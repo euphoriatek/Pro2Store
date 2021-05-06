@@ -1,0 +1,373 @@
+{
+  "@import": "./element.php",
+  "name": "protostore_addtocart",
+  "title": "Add to Cart",
+  "icon": "${url:images/protostore_addtocart.svg}",
+  "iconSmall": "${url:images/protostore_addtocart_small.svg}",
+  "element": true,
+  "container": true,
+  "group": "Pro2Store",
+  "defaults": {
+    "oos_element": "h1"
+  },
+  "placeholder": {
+    "props": {
+      "content": "Add To Cart",
+      "icon": "",
+      "button_style": "default"
+    }
+  },
+  "templates": {
+    "render": "./templates/template.php",
+    "content": "./templates/content.php"
+  },
+  "fields": {
+    "content": {
+      "label": "Content"
+    },
+    "icon": {
+      "label": "Icon",
+      "description": "Pick an optional icon.",
+      "type": "icon"
+    },
+    "icon_align": {
+      "label": "Icon Alignment",
+      "description": "Choose the icon position.",
+      "type": "select",
+      "options": {
+        "Left": "left",
+        "Right": "right"
+      },
+      "enable": "icon"
+    },
+    "button_style": {
+      "label": "Style",
+      "description": "Set the button style.",
+      "type": "select",
+      "options": {
+        "Default": "default",
+        "Primary": "primary",
+        "Secondary": "secondary",
+        "Danger": "danger",
+        "Text": "text",
+        "Link": "",
+        "Link Muted": "link-muted",
+        "Link Text": "link-text"
+      }
+    },
+    "button_size": {
+      "label": "Size",
+      "type": "select",
+      "default": "",
+      "options": {
+        "Small": "small",
+        "Default": "",
+        "Large": "large"
+      }
+    },
+    "fullwidth": {
+      "type": "checkbox",
+      "text": "Full width button"
+    },
+    "oos_message": {
+      "label": "Out of Stock Message"
+    },
+    "oos_style": {
+      "label": "Style",
+      "description": "Headline styles differ in font-size but may also come with a predefined color, size and font.",
+      "type": "select",
+      "options": {
+        "None": "",
+        "2Xlarge": "heading-2xlarge",
+        "XLarge": "heading-xlarge",
+        "Large": "heading-large",
+        "Medium": "heading-medium",
+        "Small": "heading-small",
+        "H1": "h1",
+        "H2": "h2",
+        "H3": "h3",
+        "H4": "h4",
+        "H5": "h5",
+        "H6": "h6"
+      }
+    },
+    "oos_decoration": {
+      "label": "Decoration",
+      "description": "Decorate the headline with a divider, bullet or a line that is vertically centered to the heading.",
+      "type": "select",
+      "options": {
+        "None": "",
+        "Divider": "divider",
+        "Bullet": "bullet",
+        "Line": "line"
+      }
+    },
+    "oos_font_family": {
+      "label": "Font Family",
+      "description": "Select an alternative font family.",
+      "type": "select",
+      "options": {
+        "None": "",
+        "Default": "default",
+        "Primary": "primary",
+        "Secondary": "secondary",
+        "Tertiary": "tertiary"
+      }
+    },
+    "oos_color": {
+      "label": "Color",
+      "description": "Select the text color. If the Background option is selected, styles that don't apply a background image use the primary color instead.",
+      "type": "select",
+      "options": {
+        "None": "",
+        "Muted": "muted",
+        "Emphasis": "emphasis",
+        "Primary": "primary",
+        "Secondary": "secondary",
+        "Success": "success",
+        "Warning": "warning",
+        "Danger": "danger",
+        "Background": "background"
+      }
+    },
+    "oos_element": {
+      "label": "HTML Element",
+      "description": "Choose one of the HTML elements to fit your semantic structure.",
+      "type": "select",
+      "options": {
+        "h1": "h1",
+        "h2": "h2",
+        "h3": "h3",
+        "h4": "h4",
+        "h5": "h5",
+        "h6": "h6",
+        "div": "div"
+      }
+    },
+    "direct_to_checkout": {
+      "type": "checkbox",
+      "text": "Go directly to checkout on add."
+    },
+    "alert": {
+      "type": "checkbox",
+      "text": "Show Alert When Added"
+    },
+    "alert_message": {
+      "label": "Alert Message",
+      "enable": "alert"
+    },
+    "alert_style": {
+      "type": "select",
+      "default": "primary",
+      "options": {
+        "Default": "primary",
+        "Success": "success",
+        "Warning": "warning",
+        "Danger": "danger"
+      },
+      "label": "Alert Style",
+      "enable": "alert"
+    },
+    "alert_position": {
+      "type": "select",
+      "default": "top-center",
+      "options": {
+        "Top Left": "top-left",
+        "Top Center": "top-center",
+        "Top right": "top-right",
+        "Bottom Left": "bottom-left",
+        "Bottom Center": "bottom-center",
+        "Bottom Right": "bottom-right"
+      },
+      "label": "Alert Position",
+      "enable": "alert"
+    },
+    "checkout_content": {
+      "label": "Content",
+      "enable": "checkout_show && !direct_to_checkout"
+    },
+    "checkout_icon": {
+      "label": "Icon",
+      "description": "Pick an optional icon.",
+      "type": "icon",
+      "enable": "checkout_show && !direct_to_checkout"
+    },
+    "checkout_icon_align": {
+      "label": "Icon Alignment",
+      "description": "Choose the icon position.",
+      "type": "select",
+      "options": {
+        "Left": "left",
+        "Right": "right"
+      },
+      "enable": "checkout_icon && checkout_show && !direct_to_checkout"
+    },
+    "checkout_button_style": {
+      "label": "Style",
+      "description": "Set the button style.",
+      "type": "select",
+      "options": {
+        "Default": "default",
+        "Primary": "primary",
+        "Secondary": "secondary",
+        "Danger": "danger",
+        "Text": "text",
+        "Link": "",
+        "Link Muted": "link-muted",
+        "Link Text": "link-text"
+      },
+      "enable": "checkout_show && !direct_to_checkout"
+    },
+    "checkout_button_size": {
+      "label": "Size",
+      "type": "select",
+      "default": "",
+      "options": {
+        "Small": "small",
+        "Default": "",
+        "Large": "large"
+      },
+      "enable": "checkout_show && !direct_to_checkout"
+    },
+    "checkout_fullwidth": {
+      "type": "checkbox",
+      "text": "Full width button",
+      "enable": "checkout_show && !direct_to_checkout"
+    },
+    "checkout_show": {
+      "type": "checkbox",
+      "text": "Show a 'Go to checkout' button after add to cart is clicked?",
+      "enable": "!direct_to_checkout"
+    },
+    "position": "${builder.position}",
+    "position_left": "${builder.position_left}",
+    "position_right": "${builder.position_right}",
+    "position_top": "${builder.position_top}",
+    "position_bottom": "${builder.position_bottom}",
+    "position_z_index": "${builder.position_z_index}",
+    "margin": "${builder.margin}",
+    "margin_remove_top": "${builder.margin_remove_top}",
+    "margin_remove_bottom": "${builder.margin_remove_bottom}",
+    "maxwidth": "${builder.maxwidth}",
+    "maxwidth_breakpoint": "${builder.maxwidth_breakpoint}",
+    "block_align": "${builder.block_align}",
+    "block_align_breakpoint": "${builder.block_align_breakpoint}",
+    "block_align_fallback": "${builder.block_align_fallback}",
+    "text_align": "${builder.text_align}",
+    "text_align_breakpoint": "${builder.text_align_breakpoint}",
+    "text_align_fallback": "${builder.text_align_fallback}",
+    "animation": "${builder.animation}",
+    "_parallax_button": "${builder._parallax_button}",
+    "visibility": "${builder.visibility}",
+    "name": "${builder.name}",
+    "status": "${builder.status}",
+    "class": "${builder.cls}",
+    "attributes": "${builder.attrs}",
+    "css": {
+      "label": "CSS",
+      "description": "Enter your own custom CSS. The following selectors will be prefixed automatically for this element: <code>.el-element</code>, <code>.el-item</code>, <code>.el-content</code>",
+      "type": "editor",
+      "editor": "code",
+      "mode": "css",
+      "attrs": {
+        "debounce": 500
+      }
+    }
+  },
+  "fieldset": {
+    "default": {
+      "type": "tabs",
+      "fields": [
+        {
+          "title": "Button",
+          "fields": [
+            {
+              "label": "Add to Cart Button",
+              "type": "group",
+              "divider": true,
+              "fields": [
+                "content",
+                "icon",
+                "icon_align",
+                "button_style",
+                "button_size",
+                "fullwidth",
+                "alert",
+                "alert_message",
+                "alert_style",
+                "alert_position"
+              ]
+            },
+            {
+              "label": "'Go to Checkout' Button",
+              "type": "group",
+              "divider": true,
+              "fields": [
+                "checkout_show",
+                "checkout_content",
+                "checkout_icon",
+                "checkout_icon_align",
+                "checkout_button_style",
+                "checkout_button_size",
+                "checkout_fullwidth"
+              ]
+            },
+            {
+              "label": "Go Directly to checkout",
+              "type": "group",
+              "divider": true,
+              "fields": [
+                "direct_to_checkout"
+              ]
+            },
+            {
+              "label": "Out Of Stock",
+              "type": "group",
+              "divider": true,
+              "fields": [
+                "oos_message",
+                "oos_style",
+                "oos_decoration",
+                "oos_font_family",
+                "oos_color",
+                "oos_element"
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Settings",
+          "fields": [
+            {
+              "label": "General",
+              "type": "group",
+              "fields": [
+                "position",
+                "position_left",
+                "position_right",
+                "position_top",
+                "position_bottom",
+                "position_z_index",
+                "margin",
+                "margin_remove_top",
+                "margin_remove_bottom",
+                "maxwidth",
+                "maxwidth_breakpoint",
+                "block_align",
+                "block_align_breakpoint",
+                "block_align_fallback",
+                "text_align",
+                "text_align_breakpoint",
+                "text_align_fallback",
+                "animation",
+                "_parallax_button",
+                "visibility"
+              ]
+            }
+          ]
+        },
+        "${builder.advanced}"
+      ]
+    }
+  }
+}

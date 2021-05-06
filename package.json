@@ -1,0 +1,26 @@
+﻿{
+  "name": "pro2store",
+  "version": "2.0.0",
+  "private": true,
+  "description": "An Ecommerce Extension for YOOtheme Pro",
+  "scripts": {
+    "bundlevue": "node bundlevue.js",
+    "vuedev": "onchange 'vuefiles/*.js' -- node bundlevue.js"
+  },
+  "author": "Ray Lawlor",
+  "license": "GPL-2.0",
+  "homepage": "https://pro2.store",
+  "dependencies": {
+    "@node-minify/core": "^6.2.0",
+    "@node-minify/terser": "^6.2.0",
+    "@node-minify/uglify-js": "^6.2.0",
+    "adm-zip": "0.4.16",
+    "find": "^0.3.0",
+    "fs-extra": "9.0.1",
+    "minify": "^7.0.0",
+    "node-minify": "^3.6.0",
+    "onchange": "^7.1.0",
+    "replace-in-file": "^6.1.0",
+    "rimraf": "3.0.2"
+  }
+}
