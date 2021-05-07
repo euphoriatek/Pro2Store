@@ -23,5 +23,33 @@ const stringreplace = require('replace-in-file');
             });
         });
     });
+    emptyDir('./media/com_protostore/js/vue/dashboard').then(() => {
+        remove('./media/com_protostore/js/vue/dashboard').then(() => {
+            mkdir('./media/com_protostore/js/vue/dashboard').then(() => {
+                minify({
+                    compressor: terser,
+                    input: './vuefiles/dashboard.js',
+                    output: './media/com_protostore/js/vue/dashboard/dashboard.min.js'
+                }).then(function (min) {
+                    console.log('Dashboard done on: ' + theTime);
+                });
+
+            });
+        });
+    });
+    emptyDir('./media/com_protostore/js/vue/modules/latestorders').then(() => {
+        remove('./media/com_protostore/js/vue/modules/latestorders').then(() => {
+            mkdir('./media/com_protostore/js/vue/modules/latestorders').then(() => {
+                minify({
+                    compressor: terser,
+                    input: './vuefiles/latestorders.js',
+                    output: './media/com_protostore/js/vue/modules/latestorders/latestorders.min.js'
+                }).then(function (min) {
+                    console.log('Latestorders done on: ' + theTime);
+                });
+
+            });
+        });
+    });
 
 })();

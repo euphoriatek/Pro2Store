@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="module" version="3.1" client="administrator" method="upgrade">
+    <name>mod_ps2latestorders</name>
+    <author>Ray Lawlor - Pro2Store</author>
+    <creationDate>February 2020</creationDate>
+    <copyright>Copyright (C) 2020 Ray Lawlor - Pro2Store. All rights reserved.</copyright>
+    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+    <authorEmail>info@pro2.store</authorEmail>
+    <authorUrl>https://pro2.store</authorUrl>
+    <version>1.0.0</version>
+    <description>Pro2Store Cart - by Ray Lawlor - Pro2Store</description>
+    <files>
+        <filename module="mod_ps2latestorders">mod_ps2latestorders.php</filename>
+        <folder>tmpl</folder>
+    </files>
+
+    <config>
+        <fields name="params">
+
+        </fields>
+    </config>
+</extension>

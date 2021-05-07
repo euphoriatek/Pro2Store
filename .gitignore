@@ -44,9 +44,15 @@
 
 !/administrator/
 /administrator/*
+
 !/administrator/components/
 /administrator/components/*
 !/administrator/components/com_protostore/
+
+!/administrator/modules/
+/administrator/modules/*
+!/administrator/modules/mod_ps2latestorders/
+!/administrator/modules/mod_ps2saleschart/
 
 !/administrator/language/
 /administrator/language/*
