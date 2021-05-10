@@ -10,8 +10,9 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Router\Route;
-use Protostore\Product\Product;
+use Protostore\Product\ProductFactory;
 use Protostore\Utilities\Utilities;
 use Protostore\Config\Config;
 
@@ -26,7 +27,8 @@ return [
 
             $node->props['item_id'] = Utilities::getCurrentItemId();
 
-            $product = new Product($node->props['item_id']);
+//            $product = new Product($node->props['item_id']);
+            $product = ProductFactory::get($node->props['item_id']);
 
             if ($product->published == 0) {
                 return false;
@@ -46,6 +48,7 @@ return [
 
             $config = new Config();
             $node->props['checkoutlink'] = Route::_('index.php?Itemid=' . $config->checkoutItemid);
+            $node->props['baseUrl'] = Uri::base();
 
         },
 

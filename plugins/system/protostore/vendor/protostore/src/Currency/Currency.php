@@ -9,6 +9,9 @@
 
 namespace Protostore\Currency;
 // no direct access
+use Brick\Money\Money;
+use Joomla\CMS\Factory;
+
 defined('_JEXEC') or die('Restricted access');
 
 
@@ -53,4 +56,22 @@ class Currency
 
 	}
 
+
+	public static function formatNumberWithCurrency($number, $currency)
+	{
+
+		// cast given number to integer
+		$number = (int)$number;
+
+		// get the Joomla Locale
+		$lang = Factory::getLanguage();
+		$locales = $lang->getLocale();
+		$locale = $locales[0];
+
+		// use Brick to format the number
+		$money = Money::ofMinor($number, 'GBP');
+		return $money->formatTo($locale);
+
+
+	}
 }

@@ -20,6 +20,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Helper\TagsHelper;
 
 use Protostore\Currency\Currency;
+use Protostore\Currency\CurrencyFactory;
 use Protostore\Price\Price;
 use Protostore\Utilities\Utilities;
 use Protostore\Productoptions\Productoptions;
@@ -289,12 +290,11 @@ class Product
 
 	public function getBasePriceFloat()
 	{
-		$currency = new Currency();
 
 		if ($this->baseprice)
 		{
 
-			$baseprice = Money::ofMinor((int) $this->baseprice, $currency->_getDefaultCurrencyFromDB()->iso, new CashContext(1), RoundingMode::DOWN);
+			$baseprice = Money::ofMinor((int) $this->baseprice, CurrencyFactory::getCurrent()->iso, new CashContext(1), RoundingMode::DOWN);
 
 			return $baseprice->getAmount();
 
@@ -315,17 +315,18 @@ class Product
 	 *
 	 * @return \Brick\Math\BigDecimal|string
 	 * @throws \Brick\Money\Exception\UnknownCurrencyException
+	 * @throws \Exception
 	 */
 
 	public function getFlatFeeFloat()
 	{
-		$currency = new Currency();
+
 
 		if ($this->flatfee)
 		{
 
 
-			$flatfee = Money::ofMinor((int) $this->flatfee, $currency->_getDefaultCurrencyFromDB()->iso, new CashContext(1), RoundingMode::DOWN);
+			$flatfee = Money::ofMinor((int) $this->flatfee, CurrencyFactory::getCurrent()->iso, new CashContext(1), RoundingMode::DOWN);
 
 			return $flatfee->getAmount();
 
@@ -351,12 +352,12 @@ class Product
 
 	public function getDiscountFloat()
 	{
-		$currency = new Currency();
+
 
 		if ($this->discount)
 		{
 
-			$discount = Money::ofMinor((int) $this->discount, $currency->_getDefaultCurrencyFromDB()->iso, new CashContext(1), RoundingMode::DOWN);
+			$discount = Money::ofMinor((int) $this->discount, CurrencyFactory::getCurrent()->iso, new CashContext(1), RoundingMode::DOWN);
 
 			return $discount->getAmount();
 
@@ -399,11 +400,10 @@ class Product
 
 	public function getFormattedDiscountPrice()
 	{
-		$currency = new Currency();
 
 		if ($this->discounted_total)
 		{
-			return Currency::formatNumberWithCurrency($this->discounted_total, $currency->_getDefaultCurrencyFromDB()->iso);
+			return Currency::formatNumberWithCurrency($this->discounted_total, CurrencyFactory::getCurrent()->iso);
 		}
 
 
@@ -423,11 +423,11 @@ class Product
 
 	public function getFormattedBasePrice()
 	{
-		$currency = new Currency();
+
 
 		if ($this->baseprice)
 		{
-			return Currency::formatNumberWithCurrency($this->baseprice, $currency->_getDefaultCurrencyFromDB()->iso);
+			return Currency::formatNumberWithCurrency($this->baseprice, CurrencyFactory::getCurrent()->iso);
 		}
 
 

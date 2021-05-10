@@ -18,7 +18,7 @@ use Brick\Money\Money;
 use \NumberFormatter;
 use Exception;
 
-class Currency
+class CurrencyOld
 {
 
     public $db;
