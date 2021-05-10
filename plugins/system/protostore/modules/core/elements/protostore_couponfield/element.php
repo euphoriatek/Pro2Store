@@ -13,39 +13,42 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 
-use Protostore\Coupon\Coupon;
+use Protostore\Coupon\CouponFactory;
 
 
 return [
 
-    // Define transforms for the element node
-    'transforms' => [
+	// Define transforms for the element node
+	'transforms' => [
 
 
-        // The function is executed before the template is rendered
-        'render' => function ($node, array $params) {
+		// The function is executed before the template is rendered
+		'render' => function ($node, array $params) {
 
-            $node->props['baseUrl'] = Uri::base();
+			$node->props['baseUrl'] = Uri::base();
 
-            $language = Factory::getLanguage();
-            $language->load('com_protostore', JPATH_ADMINISTRATOR);
+			$language = Factory::getLanguage();
+			$language->load('com_protostore', JPATH_ADMINISTRATOR);
 
-            $node->props['buttontext'] = Text::_('COM_PROTOSTORE_ELM_COUPON_FIELD_BUTTON_TEXT_ADD');
-            $node->props['removebuttontext'] = Text::_('COM_PROTOSTORE_ELM_COUPON_FIELD_BUTTON_TEXT_REMOVE');
-            $node->props['couponapplied'] = Text::_('COM_PROTOSTORE_ELM_COUPON_FIELD_COUPON_APPLIED');
-            $node->props['entercouponcode'] = Text::_('COM_PROTOSTORE_ELM_COUPON_FIELD_PLACEHOLDER');
-            $node->props['couponremoved'] = Text::_('COM_PROTOSTORE_ELM_COUPON_FIELD_COUPON_REMOVED');
+			$node->props['buttontext']       = Text::_('COM_PROTOSTORE_ELM_COUPON_FIELD_BUTTON_TEXT_ADD');
+			$node->props['removebuttontext'] = Text::_('COM_PROTOSTORE_ELM_COUPON_FIELD_BUTTON_TEXT_REMOVE');
+			$node->props['couponapplied']    = Text::_('COM_PROTOSTORE_ELM_COUPON_FIELD_COUPON_APPLIED');
+			$node->props['entercouponcode']  = Text::_('COM_PROTOSTORE_ELM_COUPON_FIELD_PLACEHOLDER');
+			$node->props['couponremoved']    = Text::_('COM_PROTOSTORE_ELM_COUPON_FIELD_COUPON_REMOVED');
 
-            $node->props['isCouponApplied'] = Coupon::isCouponApplied() ? 'true' : 'false';
+			$node->props['isCouponApplied'] = CouponFactory::isCouponApplied() ? 'true' : 'false';
 
-            if($node->props['isCouponApplied']) {
-                $node->props['coupon'] = Coupon::getCurrentAppliedCoupon();
-            }
+			$node->props['coupon'] = '';
+
+			if ($node->props['isCouponApplied'])
+			{
+				$node->props['coupon'] = CouponFactory::getCurrentAppliedCoupon();
+			}
 
 
-        },
+		},
 
-    ]
+	]
 
 ];
 

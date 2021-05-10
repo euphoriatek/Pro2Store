@@ -31,7 +31,7 @@ class plgSystemProtostore extends CMSPlugin
         //import VUE on the frontend
         $app = Factory::getApplication();
         if ($app->isClient('site')) {
-            Factory::getDocument()->addScript('vue/dev.js', array('type' => 'text/javascript'));
+            Factory::getDocument()->addScript('media/com_protostore/js/vue/bundle.min.js', array('type' => 'text/javascript'));
             Factory::getDocument()->addStyleDeclaration('[v-cloak] {display: none}');
         }
 
@@ -41,7 +41,14 @@ class plgSystemProtostore extends CMSPlugin
         if ($value == null) {
             $value = md5(Factory::getSession()->getId());
             $time = 0;
-            Factory::getApplication()->input->cookie->set('yps-cart', $value, $time, Factory::getApplication()->get('cookie_path', '/'), Factory::getApplication()->get('cookie_domain'), Factory::getApplication()->isSSLConnection());
+            Factory::getApplication()->input->cookie->set(
+            	'yps-cart',
+	            $value,
+	            $time,
+	            Factory::getApplication()->get('cookie_path', '/'),
+	            Factory::getApplication()->get('cookie_domain'),
+	            Factory::getApplication()->isSSLConnection()
+            );
         }
 
         //check if the setup is done

@@ -11,7 +11,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Uri\Uri;
 
-use Protostore\Checkoutnote\Checkoutnote;
+use Protostore\Checkoutnote\CheckoutnoteFactory;
 
 return [
 
@@ -22,13 +22,12 @@ return [
 
 
             $node->props['baseUrl'] = Uri::base();
+			$node->props['note'] = '';
+			$node->props['note'] = '';
 
-
-			if ($currentNote = Checkoutnote::getCurrentNote())
+			if ($currentNote = CheckoutnoteFactory::getCurrentNote())
 			{
 				$node->props['note'] = $currentNote->note;
-			} else {
-				$node->props['note'] = '';
 			}
 
 
