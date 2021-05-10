@@ -145,9 +145,6 @@ class bootstrap extends AdminModel
 	{
 		// include the vue script - defer
 		Factory::getDocument()->addScript('../media/com_protostore/js/vue/product/product.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
-//		Factory::getDocument()->addScript('https://unpkg.com/primevue@3.4.0/inputnumber/inputnumber.min.js', array('type' => 'text/javascript'));
-//		Factory::getDocument()->addScript('https://unpkg.com/primevue@3.4.0/inputtext/inputtext.min.js', array('type' => 'text/javascript'));
-//		Factory::getDocument()->addScript('https://unpkg.com/primevue@3.4.0/inputswitch/inputswitch.min.js', array('type' => 'text/javascript'));
 
 		// include prime
 		Utilities::includePrime(array('inputswitch'));
