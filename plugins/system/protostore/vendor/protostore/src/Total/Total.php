@@ -15,7 +15,9 @@ defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Factory;
 
+use Protostore\Cart\CartFactory;
 use Protostore\Coupon\Coupon;
+use Protostore\Coupon\CouponFactory;
 use Protostore\Productoptions\Productoptions;
 use Protostore\Productoption\Productoption;
 use Protostore\Cart\Cart;
@@ -52,7 +54,7 @@ class Total
 
         $total = self::getSubTotal();
 
-        $couponDiscount = Coupon::calculateDiscount($total, false, true);
+        $couponDiscount = CouponFactory::calculateDiscount($total, false, true);
 
         if ($couponDiscount > $total) {
             $couponDiscount = $total;
@@ -81,8 +83,8 @@ class Total
     public static function getSubTotal()
     {
 
-        $currentCartId = Cart::getCurrentCartId();
-        $cart = new Cart($currentCartId);
+
+        $cart = CartFactory::get();
         $results = $cart->cartItems;
 
         // init total var at 0

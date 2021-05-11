@@ -16,6 +16,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Plugin\PluginHelper;
 use phpDocumentor\Reflection\Types\Integer;
 use Protostore\Address\Address;
+use Protostore\Cart\CartFactory;
 use Protostore\Currency\Currency;
 use Protostore\Product\Product;
 use Protostore\Cart\Cart;
@@ -49,8 +50,7 @@ class Shipping
     {
 
 
-        $currentCartId = Cart::getCurrentCartId();
-        $cart = new Cart($currentCartId);
+        $cart = CartFactory::get();
         $cartitems = $cart->cartItems;
 
 
@@ -169,8 +169,7 @@ class Shipping
     {
 
 
-        $currentCartId = Cart::getCurrentCartId();
-        $cart = new Cart($currentCartId);
+	    $cart = CartFactory::get();
         $cartitems = $cart->cartItems;
 
 
@@ -207,7 +206,7 @@ class Shipping
     {
         PluginHelper::importPlugin('protostoreshipping');
 
-        $cart = new Cart(Cart::getCurrentCartId());
+        $cart = CartFactory::get();
 
         if ($cart->shipping_type) {
             $shippingType = $cart->shipping_type;
@@ -219,6 +218,7 @@ class Shipping
         if ($shippingTotal) {
             return $shippingTotal[0];
         }
+        return 0;
 
     }
 

@@ -26,7 +26,7 @@ class CheckoutnoteFactory
 	 *
 	 * @return false|Checkoutnote
 	 *
-	 * @since 1.7
+	 * @since 1.5
 	 */
 
 	public static function get($id)
@@ -60,7 +60,7 @@ class CheckoutnoteFactory
 	 *
 	 * @return bool
 	 *
-	 * @since 1.7
+	 * @since 1.5
 	 */
 
 	public static function create($data)
@@ -89,7 +89,7 @@ class CheckoutnoteFactory
 	 *
 	 * @return false|Checkoutnote
 	 *
-	 * @since 1.7
+	 * @since 1.5
 	 */
 
 	public static function getCurrentNote()
@@ -122,7 +122,7 @@ class CheckoutnoteFactory
 	 *
 	 * @return false|Checkoutnote
 	 *
-	 * @since 1.7
+	 * @since 1.5
 	 */
 
 	public static function save($data)

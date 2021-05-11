@@ -74,4 +74,25 @@ class Cart
 		$this->count = CartFactory::getCount($this->cartItems);
 
 	}
+
+
+	/**
+	 *
+	 *
+	 * @since 1.5
+	 */
+	public function save()
+	{
+
+		$object = new stdClass();
+		$object->id = $this->id;
+		$object->user_id = $this->user_id;
+		$object->cookie_id = $this->cookie_id;
+		$object->coupon_id = $this->coupon_id;
+		$object->billing_address_id = $this->billing_address_id;
+		$object->shipping_address_id = $this->shipping_address_id;
+
+		$this->db->updateObject('#__protostore_cart', $object, 'id');
+	}
+
 }

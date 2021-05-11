@@ -13,21 +13,20 @@ defined('_JEXEC') or die('Restricted access');
 
 use Protostore\Cart\CartFactory;
 
-class protostoreTask_addtocart
+class protostoreTask_changecount
 {
 
 	public function getResponse($data)
 	{
 
 		// init
-		$amount = $data->get('amount', false, 'INT');
-		$itemid = $data->get('contentitemid', null, 'INT');
+		$response   = array();
+		$cartItemId = $data->get('cartitemid');
+		$itemId     = $data->get('itemId');
+		$newCount   = $data->get('newcount', 0);
 
-		$itemOptions = $data->getString('itemoptions');
-		$itemOptions = json_decode($itemOptions, true);
-
-
-		return CartFactory::addToCart($itemid, $amount, $itemOptions);
+		$response['status'] = CartFactory::changeCount($cartItemId, $itemId, $newCount);
+		return $response;
 	}
 
 }

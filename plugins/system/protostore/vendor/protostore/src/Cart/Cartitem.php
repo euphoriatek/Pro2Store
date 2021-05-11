@@ -30,12 +30,12 @@ class CartItem
 	public string $item_options;
 	public int $bought_at_price;
 	public string $added;
-	public int $order_id;
-	public string $cookie_id;
-	public int $user_id;
+	public ?int $order_id;
+	public ?string $cookie_id;
+	public ?int $user_id;
 	public int $amount;
 
-	public string $bought_at_price_formatted;
+	public ?string $bought_at_price_formatted;
 	public int $manage_stock_enabled;
 	public Product $product;
 	public int $totalCost;

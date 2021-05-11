@@ -18,6 +18,7 @@ use Joomla\String\StringHelper;
 
 use Protostore\Address\Address;
 use Protostore\Cart\Cart;
+use Protostore\Cart\CartFactory;
 use Protostore\Product\Product;
 
 use DateTimeZone;
@@ -618,7 +619,7 @@ class Utilities
 
 		$query->select('shipping_address_id');
 		$query->from($db->quoteName('#__protostore_cart'));
-		$query->where($db->quoteName('id') . ' = ' . $db->quote(Cart::getCurrentCartId()));
+		$query->where($db->quoteName('id') . ' = ' . $db->quote(CartFactory::get()->id));
 
 		$db->setQuery($query);
 
@@ -645,7 +646,7 @@ class Utilities
 
 		$query->select('shipping_address_id');
 		$query->from($db->quoteName('#__protostore_cart'));
-		$query->where($db->quoteName('id') . ' = ' . $db->quote(Cart::getCurrentCartId()));
+		$query->where($db->quoteName('id') . ' = ' . $db->quote(CartFactory::get()->id));
 
 		$db->setQuery($query);
 
@@ -657,7 +658,7 @@ class Utilities
 
 			$query->select('shipping_address_id');
 			$query->from($db->quoteName('#__protostore_cart'));
-			$query->where($db->quoteName('id') . ' = ' . $db->quote(Cart::getCurrentCartId()));
+			$query->where($db->quoteName('id') . ' = ' . $db->quote(CartFactory::get()->id));
 
 			$db->setQuery($query);
 
@@ -678,7 +679,6 @@ class Utilities
 	public static function isBillingAssigned()
 	{
 
-		$cartid = Cart::getCurrentCartId();
 
 		$db = Factory::getDbo();
 
@@ -686,7 +686,7 @@ class Utilities
 
 		$query->select('billing_address_id');
 		$query->from($db->quoteName('#__protostore_cart'));
-		$query->where($db->quoteName('id') . ' = ' . $db->quote($cartid));
+		$query->where($db->quoteName('id') . ' = ' . $db->quote(CartFactory::get()->id));
 
 		$db->setQuery($query);
 

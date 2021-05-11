@@ -28,7 +28,7 @@ class CouponFactory
 	 *
 	 * @return false|Coupon
 	 *
-	 * @since 1.7
+	 * @since 1.5
 	 */
 
 	public static function get($id)
@@ -62,7 +62,7 @@ class CouponFactory
 	 *
 	 * @return false|Coupon
 	 *
-	 * @since 1.7
+	 * @since 1.5
 	 */
 
 	public static function getByCode($couponCode)
@@ -95,7 +95,7 @@ class CouponFactory
 	 *
 	 * @return false|Coupon
 	 *
-	 * @since 1.7
+	 * @since 1.5
 	 */
 
 
@@ -277,7 +277,7 @@ class CouponFactory
 	 *
 	 * @return bool
 	 *
-	 * @since 1.7
+	 * @since 1.5
 	 */
 
 	public static function isCouponInDate(Coupon $coupon)
@@ -303,7 +303,7 @@ class CouponFactory
 	 *
 	 * @return bool
 	 *
-	 * @since 1.7
+	 * @since 1.5
 	 */
 
 
@@ -345,7 +345,7 @@ class CouponFactory
 	 *
 	 * @return float|int|mixed
 	 *
-	 * @since 1.7
+	 * @since 1.5
 	 */
 
 	public static function calculateDiscount($subTotal)

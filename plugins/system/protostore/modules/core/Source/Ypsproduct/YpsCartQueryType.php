@@ -3,6 +3,7 @@
 namespace YpsApp\Source\Ypsproduct;
 
 use Protostore\Cart\Cart;
+use Protostore\Cart\CartFactory;
 
 class YpsCartQueryType
 {
@@ -36,8 +37,7 @@ class YpsCartQueryType
     public static function resolve($root, array $args)
     {
 
-        $currentCartId = Cart::getCurrentCartId();
-        $cart = new Cart($currentCartId);
+        $cart = CartFactory::get();
         $cartItems = $cart->cartItems;
 
 

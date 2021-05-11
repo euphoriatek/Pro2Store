@@ -11,6 +11,8 @@ namespace Protostore\Currency;
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Brick\Money\Exception\UnknownCurrencyException;
+use Brick\Money\Money;
 use Exception;
 use Joomla\CMS\Factory;
 
@@ -27,7 +29,7 @@ class CurrencyFactory
 	 *
 	 * @return false|Currency
 	 *
-	 * @since 1.7
+	 * @since 1.5
 	 */
 
 	public static function get($id)
@@ -64,7 +66,7 @@ class CurrencyFactory
 	 *
 	 * @throws Exception
 	 *
-	 * @since 1.7
+	 * @since 1.5
 	 */
 
 	public static function getCurrent()
@@ -87,7 +89,7 @@ class CurrencyFactory
 	 *
 	 * @return false|Currency
 	 *
-	 * @since 1.7
+	 * @since 1.5
 	 */
 
 	public static function getDefault()
@@ -121,7 +123,7 @@ class CurrencyFactory
 	 *
 	 *
 	 * @throws Exception
-	 * @since 1.7
+	 * @since 1.5
 	 */
 
 
@@ -145,8 +147,8 @@ class CurrencyFactory
 	 * @param   int          $offset
 	 * @param   int          $published
 	 * @param   string|null  $searchTerm
-	 * @param                $orderBy
-	 * @param                $orderDir
+	 * @param   string       $orderBy
+	 * @param   string       $orderDir
 	 *
 	 *
 	 * @since 1.5
@@ -163,13 +165,37 @@ class CurrencyFactory
 
 	}
 
-	public static function translate($number, $selectedCurrency = null)
+	/**
+	 * @param         $number
+	 * @param   null  $selectedCurrency
+	 *
+	 * @return string
+	 *
+	 * @throws Exception
+	 * @since 1.5
+	 */
+
+	public static function translate($number, $selectedCurrency = null): string
 	{
 
 		if (!$selectedCurrency)
 		{
 			$selectedCurrency = self::getCurrent();
 		}
+
+
+
+		$rate = $selectedCurrency->rate;
+
+		if ($rate) {
+			$value = ($number * $rate);
+		} else {
+			$value = $number;
+		}
+
+
+		return self::formatNumberWithCurrency((int)$value, $selectedCurrency->iso);
+
 
 	}
 
@@ -185,6 +211,37 @@ class CurrencyFactory
 
 	public static function getConversionRate($currency)
 	{
+
+	}
+
+
+	/**
+	 *
+	 * Takes an integer (representing the MINOR of the value - i.e. for 10 pounds, the number will be 1000)
+	 * and a Currency ISO and returns the Formatted string for the value.
+	 *
+	 * @param   int     $number
+	 * @param   string  $currencyISO
+	 *
+	 * @return string
+	 *
+	 * @throws UnknownCurrencyException
+	 * @since 1.5
+	 */
+
+	public static function formatNumberWithCurrency(int $number, string $currencyISO): string
+	{
+
+
+		// get the Joomla Locale
+		$lang = Factory::getLanguage();
+		$locales = $lang->getLocale();
+		$locale = $locales[0];
+
+		// use Brick to format the number
+		$money = Money::ofMinor($number, $currencyISO);
+		return $money->formatTo($locale);
+
 
 	}
 
@@ -226,7 +283,7 @@ class CurrencyFactory
 	 * @return false|Currency
 	 *
 	 * @throws Exception
-	 * @since 1.7
+	 * @since 1.5
 	 */
 
 	private static function initCurrency()
