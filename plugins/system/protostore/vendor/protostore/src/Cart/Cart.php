@@ -12,21 +12,15 @@ namespace Protostore\Cart;
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\Plugin\PluginHelper;
+use Protostore\Currency\CurrencyFactory;
+use Protostore\Coupon\CouponFactory;
 use Protostore\Cartitem\Cartitem;
-use Protostore\Currency\Currency;
-use Protostore\Product\Product;
+
 use Protostore\Total\Total;
 use Protostore\Shipping\Shipping;
-use Protostore\Coupon\Coupon;
-use Protostore\Utilities\Utilities;
-use Protostore\Orderlog\Orderlog;
-use Protostore\Checkoutnote\Checkoutnote;
+
 use Protostore\Tax\Tax;
 
-use stdClass;
 
 class Cart
 {
@@ -41,6 +35,16 @@ class Cart
 	public $shipping_type;
 	public $count;
 	public $cartItems;
+
+	public string $total;
+	public int $totalInt;
+	public string $subtotal;
+	public int $subtotalInt;
+	public string $tax;
+	public int $taxInt;
+	public string $totalShipping;
+	public string $totalDiscount;
+	public int $totalDiscountInt;
 
 
 	public function __construct($data)
@@ -67,32 +71,44 @@ class Cart
 		}
 	}
 
+
 	private function init($data)
 	{
 
+		$currency = CurrencyFactory::getCurrent();
+
 		$this->cartItems = CartFactory::getCartItems($this->id);
-		$this->count = CartFactory::getCount($this->cartItems);
+		$this->count     = CartFactory::getCount($this->cartItems);
+
+		$this->subtotalInt = Total::getSubTotal($this);
+		$this->subtotal    = CurrencyFactory::translate($this->subtotalInt, $currency);
+
+		$this->totalInt = Total::getGrandTotal($this);
+		$this->total    = CurrencyFactory::translate($this->totalInt, $currency);
+
+		$this->taxInt = Tax::calculateTotalTax($this);
+		$this->tax    = CurrencyFactory::translate($this->taxInt, $currency);
+
+
+		$this->totalShipping = Shipping::calculateTotalShippingForCart($this, $currency);
+
+
+		$couponDiscount = CouponFactory::calculateDiscount($this);
+
+		if ($couponDiscount > $this->subtotalInt)
+		{
+			$this->totalDiscount    = CurrencyFactory::translate($this->subtotalInt, $currency);
+			$this->totalDiscountInt = $this->subtotal;
+		}
+		else
+		{
+			$discount               = CouponFactory::calculateDiscount($this);
+			$this->totalDiscount    = CurrencyFactory::translate($discount, $currency);
+			$this->totalDiscountInt = CouponFactory::calculateDiscount($this);
+		}
+
 
 	}
 
-
-	/**
-	 *
-	 *
-	 * @since 1.5
-	 */
-	public function save()
-	{
-
-		$object = new stdClass();
-		$object->id = $this->id;
-		$object->user_id = $this->user_id;
-		$object->cookie_id = $this->cookie_id;
-		$object->coupon_id = $this->coupon_id;
-		$object->billing_address_id = $this->billing_address_id;
-		$object->shipping_address_id = $this->shipping_address_id;
-
-		$this->db->updateObject('#__protostore_cart', $object, 'id');
-	}
 
 }

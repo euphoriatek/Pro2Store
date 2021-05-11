@@ -34,52 +34,26 @@ class protostoreTask_update
 
 
 		$response = array();
-		$currency = CurrencyFactory::getCurrent();
+
 		$cart     = CartFactory::get();
 
-		$response['cartItems'] = $cart->cartItems;
-		$response['cartCount'] = $cart->count;
-		$response['total']     = CurrencyFactory::translate(Total::getGrandTotal(), $currency);
-		$response['totalInt']  = Total::getGrandTotal();
-		$response['subtotal']  = CurrencyFactory::translate(Total::getSubTotal(), $currency);
-		$response['tax']       = CurrencyFactory::translate(Tax::calculateTotalTax(), $currency);
-		$response['taxInt']    = Tax::calculateTotalTax();
+//		$response['cartItems'] = $cart->cartItems;
+//		$response['cartCount'] = $cart->count;
+//
+//		$response['total']    = $cart->total;
+//		$response['totalInt'] = $cart->totalInt;
+//		$response['subtotal'] = $cart->subtotal;
+//		$response['subtotalInt'] = $cart->subtotalInt;
+//		$response['tax']      = $cart->tax;
+//		$response['taxInt']   = $cart->taxInt;
+//		$response['totalShipping'] = $cart->totalShipping;
+//
+//		$response['totalDiscount']    = $cart->totalDiscount;
+//		$response['totalDiscountInt'] = $cart->totalDiscountInt;
+//
+//
 
-		if (Factory::getUser()->guest)
-		{
-			if (CartFactory::isGuestAddressSet())
-			{
-				$response['totalShipping'] = CurrencyFactory::translate(Shipping::getTotalShippingFromPlugin(), $currency);
-			}
-			else
-			{
-				$response['totalShipping'] = Text::_('COM_PROTOSTORE_ELM_CARTSUMMARY_SELECT_SHIPPING_ADDRESS');
-			}
-
-
-		}
-		else
-		{
-			$response['totalShipping'] = CurrencyFactory::translate(Shipping::getTotalShippingFromPlugin(), $currency);
-		}
-
-
-		$couponDiscount = CouponFactory::calculateDiscount(Total::getSubTotal());
-
-		if ($couponDiscount > Total::getSubTotal())
-		{
-			$response['totalDiscount']    = CurrencyFactory::translate($response['subtotal'], $currency);
-			$response['totalDiscountInt'] = $response['subtotal'];
-		}
-		else
-		{
-			$discount                     = CouponFactory::calculateDiscount(Total::getSubTotal());
-			$response['totalDiscount']    = CurrencyFactory::translate($discount, $currency);
-			$response['totalDiscountInt'] = CouponFactory::calculateDiscount(Total::getSubTotal());
-		}
-
-
-		return $response;
+		return $cart;
 	}
 
 }

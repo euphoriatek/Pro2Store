@@ -667,7 +667,7 @@ class CartFactory
 	 * @since 1.5
 	 */
 
-	public static function isGuestAddressSet()
+	public static function isGuestAddressSet(Cart $cart)
 	{
 
 		$db = Factory::getDbo();
@@ -676,7 +676,7 @@ class CartFactory
 
 		$query->select('shipping_address_id');
 		$query->from($db->quoteName('#__protostore_cart'));
-		$query->where($db->quoteName('id') . ' = ' . $db->quote(self::get()->id));
+		$query->where($db->quoteName('id') . ' = ' . $db->quote($cart->id));
 
 		$db->setQuery($query);
 

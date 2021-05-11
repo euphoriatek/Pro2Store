@@ -40,29 +40,28 @@ class Total
     }
 
 
-    /**
-     *
-     * Function - getGrandTotal
-     *
-     * Returns the Grand Total for any cart in integer format
-     *
-     * @return integer
-     */
+	/**
+	 * @param   Cart  $cart
+	 *
+	 * @return float|int|mixed
+	 *
+	 * @since 1.0
+	 */
 
-    public static function getGrandTotal()
+    public static function getGrandTotal(Cart $cart)
     {
 
-        $total = self::getSubTotal();
+        $total = $cart->subtotalInt;
 
-        $couponDiscount = CouponFactory::calculateDiscount($total, false, true);
+        $couponDiscount = CouponFactory::calculateDiscount($cart);
 
         if ($couponDiscount > $total) {
             $couponDiscount = $total;
         }
 
         $total = $total - $couponDiscount;
-        $total = $total + Shipping::getTotalShippingFromPlugin();
-        $total = $total + Tax::calculateTotalTax();
+        $total = $total + Shipping::getTotalShippingFromPlugin($cart);
+//        $total = $total + Tax::calculateTotalTax($cart);
 
         return $total;
 
@@ -80,17 +79,14 @@ class Total
      * @return integer
      */
 
-    public static function getSubTotal()
+    public static function getSubTotal(Cart $cart)
     {
 
-
-        $cart = CartFactory::get();
-        $results = $cart->cartItems;
 
         // init total var at 0
         $total = 0;
 
-        if ($results) {
+        if ($results = $cart->cartItems) {
 
             // loop through the cart list
             foreach ($results as $result) {

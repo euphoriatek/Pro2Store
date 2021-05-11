@@ -17,6 +17,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Date\Date;
 use Protostore\Shipping\Shipping;
 use Protostore\Utilities\Utilities;
+use Protostore\Cart\Cart;
 
 use stdClass;
 
@@ -348,7 +349,7 @@ class CouponFactory
 	 * @since 1.5
 	 */
 
-	public static function calculateDiscount($subTotal)
+	public static function calculateDiscount(Cart $cart)
 	{
 
 		//get the current applied coupon
@@ -365,13 +366,13 @@ class CouponFactory
 
 				if ($coupon->discount_type == 'freeship')
 				{
-					$total = Shipping::getTotalShippingFromPlugin();
+					$total = Shipping::getTotalShippingFromPlugin($cart);
 				}
 
 				// if the discount type is perc, then divide the number by 100
 				if ($coupon->discount_type == 'perc')
 				{
-					$total = $subTotal * ($total / 100);
+					$total = $cart->subtotalInt * ($total / 100);
 				}
 
 

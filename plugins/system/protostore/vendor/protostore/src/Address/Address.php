@@ -622,7 +622,7 @@ class Address
 	 */
 
 
-	public static function getAssignedShippingAddressID()
+	public static function getAssignedShippingAddressID(Cart $cart)
 	{
 
 
@@ -632,7 +632,7 @@ class Address
 
 		$query->select('shipping_address_id');
 		$query->from($db->quoteName('#__protostore_cart'));
-		$query->where($db->quoteName('id') . ' = ' . $db->quote(CartFactory::get()->id));
+		$query->where($db->quoteName('id') . ' = ' . $db->quote($cart->id));
 
 		$db->setQuery($query);
 

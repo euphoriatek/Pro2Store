@@ -16,6 +16,7 @@ use Protostore\Address\Address;
 use Protostore\Cart\Cart;
 use Protostore\Cart\CartFactory;
 use Protostore\Product\Product;
+use Protostore\Product\ProductFactory;
 use Protostore\Utilities\Utilities;
 use Protostore\Shipping\Shipping;
 use Protostore\Config\Config;
@@ -37,16 +38,13 @@ class Tax
 	}
 
 
-	public static function calculateTotalTax()
+	public static function calculateTotalTax(Cart $cart)
 	{
 
 		$config = new Config();
 		$config = $config->config;
 
-		$cart      = CartFactory::get();
-
 		$cartitems = $cart->cartItems;
-
 
 		$totalTaxableValue = 0;
 
@@ -61,7 +59,7 @@ class Tax
 			$totalTaxableValue += Shipping::getTotalShippingFromPlugin();
 		}
 
-		$total = self::getTotalTax($totalTaxableValue);
+		$total = self::getTotalTax($cart, $totalTaxableValue);
 
 		//now convert to integer
 		// currency doesn't matter at this point... we just need the int
@@ -75,8 +73,8 @@ class Tax
 
 	public static function getItemTaxableValue($cartitem)
 	{
-		$product = new Product($cartitem->joomla_item_id);
-		if ($product->taxable == 0)
+
+		if ($cartitem->product->taxable == 0)
 		{
 			return 0;
 		}
@@ -157,11 +155,11 @@ class Tax
 	}
 
 
-	public static function getTotalTax($total)
+	public static function getTotalTax(Cart $cart, $total)
 	{
 
 
-		if ($selectedShippingAddress = Address::getAssignedShippingAddressID())
+		if ($selectedShippingAddress = Address::getAssignedShippingAddressID($cart))
 		{
 
 			$db = Factory::getDbo();
