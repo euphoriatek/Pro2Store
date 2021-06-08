@@ -15,6 +15,7 @@ use Joomla\CMS\Language\Text;
 
 $data = $displayData;
 $form = $data['form'];
+
 ?>
 
 

@@ -175,17 +175,17 @@ class CurrencyFactory
 	 * @since 1.5
 	 */
 
-	public static function translate($number, $selectedCurrency = null): string
+	public static function translate($number, ?Currency $currency = null): string
 	{
 
-		if (!$selectedCurrency)
+		if (!$currency)
 		{
-			$selectedCurrency = self::getCurrent();
+			$currency = self::getCurrent();
 		}
 
 
 
-		$rate = $selectedCurrency->rate;
+		$rate = $currency->rate;
 
 		if ($rate) {
 			$value = ($number * $rate);
@@ -194,7 +194,7 @@ class CurrencyFactory
 		}
 
 
-		return self::formatNumberWithCurrency((int)$value, $selectedCurrency->iso);
+		return self::formatNumberWithCurrency((int)$value, $currency->iso);
 
 
 	}

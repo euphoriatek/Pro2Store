@@ -15,19 +15,13 @@ defined('_JEXEC') or die('Restricted access');
 
 
 
-class DigitalProduct extends Product
+class PurchaseProduct extends Product
 {
 
 
-	public $subscription;
-	public $costPerMonth;
 
 
-	/**
-	 * Product constructor.
-	 *
-	 * @param   null  $joomla_item_id
-	 */
+
 
 
 	public function __construct($data)
@@ -37,7 +31,6 @@ class DigitalProduct extends Product
 		{
 			$this->hydrate($data);
 			$this->init($data);
-
 			parent::__construct($data);
 		}
 
@@ -60,7 +53,6 @@ class DigitalProduct extends Product
 	{
 
 	}
-
 
 
 

@@ -16,7 +16,8 @@ const p2s_product_form = {
                 jform_shipping_mode: '',
                 jform_publish_up_date: '',
                 jform_tags: [],
-            }
+            },
+            andClose: false
 
         };
     },
@@ -65,12 +66,18 @@ const p2s_product_form = {
 
     },
     methods: {
-        submitForm() {
+
+        saveItem() {
             this.form.jform_long_description = this.getFrameContents('jform_long_description');
             this.form.jform_short_description = this.getFrameContents('jform_short_description');
             this.form.jform_teaserimage = document.getElementById("jform_teaserimage").value;
             this.form.jform_fullimage = document.getElementById("jform_fullimage").value;
             this.form.jform_publish_up_date = document.getElementById("jform_publish_up_date").value;
+            this.form.jform_manage_stock = document.getElementById("jform_manage_stock").value;
+            this.form.jform_featured = document.getElementById("jform_featured").value;
+            this.form.jform_taxable = document.getElementById("jform_taxable").value;
+            this.form.jform_discount = document.getElementById("jform_discount").value;
+            // this.form.jform_shipping_mode = document.getElementById("jform_shipping_mode").value;
 
             this.form.jform_tags = [];
             for (var option of document.getElementById("jform_tags").options) {
@@ -79,9 +86,8 @@ const p2s_product_form = {
 
             console.log(this.form);
 
-
-
         },
+
         getFrameContents(elementId) {
             const iFrame = document.getElementById(elementId + '_ifr');
             let iFrameBody;

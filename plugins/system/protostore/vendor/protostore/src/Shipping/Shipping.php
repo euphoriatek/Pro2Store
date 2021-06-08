@@ -260,6 +260,7 @@ class Shipping
 			}
 			else
 			{
+				Factory::getLanguage()->load('com_protostore', JPATH_ADMINISTRATOR);
 				$totalShipping = Text::_('COM_PROTOSTORE_ELM_CARTSUMMARY_SELECT_SHIPPING_ADDRESS');
 			}
 

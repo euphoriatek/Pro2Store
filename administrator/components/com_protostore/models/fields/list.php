@@ -44,7 +44,7 @@ class JFormFieldList extends JFormField
 		$attr .= $this->multiple ? ' multiple' : '';
 		$attr .= $this->required ? ' required aria-required="true"' : '';
 		$attr .= $this->autofocus ? ' autofocus' : '';
-		$attr .= 'v-model="form.'. $this->id .'"';
+		$attr .= ' v-model="form.'. $this->id .'"';
 
 		// To avoid user's confusion, readonly="true" should imply disabled="true".
 		if ((string) $this->readonly == '1' || (string) $this->readonly == 'true' || (string) $this->disabled == '1'|| (string) $this->disabled == 'true')

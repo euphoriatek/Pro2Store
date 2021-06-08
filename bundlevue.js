@@ -19,6 +19,13 @@ const stringreplace = require('replace-in-file');
                 }).then(function (min) {
                     console.log('Product done on: ' + theTime);
                 });
+                minify({
+                    compressor: terser,
+                    input: './vuefiles/add_product.js',
+                    output: './media/com_protostore/js/vue/product/add_product.min.js'
+                }).then(function (min) {
+                    console.log('Add Product done on: ' + theTime);
+                });
 
             });
         });

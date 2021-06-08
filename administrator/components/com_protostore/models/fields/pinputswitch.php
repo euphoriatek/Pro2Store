@@ -38,7 +38,7 @@ class JFormFieldPinputswitch extends JFormField
 
 		$html = array();
 
-		$html[] = '<p-inputswitch v-model="form.'.$this->id.'"></p-inputswitch>';
+		$html[] = '<p-inputswitch v-model="form.'.$this->id.'" id="'.$this->id.'"></p-inputswitch>';
 
 
 		return implode('', $html);

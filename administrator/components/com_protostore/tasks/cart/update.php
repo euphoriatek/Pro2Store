@@ -11,49 +11,25 @@
 
 defined('_JEXEC') or die('Restricted access');
 
-use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
 
-use Protostore\Currency\CurrencyFactory;
+
 use Protostore\Cart\CartFactory;
-use Protostore\Coupon\CouponFactory;
-use Protostore\Shipping\Shipping;
-use Protostore\Total\Total;
-use Protostore\Tax\Tax;
+use Protostore\Cart\Cart;
 
 class protostoreTask_update
 {
 
 	/**
-	 * @throws Exception
+	 * @param $data
+	 *
+	 * @return Cart
+	 *
+	 * @since 1.5
 	 */
 	public function getResponse($data)
 	{
 
-		// init
-
-
-		$response = array();
-
-		$cart     = CartFactory::get();
-
-//		$response['cartItems'] = $cart->cartItems;
-//		$response['cartCount'] = $cart->count;
-//
-//		$response['total']    = $cart->total;
-//		$response['totalInt'] = $cart->totalInt;
-//		$response['subtotal'] = $cart->subtotal;
-//		$response['subtotalInt'] = $cart->subtotalInt;
-//		$response['tax']      = $cart->tax;
-//		$response['taxInt']   = $cart->taxInt;
-//		$response['totalShipping'] = $cart->totalShipping;
-//
-//		$response['totalDiscount']    = $cart->totalDiscount;
-//		$response['totalDiscountInt'] = $cart->totalDiscountInt;
-//
-//
-
-		return $cart;
+		return CartFactory::get();
 	}
 
 }

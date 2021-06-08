@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="3.1" type="plugin" group="protostoresystem" method="upgrade">
+    <name>Emailer - Pro2Store</name>
+    <version>1.0.0</version>
+    <creationDate>Aug 2020</creationDate>
+    <author>Ray Lawlor - Pro2Store</author>
+    <authorEmail>info@pro2.store</authorEmail>
+    <authorUrl>https://pro2.store</authorUrl>
+    <license>GNU General Public License version 2 or later</license>
+    <copyright>Copyright (C) 2020 Ray Lawlor - Pro2Store. All rights reserved.</copyright>
+    <description>Email - Pro2Store</description>
+    <files>
+        <filename plugin="protostore_emailer">protostore_emailer.php</filename>
+        <folder>tmpl</folder>
+    </files>
+
+    <config>
+        <fields name="params">
+            <fieldset name="basic">
+                <field name="layout" type="filelist" default="default" label="Select an Email Layout" description=""
+                       directory="plugins/protostoresystem/protostore_emailer/tmpl" filter="" exclude=""
+                       stripext="true"/>
+
+            </fieldset>
+        </fields>
+    </config>
+</extension>

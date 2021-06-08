@@ -13,50 +13,60 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 
 use Protostore\Address\Address;
-use Protostore\Cart\Cart;
+use Protostore\Cart\CartFactory;
 use Protostore\Zone\Zone;
 
 
 return [
 
-    // Define transforms for the element node
-    'transforms' => [
+	// Define transforms for the element node
+	'transforms' => [
 
 
-        // The function is executed before the template is rendered
-        'render' => function ($node, array $params) {
+		// The function is executed before the template is rendered
+		'render' => function ($node, array $params) {
 
-            if (Factory::getUser()->guest) {
-                $node->props['guestaddressset'] = Cart::isGuestAddressSet();
+			$cart = CartFactory::get();
 
-                if ($node->props['guestaddressset']) {
+			if (Factory::getUser()->guest)
+			{
+				$node->props['guestaddressset'] = CartFactory::isGuestAddressSet($cart);
 
-                } else {
-                    //if the user is logged in, attempt to assign an address to the order.
-                    Address::assignDefaultAddressToOrder();
-                }
+				if ($node->props['guestaddressset'])
+				{
 
-                $node->props['shown'] = array();
+				}
+				else
+				{
+					//if the user is logged in, attempt to assign an address to the order.
+					Address::assignDefaultAddressToOrder($cart);
+				}
 
-                if ($node->props['hideregister']) {
-                    $node->props['shown'][] = $node->props['hideregister'];
-                }
-                if ($node->props['hidelogin']) {
-                    $node->props['shown'][] = $node->props['hidelogin'];
-                }
-                if ($node->props['hideguest']) {
-                    $node->props['shown'][] = $node->props['hideguest'];
-                }
+				$node->props['shown'] = array();
+
+				if ($node->props['hideregister'])
+				{
+					$node->props['shown'][] = $node->props['hideregister'];
+				}
+				if ($node->props['hidelogin'])
+				{
+					$node->props['shown'][] = $node->props['hidelogin'];
+				}
+				if ($node->props['hideguest'])
+				{
+					$node->props['shown'][] = $node->props['hideguest'];
+				}
 
 
-                if (count($node->props['shown']) === 3) {
-                    return false;
-                }
+				if (count($node->props['shown']) === 3)
+				{
+					return false;
+				}
 
-            }
+			}
 
-            $node->props['baseUrl'] = Uri::base();
-            $node->props['countries'] = Zone::getAllCountries();
-        }
-    ]
+			$node->props['baseUrl']   = Uri::base();
+			$node->props['countries'] = Zone::getAllCountries();
+		}
+	]
 ];

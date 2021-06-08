@@ -60,6 +60,15 @@ class Product
 	public $link;
 	public $category_link;
 	public $product_type;
+
+	public $shipping_mode;
+	public $weight;
+	public $weight_unit;
+	public ?int $manage_stock;
+	public ?int $stock;
+	public int $maxPerOrder;
+
+
 //
 //    public $variantTypes;
 //    public $variantList;

@@ -13,7 +13,6 @@ defined('_JEXEC') or die('Restricted access');
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Layout\LayoutHelper;
-use Joomla\CMS\Form\Field;
 
 
 HTMLHelper::_('behavior.keepalive');
@@ -24,22 +23,8 @@ $item = $vars['item'];
 
 ?>
 
-<?php if ($item) : ?>
-
-    <script id="jform_title_data" type="application/json"><?= $item->joomlaItem->title; ?></script>
-    <script id="jform_manage_stock_data"
-            type="application/json"><?= ($item->manage_stock == 1 ? 'true' : 'false'); ?></script>
-    <script id="jform_category_data" type="application/json"><?= $item->joomlaItem->catid; ?></script>
-    <script id="jform_featured_data"
-            type="application/json"><?= ($item->joomlaItem->featured == 1 ? 'true' : 'false'); ?></script>
-    <script id="jform_taxable_data" type="application/json"><?= ($item->taxable == 1 ? 'true' : 'false'); ?></script>
-    <script id="jform_discount_data" type="application/json"><?= ($item->discount > 0 ? 'true' : 'false'); ?></script>
-    <script id="jform_shipping_mode_data" type="application/json"><?= $item->shipping_mode; ?></script>
-    <script id="jform_base_price_data" type="application/json"><?= $item->basepricefloat; ?></script>
-<?php endif; ?>
-
 <div id="p2s_product_form">
-    <form @submit.prevent="saveItem">
+    <form @submit.prevent="submitForm">
         <div class="uk-margin-left">
             <div class="uk-grid" uk-grid="">
                 <div class="uk-width-1-1">
@@ -51,9 +36,7 @@ $item = $vars['item'];
                             <div class="uk-navbar-left">
 
                                 <span class="uk-navbar-item uk-logo">
-
-	                                    <?= Text::_('COM_PROTOSTORE_ADD_DISCOUNTS_MODAL_EDITING'); ?>  {{form.jform_title}}
-
+	                                    <?= Text::_('COM_PROTOSTORE_ADD_PRODUCT_TITLE'); ?>
                                 </span>
 
                             </div>
@@ -61,11 +44,11 @@ $item = $vars['item'];
                             <div class="uk-navbar-right">
 
 
-                                <button type="submit" @click="andClose = false"
+                                <button type="submit"
                                         class="uk-button uk-button-default button-success uk-button-small uk-margin-right">
                                     Save
                                 </button>
-                                <button type="submit" @click="andClose = true"
+                                <button type="submit"
                                         class="uk-button uk-button-default button-success uk-button-small uk-margin-right">
                                     Save & Close
                                 </button>
@@ -108,15 +91,6 @@ $item = $vars['item'];
 
 
                 <div class="uk-width-1-3">
-
-
-					<?= LayoutHelper::render('card', array(
-						'form'      => $vars['form'],
-						'cardTitle' => 'COM_PROTOSTORE_ADD_PRODUCT_ORGANISATION',
-						'cardStyle' => 'default',
-						'fields'    => array('tags')
-					)); ?>
-
 					<?= LayoutHelper::render('card', array(
 						'form'      => $vars['form'],
 						'cardTitle' => 'COM_PROTOSTORE_ADD_PRODUCT_PRODUCT_ACCESS',
@@ -142,11 +116,8 @@ $item = $vars['item'];
 						'form'      => $vars['form'],
 						'cardTitle' => 'COM_PROTOSTORE_ADD_PRODUCT_ORGANISATION',
 						'cardStyle' => 'default',
-						'fields'    => array('category', 'featured')
+						'fields'    => array('category', 'featured', 'tags')
 					)); ?>
-
-
-
 
                 </div>
             </div>

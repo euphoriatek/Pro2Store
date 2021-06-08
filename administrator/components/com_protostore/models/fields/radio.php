@@ -51,8 +51,8 @@ class JFormFieldRadio extends JFormField
 				$option->class = !empty($option->class) ? $option->class : '';
 				$option->class = trim($option->class);
 				$optionClass   = !empty($option->class) ? 'class="' . $option->class . '"' : '';
-				$vModel   = 'v-model="'.$this->id.'"';
-				$vModelVal   = 'v-bind:value="'.$i.'"';
+				$vModel   = ' v-model="'.$this->id.'"';
+				$vModelVal   = ' v-bind:value="'.$i.'"';
 
 				$oid        = $this->id . $i;
 				$ovalue     = htmlspecialchars($i, ENT_COMPAT, 'UTF-8');

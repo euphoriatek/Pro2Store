@@ -13,7 +13,8 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 
-use Protostore\Currency\Currency;
+use Protostore\Currency\CurrencyFactory;
+use Protostore\Cart\CartFactory;
 use Protostore\Shipping\Shipping;
 use Protostore\Total\Total;
 use Protostore\Coupon\Coupon;
@@ -37,7 +38,8 @@ return [
 
             $node->props['baseUrl'] = Uri::base();
 
-            $currencyHelper = new Currency();
+            $currency = CurrencyFactory::getCurrent();
+            $cart = CartFactory::get();
 
             $app = Factory::getApplication();
             $config = $app->getParams('com_protostore');
@@ -48,42 +50,43 @@ return [
                 $node->props['show_shipping'] = false;
             }
 
+            $node->props['cart'] = $cart;
 
-            $shippingTotal = Currency::translate(Shipping::getTotalShippingFromPlugin(), $currencyHelper);
+//            $shippingTotal = CurrencyFactory::translate(Shipping::getTotalShippingFromPlugin($cart), $currency);
+//
+//            $node->props['subTotal'] = CurrencyFactory::translate(Total::getSubTotal($cart), $currency);
+//            $node->props['total'] = CurrencyFactory::translate(Total::getGrandTotal($cart), $currency);
+//
+//            $node->props['tax'] = CurrencyFactory::translate(Tax::calculateTotalTax($cart), $currency);
 
-            $node->props['subTotal'] = Currency::translate(Total::getSubTotal(), $currencyHelper);
-            $node->props['total'] = Currency::translate(Total::getGrandTotal(), $currencyHelper);
-
-            $node->props['tax'] = Currency::translate(Tax::calculateTotalTax(), $currencyHelper);
 
 
+//            if (Factory::getUser()->guest) {
+//                if (Cart::isGuestAddressSet()) {
+//
+//                    $node->props['totalShipping'] = $shippingTotal;
+//                } else {
+//                    $node->props['totalShipping'] = Text::_('COM_PROTOSTORE_ELM_CARTSUMMARY_SELECT_SHIPPING_ADDRESS');
+//                }
+//
+//            } else {
+//                $node->props['totalShipping'] = $shippingTotal;
+//            }
 
-            if (Factory::getUser()->guest) {
-                if (Cart::isGuestAddressSet()) {
-
-                    $node->props['totalShipping'] = $shippingTotal;
-                } else {
-                    $node->props['totalShipping'] = Text::_('COM_PROTOSTORE_ELM_CARTSUMMARY_SELECT_SHIPPING_ADDRESS');
-                }
-
-            } else {
-                $node->props['totalShipping'] = $shippingTotal;
-            }
-
-            if ($coupon = Coupon::getCurrentAppliedCoupon()) {
-                if ($coupon->discount_type === 'freeship') {
-                    $node->props['totalDiscount'] =  Currency::translate(Coupon::calculateDiscount(Total::getSubTotal()), $currencyHelper);
-                } else {
-                    $couponDiscount = Money::ofMinor(Coupon::calculateDiscount(Total::getSubTotal()), $currencyHelper->currency->iso);
-                    if ($couponDiscount > Total::getSubTotal()) {
-                        $node->props['totalDiscount'] = $node->props['subTotal'];
-                    } else {
-                        $node->props['totalDiscount'] = Currency::translate(Coupon::calculateDiscount(Total::getSubTotal()), $currencyHelper);
-                    }
-                }
-            } else {
-                $node->props['totalDiscount'] = Currency::translate(0, $currencyHelper);
-            }
+//            if ($coupon = Coupon::getCurrentAppliedCoupon()) {
+//                if ($coupon->discount_type === 'freeship') {
+//                    $node->props['totalDiscount'] =  Currency::translate(Coupon::calculateDiscount(Total::getSubTotal()), $currencyHelper);
+//                } else {
+//                    $couponDiscount = Money::ofMinor(Coupon::calculateDiscount(Total::getSubTotal()), $currencyHelper->currency->iso);
+//                    if ($couponDiscount > Total::getSubTotal()) {
+//                        $node->props['totalDiscount'] = $node->props['subTotal'];
+//                    } else {
+//                        $node->props['totalDiscount'] = Currency::translate(Coupon::calculateDiscount(Total::getSubTotal()), $currencyHelper);
+//                    }
+//                }
+//            } else {
+//                $node->props['totalDiscount'] = Currency::translate(0, $currencyHelper);
+//            }
 
 
         },

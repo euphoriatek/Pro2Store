@@ -14,7 +14,6 @@ defined('_JEXEC') or die('Restricted access');
 use Joomla\CMS\Factory;
 use Joomla\CMS\Layout\LayoutHelper;
 
-
 $input = Factory::getApplication()->input;
 $view  = $input->get('view', 'dashboard');
 

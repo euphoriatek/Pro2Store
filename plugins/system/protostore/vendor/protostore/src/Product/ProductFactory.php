@@ -47,9 +47,9 @@ class ProductFactory
 			switch ($result->product_type)
 			{
 				case 0:
-					return new PhysicalProduct($result);
+					return new PurchaseProduct($result);
 				case 1:
-					return new DigitalProduct($result);
+					return new SubscriptionProduct($result);
 			}
 
 			return new Product($result);

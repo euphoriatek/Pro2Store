@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="3.1" type="plugin" group="protostoresystem" method="upgrade">
+    <name>TrackingCode - Pro2Store</name>
+    <version>1.0.0</version>
+    <creationDate>Nov 2020</creationDate>
+    <author>Ray Lawlor - Pro2Store</author>
+    <authorEmail>info@pro2.store</authorEmail>
+    <authorUrl>https://pro2.store</authorUrl>
+    <license>GNU General Public License version 2 or later</license>
+    <copyright>Copyright (C) 2020 Ray Lawlor - Pro2Store. All rights reserved.</copyright>
+    <description>TrackingCode - Pro2Store</description>
+    <files>
+        <filename plugin="protostore_trackingcode">protostore_trackingcode.php</filename>
+    </files>
+</extension>

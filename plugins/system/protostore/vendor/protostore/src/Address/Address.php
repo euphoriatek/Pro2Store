@@ -557,7 +557,7 @@ class Address
 	 */
 
 
-	public static function assignDefaultAddressToOrder()
+	public static function assignDefaultAddressToOrder(Cart $cart)
 	{
 
 
@@ -567,7 +567,7 @@ class Address
 
 		$query->select('shipping_address_id');
 		$query->from($db->quoteName('#__protostore_cart'));
-		$query->where($db->quoteName('id') . ' = ' . $db->quote(CartFactory::get()->id));
+		$query->where($db->quoteName('id') . ' = ' . $db->quote($cart->id));
 
 		$db->setQuery($query);
 
@@ -589,8 +589,6 @@ class Address
 
 			if ($addresses)
 			{
-
-				$cart = CartFactory::get();
 
 				$cart->shipping_address_id = $addresses[0]->id;
 				$cart->billing_address_id  = $addresses[0]->id;
