@@ -51,7 +51,7 @@
 
         <field name="tags" type="tag" label="JTAG" description="JTAG_DESC" mode="ajax" class="inputbox span12 small" multiple="true"/>
 
-        <field name="publish_up_date" type="calendar" default="2021-01-01" label="Select a date" description=""
+        <field name="publish_up_date" type="calendar" default="now" label="Select a date" description=""
                class="input-medium uk-input non-uk-input" required="true" filter="user_utc" format="%Y-%m-%d %H:%M:%S"
                singleheader="true" showtime="true" timeformat="12" todaybutton="true" weeknumbers="true"
                filltable="true" minyear="-3" maxyear="5" />

@@ -62,7 +62,7 @@ class bootstrap
 
 	private function getItems()
 	{
-		return ProductFactory::getList();
+
 	}
 
 }
