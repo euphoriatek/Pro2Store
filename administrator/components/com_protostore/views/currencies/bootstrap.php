@@ -13,7 +13,7 @@ defined('_JEXEC') or die('Restricted access');
 use Joomla\CMS\Factory;
 
 use Protostore\Render\Render;
-
+use Protostore\Currency\CurrencyFactory;
 
 /**
  *
@@ -59,8 +59,9 @@ class bootstrap
 		$vars = array();
 
 
-		$vars['items'] = $this->getItems();
+		$vars['items']      = $this->getItems();
 
+		$this->addScripts();
 
 		return $vars;
 
@@ -76,6 +77,30 @@ class bootstrap
 
 	private function getItems()
 	{
+
+
+		return CurrencyFactory::getList(Factory::getConfig()->get('list_limit', '25'), 0, false, '', 'published', 'desc');
+
+	}
+
+
+	/**
+	 *
+	 *
+	 * @since version
+	 */
+
+	private function addScripts()
+	{
+
+
+		// include the vue script - defer
+		Factory::getDocument()->addScript('../media/com_protostore/js/vue/currencies/currencies.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
+
+
+		// include prime
+//		Utilities::includePrime(array('inputswitch'));
+
 
 	}
 

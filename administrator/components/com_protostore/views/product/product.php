@@ -39,6 +39,7 @@ $item = $vars['item'];
 <?php endif; ?>
 
 <div id="p2s_product_form">
+    <button class="uk-button uk-button-primary" @click="toggle()" type="button">Toggle</button>
     <form @submit.prevent="saveItem">
         <div class="uk-margin-left">
             <div class="uk-grid" uk-grid="">
@@ -84,6 +85,7 @@ $item = $vars['item'];
 						'form'      => $vars['form'],
 						'cardStyle' => 'default',
 						'cardTitle' => 'COM_PROTOSTORE_ADD_PRODUCT_PRODUCT_DETAILS',
+						'cardId'    => 'details',
 						'fields'    => array('title', 'short_description', 'long_description')
 					)); ?>
 
@@ -91,6 +93,7 @@ $item = $vars['item'];
 						'form'             => $vars['form'],
 						'cardTitle'        => 'COM_PROTOSTORE_ADD_PRODUCT_IMAGES',
 						'cardStyle'        => 'default',
+						'cardId'           => 'images',
 						'fields'           => array('teaserimage', 'fullimage'),
 						'field_grid_width' => '1-2',
 					)); ?>
@@ -100,6 +103,7 @@ $item = $vars['item'];
 							'form'      => $vars['form'],
 							'cardTitle' => 'COM_PROTOSTORE_ADD_PRODUCT_SHIPPING',
 							'cardStyle' => 'default',
+							'cardId'    => 'shipping',
 							'fields'    => array('shipping_mode')
 						)); ?>
 					<?php endif; ?>
@@ -110,24 +114,27 @@ $item = $vars['item'];
                 <div class="uk-width-1-3">
 
 
-					<?= LayoutHelper::render('card', array(
-						'form'      => $vars['form'],
-						'cardTitle' => 'COM_PROTOSTORE_ADD_PRODUCT_ORGANISATION',
-						'cardStyle' => 'default',
-						'fields'    => array('tags')
-					)); ?>
+
 
 					<?= LayoutHelper::render('card', array(
 						'form'      => $vars['form'],
 						'cardTitle' => 'COM_PROTOSTORE_ADD_PRODUCT_PRODUCT_ACCESS',
 						'cardStyle' => 'default',
+						'cardId'    => 'access',
 						'fields'    => array('access', 'publish_up_date')
 					)); ?>
-
+					<?= LayoutHelper::render('card', array(
+						'form'      => $vars['form'],
+						'cardTitle' => 'COM_PROTOSTORE_ADD_PRODUCT_ORGANISATION',
+						'cardStyle' => 'default',
+						'cardId'    => 'organisation',
+						'fields'    => array('category', 'featured')
+					)); ?>
 					<?= LayoutHelper::render('card', array(
 						'form'      => $vars['form'],
 						'cardTitle' => 'COM_PROTOSTORE_ADD_PRODUCT_PRODUCT_PRICING',
 						'cardStyle' => 'default',
+						'cardId'    => 'pricing',
 						'fields'    => array('base_price', 'taxable', 'discount')
 					)); ?>
 
@@ -135,17 +142,18 @@ $item = $vars['item'];
 						'form'      => $vars['form'],
 						'cardTitle' => 'COM_PROTOSTORE_ADD_PRODUCT_INVENTORY',
 						'cardStyle' => 'default',
+						'cardId'    => 'inventory',
 						'fields'    => array('sku', 'manage_stock', 'stock')
 					)); ?>
 
+
 					<?= LayoutHelper::render('card', array(
 						'form'      => $vars['form'],
-						'cardTitle' => 'COM_PROTOSTORE_ADD_PRODUCT_ORGANISATION',
+						'cardTitle' => 'COM_PROTOSTORE_ADD_PRODUCT_TAGS',
 						'cardStyle' => 'default',
-						'fields'    => array('category', 'featured')
+						'cardId'    => 'tags',
+						'fields'    => array('tags')
 					)); ?>
-
-
 
 
                 </div>
@@ -155,9 +163,4 @@ $item = $vars['item'];
     </form>
 </div>
 
-<script>
-    jQuery(document).ready(function () {
-        jQuery('#jform_short_description').attr("v-model", "jform_short_description");
-    })
 
-</script>

@@ -67,6 +67,11 @@ const p2s_product_form = {
     },
     methods: {
 
+        toggle() {
+            console.log(this.hasErroraccess);
+            this.hasErroraccess = !this.hasErroraccess;
+        },
+
         saveItem() {
             this.form.jform_long_description = this.getFrameContents('jform_long_description');
             this.form.jform_short_description = this.getFrameContents('jform_short_description');
@@ -78,6 +83,8 @@ const p2s_product_form = {
             this.form.jform_taxable = document.getElementById("jform_taxable").value;
             this.form.jform_discount = document.getElementById("jform_discount").value;
             // this.form.jform_shipping_mode = document.getElementById("jform_shipping_mode").value;
+
+            // this.hasErroraccess = true;
 
             this.form.jform_tags = [];
             for (var option of document.getElementById("jform_tags").options) {

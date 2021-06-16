@@ -47,9 +47,29 @@ class bootstrap
 
 		$vars['items']      = $this->getItems();
 		$vars['categories'] = $this->getCategories();
-
+		$this->addScripts();
 
 		return $vars;
+
+
+	}
+
+	/**
+	 *
+	 *
+	 * @since version
+	 */
+
+	private function addScripts($add = false)
+	{
+
+
+		// include the vue script - defer
+		Factory::getDocument()->addScript('../media/com_protostore/js/vue/products/products.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
+
+
+		// include prime
+//		Utilities::includePrime(array('inputswitch'));
 
 
 	}

@@ -68,6 +68,9 @@ class Currency
 		$locales = $lang->getLocale();
 		$locale = $locales[0];
 
+
+		// todo - fix hardcoded currency
+
 		// use Brick to format the number
 		$money = Money::ofMinor($number, 'GBP');
 		return $money->formatTo($locale);

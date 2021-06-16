@@ -30,6 +30,60 @@ const stringreplace = require('replace-in-file');
             });
         });
     });
+
+    emptyDir('./media/com_protostore/js/vue/currency').then(() => {
+        remove('./media/com_protostore/js/vue/currency').then(() => {
+            mkdir('./media/com_protostore/js/vue/currency').then(() => {
+                minify({
+                    compressor: terser,
+                    input: './vuefiles/currency.js',
+                    output: './media/com_protostore/js/vue/currency/currency.min.js'
+                }).then(function (min) {
+                    console.log('currency done on: ' + theTime);
+                });
+                minify({
+                    compressor: terser,
+                    input: './vuefiles/add_currency.js',
+                    output: './media/com_protostore/js/vue/currency/add_currency.min.js'
+                }).then(function (min) {
+                    console.log('Add currency done on: ' + theTime);
+                });
+
+            });
+        });
+    });
+
+
+    emptyDir('./media/com_protostore/js/vue/products').then(() => {
+        remove('./media/com_protostore/js/vue/products').then(() => {
+            mkdir('./media/com_protostore/js/vue/products').then(() => {
+                minify({
+                    compressor: terser,
+                    input: './vuefiles/products.js',
+                    output: './media/com_protostore/js/vue/products/products.min.js'
+                }).then(function (min) {
+                    console.log('Products done on: ' + theTime);
+                });
+            });
+        });
+    });
+
+    emptyDir('./media/com_protostore/js/vue/currencies').then(() => {
+        remove('./media/com_protostore/js/vue/currencies').then(() => {
+            mkdir('./media/com_protostore/js/vue/currencies').then(() => {
+                minify({
+                    compressor: terser,
+                    input: './vuefiles/currencies.js',
+                    output: './media/com_protostore/js/vue/currencies/currencies.min.js'
+                }).then(function (min) {
+                    console.log('Currencies done on: ' + theTime);
+                });
+            });
+        });
+    });
+
+
+
     emptyDir('./media/com_protostore/js/vue/dashboard').then(() => {
         remove('./media/com_protostore/js/vue/dashboard').then(() => {
             mkdir('./media/com_protostore/js/vue/dashboard').then(() => {

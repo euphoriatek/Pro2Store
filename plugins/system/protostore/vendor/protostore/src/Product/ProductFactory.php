@@ -109,7 +109,8 @@ class ProductFactory
 
 				$result = $db->loadObject();
 
-				if($result) {
+				if ($result)
+				{
 					$products[] = new Product($result);
 				}
 
@@ -122,6 +123,30 @@ class ProductFactory
 
 
 		return false;
+	}
+
+
+	public static function togglePublished($id)
+	{
+		$db = Factory::getDbo();
+
+		$query = 'UPDATE `#__content` SET `state` = IF(`state`=1, 0, 1) WHERE id = ' . $id . ';';
+		$db->setQuery($query);
+		$db->execute();
+
+		$query = $db->getQuery(true);
+
+		$query->select('*');
+		$query->from($db->quoteName('#__content'));
+		$query->where($db->quoteName('id') . ' = ' . $db->quote($id));
+
+		$db->setQuery($query);
+
+		$item = $db->loadObject();
+
+		return $item->state;
+
+
 	}
 
 }

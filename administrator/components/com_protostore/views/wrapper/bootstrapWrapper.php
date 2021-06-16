@@ -56,6 +56,7 @@ class bootstrapWrapper
 
 		$vars = array();
 
+		$vars['breadcrumbs'] = $this->getBreadcrumbs();
 
 
 		return $vars;
@@ -63,6 +64,31 @@ class bootstrapWrapper
 
 	}
 
+	private function getBreadcrumbs()
+	{
+
+		$breadcrumbs = array();
+
+
+		$input = Factory::getApplication()->input;
+		$view  = $input->getString('view');
+
+		$breadcrumbs[] = $view;
+
+//		if ($id = $input->get('id'))
+//		{
+//			$breadcrumbs[] = $this->getBreadcrumbItem($view, $id);
+//		}
+
+		return $breadcrumbs;
+
+
+	}
+
+	private function getBreadcrumbItem($view, $id)
+	{
+
+	}
 
 
 }

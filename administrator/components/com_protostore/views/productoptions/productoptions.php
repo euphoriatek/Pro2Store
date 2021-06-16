@@ -13,14 +13,14 @@ defined('_JEXEC') or die('Restricted access');
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 
+// init vars
+$id = uniqid('p2s_productoptions');
+
+
 ?>
 
 
-<script id="base_url" type="application/json"><?= Uri::base(); ?></script>
-<script id="products_data" type="application/json"><?= json_encode($vars['items']); ?></script>
-<script id="categories_data" type="application/json"><?= json_encode($vars['categories']); ?></script>
-
-<div id="p2s_products">
+<div id="<?= $id; ?>">
     <div class="uk-margin-left">
         <div class="uk-grid" uk-grid="">
             <div class="uk-width-3-4">
@@ -113,7 +113,7 @@ use Joomla\CMS\Uri\Uri;
                                     <a :href="'index.php?option=com_protostore&view=product&id=' + product.joomla_item_id">{{product.title}}</a>
                                 </td>
                                 <td>
-                                    <div style="min-height: 80px;"><img :src="product.teaserImagePath" width="100"/></div>
+                                    <div><img :src="product.teaserImagePath" width="100"/></div>
                                 </td>
                                 <td>
                                     <div>{{product.category}}</div>
@@ -125,14 +125,14 @@ use Joomla\CMS\Uri\Uri;
                                     <div>{{product.stock}}</div>
                                 </td>
                                 <td class="uk-text-center">
-                                  <span v-if="product.published == '1'" class="yps_currency_published_icon" @click="togglePublished(product)"
+                                  <span v-if="product.published == '1'" class="yps_currency_published_icon" @click=""
                                         style="font-size: 18px; color: green; cursor: pointer;">
                                       <i class="fal fa-check-circle"></i>
                                   </span>
-                                    <span
+                                    <span id="unpublished{{product.itemid}}"
                                           v-if="product.published == '0'"
                                           class="yps_currency_published_icon"
-                                          @click="togglePublished(product)"
+                                          @click=""
                                           style="font-size: 18px; color: red; cursor: pointer;">
                                         <i class="fal fa-times-circle"></i>
                                     </span>
@@ -168,3 +168,134 @@ use Joomla\CMS\Uri\Uri;
 
     </div>
 </div>
+
+
+<script>
+
+    const <?= $id; ?> = {
+        data() {
+            return {
+                products: <?= json_encode($vars['items']); ?>,
+                productsChunked: [],
+                categories: <?= json_encode($vars['categories']); ?>,
+                selectedCategory: '',
+                currentSort: 'title',
+                currentSortDir: 'asc',
+                currentPage: 0,
+                pages: [],
+                pagesizes: [5, 10, 20, 30, 50, 100],
+                show: 25,
+            };
+        },
+        mounted: function () {
+            this.changeShow();
+        },
+        computed: {},
+
+        methods: {
+
+            async updateList() {
+                const request = await fetch("index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=products.updatelist&format=raw&limit=0", {
+                    method: 'post'
+                });
+
+                const response = await request.json();
+
+                if (response.success) {
+
+
+                } else {
+                    UIkit.notification({
+                        message: 'There was an error.',
+                        status: 'danger',
+                        pos: 'top-center',
+                        timeout: 5000
+                    });
+                }
+            },
+            async filter() {
+
+                this.loading = true;
+
+                const params = {
+                    'limit': this.show,
+                    'offset': (this.currentPage * this.show),
+                    'category': this.selectedCategory,
+                    'searchTerm': this.enteredText,
+                };
+
+                const URLparams = this.serialize(params);
+
+                const request = await fetch('<?= Uri::base(); ?>index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=products.filter&format=raw&' + URLparams, {method: 'post'});
+
+                const response = await request.json();
+
+                if (response.success) {
+                    this.products = response.data.products;
+                    this.loading = false;
+
+                    if (this.products) {
+                        this.changeShow();
+                    } else {
+                        this.productsChunked = [];
+                        this.pages = 1;
+                        this.currentPage = 0;
+                    }
+                }
+
+            },
+            changeShow() {
+
+                this.productsChunked = this.products.reduce((resultArray, item, index) => {
+                    const chunkIndex = Math.floor(index / this.show)
+                    if (!resultArray[chunkIndex]) {
+                        resultArray[chunkIndex] = []
+                    }
+                    resultArray[chunkIndex].push(item)
+                    return resultArray
+                }, []);
+                this.pages = this.productsChunked.length;
+                this.currentPage = 0;
+                console.log(this.productsChunked);
+            },
+            changePage(i) {
+                this.currentPage = i;
+            },
+            async doTextSearch(event) {
+                this.enteredText = null
+                clearTimeout(this.debounce)
+                this.debounce = setTimeout(() => {
+                    this.enteredText = event.target.value
+                    this.filter();
+                }, 600)
+            },
+            sort(s) {
+                //if s == current sort, reverse
+                if (s === this.currentSort) {
+                    this.currentSortDir = this.currentSortDir === 'asc' ? 'desc' : 'asc';
+                }
+                this.currentSort = s;
+                return this.productsChunked[this.currentPage].sort((a, b) => {
+                    let modifier = 1;
+                    if (this.currentSortDir === 'desc') modifier = -1;
+                    if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
+                    if (a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
+                    return 0;
+                });
+            },
+            serialize(obj) {
+                var str = [];
+                for (var p in obj)
+                    if (obj.hasOwnProperty(p)) {
+                        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+                    }
+                return str.join("&");
+            }
+
+        }
+    }
+
+    Vue.createApp(<?= $id; ?>).mount('#<?= $id; ?>')
+
+
+</script>

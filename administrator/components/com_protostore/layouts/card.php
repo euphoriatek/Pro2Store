@@ -18,8 +18,7 @@ $form = $data['form'];
 
 ?>
 
-
-<div class="uk-card uk-card-<?= $data['cardStyle']; ?> uk-margin-bottom">
+<div class="uk-card uk-card-<?= $data['cardStyle']; ?> uk-margin-bottom" :class="{ ukcardwarning: hasError<?= $data['cardId']; ?> }">
     <div class="uk-card-header">
         <div class="uk-grid uk-grid-small">
             <div class="uk-width-expand">

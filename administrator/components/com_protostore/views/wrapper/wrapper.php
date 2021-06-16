@@ -65,9 +65,9 @@ $view  = $input->get('view', 'dashboard');
                                         </svg>
                                     </a>
                                 </li>
-
-                                <li><a href="index.php?option=com_protostore">Dashboard</a></li>
-
+								<?php foreach ($vars['breadcrumbs'] as $breadcrumb) : ?>
+                                    <li><a href="index.php?option=com_protostore"><?= $breadcrumb; ?></a></li>
+								<?php endforeach; ?>
                             </ul>
                         </div>
 

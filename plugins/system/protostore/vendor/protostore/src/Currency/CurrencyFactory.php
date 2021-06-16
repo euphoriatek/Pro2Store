@@ -154,8 +154,52 @@ class CurrencyFactory
 	 * @since 1.5
 	 */
 
-	public static function getList(int $limit = 25, int $offset = 0, int $published = 1, string $searchTerm = null, string $orderBy = 'name', string $orderDir = 'ASC')
+	public static function getList(int $limit = 25, int $offset = 0, bool $publishedOnly = false, string $searchTerm = null, string $orderBy = 'name', string $orderDir = 'ASC')
 	{
+		$currencies = array();
+
+		$db = Factory::getDbo();
+
+		$query = $db->getQuery(true);
+
+		$query->select('*');
+		$query->from($db->quoteName('#__protostore_currency'));
+
+		if($publishedOnly) {
+			$query->where($db->quoteName('published') . ' = 1');
+		}
+
+
+		if ($searchTerm)
+		{
+			$query->where($db->quoteName('name') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'), 'OR');
+			$query->where($db->quoteName('iso') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'), 'OR');
+			$query->where($db->quoteName('currencysymbol') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'));
+		}
+
+		$query->order($orderBy . ' ' . $orderDir);
+
+		$db->setQuery($query, $offset, $limit);
+
+		$results = $db->loadObjectList();
+
+		if ($results)
+		{
+			foreach ($results as $result)
+			{
+
+				$currencies[] = new Currency($result);
+
+
+			}
+
+
+			return $currencies;
+		}
+
+
+		return false;
+
 
 	}
 
@@ -184,17 +228,19 @@ class CurrencyFactory
 		}
 
 
-
 		$rate = $currency->rate;
 
-		if ($rate) {
+		if ($rate)
+		{
 			$value = ($number * $rate);
-		} else {
+		}
+		else
+		{
 			$value = $number;
 		}
 
 
-		return self::formatNumberWithCurrency((int)$value, $currency->iso);
+		return self::formatNumberWithCurrency((int) $value, $currency->iso);
 
 
 	}
@@ -234,12 +280,13 @@ class CurrencyFactory
 
 
 		// get the Joomla Locale
-		$lang = Factory::getLanguage();
+		$lang    = Factory::getLanguage();
 		$locales = $lang->getLocale();
-		$locale = $locales[0];
+		$locale  = $locales[0];
 
 		// use Brick to format the number
 		$money = Money::ofMinor($number, $currencyISO);
+
 		return $money->formatTo($locale);
 
 
