@@ -47,6 +47,7 @@ class bootstrap
 
 		$vars['items']      = $this->getItems();
 		$vars['categories'] = $this->getCategories();
+		$vars['list_limit'] = Factory::getConfig()->get('list_limit', '25');
 		$this->addScripts();
 
 		return $vars;
@@ -83,7 +84,7 @@ class bootstrap
 
 	private function getItems()
 	{
-		return ProductFactory::getList(25, 0);
+		return ProductFactory::getList();
 	}
 
 	private function getCategories()

@@ -135,6 +135,7 @@ class bootstrap extends AdminModel
 			$form->setValue('long_description', null, $item->joomlaItem->fulltext);
 			$form->setValue('teaserimage', null, $item->getImage_intro()->path);
 			$form->setValue('fullimage', null, $item->getImage_fulltext()->path);
+			$form->setValue('state', null, $item->joomlaItem->state);
 			$form->setValue('publish_up_date', null, $item->joomlaItem->publish_up);
 			$form->setValue('taxable', null, $item->taxable);
 			$form->setValue('discount', null, $item->discount);

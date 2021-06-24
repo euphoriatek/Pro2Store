@@ -35,7 +35,12 @@ $document->addStyleSheet("https://unpkg.com/primevue/resources/themes/saga-blue/
 $document->addScript("https://cdn.jsdelivr.net/npm/uikit@latest/dist/js/uikit.min.js");
 $document->addScript("https://cdn.jsdelivr.net/npm/uikit@latest/dist/js/uikit-icons.min.js");
 $document->addScript("https://kit.fontawesome.com/6afbbf2d93.js");
-$document->addScript('../media/com_protostore/js/vue/bundle.min.js', array('type' => 'text/javascript'));
+
+// development only
+$document->addScript('../media/com_protostore/js/vue/bundle.js', array('type' => 'text/javascript'));
+
+// uncomment for production
+//$document->addScript('../media/com_protostore/js/vue/bundle.min.js', array('type' => 'text/javascript'));
 
 
 

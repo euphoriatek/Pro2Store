@@ -21,7 +21,6 @@ HTMLHelper::_('behavior.formvalidator');
 
 $item = $vars['item'];
 
-
 ?>
 
 <?php if ($item) : ?>
@@ -30,6 +29,8 @@ $item = $vars['item'];
     <script id="jform_manage_stock_data"
             type="application/json"><?= ($item->manage_stock == 1 ? 'true' : 'false'); ?></script>
     <script id="jform_category_data" type="application/json"><?= $item->joomlaItem->catid; ?></script>
+    <script id="jform_state_data"
+            type="application/json"><?= ($item->joomlaItem->state == 1 ? 'true' : 'false'); ?></script>
     <script id="jform_featured_data"
             type="application/json"><?= ($item->joomlaItem->featured == 1 ? 'true' : 'false'); ?></script>
     <script id="jform_taxable_data" type="application/json"><?= ($item->taxable == 1 ? 'true' : 'false'); ?></script>
@@ -39,7 +40,6 @@ $item = $vars['item'];
 <?php endif; ?>
 
 <div id="p2s_product_form">
-    <button class="uk-button uk-button-primary" @click="toggle()" type="button">Toggle</button>
     <form @submit.prevent="saveItem">
         <div class="uk-margin-left">
             <div class="uk-grid" uk-grid="">
@@ -121,7 +121,7 @@ $item = $vars['item'];
 						'cardTitle' => 'COM_PROTOSTORE_ADD_PRODUCT_PRODUCT_ACCESS',
 						'cardStyle' => 'default',
 						'cardId'    => 'access',
-						'fields'    => array('access', 'publish_up_date')
+						'fields'    => array('state', 'access', 'publish_up_date')
 					)); ?>
 					<?= LayoutHelper::render('card', array(
 						'form'      => $vars['form'],

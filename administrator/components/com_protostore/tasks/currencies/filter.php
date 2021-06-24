@@ -11,7 +11,7 @@
 
 defined('_JEXEC') or die('Restricted access');
 
-use Protostore\Product\ProductFactory;
+use Protostore\Currency\CurrencyFactory;
 
 
 class protostoreTask_filter
@@ -23,14 +23,17 @@ class protostoreTask_filter
 		// init
 		$response = array();
 
-		$products = ProductFactory::getList(
+
+		$publishedOnly = $data->get('publishedOnly', false) === "true";
+
+		$currencies = CurrencyFactory::getList(
 			$data->getInt('limit', 0),
 			$data->getInt('offset', 0),
-			$data->getInt('category', null),
+			$publishedOnly,
 			$data->getString('searchTerm', null)
 		);
 
-		$response['items'] = $products;
+		$response['items'] = $currencies;
 
 		return $response;
 	}

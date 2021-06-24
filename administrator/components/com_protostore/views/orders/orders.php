@@ -11,15 +11,15 @@
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Language\Text;
-
-// init vars
-$id = uniqid('p2s_orders');
-
+use Joomla\CMS\Layout\LayoutHelper;
+use Joomla\CMS\Uri\Uri;
 
 ?>
+<script id="base_url" type="application/json"><?= Uri::base(); ?></script>
+<script id="items_data" type="application/json"><?= json_encode($vars['items']); ?></script>
+<script id="page_size" type="application/json"><?= $vars['list_limit']; ?></script>
 
-
-<div id="<?= $id; ?>">
+<div id="p2s_orders">
 	<div class="uk-margin-left">
 		<div class="uk-grid" uk-grid="">
 			<div class="uk-width-3-4">
@@ -134,7 +134,18 @@ $id = uniqid('p2s_orders');
 
 
 					</div>
-					<div class="uk-card-footer"></div>
+                    <div class="uk-card-footer">
+                        <div class="uk-grid uk-grid-small">
+                            <div class="uk-width-expand">
+                                <p class="uk-text-meta">
+
+                                </p>
+                            </div>
+                            <div class="uk-width-auto">
+								<?= LayoutHelper::render('pagination'); ?>
+                            </div>
+                        </div>
+                    </div>
 				</div>
 			</div>
 			<div class="uk-width-1-4">
@@ -154,47 +165,3 @@ $id = uniqid('p2s_orders');
 
 	</div>
 </div>
-
-
-<script>
-
-    const <?= $id; ?> = {
-        data() {
-            return {
-                products: <?= json_encode($vars['items']); ?>,
-                productsChunked: []
-            };
-        },
-        mounted: function () {
-        },
-        computed: {},
-
-        methods: {
-
-            async updateList() {
-                const request = await fetch("index.php?option=com_ajax&plugin=thehub_ajaxhelper&method=post&task=task&type=products.updatelist&format=raw&limit=0", {
-                    method: 'post'
-                });
-
-                const response = await request.json();
-
-                if (response.success) {
-
-
-                } else {
-                    UIkit.notification({
-                        message: 'There was an error.',
-                        status: 'danger',
-                        pos: 'top-center',
-                        timeout: 5000
-                    });
-                }
-            }
-
-        }
-    }
-
-    Vue.createApp(<?= $id; ?>).mount('#<?= $id; ?>')
-
-
-</script>

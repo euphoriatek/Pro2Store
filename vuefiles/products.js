@@ -2,15 +2,15 @@ const p2s_products = {
     data() {
         return {
             base_url: '',
-            products: [],
-            productsChunked: [],
+            items: [],
+            itemsChunked: [],
             categories: [],
             selectedCategory: 0,
             currentSort: 'title',
             currentSortDir: 'asc',
             currentPage: 0,
             pages: [],
-            pagesizes: [5, 10, 20, 30, 50, 100],
+            pagesizes: [5, 10, 15, 20, 25, 30, 50, 100, 200, 500],
             show: 25,
         };
     },
@@ -20,13 +20,17 @@ const p2s_products = {
         this.base_url = base_url.innerText;
         base_url.remove();
 
-        const products_data = document.getElementById('products_data');
-        this.products = JSON.parse(products_data.innerText);
-        products_data.remove();
+        const items_data = document.getElementById('items_data');
+        this.items = JSON.parse(items_data.innerText);
+        items_data.remove();
 
         const categories_data = document.getElementById('categories_data');
         this.categories = JSON.parse(categories_data.innerText);
         categories_data.remove();
+
+        const show = document.getElementById('page_size');
+        this.show = show.innerText;
+        show.remove();
 
     },
     mounted: function () {
@@ -72,13 +76,13 @@ const p2s_products = {
             const response = await request.json();
 
             if (response.success) {
-                this.products = response.data.products;
+                this.items = response.data.items;
                 this.loading = false;
 
-                if (this.products) {
+                if (this.items) {
                     this.changeShow();
                 } else {
-                    this.productsChunked = [];
+                    this.itemsChunked = [];
                     this.pages = 1;
                     this.currentPage = 0;
                 }
@@ -87,7 +91,7 @@ const p2s_products = {
         },
         changeShow() {
 
-            this.productsChunked = this.products.reduce((resultArray, item, index) => {
+            this.itemsChunked = this.items.reduce((resultArray, item, index) => {
                 const chunkIndex = Math.floor(index / this.show)
                 if (!resultArray[chunkIndex]) {
                     resultArray[chunkIndex] = []
@@ -95,9 +99,8 @@ const p2s_products = {
                 resultArray[chunkIndex].push(item)
                 return resultArray
             }, []);
-            this.pages = this.productsChunked.length;
+            this.pages = this.itemsChunked.length;
             this.currentPage = 0;
-            console.log(this.productsChunked);
         },
         changePage(i) {
             this.currentPage = i;
@@ -116,7 +119,7 @@ const p2s_products = {
                 this.currentSortDir = this.currentSortDir === 'asc' ? 'desc' : 'asc';
             }
             this.currentSort = s;
-            return this.productsChunked[this.currentPage].sort((a, b) => {
+            return this.itemsChunked[this.currentPage].sort((a, b) => {
                 let modifier = 1;
                 if (this.currentSortDir === 'desc') modifier = -1;
                 if (a[this.currentSort] < b[this.currentSort]) return -1 * modifier;

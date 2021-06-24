@@ -42,7 +42,6 @@ class JFormFieldText extends JFormField
 		$html[] = 'name="' . $this->name . '" ';
 		$html[] = 'v-model="form.' . $this->id . '" ';
 		$html[] = 'id="' . $this->id . '" ';
-		$html[] = 'value="' . htmlspecialchars($this->value, ENT_COMPAT, 'UTF-8') . '" ';
 		$html[] = ' />';
 
 		return implode('', $html);

@@ -80,7 +80,7 @@ $view  = $input->get('view', 'dashboard');
                     <div class="uk-text-lowercase uk-visible@s">
                         <ul class="uk-margin-remove-bottom uk-subnav uk-margin-right" uk-margin>
                             <li class="el-item uk-first-column">
-                                <a class="el-content uk-disabled">Ray Lawlor</a>
+                                <a class="el-content" href="index.php?option=com_users&task=user.edit&id=295"><?= Factory::getUser()->name; ?></a>
                             </li>
                             <li class="el-item">
                                 <a class="el-link"

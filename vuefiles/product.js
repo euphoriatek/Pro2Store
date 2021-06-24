@@ -9,6 +9,7 @@ const p2s_product_form = {
                 jform_category: '',
                 jform_manage_stock: true,
                 jform_featured: false,
+                jform_state: false,
                 jform_taxable: false,
                 jform_discount: false,
                 jform_teaserimage: '',
@@ -25,7 +26,6 @@ const p2s_product_form = {
 
     },
     mounted() {
-
     },
     computed() {
     },
@@ -55,6 +55,10 @@ const p2s_product_form = {
         this.form.jform_featured = (jform_featured.innerText == 'true' ? true : false);
         jform_featured.remove();
 
+        const jform_state = document.getElementById('jform_state_data');
+        this.form.jform_state = (jform_state.innerText == 'true' ? true : false);
+        jform_state.remove();
+
         const jform_shipping_mode = document.getElementById('jform_shipping_mode_data');
         this.form.jform_shipping_mode = jform_shipping_mode.innerText;
         jform_shipping_mode.remove();
@@ -79,6 +83,7 @@ const p2s_product_form = {
             this.form.jform_fullimage = document.getElementById("jform_fullimage").value;
             this.form.jform_publish_up_date = document.getElementById("jform_publish_up_date").value;
             this.form.jform_manage_stock = document.getElementById("jform_manage_stock").value;
+            this.form.jform_state = document.getElementById("jform_state").value;
             this.form.jform_featured = document.getElementById("jform_featured").value;
             this.form.jform_taxable = document.getElementById("jform_taxable").value;
             this.form.jform_discount = document.getElementById("jform_discount").value;

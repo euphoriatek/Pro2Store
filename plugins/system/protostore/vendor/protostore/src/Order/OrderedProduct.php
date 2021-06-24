@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package   Pro2Store
  * @author    Ray Lawlor - pro2.store
@@ -6,25 +7,26 @@
  * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
  */
 
-namespace Protostore\Customer;
-
 // no direct access
+namespace Protostore\Order;
+
 defined('_JEXEC') or die('Restricted access');
 
 
-class Customer
+class OrderedProduct
 {
 
-	public $id;
-	public $j_user_id;
-	public $name;
-	public $email;
-	public $j_user;
-	public $orders;
-	public $total_orders;
-	public $order_total;
-	public $addresses;
-	public $order_total_integer;
+	public int $id;
+	public int $order_id;
+	public int $j_item;
+	public int $j_item_cat;
+	public string $j_item_name;
+	public ?string $item_options;
+	public int $price_at_sale;
+	public string $price_at_sale_formatted;
+	public int $amount;
+
+
 
 
 	public function __construct($data)
@@ -33,7 +35,7 @@ class Customer
 		if ($data)
 		{
 			$this->hydrate($data);
-			$this->init($data);
+			$this->init();
 		}
 
 	}
@@ -75,24 +77,9 @@ class Customer
 	private function init($data)
 	{
 
-		$this->j_user = CustomerFactory::getUser($this->j_user_id);
+		// set all the formats for the money values.
+		$this->price_at_sale_formatted = OrderFactory::intToFormat($this->price_at_sale, OrderFactory::getOrderCurrency($this->order_id));
 
-		$this->orders = CustomerFactory::getCustomersOrders($this->id);
-
-
-		if ($this->orders)
-		{
-			$this->total_orders = count($this->orders);
-		}
-		else
-		{
-			$this->total_orders = 0;
-		}
-
-
-		$this->order_total = CustomerFactory::getOrderTotal($this->orders);
-		$this->order_total_integer = CustomerFactory::getOrderTotal($this->orders, true);
-		$this->addresses = CustomerFactory::getCustomerAddresses($this->id);
 	}
 
 

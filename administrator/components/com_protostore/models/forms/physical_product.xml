@@ -36,6 +36,11 @@
             <option value="weight">By Weight</option>
         </field>
 
+        <field name="state" type="pinputswitch" default="0" label="Published" description=""
+               class="btn-group btn-group-yesno">
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
         <field name="featured" type="pinputswitch" default="0" label="Featured" description=""
                class="btn-group btn-group-yesno">
             <option value="1">JYES</option>

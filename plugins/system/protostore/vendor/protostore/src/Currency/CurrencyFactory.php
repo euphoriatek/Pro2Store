@@ -145,16 +145,17 @@ class CurrencyFactory
 	/**
 	 * @param   int          $limit
 	 * @param   int          $offset
-	 * @param   int          $published
+	 * @param   bool         $publishedOnly
 	 * @param   string|null  $searchTerm
 	 * @param   string       $orderBy
 	 * @param   string       $orderDir
 	 *
 	 *
+	 * @return array|false
 	 * @since 1.5
 	 */
 
-	public static function getList(int $limit = 25, int $offset = 0, bool $publishedOnly = false, string $searchTerm = null, string $orderBy = 'name', string $orderDir = 'ASC')
+	public static function getList(int $limit = 0, int $offset = 0, bool $publishedOnly = false, string $searchTerm = null, string $orderBy = 'name', string $orderDir = 'ASC')
 	{
 		$currencies = array();
 
@@ -266,8 +267,8 @@ class CurrencyFactory
 	 * Takes an integer (representing the MINOR of the value - i.e. for 10 pounds, the number will be 1000)
 	 * and a Currency ISO and returns the Formatted string for the value.
 	 *
-	 * @param   int     $number
-	 * @param   string  $currencyISO
+	 * @param   int          $number
+	 * @param   string|null  $currencyISO
 	 *
 	 * @return string
 	 *
@@ -275,9 +276,25 @@ class CurrencyFactory
 	 * @since 1.5
 	 */
 
-	public static function formatNumberWithCurrency(int $number, string $currencyISO): string
+	public static function formatNumberWithCurrency(int $number, string $currencyISO = null): string
 	{
 
+		// if no $currencyISO is specified...
+		if(!$currencyISO) {
+
+			// try getting the current selected currency
+			$currency = self::getCurrent();
+			if($currency) {
+				$currencyISO = $currency->iso;
+			} else {
+
+				// else ... get the default currency
+
+				$currency = self::getDefault();
+				$currencyISO = $currency->iso;
+			}
+
+		}
 
 		// get the Joomla Locale
 		$lang    = Factory::getLanguage();

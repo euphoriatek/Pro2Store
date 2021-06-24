@@ -12,13 +12,15 @@ defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Layout\LayoutHelper;
 
 ?>
 
 
 <script id="base_url" type="application/json"><?= Uri::base(); ?></script>
-<script id="products_data" type="application/json"><?= json_encode($vars['items']); ?></script>
+<script id="items_data" type="application/json"><?= json_encode($vars['items']); ?></script>
 <script id="categories_data" type="application/json"><?= json_encode($vars['categories']); ?></script>
+<script id="page_size" type="application/json"><?= $vars['list_limit']; ?></script>
 
 <div id="p2s_products">
     <div class="uk-margin-left">
@@ -105,7 +107,7 @@ use Joomla\CMS\Uri\Uri;
                             </thead>
 
                             <tbody>
-                            <tr class="el-item" v-for="product in productsChunked[currentPage]">
+                            <tr class="el-item" v-for="product in itemsChunked[currentPage]">
                                 <td>
                                     <div><input type="checkbox"></div>
                                 </td>
@@ -148,7 +150,18 @@ use Joomla\CMS\Uri\Uri;
 
 
                     </div>
-                    <div class="uk-card-footer"></div>
+                    <div class="uk-card-footer">
+                        <div class="uk-grid uk-grid-small">
+                            <div class="uk-width-expand">
+                                <p class="uk-text-meta">
+
+                                </p>
+                            </div>
+                            <div class="uk-width-auto">
+				                <?= LayoutHelper::render('pagination'); ?>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="uk-width-1-4">

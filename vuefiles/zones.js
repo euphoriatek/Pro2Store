@@ -1,4 +1,4 @@
-const p2s_currencies = {
+const p2s_zones = {
     data() {
         return {
             base_url: '',
@@ -11,7 +11,7 @@ const p2s_currencies = {
             pagesizes: [5, 10, 15, 20, 25, 30, 50, 100, 200, 500],
             show: 25,
             enteredText: '',
-            publishedOnly: true,
+            publishedOnly: false
         };
     },
     async beforeMount() {
@@ -33,11 +33,16 @@ const p2s_currencies = {
     mounted: function () {
         this.changeShow();
     },
-    computed: {},
+    computed: {
+
+        last5() {
+            return Number(this.itemsChunked.length - 5);
+        }
+    },
     methods: {
 
         async updateList() {
-            const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=currencies.updatelist&format=raw&limit=0", {
+            const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=zones.updatelist&format=raw&limit=0", {
                 method: 'post'
             });
 
@@ -68,12 +73,13 @@ const p2s_currencies = {
 
             const URLparams = this.serialize(params);
 
-            const request = await fetch(this.base_url + 'index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=currencies.filter&format=raw&' + URLparams, {method: 'post'});
+            const request = await fetch(this.base_url + 'index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=zones.filter&format=raw&' + URLparams, {method: 'post'});
 
             const response = await request.json();
 
+
             if (response.success) {
-                this.items = response.data.items;
+                this.items = response.data.zones;
                 this.loading = false;
 
                 if (this.items) {
@@ -124,20 +130,20 @@ const p2s_currencies = {
                 return 0;
             });
         },
-        async togglePublished(currency) {
+        async togglePublished(item) {
 
             const params = {
-                'currency_id': currency.id
+                'item_id': item.id
             };
 
             const URLparams = this.serialize(params);
 
-            const request = await fetch(this.base_url + 'index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=currency.togglePublished&format=raw&' + URLparams, {method: 'post'});
+            const request = await fetch(this.base_url + 'index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=zone.togglePublished&format=raw&' + URLparams, {method: 'post'});
 
             const response = await request.json();
 
             if (response.success) {
-                currency.published = response.data
+                item.published = response.data
             }
         },
         serialize(obj) {
@@ -155,4 +161,4 @@ const p2s_currencies = {
     }
 }
 
-Vue.createApp(p2s_currencies).mount('#p2s_currencies')
+Vue.createApp(p2s_zones).mount('#p2s_zones')

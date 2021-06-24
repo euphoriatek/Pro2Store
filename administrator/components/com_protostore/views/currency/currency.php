@@ -28,7 +28,6 @@ $item = $vars['item'];
     <script id="jform_iso_data" type="application/json"><?= $item->iso; ?></script>
     <script id="jform_currencysymbol_data" type="application/json"><?= $item->currencysymbol; ?></script>
     <script id="jform_rate_data" type="application/json"><?= $item->rate; ?></script>
-    <script id="jform_rate_data" type="application/json"><?= $item->rate; ?></script>
     <script id="jform_default_data" type="application/json"><?= ($item->default == 1 ? 'true' : 'false'); ?></script>
     <script id="jform_published_data"
             type="application/json"><?= ($item->published == 1 ? 'true' : 'false'); ?></script>

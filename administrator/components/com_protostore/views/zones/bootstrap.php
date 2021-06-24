@@ -10,27 +10,42 @@
 
 defined('_JEXEC') or die('Restricted access');
 
-use Protostore\Render\Render;
-use Protostore\Product\ProductFactory;
+use Joomla\CMS\Factory;
 
+use Protostore\Render\Render;
+use Protostore\Country\CountryFactory;
+use Protostore\Utilities\Utilities;
 
 /**
  *
- * @since       2.0
+ * @since 2.0
  */
-
 class bootstrap
 {
 
 
-
 	public function __construct()
 	{
-		$vars = $this->init();
+		$this->init();
+		$this->addScripts();
+		$vars = $this->setVars();
 
 		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/zones/zones.php', $vars);
 
 	}
+
+	/**
+	 *
+	 *
+	 * @since 2.0
+	 */
+
+	private function init()
+	{
+
+
+	}
+
 
 	/**
 	 *
@@ -39,14 +54,14 @@ class bootstrap
 	 * @since 2.0
 	 */
 
-	private function init()
+	private function setVars()
 	{
 
 		$vars = array();
 
 
-		$vars['items'] = $this->getItems();
-
+		$vars['items']      = $this->getItems();
+		$vars['list_limit'] = Factory::getConfig()->get('list_limit', '25');
 
 		return $vars;
 
@@ -62,6 +77,29 @@ class bootstrap
 
 	private function getItems()
 	{
+
+		return CountryFactory::getZoneList(0, 0, false, '', null, 'published', 'desc');
+
+	}
+
+
+	/**
+	 *
+	 *
+	 * @since version
+	 */
+
+	private function addScripts()
+	{
+
+
+		// include the vue script - defer
+		Factory::getDocument()->addScript('../media/com_protostore/js/vue/zones/zones.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
+
+
+		// include prime
+		Utilities::includePrime(array('inputswitch'));
+
 
 	}
 

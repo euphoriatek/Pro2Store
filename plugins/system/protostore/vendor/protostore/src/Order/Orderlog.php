@@ -8,7 +8,7 @@
  */
 
 // no direct access
-namespace Protostore\Orderlog;
+namespace Protostore\Order;
 
 defined('_JEXEC') or die('Restricted access');
 

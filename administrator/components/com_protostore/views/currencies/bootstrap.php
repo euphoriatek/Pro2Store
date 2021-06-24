@@ -14,6 +14,7 @@ use Joomla\CMS\Factory;
 
 use Protostore\Render\Render;
 use Protostore\Currency\CurrencyFactory;
+use Protostore\Utilities\Utilities;
 
 /**
  *
@@ -26,6 +27,8 @@ class bootstrap
 	public function __construct()
 	{
 		$this->init();
+		$this->addScripts();
+
 		$vars = $this->setVars();
 
 		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/currencies/currencies.php', $vars);
@@ -40,7 +43,6 @@ class bootstrap
 
 	private function init()
 	{
-
 
 
 	}
@@ -58,10 +60,8 @@ class bootstrap
 
 		$vars = array();
 
-
 		$vars['items']      = $this->getItems();
-
-		$this->addScripts();
+		$vars['list_limit'] = Factory::getConfig()->get('list_limit', '25');
 
 		return $vars;
 
@@ -79,7 +79,7 @@ class bootstrap
 	{
 
 
-		return CurrencyFactory::getList(Factory::getConfig()->get('list_limit', '25'), 0, false, '', 'published', 'desc');
+		return CurrencyFactory::getList(0, 0, false, '', 'published', 'desc');
 
 	}
 
@@ -99,7 +99,7 @@ class bootstrap
 
 
 		// include prime
-//		Utilities::includePrime(array('inputswitch'));
+		Utilities::includePrime(array('inputswitch'));
 
 
 	}

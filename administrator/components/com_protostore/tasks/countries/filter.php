@@ -6,12 +6,11 @@
  * @copyright   Copyright (C) 2021 Ray Lawlor - Pro2Store - https://pro2.store. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
+
 // no direct access
-
-
 defined('_JEXEC') or die('Restricted access');
 
-use Protostore\Product\ProductFactory;
+use Protostore\Country\CountryFactory;
 
 
 class protostoreTask_filter
@@ -23,14 +22,17 @@ class protostoreTask_filter
 		// init
 		$response = array();
 
-		$products = ProductFactory::getList(
+
+		$publishedOnly = $data->get('publishedOnly', false) === "true";
+
+		$countries = CountryFactory::getList(
 			$data->getInt('limit', 0),
 			$data->getInt('offset', 0),
-			$data->getInt('category', null),
+			$publishedOnly,
 			$data->getString('searchTerm', null)
 		);
 
-		$response['items'] = $products;
+		$response['countries'] = $countries;
 
 		return $response;
 	}

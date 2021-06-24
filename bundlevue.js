@@ -68,6 +68,20 @@ const stringreplace = require('replace-in-file');
         });
     });
 
+    emptyDir('./media/com_protostore/js/vue/orders').then(() => {
+        remove('./media/com_protostore/js/vue/orders').then(() => {
+            mkdir('./media/com_protostore/js/vue/orders').then(() => {
+                minify({
+                    compressor: terser,
+                    input: './vuefiles/orders.js',
+                    output: './media/com_protostore/js/vue/orders/orders.min.js'
+                }).then(function (min) {
+                    console.log('Orders done on: ' + theTime);
+                });
+            });
+        });
+    });
+
     emptyDir('./media/com_protostore/js/vue/currencies').then(() => {
         remove('./media/com_protostore/js/vue/currencies').then(() => {
             mkdir('./media/com_protostore/js/vue/currencies').then(() => {
@@ -77,6 +91,46 @@ const stringreplace = require('replace-in-file');
                     output: './media/com_protostore/js/vue/currencies/currencies.min.js'
                 }).then(function (min) {
                     console.log('Currencies done on: ' + theTime);
+                });
+            });
+        });
+    });
+    emptyDir('./media/com_protostore/js/vue/customers').then(() => {
+        remove('./media/com_protostore/js/vue/customers').then(() => {
+            mkdir('./media/com_protostore/js/vue/customers').then(() => {
+                minify({
+                    compressor: terser,
+                    input: './vuefiles/customers.js',
+                    output: './media/com_protostore/js/vue/customers/customers.min.js'
+                }).then(function (min) {
+                    console.log('Customers done on: ' + theTime);
+                });
+            });
+        });
+    });
+
+    emptyDir('./media/com_protostore/js/vue/countries').then(() => {
+        remove('./media/com_protostore/js/vue/countries').then(() => {
+            mkdir('./media/com_protostore/js/vue/countries').then(() => {
+                minify({
+                    compressor: terser,
+                    input: './vuefiles/countries.js',
+                    output: './media/com_protostore/js/vue/countries/countries.min.js'
+                }).then(function (min) {
+                    console.log('Countries done on: ' + theTime);
+                });
+            });
+        });
+    });
+    emptyDir('./media/com_protostore/js/vue/zones').then(() => {
+        remove('./media/com_protostore/js/vue/zones').then(() => {
+            mkdir('./media/com_protostore/js/vue/zones').then(() => {
+                minify({
+                    compressor: terser,
+                    input: './vuefiles/zones.js',
+                    output: './media/com_protostore/js/vue/zones/zones.min.js'
+                }).then(function (min) {
+                    console.log('zones done on: ' + theTime);
                 });
             });
         });

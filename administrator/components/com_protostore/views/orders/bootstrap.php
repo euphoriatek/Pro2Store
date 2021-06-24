@@ -10,6 +10,8 @@
 
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Factory;
+
 use Protostore\Render\Render;
 use Protostore\Order\OrderFactory;
 
@@ -46,7 +48,10 @@ class bootstrap
 
 
 		$vars['items'] = $this->getItems();
+		$vars['list_limit'] = Factory::getConfig()->get('list_limit', '25');
 
+
+		$this->addScripts();
 
 		return $vars;
 
@@ -63,6 +68,28 @@ class bootstrap
 	private function getItems()
 	{
 		return OrderFactory::getList();
+	}
+
+
+
+	/**
+	 *
+	 *
+	 * @since version
+	 */
+
+	private function addScripts($add = false)
+	{
+
+
+		// include the vue script - defer
+		Factory::getDocument()->addScript('../media/com_protostore/js/vue/orders/orders.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
+
+
+		// include prime
+//		Utilities::includePrime(array('inputswitch'));
+
+
 	}
 }
 

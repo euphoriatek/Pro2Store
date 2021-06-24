@@ -69,7 +69,7 @@ class ProductFactory
 	 * @since version
 	 */
 
-	public static function getList(int $limit, int $offset, int $category = 0, string $searchTerm = null)
+	public static function getList(int $limit = 0, int $offset = 0, int $category = 0, string $searchTerm = null)
 	{
 
 		$products = array();
