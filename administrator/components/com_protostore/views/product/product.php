@@ -21,6 +21,12 @@ HTMLHelper::_('behavior.formvalidator');
 
 $item = $vars['item'];
 
+echo $item->product_type;
+
+
+$variants = ["colour", "size"];
+$variantLabels = [["Red", "Green", "Blue"], ["small", "medium"]];
+$variantsListLocal = '[{"identifier":["Red","small"],"name":"Red / small","active":true,"default":false,"price":"","stock":0,"sku":""},{"identifier":["Red","medium"],"name":"Red / medium","active":true,"default":true,"price":"","stock":0,"sku":""},{"identifier":["Green","small"],"name":"Green / small","active":true,"default":false,"price":"","stock":100,"sku":"qwerty"},{"identifier":["Green","medium"],"name":"Green / medium","active":true,"default":false,"price":"","stock":0,"sku":""},{"identifier":["Blue","small"],"name":"Blue / small","active":true,"default":false,"price":"","stock":0,"sku":""},{"identifier":["Blue","medium"],"name":"Blue / medium","active":true,"default":false,"price":"","stock":0,"sku":""}]';
 ?>
 
 <?php if ($item) : ?>
@@ -37,6 +43,9 @@ $item = $vars['item'];
     <script id="jform_discount_data" type="application/json"><?= ($item->discount > 0 ? 'true' : 'false'); ?></script>
     <script id="jform_shipping_mode_data" type="application/json"><?= $item->shipping_mode; ?></script>
     <script id="jform_base_price_data" type="application/json"><?= $item->basepricefloat; ?></script>
+    <script id="jform_variants" type="application/json"><?= json_encode($variants); ?></script>
+    <script id="jform_variantLabels" type="application/json"><?= json_encode($variantLabels); ?></script>
+    <script id="jform_variantsListLocal" type="application/json"><?= $variantsListLocal; ?></script>
 <?php endif; ?>
 
 <div id="p2s_product_form">
@@ -98,22 +107,22 @@ $item = $vars['item'];
 						'field_grid_width' => '1-2',
 					)); ?>
 
-					<?php if ($item->product_type = 0) : ?>
-						<?= LayoutHelper::render('card', array(
-							'form'      => $vars['form'],
-							'cardTitle' => 'COM_PROTOSTORE_ADD_PRODUCT_SHIPPING',
-							'cardStyle' => 'default',
-							'cardId'    => 'shipping',
-							'fields'    => array('shipping_mode')
-						)); ?>
-					<?php endif; ?>
+					<?= LayoutHelper::render('card', array(
+						'form'             => $vars['form'],
+						'cardTitle'        => 'COM_PROTOSTORE_ADD_PRODUCT_VARIANTS',
+						'cardStyle'        => 'default',
+						'cardId'           => 'variants',
+						'fields'           => array('variants'),
+						'field_grid_width' => '1-1',
+						'showVariantsBody'       => true,
+					)); ?>
+
+
 
                 </div>
 
 
                 <div class="uk-width-1-3">
-
-
 
 
 					<?= LayoutHelper::render('card', array(
@@ -128,7 +137,7 @@ $item = $vars['item'];
 						'cardTitle' => 'COM_PROTOSTORE_ADD_PRODUCT_ORGANISATION',
 						'cardStyle' => 'default',
 						'cardId'    => 'organisation',
-						'fields'    => array('category', 'featured')
+						'fields'    => array('category', 'featured', 'tags')
 					)); ?>
 					<?= LayoutHelper::render('card', array(
 						'form'      => $vars['form'],
@@ -145,15 +154,15 @@ $item = $vars['item'];
 						'cardId'    => 'inventory',
 						'fields'    => array('sku', 'manage_stock', 'stock')
 					)); ?>
-
-
-					<?= LayoutHelper::render('card', array(
-						'form'      => $vars['form'],
-						'cardTitle' => 'COM_PROTOSTORE_ADD_PRODUCT_TAGS',
-						'cardStyle' => 'default',
-						'cardId'    => 'tags',
-						'fields'    => array('tags')
-					)); ?>
+					<?php if ($item->product_type == 0) : ?>
+						<?= LayoutHelper::render('card', array(
+							'form'      => $vars['form'],
+							'cardTitle' => 'COM_PROTOSTORE_ADD_PRODUCT_SHIPPING',
+							'cardStyle' => 'default',
+							'cardId'    => 'shipping',
+							'fields'    => array('shipping_mode')
+						)); ?>
+					<?php endif; ?>
 
 
                 </div>

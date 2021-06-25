@@ -10,12 +10,9 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
-/**
- * Clicks field.
- *
- * @since  1.6
- */
-class JFormFieldPinputswitch extends JFormField
+use Joomla\CMS\Layout\LayoutHelper;
+
+class JFormFieldVariants extends JFormField
 {
 	/**
 	 * The form field type.
@@ -23,7 +20,12 @@ class JFormFieldPinputswitch extends JFormField
 	 * @var    string
 	 * @since  1.6
 	 */
-	protected $type = 'pinputswitch';
+	protected $type = 'Variants';
+
+	public function getLabel()
+	{
+		return '';
+	}
 
 	/**
 	 * Method to get the field input markup.
@@ -35,13 +37,11 @@ class JFormFieldPinputswitch extends JFormField
 	protected function getInput()
 	{
 
+		//		$html[] = '<p-chips v-model="form.variants"></p-chips>';
 
-		$html = array();
-
-		$html[] = '<p-inputswitch v-model="form.'.$this->id.'" id="'.$this->id.'" @change="logIt"></p-inputswitch>';
+	 return	LayoutHelper::render('variants', array());
 
 
-		return implode('', $html);
 
 
 	}

@@ -17,17 +17,49 @@ const p2s_product_form = {
                 jform_shipping_mode: '',
                 jform_publish_up_date: '',
                 jform_tags: [],
+                jform_variants: [],
+                variantLabels: [],
+                variantsList: [],
+                variantsListLocal: []
             },
+            variantsSet: false,
+            showVariantsBody: true,
             andClose: false
 
-        };
+        }
+
     },
     created() {
 
+
     },
     mounted() {
+        if (this.form.jform_variants.length > 0) {
+            this.variantsSet = true;
+        }
+        if (this.form.variantLabels.length > 0 && this.form.variantsListLocal.length == 0) {
+            this.runCartesian();
+        }
     },
-    computed() {
+    computed: {
+        variantsSet() {
+            if (this.form.jform_variants[0] && this.showVariantValuesBlock) {
+                return true;
+            }
+            return false;
+        },
+        showVariantValuesBlock() {
+            if (this.form.jform_variants.length > 0 && this.variantsSet) {
+                return true;
+            }
+            return false;
+        },
+        showVariantItemsBlock() {
+            if (this.form.variantsListLocal.length > 0) {
+                return true;
+            }
+            return false;
+        }
     },
     async beforeMount() {
 
@@ -67,9 +99,91 @@ const p2s_product_form = {
         this.form.jform_base_price = jform_base_price.innerText;
         jform_base_price.remove();
 
+        const jform_variants = document.getElementById('jform_variants');
+        this.form.jform_variants =  JSON.parse(jform_variants.innerText);
+        jform_variants.remove();
+
+        const jform_variantLabels = document.getElementById('jform_variantLabels');
+        this.form.variantLabels =  JSON.parse(jform_variantLabels.innerText);
+        jform_variantLabels.remove();
+
+        const jform_variantsListLocal = document.getElementById('jform_variantsListLocal');
+        this.form.variantsListLocal =  JSON.parse(jform_variantsListLocal.innerText);
+        jform_variantsListLocal.remove();
+
 
     },
     methods: {
+
+        logIt() {
+            console.log(this.form);
+        },
+        addVariant() {
+            this.form.jform_variants.push('');
+        },
+        removeVariant(i) {
+            this.form.jform_variants.splice(i, 1);
+        },
+        async editVariants() {
+
+            await UIkit.modal.confirm('Are You sure? This will reset all variant data!');
+
+            this.form.variantsList = [];
+            this.form.variantsListLocal = [];
+            this.form.variantLabels = [];
+            this.variantsSet = false;
+
+        },
+        async editVariantValues() {
+
+            await UIkit.modal.confirm('Are You sure? This will reset all variant data!');
+
+            this.form.variantsList = [];
+            this.form.variantsListLocal = [];
+
+        },
+        setVariants() {
+            this.variantsSet = true;
+        },
+        runCartesian() {
+            this.form.variantsListLocal = [];
+            this.form.variantsList = this.cartesianProduct(this.form.variantLabels);
+
+            this.form.variantsList.forEach((variant, index) => {
+
+                let newName = variant.join(' / ');
+                let itsDefault = false;
+                if (index === 0) {
+                    itsDefault = true;
+                }
+                this.form.variantsListLocal.push({
+                    identifier: variant,
+                    name: newName,
+                    active: true,
+                    default: itsDefault,
+                    price: '',
+                    stock: 0,
+                    sku: '',
+                })
+            });
+
+            if (this.form.variantsListLocal.length > 0) {
+                this.showVariantItemsBlock = true;
+            }
+
+            console.log( JSON.stringify(this.form.variantsListLocal));
+        },
+        cartesianProduct(arr) {
+            return arr.reduce(function (a, b) {
+                return a.map(function (x) {
+                    return b.map(function (y) {
+                        return x.concat([y]);
+                    })
+                }).reduce(function (a, b) {
+                    return a.concat(b)
+                }, [])
+            }, [[]])
+        },
 
         toggle() {
             console.log(this.hasErroraccess);
@@ -113,6 +227,7 @@ const p2s_product_form = {
     },
     components: {
         'p-inputswitch': primevue.inputswitch,
+        'p-chips': primevue.chips,
         'p-inputnumber': primevue.inputnumber
     }
 }

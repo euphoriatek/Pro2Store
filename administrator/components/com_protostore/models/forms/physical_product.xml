@@ -17,8 +17,8 @@
             <option value="0">JNO</option>
         </field>
 
-        <field name="stock" type="title" default="0" label="Stock" description="" size="10"
-               class="uk-input uk-form-width-medium uk-form-large"  showon="manage_stock:1"/>
+        <field name="stock" type="stock" default="0" label="Stock" description="" size="10"
+               class="uk-input uk-form-width-medium uk-form-large" />
 
         <field name="short_description" type="editor" label="Short Description" description="" width="" height="100px"
                filter="safehtml"/>
@@ -41,6 +41,7 @@
             <option value="1">JYES</option>
             <option value="0">JNO</option>
         </field>
+
         <field name="featured" type="pinputswitch" default="0" label="Featured" description=""
                class="btn-group btn-group-yesno">
             <option value="1">JYES</option>
@@ -72,6 +73,10 @@
             <option value="1">JYES</option>
             <option value="0">JNO</option>
         </field>
+
+        <field name="variants" type="variants" default="0" label="Product Variants" description="" size="10"
+               class="uk-input uk-form-width-medium uk-form-large" />
+
 
     </fieldset>
 

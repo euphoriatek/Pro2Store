@@ -15,9 +15,12 @@ defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Factory;
 
+use Joomla\CMS\User\User;
 use Protostore\Currency\CurrencyFactory;
 
 use Brick\Money\Exception\UnknownCurrencyException;
+use Protostore\Utilities\Utilities;
+
 
 class OrderFactory
 {
@@ -53,12 +56,14 @@ class OrderFactory
 		return false;
 	}
 
+
 	/**
 	 * @param   int          $limit
 	 *
 	 * @param   int          $offset
 	 * @param   string|null  $searchTerm
 	 * @param   int|null     $customerId
+	 * @param   string|null  $status
 	 * @param   string|null  $currency
 	 * @param   string|null  $dateFrom
 	 * @param   string|null  $dateTo
@@ -174,9 +179,165 @@ class OrderFactory
 
 	}
 
+
 	/**
-	 * @param   int     $int
-	 * @param   string  $currency
+	 * @param   int  $order_id
+	 * @param   int  $limit
+	 * @param   int  $offset
+	 *
+	 * @return array|false
+	 *
+	 * @since 1.6
+	 */
+
+
+	public static function getOrderLogs(int $order_id, int $limit = 0, int $offset = 0)
+	{
+		$orderLogs = array();
+
+		$db = Factory::getDbo();
+
+		$query = $db->getQuery(true);
+
+		$query->select('*');
+		$query->from($db->quoteName('#__protostore_order_log'));
+
+		$query->where($db->quoteName('order_id') . ' = ' . $db->quote($order_id));
+
+		$db->setQuery($query, $offset, $limit);
+
+		$results = $db->loadObjectList();
+
+		if ($results)
+		{
+			foreach ($results as $result)
+			{
+				$orderLogs[] = new Orderlog($result);
+
+			}
+
+			return $orderLogs;
+		}
+
+
+		return false;
+
+	}
+
+
+	/**
+	 * @param   int     $id
+	 * @param   string  $note
+	 *
+	 *
+	 * @since 1.6
+	 */
+
+	public static function log(int $order_id, string $note)
+	{
+
+		$object             = new \stdClass();
+		$object->id         = 0;
+		$object->order_id   = $order_id;
+		$object->note       = $note;
+		$object->created_by = Factory::getUser()->id;
+		$object->created    = Utilities::getDate();
+
+
+		Factory::getDbo()->insertObject('#__protostore_order_log', $object);
+
+	}
+
+	/**
+	 * @param   int  $order_id
+	 * @param   int  $limit
+	 * @param   int  $offset
+	 *
+	 * @return array|false
+	 *
+	 * @since 1.6
+	 */
+
+
+	public static function getOrderNotes(int $order_id, int $limit = 0, int $offset = 0)
+	{
+		$orderNotes = array();
+
+		$db = Factory::getDbo();
+
+		$query = $db->getQuery(true);
+
+		$query->select('*');
+		$query->from($db->quoteName('#__protostore_order_notes'));
+
+		$query->where($db->quoteName('order_id') . ' = ' . $db->quote($order_id));
+
+		$db->setQuery($query, $offset, $limit);
+
+		$results = $db->loadObjectList();
+
+		if ($results)
+		{
+			foreach ($results as $result)
+			{
+				$orderNotes[] = new Ordernote($result);
+
+			}
+
+			return $orderNotes;
+		}
+
+
+		return false;
+	}
+
+	/**
+	 * @param $order_id
+	 * @param $note
+	 *
+	 *
+	 * @since 1.6
+	 */
+
+	public static function note($order_id, $note)
+	{
+
+		$object             = new \stdClass();
+		$object->id         = 0;
+		$object->order_id   = $order_id;
+		$object->note       = $note;
+		$object->created_by = Factory::getUser()->id;
+		$object->created    = Utilities::getDate();
+
+
+		Factory::getDbo()->insertObject('#__protostore_order_notes', $object);
+
+	}
+
+	/**
+	 * @param $note_id
+	 * @param $note
+	 *
+	 *
+	 * @since 1.6
+	 */
+
+	public static function updateNote($note_id, $note)
+	{
+		$object       = new \stdClass();
+		$object->id   = $note_id;
+		$object->note = $note;
+
+
+		Factory::getDbo()->updateObject('#__protostore_order_notes', $object, 'id');
+
+
+	}
+
+
+	/**
+	 * @param   int          $int
+	 * @param   string|null  $currency
 	 *
 	 * @return string
 	 *
@@ -193,9 +354,9 @@ class OrderFactory
 
 	/**
 	 *
-	 * Gets the currency for the order... we CAN'T instantiate the Order class here with self::get() as
-	 * we need this function for the Ordered Product class
-	 * calling the order would cause an infinite loop
+	 * Gets the currency for the order... we *CAN'T* instantiate the Order class here with self::get() as
+	 * we need this function for the OrderedProduct class...
+	 * calling the Order would cause an infinite loop
 	 *
 	 * @param $id
 	 *
@@ -222,5 +383,44 @@ class OrderFactory
 
 
 	}
+
+	/**
+	 * @param $user_id
+	 *
+	 * @return User
+	 *
+	 * @since 1.6
+	 */
+
+
+	public static function getUser($user_id): User
+	{
+
+		return Factory::getUser($user_id);
+
+	}
+
+	/**
+	 * @param $created_by_name
+	 *
+	 * @return string
+	 *
+	 * @since 1.6
+	 */
+
+	public static function getAvatarAbb($name): string
+	{
+
+		$words   = preg_split("/[\s,_-]+/", $name);
+		$acronym = "";
+
+		foreach ($words as $w)
+		{
+			$acronym .= $w[0];
+		}
+
+		return $acronym;
+	}
+
 
 }

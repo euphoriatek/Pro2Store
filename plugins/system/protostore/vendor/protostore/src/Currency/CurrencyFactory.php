@@ -11,6 +11,7 @@ namespace Protostore\Currency;
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Brick\Math\BigDecimal;
 use Brick\Money\Exception\UnknownCurrencyException;
 use Brick\Money\Money;
 use Exception;
@@ -166,7 +167,8 @@ class CurrencyFactory
 		$query->select('*');
 		$query->from($db->quoteName('#__protostore_currency'));
 
-		if($publishedOnly) {
+		if ($publishedOnly)
+		{
 			$query->where($db->quoteName('published') . ' = 1');
 		}
 
@@ -280,17 +282,21 @@ class CurrencyFactory
 	{
 
 		// if no $currencyISO is specified...
-		if(!$currencyISO) {
+		if (!$currencyISO)
+		{
 
 			// try getting the current selected currency
 			$currency = self::getCurrent();
-			if($currency) {
+			if ($currency)
+			{
 				$currencyISO = $currency->iso;
-			} else {
+			}
+			else
+			{
 
 				// else ... get the default currency
 
-				$currency = self::getDefault();
+				$currency    = self::getDefault();
 				$currencyISO = $currency->iso;
 			}
 
@@ -305,6 +311,48 @@ class CurrencyFactory
 		$money = Money::ofMinor($number, $currencyISO);
 
 		return $money->formatTo($locale);
+
+
+	}
+
+	/**
+	 * @param   int          $number
+	 * @param   string|null  $currencyISO
+	 *
+	 * @return BigDecimal
+	 *
+	 * @throws UnknownCurrencyException
+	 * @throws Exception
+	 * @since 1.6
+	 */
+
+	public static function toFloat(int $number, string $currencyISO = null): BigDecimal
+	{
+
+		// if no $currencyISO is specified...
+		if (!$currencyISO)
+		{
+
+			// try getting the current selected currency
+			$currency = self::getCurrent();
+			if ($currency)
+			{
+				$currencyISO = $currency->iso;
+			}
+			else
+			{
+
+				// else ... get the default currency
+
+				$currency    = self::getDefault();
+				$currencyISO = $currency->iso;
+			}
+
+		}
+
+		$float = Money::ofMinor((int) $number, $currencyISO, new CashContext(1), RoundingMode::DOWN);
+
+		return $float->getAmount();
 
 
 	}

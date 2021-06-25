@@ -8,21 +8,17 @@
  */
 
 // no direct access
-namespace Protostore\Order;
+namespace Protostore\Product;
 
 defined('_JEXEC') or die('Restricted access');
 
 
-class Orderlog
+class Variant
 {
 
-
-    public $id;
-    public $order_id;
-    public $note;
-    public $created_by;
-    public $created;
-
+	public string $variants;
+	public string $variantLabels;
+	public string $variantList;
 
 
 	public function __construct($data)
@@ -74,5 +70,6 @@ class Orderlog
 
 
 	}
+
 
 }

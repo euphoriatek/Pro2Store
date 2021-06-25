@@ -140,6 +140,7 @@ class bootstrap extends AdminModel
 			$form->setValue('taxable', null, $item->taxable);
 			$form->setValue('discount', null, $item->discount);
 			$form->setValue('base_price', null, $item->basepricefloat);
+			$form->setValue('manage_stock', null, $item->manage_stock);
 
 
 			switch ($item->product_type)
@@ -180,7 +181,7 @@ class bootstrap extends AdminModel
 		}
 
 		// include prime
-		Utilities::includePrime(array('inputswitch'));
+		Utilities::includePrime(array('inputswitch','chips', 'inputtext'));
 
 
 	}

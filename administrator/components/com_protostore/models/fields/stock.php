@@ -10,12 +10,8 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
-/**
- * Clicks field.
- *
- * @since  1.6
- */
-class JFormFieldPinputswitch extends JFormField
+
+class JFormFieldStock extends JFormField
 {
 	/**
 	 * The form field type.
@@ -23,7 +19,22 @@ class JFormFieldPinputswitch extends JFormField
 	 * @var    string
 	 * @since  1.6
 	 */
-	protected $type = 'pinputswitch';
+	protected $type = 'Stock';
+
+
+	public function getLabel()
+	{
+
+		$html = array();
+
+		$html[] = '<span v-if="form.jform_manage_stock">';
+		$html[] = $this->element['label'];
+		$html[] = '</span>';
+
+
+		return implode('', $html);
+
+	}
 
 	/**
 	 * Method to get the field input markup.
@@ -38,8 +49,12 @@ class JFormFieldPinputswitch extends JFormField
 
 		$html = array();
 
-		$html[] = '<p-inputswitch v-model="form.'.$this->id.'" id="'.$this->id.'" @change="logIt"></p-inputswitch>';
-
+		$html[] = '<input class="input-small ' . $this->class . '" type="text" ';
+		$html[] = 'name="' . $this->name . '" ';
+		$html[] = 'v-model="form.' . $this->id . '" ';
+		$html[] = 'id="' . $this->id . '" ';
+		$html[] = 'v-if="form.jform_manage_stock"';
+		$html[] = ' />';
 
 		return implode('', $html);
 
