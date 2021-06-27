@@ -11,7 +11,8 @@ const p2s_product_form = {
                 jform_featured: false,
                 jform_state: false,
                 jform_taxable: false,
-                jform_discount: false,
+                jform_show_discount: false,
+                jform_discount: '',
                 jform_teaserimage: '',
                 jform_fullimage: '',
                 jform_shipping_mode: '',
@@ -59,6 +60,9 @@ const p2s_product_form = {
                 return true;
             }
             return false;
+        },
+        sellPrice(){
+            return this.form.jform_base_price - this.form.jform_discount;
         }
     },
     async beforeMount() {
@@ -75,8 +79,12 @@ const p2s_product_form = {
         this.form.jform_taxable = (jform_taxable.innerText == 'true' ? true : false);
         jform_taxable.remove();
 
+        const jform_show_discount = document.getElementById('jform_show_discount_data');
+        this.form.jform_show_discount = (jform_show_discount.innerText == 'true' ? true : false);
+        jform_show_discount.remove();
+
         const jform_discount = document.getElementById('jform_discount_data');
-        this.form.jform_discount = (jform_discount.innerText == 'true' ? true : false);
+        this.form.jform_discount = jform_discount.innerText;
         jform_discount.remove();
 
         const jform_category = document.getElementById('jform_category_data');
@@ -100,15 +108,15 @@ const p2s_product_form = {
         jform_base_price.remove();
 
         const jform_variants = document.getElementById('jform_variants');
-        this.form.jform_variants =  JSON.parse(jform_variants.innerText);
+        this.form.jform_variants = JSON.parse(jform_variants.innerText);
         jform_variants.remove();
 
         const jform_variantLabels = document.getElementById('jform_variantLabels');
-        this.form.variantLabels =  JSON.parse(jform_variantLabels.innerText);
+        this.form.variantLabels = JSON.parse(jform_variantLabels.innerText);
         jform_variantLabels.remove();
 
         const jform_variantsListLocal = document.getElementById('jform_variantsListLocal');
-        this.form.variantsListLocal =  JSON.parse(jform_variantsListLocal.innerText);
+        this.form.variantsListLocal = JSON.parse(jform_variantsListLocal.innerText);
         jform_variantsListLocal.remove();
 
 
@@ -171,7 +179,6 @@ const p2s_product_form = {
                 this.showVariantItemsBlock = true;
             }
 
-            console.log( JSON.stringify(this.form.variantsListLocal));
         },
         cartesianProduct(arr) {
             return arr.reduce(function (a, b) {
@@ -185,6 +192,48 @@ const p2s_product_form = {
             }, [[]])
         },
 
+        setVariantDefault(itemIndex) {
+
+            this.form.variantsListLocal.forEach((variant, index) => {
+                variant.default = false;
+                if (itemIndex === index) {
+                    variant.default = true;
+                    if (!variant.active) {
+                        variant.active = true;
+                    }
+                }
+            });
+        },
+        checkVariantDefault(itemIndex) {
+            this.form.variantsListLocal.forEach((variant, index) => {
+                if (itemIndex === index) {
+                    if (variant.default) {
+                        variant.active = true;
+                        return false;
+                    }
+                }
+            });
+        },
+        async checkVariant() {
+            //
+            // if (this.showVariantsBody === true) {
+            //     // await UIkit.modal.confirm('Are You sure? This will erase all variant data!');
+            //     // this.form.variantsList = [];
+            //     // this.form.variantsListLocal = [];
+            //     // this.form.variantLabels = [];
+            //     // this.variantsSet = false;
+            //
+            //     UIkit.modal.confirm('UIkit confirm!').then(function () {
+            //         console.log('accepted');
+            //         this.showVariantsBody = false;
+            //     }, function () {
+            //         console.log('rejected');
+            //         this.showVariantsBody = true;
+            //         console.log(this.showVariantsBody);
+            //     });
+            //
+            // }
+        },
         toggle() {
             console.log(this.hasErroraccess);
             this.hasErroraccess = !this.hasErroraccess;

@@ -112,13 +112,13 @@ use Joomla\CMS\Layout\LayoutHelper;
                                     <div><input type="checkbox"></div>
                                 </td>
                                 <td>
-                                    <a :href="'index.php?option=com_protostore&view=product&id=' + product.joomla_item_id">{{product.title}}</a>
+                                    <a :href="'index.php?option=com_protostore&view=product&id=' + product.joomla_item_id">{{product.joomlaItem.title}}</a>
                                 </td>
                                 <td>
                                     <div style="min-height: 80px;"><img :src="product.teaserImagePath" width="100"/></div>
                                 </td>
                                 <td>
-                                    <div>{{product.category}}</div>
+                                    <div>{{product.categoryName}}</div>
                                 </td>
                                 <td>
                                     <div>{{product.baseprice_formatted}}</div>

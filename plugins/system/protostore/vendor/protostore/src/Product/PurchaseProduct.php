@@ -22,15 +22,13 @@ class PurchaseProduct extends Product
 
 
 
-
-
 	public function __construct($data)
 	{
 
 		if ($data)
 		{
-			$this->hydrate($data);
-			$this->init($data);
+//			$this->hydrate($data);
+//			$this->init($data);
 			parent::__construct($data);
 		}
 

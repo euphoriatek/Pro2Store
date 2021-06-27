@@ -139,13 +139,13 @@ class OrderFactory
 	/**
 	 * @param $order_id
 	 *
-	 * @return array|false
+	 * @return array
 	 *
 	 * @since version
 	 */
 
 
-	public static function getOrderedProducts($order_id)
+	public static function getOrderedProducts($order_id): ?array
 	{
 
 		$products = array();
@@ -174,7 +174,7 @@ class OrderFactory
 		}
 
 
-		return false;
+		return null;
 
 
 	}

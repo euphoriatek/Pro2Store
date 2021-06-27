@@ -68,11 +68,14 @@
             <option value="0">JNO</option>
         </field>
 
-        <field name="discount" type="pinputswitch" default="0" label="Discount" description=""
+        <field name="show_discount" type="pinputswitch" default="0" label="Apply Discount" description=""
                class="btn-group btn-group-yesno">
             <option value="1">JYES</option>
             <option value="0">JNO</option>
         </field>
+
+        <field name="discount" type="discount" default="0" label="Discount" description="" size="10"
+               class="uk-input uk-form-width-medium uk-form-large" />
 
         <field name="variants" type="variants" default="0" label="Product Variants" description="" size="10"
                class="uk-input uk-form-width-medium uk-form-large" />

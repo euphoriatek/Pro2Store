@@ -15,7 +15,7 @@ defined('_JEXEC') or die('Restricted access');
  *
  * @since  1.6
  */
-class JFormFieldPinputswitch extends JFormField
+class JFormFieldDiscount extends JFormField
 {
 	/**
 	 * The form field type.
@@ -23,11 +23,12 @@ class JFormFieldPinputswitch extends JFormField
 	 * @var    string
 	 * @since  1.6
 	 */
-	protected $type = 'pinputswitch';
+	protected $type = 'Discount';
+
 
 	public function getLabel()
 	{
-		return '';
+		return '<div v-show="form.jform_show_discount">' . $this->element['label']  . '</div>';
 	}
 
 	/**
@@ -43,14 +44,14 @@ class JFormFieldPinputswitch extends JFormField
 
 		$html = array();
 
-		$html[] = '<div class="uk-grid uk-margin" uk-grid>';
-		$html[] = '<div class="uk-width-1-4 uk-grid-item-match uk-flex-middle">';
-		$html[] =  $this->element['label'];
-		$html[] = '</div>';
-		$html[] = '<div class="uk-width-3-4">';
-		$html[] = '<p-inputswitch v-model="form.' . $this->id . '" id="' . $this->id . '" @change="logIt"></p-inputswitch>';
-		$html[] = '</div>';
-		$html[] = '</div>';
+		$html[] = '<div v-show="form.jform_show_discount">';
+		$html[] = '<input class="input-small ' . $this->class . '" type="text" ';
+		$html[] = 'name="' . $this->name . '" ';
+		$html[] = 'v-model="form.' . $this->id . '" ';
+		$html[] = 'id="' . $this->id . '" ';
+		$html[] = ' />';
+		$html[] = ' <span>This product will sell for: {{sellPrice}}</span>';
+		$html[] = ' </div>';
 
 		return implode('', $html);
 

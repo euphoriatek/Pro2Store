@@ -140,7 +140,7 @@ $data = $displayData;
         </tr>
         </thead>
         <tbody>
-        <tr v-for="item in form.variantsListLocal">
+        <tr v-for="(item, index) in form.variantsListLocal">
             <td>
                 {{item.name}}
             </td>
@@ -154,10 +154,10 @@ $data = $displayData;
                 <input class="uk-input uk-form-small uk-width-3-5" v-model="item.sku" placeholder="SKU">
             </td>
             <td class="">
-                <p-inputswitch v-model="item.active"></p-inputswitch>
+                <p-inputswitch v-model="item.active" @change="checkVariantDefault(index)"></p-inputswitch>
             </td>
             <td class="">
-                <p-inputswitch v-model="item.default"></p-inputswitch>
+                <p-inputswitch v-model="item.default" @change="setVariantDefault(index)"></p-inputswitch>
             </td>
         </tr>
         </tbody>

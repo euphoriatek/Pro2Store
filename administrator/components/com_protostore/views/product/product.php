@@ -21,12 +21,11 @@ HTMLHelper::_('behavior.formvalidator');
 
 $item = $vars['item'];
 
-echo $item->product_type;
 
-
-$variants = ["colour", "size"];
-$variantLabels = [["Red", "Green", "Blue"], ["small", "medium"]];
-$variantsListLocal = '[{"identifier":["Red","small"],"name":"Red / small","active":true,"default":false,"price":"","stock":0,"sku":""},{"identifier":["Red","medium"],"name":"Red / medium","active":true,"default":true,"price":"","stock":0,"sku":""},{"identifier":["Green","small"],"name":"Green / small","active":true,"default":false,"price":"","stock":100,"sku":"qwerty"},{"identifier":["Green","medium"],"name":"Green / medium","active":true,"default":false,"price":"","stock":0,"sku":""},{"identifier":["Blue","small"],"name":"Blue / small","active":true,"default":false,"price":"","stock":0,"sku":""},{"identifier":["Blue","medium"],"name":"Blue / medium","active":true,"default":false,"price":"","stock":0,"sku":""}]';
+//
+//$variants = ["colour", "size"];
+//$variantLabels = [["Red", "Green", "Blue"], ["small", "medium"]];
+//$variantsListLocal = '[{"identifier":["Red","small"],"name":"Red / small","active":true,"default":false,"price":"","stock":0,"sku":""},{"identifier":["Red","medium"],"name":"Red / medium","active":true,"default":true,"price":"","stock":0,"sku":""},{"identifier":["Green","small"],"name":"Green / small","active":true,"default":false,"price":"","stock":100,"sku":"qwerty"},{"identifier":["Green","medium"],"name":"Green / medium","active":true,"default":false,"price":"","stock":0,"sku":""},{"identifier":["Blue","small"],"name":"Blue / small","active":true,"default":false,"price":"","stock":0,"sku":""},{"identifier":["Blue","medium"],"name":"Blue / medium","active":true,"default":false,"price":"","stock":0,"sku":""}]';
 ?>
 
 <?php if ($item) : ?>
@@ -40,12 +39,13 @@ $variantsListLocal = '[{"identifier":["Red","small"],"name":"Red / small","activ
     <script id="jform_featured_data"
             type="application/json"><?= ($item->joomlaItem->featured == 1 ? 'true' : 'false'); ?></script>
     <script id="jform_taxable_data" type="application/json"><?= ($item->taxable == 1 ? 'true' : 'false'); ?></script>
-    <script id="jform_discount_data" type="application/json"><?= ($item->discount > 0 ? 'true' : 'false'); ?></script>
+    <script id="jform_show_discount_data" type="application/json"><?= ($item->discount > 0 ? 'true' : 'false'); ?></script>
+    <script id="jform_discount_data" type="application/json"><?= $item->discountFloat; ?></script>
     <script id="jform_shipping_mode_data" type="application/json"><?= $item->shipping_mode; ?></script>
-    <script id="jform_base_price_data" type="application/json"><?= $item->basepricefloat; ?></script>
-    <script id="jform_variants" type="application/json"><?= json_encode($variants); ?></script>
-    <script id="jform_variantLabels" type="application/json"><?= json_encode($variantLabels); ?></script>
-    <script id="jform_variantsListLocal" type="application/json"><?= $variantsListLocal; ?></script>
+    <script id="jform_base_price_data" type="application/json"><?= $item->basepriceFloat; ?></script>
+    <script id="jform_variants" type="application/json"><?= $item->variants; ?></script>
+    <script id="jform_variantLabels" type="application/json"><?= $item->variantLabels; ?></script>
+    <script id="jform_variantsListLocal" type="application/json"><?= $item->variantList; ?></script>
 <?php endif; ?>
 
 <div id="p2s_product_form">
@@ -107,14 +107,13 @@ $variantsListLocal = '[{"identifier":["Red","small"],"name":"Red / small","activ
 						'field_grid_width' => '1-2',
 					)); ?>
 
-					<?= LayoutHelper::render('card', array(
+					<?= LayoutHelper::render('card_variant', array(
 						'form'             => $vars['form'],
 						'cardTitle'        => 'COM_PROTOSTORE_ADD_PRODUCT_VARIANTS',
 						'cardStyle'        => 'default',
 						'cardId'           => 'variants',
 						'fields'           => array('variants'),
 						'field_grid_width' => '1-1',
-						'showVariantsBody'       => true,
 					)); ?>
 
 
@@ -144,7 +143,7 @@ $variantsListLocal = '[{"identifier":["Red","small"],"name":"Red / small","activ
 						'cardTitle' => 'COM_PROTOSTORE_ADD_PRODUCT_PRODUCT_PRICING',
 						'cardStyle' => 'default',
 						'cardId'    => 'pricing',
-						'fields'    => array('base_price', 'taxable', 'discount')
+						'fields'    => array('base_price', 'taxable', 'show_discount', 'discount')
 					)); ?>
 
 					<?= LayoutHelper::render('card', array(

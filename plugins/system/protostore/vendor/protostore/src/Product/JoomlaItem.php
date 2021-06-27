@@ -78,13 +78,10 @@ class JoomlaItem
 	 *
 	 * Function to "hydrate" all non-database values.
 	 *
-	 * @param $data
-	 *
-	 *
 	 * @since 1.6
 	 */
 
-	private function init($data)
+	private function init()
 	{
 
 

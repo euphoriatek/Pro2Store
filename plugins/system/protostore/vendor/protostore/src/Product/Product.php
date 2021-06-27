@@ -20,16 +20,16 @@ class Product
 	// base
 	public int $id;
 	public int $joomla_item_id;
-	public string $sku;
+	public ?string $sku;
 
 
 	// Pricing
 	public int $base_price;
 	public \Brick\Math\BigDecimal $basepriceFloat;
 	public string $baseprice_formatted;
-	public int $discount;
+	public ?int $discount;
 	public \Brick\Math\BigDecimal $discountFloat;
-	public string $discount_type;
+	public ?string $discount_type;
 	public int $discounted_total;
 
 	// Old Options
@@ -40,22 +40,23 @@ class Product
 	// Joomla Item
 	public ?string $categoryName;
 	public ?JoomlaItem $joomlaItem;
-	public array $images;
+	public ?array $images;
 	public ?string $teaserImagePath;
 	public ?string $fullImagePath;
 	public array $tags;
-	public int $taxable;
-	public string $link;
-	public string $category_link;
+	public ?int $taxable;
+	public ?string $link;
+	public ?string $category_link;
 	public string $product_type;
+	public bool $published;
 
 
 	// Shipping
-	public string $shipping_mode;
-	public int $flatfee;
+	public ?string $shipping_mode;
+	public ?int $flatfee;
 	public \Brick\Math\BigDecimal $flatfeeFloat;
-	public int $weight;
-	public string $weight_unit;
+	public ?int $weight;
+	public ?string $weight_unit;
 
 	// Stock
 	public ?int $manage_stock;
@@ -63,9 +64,9 @@ class Product
 	public ?int $maxPerOrder;
 
 	// Variants
-	public string $variants;
-	public string $variantLabels;
-	public string $variantList;
+	public ?string $variants;
+	public ?string $variantLabels;
+	public ?string $variantList;
 
 
 	public function __construct($data)
@@ -115,37 +116,59 @@ class Product
 
 		// get the joomla item
 		$this->joomlaItem = ProductFactory::getJoomlaItem($this->joomla_item_id);
+		$this->published = $this->joomlaItem->state == 1;
 
 		// get the images
-		$this->images          = json_decode($this->joomlaItem->images);
-		$this->teaserImagePath = ProductFactory::getImagePath($this->images->image_intro);
-		$this->fullImagePath   = ProductFactory::getImagePath($this->images->image_fulltext);
+		$this->images = json_decode($this->joomlaItem->images, true);
+
+		if ($this->images)
+		{
+			$this->teaserImagePath = ProductFactory::getImagePath($this->images['image_intro']);
+			$this->fullImagePath   = ProductFactory::getImagePath($this->images['image_fulltext']);
+		}
+
 
 		// set the prices
-		$this->basepriceFloat      = ProductFactory::getFloat($this->base_price);
-		$this->baseprice_formatted = ProductFactory::getFormattedPrice($this->base_price);
-		$this->flatfeeFloat     = ProductFactory::getFloat($this->flatfee);
-		$this->discountFloat    = ProductFactory::getFloat($this->discount);
+		if ($this->base_price)
+		{
+			$this->basepriceFloat      = ProductFactory::getFloat($this->base_price);
+			$this->baseprice_formatted = ProductFactory::getFormattedPrice($this->base_price);
+		}
+
+		if ($this->flatfee)
+		{
+			$this->flatfeeFloat = ProductFactory::getFloat($this->flatfee);
+		}
+
+		if ($this->discount)
+		{
+			$this->discountFloat = ProductFactory::getFloat($this->discount);
+		}
+
 
 		//		$this->discounted_total           = $this->getDiscountedTotal(); // todo
 		//		$this->discounted_total_formatted = $this->getFormattedDiscountPrice(); // todo
 
-		$this->options          = Productoptions::getOptions($this->joomla_item_id);
-		$this->options_for_edit = Productoptions::getOptionsForEdit($this->joomla_item_id);
+//		$this->options          = Productoptions::getOptions($this->joomla_item_id);
+//		$this->options_for_edit = Productoptions::getOptionsForEdit($this->joomla_item_id);
 
 
 		$this->categoryName = ProductFactory::getCategoryName($this->joomlaItem->catid);
 
-		$this->tags      = ProductFactory::getTags($this->joomla_item_id);
+		$this->tags = ProductFactory::getTags($this->joomla_item_id);
 
-		$this->link          = Route::_('index.php?option=com_content&view=article&id=' . $this->joomla_item_id . '&catid=' . $this->joomlaItem->catid);
-		$this->category_link = Route::_('index.php?option=com_content&view=category&layout=blog&id=' . $this->joomlaItem->catid);
+
+		$this->link          = ProductFactory::getRoute('item', $this->joomla_item_id, $this->joomlaItem->catid);
+		$this->category_link = ProductFactory::getRoute('category', $this->joomla_item_id, $this->joomlaItem->catid);
 
 		$variantData = ProductFactory::getVariantData($this->id);
 
-		$this->variants      = $variantData->variants;
-		$this->variantLabels = $variantData->variantLabels;
-		$this->variantList   = $variantData->variantList;
+		if ($variantData)
+		{
+			$this->variants      = $variantData->variants;
+			$this->variantLabels = $variantData->variantLabels;
+			$this->variantList   = $variantData->variantList;
+		}
 
 
 	}

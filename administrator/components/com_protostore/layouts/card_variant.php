@@ -26,26 +26,24 @@ $form = $data['form'];
 					<?= Text::_($data['cardTitle']); ?>
                 </h3>
             </div>
-			<?php if (isset($data['showVariantsBody'])): ?>
                 <div class="uk-width-auto">
                     <div class="uk-grid uk-grid-small" uk-grid>
                         <div class="uk-width-auto uk-grid-item-match uk-flex-middle">This product has variants</div>
-                        <div class="uk-width-auto"><p-inputswitch v-model="showVariantsBody"></p-inputswitch></div>
+                        <div class="uk-width-auto"><p-inputswitch v-model="showVariantsBody" @click="checkVariant"></p-inputswitch></div>
                     </div>
 
                 </div>
-			<?php endif; ?>
         </div>
     </div>
 
-    <div class="uk-card-body" <?php if (isset($data['showVariantsBody'])): ?>  v-show="showVariantsBody" <?php endif; ?>  >
+    <div class="uk-card-body"  v-show="showVariantsBody">
 		<?php if (isset($data['field_grid_width'])): ?>
         <div class="uk-grid uk-child-width-<?= $data['field_grid_width']; ?>" uk-grid>
 			<?php endif; ?>
 
 
 			<?php foreach ($data['fields'] as $field) : ?>
-                <div class="uk-margin-bottom">
+                <div class="">
 					<?php $form->setFieldAttribute($field, 'autofocus', 'p2s_product_form.' . $field, null); ?>
 					<?php echo $form->renderField($field); ?>
                 </div>

@@ -20,6 +20,7 @@ use Brick\Math\BigDecimal;
 use Brick\Money\Exception\UnknownCurrencyException;
 
 use Joomla\CMS\Helper\TagsHelper;
+use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 use Protostore\Currency\CurrencyFactory;
 
@@ -164,6 +165,30 @@ class ProductFactory
 		}
 
 		return false;
+
+	}
+
+	/**
+	 * @param   string  $type
+	 * @param   int     $joomla_item_id
+	 * @param   int     $catid
+	 *
+	 * @return string|null
+	 *
+	 * @since 1.6
+	 */
+
+	public static function getRoute(string $type, int $joomla_item_id, int $catid): string
+	{
+
+		switch ($type)
+		{
+			case 'item':
+				return Route::_('index.php?option=com_content&view=article&id=' . $joomla_item_id . '&catid=' . $catid);
+			case 'category':
+				return Route::_('index.php?option=com_content&view=category&layout=blog&id=' . $catid);
+		}
+
 
 	}
 
@@ -318,7 +343,7 @@ class ProductFactory
 			return new Variant($result);
 		}
 
-		return false;
+		return null;
 
 
 	}
