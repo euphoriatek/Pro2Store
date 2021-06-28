@@ -24,8 +24,8 @@ class Product
 
 
 	// Pricing
-	public int $base_price;
-	public \Brick\Math\BigDecimal $basepriceFloat;
+	public int $base_price = 0;
+	public ?\Brick\Math\BigDecimal $basepriceFloat;
 	public string $baseprice_formatted;
 	public ?int $discount;
 	public \Brick\Math\BigDecimal $discountFloat;
@@ -64,9 +64,9 @@ class Product
 	public ?int $maxPerOrder;
 
 	// Variants
-	public ?string $variants;
-	public ?string $variantLabels;
-	public ?string $variantList;
+	public $variants;
+	public $variantLabels;
+	public $variantList;
 
 
 	public function __construct($data)
@@ -116,7 +116,7 @@ class Product
 
 		// get the joomla item
 		$this->joomlaItem = ProductFactory::getJoomlaItem($this->joomla_item_id);
-		$this->published = $this->joomlaItem->state == 1;
+		$this->published  = $this->joomlaItem->state == 1;
 
 		// get the images
 		$this->images = json_decode($this->joomlaItem->images, true);
@@ -129,22 +129,10 @@ class Product
 
 
 		// set the prices
-		if ($this->base_price)
-		{
-			$this->basepriceFloat      = ProductFactory::getFloat($this->base_price);
-			$this->baseprice_formatted = ProductFactory::getFormattedPrice($this->base_price);
-		}
-
-		if ($this->flatfee)
-		{
-			$this->flatfeeFloat = ProductFactory::getFloat($this->flatfee);
-		}
-
-		if ($this->discount)
-		{
-			$this->discountFloat = ProductFactory::getFloat($this->discount);
-		}
-
+		$this->basepriceFloat      = ProductFactory::getFloat(($this->base_price ?: 0));
+		$this->baseprice_formatted = ProductFactory::getFloat(($this->base_price ?: 0));
+		$this->flatfeeFloat        = ProductFactory::getFloat(($this->flatfee ?: 0));
+		$this->discountFloat       = ProductFactory::getFloat(($this->discount ?: 0));
 
 		//		$this->discounted_total           = $this->getDiscountedTotal(); // todo
 		//		$this->discounted_total_formatted = $this->getFormattedDiscountPrice(); // todo

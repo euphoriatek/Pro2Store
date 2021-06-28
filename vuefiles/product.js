@@ -23,7 +23,6 @@ const p2s_product_form = {
                 variantsList: [],
                 variantsListLocal: []
             },
-            variantsSet: false,
             showVariantsBody: true,
             andClose: false
 
@@ -108,15 +107,21 @@ const p2s_product_form = {
         jform_base_price.remove();
 
         const jform_variants = document.getElementById('jform_variants');
-        this.form.jform_variants = JSON.parse(jform_variants.innerText);
+        if(jform_variants.length){
+            this.form.jform_variants = JSON.parse(jform_variants.innerText);
+        }
         jform_variants.remove();
 
         const jform_variantLabels = document.getElementById('jform_variantLabels');
-        this.form.variantLabels = JSON.parse(jform_variantLabels.innerText);
+        if (jform_variantLabels.length){
+            this.form.variantLabels = JSON.parse(jform_variantLabels.innerText);
+        }
         jform_variantLabels.remove();
 
         const jform_variantsListLocal = document.getElementById('jform_variantsListLocal');
-        this.form.variantsListLocal = JSON.parse(jform_variantsListLocal.innerText);
+        if(jform_variantsListLocal.length){
+            this.form.variantsListLocal = JSON.parse(jform_variantsListLocal.innerText);
+        }
         jform_variantsListLocal.remove();
 
 

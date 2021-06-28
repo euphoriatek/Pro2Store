@@ -37,7 +37,7 @@ $view  = $input->get('view', 'dashboard');
                        rel="noopener" target="_blank"
                        data-uk-tooltip="title:View Changelog; pos: bottom;"
                        class="uk-text-xsmall uk-text-muted uk-display-block"
-                       title="" aria-expanded="false"> 2.0.0
+                       title="" aria-expanded="false"> 1.6.0BETA1
                     </a>
                 </div>
 				<?= LayoutHelper::render('sidemenu'); ?>
