@@ -1,16 +1,12 @@
 <?php
 /**
- * @package   Pro2Store - Helper
+ * @package   Pro2Store
  * @author    Ray Lawlor - pro2.store
- * @copyright Copyright (C) 2020 Ray Lawlor - pro2.store
+ * @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
  * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
  */
 
-
 namespace Protostore\Currency;
-// no direct access
-use Brick\Money\Money;
-use Joomla\CMS\Factory;
 
 defined('_JEXEC') or die('Restricted access');
 
@@ -33,10 +29,20 @@ class Currency
 		if ($data)
 		{
 			$this->hydrate($data);
-			$this->init($data);
+			$this->init();
 		}
 
 	}
+
+	/**
+	 *
+	 * Function to simply "hydrate" the database values directly to the class parameters.
+	 *
+	 * @param $data
+	 *
+	 *
+	 * @since 1.6
+	 */
 
 	private function hydrate($data)
 	{
@@ -51,30 +57,10 @@ class Currency
 		}
 	}
 
-	private function init($data)
+	private function init()
 	{
 
 	}
 
 
-	public static function formatNumberWithCurrency($number, $currency)
-	{
-
-		// cast given number to integer
-		$number = (int)$number;
-
-		// get the Joomla Locale
-		$lang = Factory::getLanguage();
-		$locales = $lang->getLocale();
-		$locale = $locales[0];
-
-
-		// todo - fix hardcoded currency
-
-		// use Brick to format the number
-		$money = Money::ofMinor($number, 'GBP');
-		return $money->formatTo($locale);
-
-
-	}
 }

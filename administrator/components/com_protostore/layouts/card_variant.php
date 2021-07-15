@@ -26,17 +26,18 @@ $form = $data['form'];
 					<?= Text::_($data['cardTitle']); ?>
                 </h3>
             </div>
-                <div class="uk-width-auto">
-                    <div class="uk-grid uk-grid-small" uk-grid>
-                        <div class="uk-width-auto uk-grid-item-match uk-flex-middle">This product has variants</div>
-                        <div class="uk-width-auto"><p-inputswitch v-model="showVariantsBody" @click="checkVariant"></p-inputswitch></div>
-                    </div>
+            <div class="uk-width-auto">
+                <button type="button" v-show="showVariantItemsBlock"
+                        class="uk-button uk-button-small uk-button-default"
+                        @click="variantsStartOver">Start Over
+                    <span uk-icon="icon: refresh"></span>
+                </button>
+            </div>
 
-                </div>
         </div>
     </div>
 
-    <div class="uk-card-body"  v-show="showVariantsBody">
+    <div class="uk-card-body">
 		<?php if (isset($data['field_grid_width'])): ?>
         <div class="uk-grid uk-child-width-<?= $data['field_grid_width']; ?>" uk-grid>
 			<?php endif; ?>
@@ -54,5 +55,25 @@ $form = $data['form'];
 	<?php endif; ?>
 
     </div>
-    <div class="uk-card-footer"></div>
+    <div class="uk-card-footer">
+        <div class="uk-grid" uk-grid>
+            <div class="uk-width-expand"></div>
+            <div class="uk-width-auto">
+
+                <button class="uk-button uk-button-link" type="button"> <spa uk-icon="icon: settings" uk-tooltip="Advanced Options"></spa></button>
+                <div uk-dropdown="mode: click">
+                    <ul class="uk-nav uk-dropdown-nav">
+                        <li class="uk-active"><a href="#">Active</a></li>
+                        <li><a href="#">Item</a></li>
+                        <li class="uk-nav-header">Header</li>
+                        <li><a href="#">Item</a></li>
+                        <li><a href="#">Item</a></li>
+                        <li class="uk-nav-divider"></li>
+                        <li><a href="#">Item</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </div>

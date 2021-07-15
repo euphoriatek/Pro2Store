@@ -27,15 +27,14 @@ class Product
 	public int $base_price = 0;
 	public ?\Brick\Math\BigDecimal $basepriceFloat;
 	public string $baseprice_formatted;
+	public ?int $show_discount;
 	public ?int $discount;
-	public \Brick\Math\BigDecimal $discountFloat;
+	public ?\Brick\Math\BigDecimal $discountFloat;
 	public ?string $discount_type;
 	public int $discounted_total;
 
 	// Old Options
-	public string $options;
-	public string $options_for_edit;
-
+	public $options;
 
 	// Joomla Item
 	public ?string $categoryName;
@@ -43,7 +42,7 @@ class Product
 	public ?array $images;
 	public ?string $teaserImagePath;
 	public ?string $fullImagePath;
-	public array $tags;
+	public $tags;
 	public ?int $taxable;
 	public ?string $link;
 	public ?string $category_link;
@@ -132,14 +131,13 @@ class Product
 		$this->basepriceFloat      = ProductFactory::getFloat(($this->base_price ?: 0));
 		$this->baseprice_formatted = ProductFactory::getFloat(($this->base_price ?: 0));
 		$this->flatfeeFloat        = ProductFactory::getFloat(($this->flatfee ?: 0));
+		$this->show_discount       = ($this->discount ? 1 : 0);
 		$this->discountFloat       = ProductFactory::getFloat(($this->discount ?: 0));
 
 		//		$this->discounted_total           = $this->getDiscountedTotal(); // todo
 		//		$this->discounted_total_formatted = $this->getFormattedDiscountPrice(); // todo
 
-//		$this->options          = Productoptions::getOptions($this->joomla_item_id);
-//		$this->options_for_edit = Productoptions::getOptionsForEdit($this->joomla_item_id);
-
+		$this->options = ProductFactory::getOptions($this->id);
 
 		$this->categoryName = ProductFactory::getCategoryName($this->joomlaItem->catid);
 

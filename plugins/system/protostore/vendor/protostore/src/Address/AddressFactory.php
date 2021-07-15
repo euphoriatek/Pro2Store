@@ -12,6 +12,7 @@ namespace Protostore\Address;
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Factory;
+use Joomla\Input\Input;
 use Protostore\Country\CountryFactory;
 
 
@@ -66,7 +67,7 @@ class AddressFactory
 	 * @since 1.6
 	 */
 
-	public static function getAsCSV($id): string
+	public static function getAsCSVFromId($id): string
 	{
 
 		$address = self::get($id);
@@ -97,6 +98,8 @@ class AddressFactory
 	 * @param   string       $orderBy
 	 * @param   string       $orderDir
 	 * @param   int|null     $customerId
+	 * @param   int|null     $zoneId
+	 * @param   int|null     $countryId
 	 *
 	 * @return array|false
 	 * @since 1.6
@@ -104,6 +107,7 @@ class AddressFactory
 
 	public static function getList(int $limit = 0, int $offset = 0, string $searchTerm = null, string $orderBy = 'name', string $orderDir = 'DESC', int $customerId = null, int $zoneId = null, int $countryId = null)
 	{
+
 
 		// init items
 		$items = array();
@@ -148,7 +152,9 @@ class AddressFactory
 
 		$db->setQuery($query, $offset, $limit);
 
-		$results = $db->loadObjectList();
+		$results = $db->loadAssocList();
+
+//		return $results;
 
 		// only proceed if there's any rows
 		if ($results)
@@ -168,6 +174,41 @@ class AddressFactory
 	}
 
 	/**
+	 * @param   Input  $data
+	 *
+	 * @return bool
+	 *
+	 * @since 1.6
+	 */
+
+
+	public static function saveFromInputData(Input $data)
+	{
+
+		$address = json_decode($data->getString('address'));
+
+		unset($address->zones);
+		unset($address->zone_name);
+		unset($address->country_name);
+		unset($address->created);
+		unset($address->address_as_csv);
+		unset($address->edit);
+
+
+		$result = Factory::getDbo()->updateObject('#__protostore_customer_address', $address, 'id');
+
+		if ($result)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+
+	}
+
+	/**
 	 * @param $zone_id
 	 *
 	 * @return string
@@ -179,9 +220,12 @@ class AddressFactory
 	public static function getZoneName($zone_id): string
 	{
 
-		if($zone = CountryFactory::getZone($zone_id)){
+		if ($zone = CountryFactory::getZone($zone_id))
+		{
 			return $zone->zone_name;
-		} else {
+		}
+		else
+		{
 			return '';
 		}
 
@@ -199,12 +243,54 @@ class AddressFactory
 	public static function getCountryName($country_id): string
 	{
 
-		if($country = CountryFactory::get($country_id)){
+		if ($country = CountryFactory::get($country_id))
+		{
 			return $country->country_name;
-		} else {
+		}
+		else
+		{
 			return '';
 		}
 
+
+	}
+
+	/**
+	 *
+	 * Gets the CSV from the given full address object
+	 *
+	 * @param   Address  $address
+	 *
+	 * @return string
+	 *
+	 * @since 1.6
+	 */
+
+
+	public static function getAddressAsCSV(Address $address)
+	{
+
+		// clone the $address to prevent actual values being unset
+		$clone = clone $address;
+
+		unset($clone->id);
+		unset($clone->created);
+		unset($clone->customer_id);
+		unset($clone->zone);
+		unset($clone->country);
+
+		$string = '';
+
+		foreach ($clone as $line)
+		{
+			if (!empty($line))
+			{
+				$string .= $line . ", ";
+			}
+
+		}
+
+		return rtrim($string, ', ');
 
 	}
 

@@ -13,14 +13,13 @@ defined('_JEXEC') or die('Restricted access');
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 
-// init vars
-$id = uniqid('p2s_productoptions');
-
-
 ?>
 
+<script id="base_url" type="application/json"><?= Uri::base(); ?></script>
+<script id="items_data" type="application/json"><?= json_encode($vars['items']); ?></script>
+<script id="page_size" type="application/json"><?= $vars['list_limit']; ?></script>
 
-<div id="<?= $id; ?>">
+<div id="p2s_productoptions">
     <div class="uk-margin-left">
         <div class="uk-grid" uk-grid="">
             <div class="uk-width-3-4">
@@ -29,21 +28,10 @@ $id = uniqid('p2s_productoptions');
                         <div class="uk-grid uk-grid-small">
                             <div class="uk-width-expand">
                                 <h3>
-                                    <svg width="16px" class="svg-inline--fa fa-boxes fa-w-16" aria-hidden="true"
-                                         focusable="false"
-                                         data-prefix="fad"
-                                         data-icon="boxes" role="img" xmlns="http://www.w3.org/2000/svg"
-                                         viewBox="0 0 576 512"
-                                         data-fa-i2svg="">
-                                        <g class="fa-group">
-                                            <path class="fa-secondary" fill="currentColor"
-                                                  d="M480 288v96l-32-21.3-32 21.3v-96zM320 0v96l-32-21.3L256 96V0zM160 288v96l-32-21.3L96 384v-96z">
-                                            </path>
-                                            <path class="fa-primary" fill="currentColor"
-                                                  d="M560 288h-80v96l-32-21.3-32 21.3v-96h-80a16 16 0 0 0-16 16v192a16 16 0 0 0 16 16h224a16 16 0 0 0 16-16V304a16 16 0 0 0-16-16zm-384-64h224a16 16 0 0 0 16-16V16a16 16 0 0 0-16-16h-80v96l-32-21.3L256 96V0h-80a16 16 0 0 0-16 16v192a16 16 0 0 0 16 16zm64 64h-80v96l-32-21.3L96 384v-96H16a16 16 0 0 0-16 16v192a16 16 0 0 0 16 16h224a16 16 0 0 0 16-16V304a16 16 0 0 0-16-16z">
-                                            </path>
-                                        </g>
-                                    </svg> &nbsp; <?= Text::_('COM_PROTOSTORE_PRODUCTS_TITLE'); ?></h3>
+                                    <svg width="16px" aria-hidden="true" focusable="false" data-prefix="fal" data-icon="ballot-check" class="svg-inline--fa fa-ballot-check fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                                        <path fill="currentColor" d="M112 432h32c17.7 0 32-14.4 32-32v-32c0-17.6-14.3-32-32-32h-32c-17.7 0-32 14.4-32 32v32c0 17.6 14.3 32 32 32zm0-64h32v32h-32v-32zm0-192h32c17.7 0 32-14.4 32-32v-32c0-17.6-14.3-32-32-32h-32c-17.7 0-32 14.4-32 32v32c0 17.6 14.3 32 32 32zm0-64h32v32h-32v-32zM416 0H32C14.3 0 0 14.4 0 32v448c0 17.6 14.3 32 32 32h384c17.7 0 32-14.4 32-32V32c0-17.6-14.3-32-32-32zm0 480H32V32h384v448zM216 144h128c4.4 0 8-3.6 8-8v-16c0-4.4-3.6-8-8-8H216c-4.4 0-8 3.6-8 8v16c0 4.4 3.6 8 8 8zm0 128h128c4.4 0 8-3.6 8-8v-16c0-4.4-3.6-8-8-8H216c-4.4 0-8 3.6-8 8v16c0 4.4 3.6 8 8 8zm0 128h128c4.4 0 8-3.6 8-8v-16c0-4.4-3.6-8-8-8H216c-4.4 0-8 3.6-8 8v16c0 4.4 3.6 8 8 8zm-97.4-113.6c2.1 2.1 5.5 2.1 7.6 0l64.2-63.6c2.1-2.1 2.1-5.5 0-7.6l-12.6-12.7c-2.1-2.1-5.5-2.1-7.6 0l-47.6 47.2-20.6-20.9c-2.1-2.1-5.5-2.1-7.6 0l-12.7 12.6c-2.1 2.1-2.1 5.5 0 7.6l36.9 37.4z"></path>
+                                    </svg>
+                                    &nbsp; <?= Text::_('COM_PROTOSTORE_OPTIONS_TITLE'); ?></h3>
                             </div>
                             <div class="uk-width-auto uk-text-right">
                                 <div class="uk-grid uk-grid-small" uk-grid="">
@@ -51,12 +39,6 @@ $id = uniqid('p2s_productoptions');
                                         <input  @input="doTextSearch($event)" type="text" placeholder="Search...">
                                     </div>
                                     <div class="uk-width-auto">
-                                        <select class="uk-select" v-model="selectedCategory" @change="filter">
-                                            <option value="0"> -- Filter Category --</option>
-                                            <option v-for="category in categories" :value="category.id">
-                                                {{category.title}}
-                                            </option>
-                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -69,73 +51,40 @@ $id = uniqid('p2s_productoptions');
                             <thead>
                             <tr>
 
-                                <th class="uk-text-left">
-                                </th>
-                                <th class="uk-text-left">Name
-                                    <a href="#" @click="sort('title')" class="uk-margin-small-right uk-icon"
+                                <th class="uk-text-left"><?= Text::_('COM_PROTOSTORE_OPTIONS_TABLE_NAME'); ?>
+                                    <a href="#" @click="sort('name')" class="uk-margin-small-right uk-icon"
                                        uk-icon="triangle-down">
                                     </a>
                                 </th>
-                                <th class="uk-text-left">Image
-                                </th>
-                                <th class="uk-text-left">Category
-                                    <a href="#" @click="sort('category')" class="uk-margin-small-right uk-icon"
-                                       uk-icon="triangle-down">
-                                    </a>
-                                <th class="uk-text-left">Base Price
-                                    <a href="#" @click="sort('base_price')" class="uk-margin-small-right uk-icon"
+                                <th class="uk-text-left uk-table-expand"><?= Text::_('COM_PROTOSTORE_OPTIONS_TABLE_TYPE'); ?>
+                                    <a href="#" @click="sort('option_type')" class="uk-margin-small-right uk-icon"
                                        uk-icon="triangle-down">
                                     </a>
                                 </th>
 
-                                <th class="uk-text-left">Stock
-                                    <a href="#" @click="sort('stock')" class="uk-margin-small-right uk-icon"
-                                       uk-icon="triangle-down">
-                                    </a>
-                                </th>
-                                <th class="uk-text-left">Published
-                                    <a href="#" @click="sort('published')" class="uk-margin-small-right uk-icon"
-                                       uk-icon="triangle-down">
-                                    </a>
-                                </th>
-
-                                <th class="uk-text-left@m uk-text-nowrap">
+                                <th class="uk-width-small">
                                 </th>
                             </tr>
                             </thead>
 
                             <tbody>
-                            <tr class="el-item" v-for="product in productsChunked[currentPage]">
+                            <tr class="el-item" v-for="item in itemsChunked[currentPage]">
+
                                 <td>
-                                    <div><input type="checkbox"></div>
+                                    <div>{{item.name}}</div>
                                 </td>
                                 <td>
-                                    <a :href="'index.php?option=com_protostore&view=product&id=' + product.joomla_item_id">{{product.title}}</a>
+                                    <div>{{item.option_type}}</div>
                                 </td>
-                                <td>
-                                    <div><img :src="product.teaserImagePath" width="100"/></div>
-                                </td>
-                                <td>
-                                    <div>{{product.category}}</div>
-                                </td>
-                                <td>
-                                    <div>{{product.baseprice_formatted}}</div>
-                                </td>
-                                <td>
-                                    <div>{{product.stock}}</div>
-                                </td>
-                                <td class="uk-text-center">
-                                  <span v-if="product.published == '1'" class="yps_currency_published_icon" @click=""
-                                        style="font-size: 18px; color: green; cursor: pointer;">
-                                      <i class="fal fa-check-circle"></i>
-                                  </span>
-                                    <span id="unpublished{{product.itemid}}"
-                                          v-if="product.published == '0'"
-                                          class="yps_currency_published_icon"
-                                          @click=""
-                                          style="font-size: 18px; color: red; cursor: pointer;">
-                                        <i class="fal fa-times-circle"></i>
-                                    </span>
+                                <td class="uk-text-right">
+                                    <ul class="uk-iconnav">
+                                        <li>
+                                            <a><span uk-icon="icon: pencil"></span></a>
+                                        </li>
+                                        <li>
+                                            <a><span uk-icon="icon: trash"></span></a>
+                                        </li>
+                                    </ul>
                                 </td>
 
 

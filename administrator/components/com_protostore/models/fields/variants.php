@@ -37,11 +37,8 @@ class JFormFieldVariants extends JFormField
 	protected function getInput()
 	{
 
-		//		$html[] = '<p-chips v-model="form.variants"></p-chips>';
 
 	 return	LayoutHelper::render('variants', array());
-
-
 
 
 	}

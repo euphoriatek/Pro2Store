@@ -16,115 +16,56 @@ $data = $displayData;
 
 ?>
 
-<div class="uk-card uk-card-default  uk-margin-bottom">
+<div class="uk-card uk-card-default  uk-margin-bottom" v-show="!showVariantItemsBlock">
     <div class="uk-card-header">
         <div class="uk-grid" uk-grid>
-            <div class="uk-width-expand"><h5>Variant Types</h5></div>
+            <div class="uk-width-expand"><h5 >Variant Types</h5></div>
             <div class="uk-width-auto">
-                <button v-show="!showVariantValuesBlock" type="button"
-                        class="uk-button uk-button-small uk-button-default"
+                <button type="button" v-show="!showVariantItemsBlock"
+                        class="uk-button uk-button-small uk-button-default button-success"
                         @click="addVariant">Add Variant
                     <span uk-icon="icon: plus-circle"></span>
                 </button>
-                <button v-show="showVariantValuesBlock" type="button"
-                        class="uk-button uk-button-small uk-button-default"
-                        @click="editVariants">Edit Variants
-                    <span uk-icon="icon: pencil"></span>
-                </button>
             </div>
         </div>
     </div>
 
-    <div class="uk-card-body">
-        <div class="uk-grid uk-child-width-1-3" uk-grid v-show="!showVariantValuesBlock">
-            <div v-for="(variant, index) in form.jform_variants">
-                <div class="uk-grid uk-grid-small uk-flex" uk-grid>
-                    <div class="uk-width-expand">
-                        <input class="uk-input" type="text"
-                               placeholder="Product Variant e.g. 'Colour' 'Size'"
-                               v-model="form.jform_variants[index]">
-                    </div>
-                    <div class="uk-width-auto uk-grid-item-match uk-flex-middle">
-                        <span uk-icon="icon: minus-circle" @click="removeVariant(index)"></span>
-                    </div>
+    <div class="uk-card-body" v-show="!showVariantItemsBlock">
+        <div class="uk-card uk-card-body uk-card-default uk-margin-small-bottom"
+             v-for="(variant, index) in form.jform_variants">
+            <div class="uk-position-absolute uk-position-top-right uk-margin-small-right uk-margin-small-top">
+                <span style="cursor: pointer; color: red;" uk-icon="icon: minus-circle" @click="removeVariant(index)"></span>
+            </div>
+            <div class="uk-grid" uk-grid>
+                <div class="uk-width-1-2 uk-grid-item-match uk-flex-middle">
+
+                    <input class="uk-input" type="text"
+                           placeholder="Product Variant e.g. 'Colour' 'Size'"
+                           v-model="form.jform_variants[index]">
+
                 </div>
-            </div>
-        </div>
-        <div class="uk-grid uk-child-width-1-3" uk-grid v-show="showVariantValuesBlock">
-            <ul class="uk-list uk-list-bullet">
-                <li v-for="(variant, index) in form.jform_variants">
-                    {{variant}}
-                </li>
-            </ul>
-        </div>
-    </div>
-    <div class="uk-card-footer">
-        <div class="uk-grid" uk-grid>
-            <div class="uk-width-expand"></div>
-            <div class="uk-width-auto">
-                <button v-show="!showVariantValuesBlock" type="button"
-                        class="uk-button uk-button-small uk-button-primary"
-                        @click="setVariants">Set Variants
-                    <span uk-icon="icon: check"></span>
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<div class="uk-card uk-card-default uk-margin-bottom" v-show="showVariantValuesBlock">
-
-
-    <div class="uk-card-header">
-        <div class="uk-grid" uk-grid>
-            <div class="uk-width-expand"><h5>Variant Values</h5></div>
-            <div class="uk-width-auto">
-                <button v-show="showVariantItemsBlock" type="button"
-                        class="uk-button uk-button-small uk-button-default"
-                        @click="editVariantValues">Edit Variant Values
-                    <span uk-icon="icon: pencil"></span>
-                </button>
-            </div>
-        </div>
-    </div>
-
-
-    <div class="uk-card-body">
-        <div class="uk-margin-bottom" v-for="(variant, index) in form.jform_variants" v-show="!showVariantItemsBlock">
-            <div class="uk-grid" uk-grid v-show="variant.length > 0">
-                <div class="uk-width-1-6 uk-grid-item-match  uk-flex-middle">
-                    {{variant}}
-                </div>
-                <div class="uk-width-expand">
+                <div class="uk-width-1-2">
                     <p-chips v-model="form.variantLabels[index]"></p-chips>
                 </div>
             </div>
         </div>
-        <div class="uk-grid uk-child-width-1-3@m" v-show="showVariantItemsBlock">
-            <div v-for="(variant, index) in form.jform_variants">
-                <span class="uk-text-bold">{{variant}}</span>
-                <ul class="uk-list uk-list-bullet">
-                    <li v-for="item in form.variantLabels[index]">{{item}}</li>
-                </ul>
-            </div>
-        </div>
     </div>
+
 
 
     <div class="uk-card-footer">
         <div class="uk-grid" uk-grid>
             <div class="uk-width-expand"></div>
             <div class="uk-width-auto">
-                <button type="button" v-show="!showVariantItemsBlock"
+                <button type="button" v-show="form.jform_variants.length > 0 && !showVariantItemsBlock"
                         class="uk-button uk-button-small uk-button-primary" @click="runCartesian">Set Variant Values
                     <span uk-icon="icon: check"></span>
                 </button>
             </div>
         </div>
     </div>
-
 </div>
+
 
 
 <div class="uk-card uk-card-default uk-card-body uk-margin-bottom" v-show="showVariantItemsBlock">
@@ -145,13 +86,14 @@ $data = $displayData;
                 {{item.name}}
             </td>
             <td class="">
-                <input class="uk-input" :placeholder="form.jform_base_price" v-model="item.price">
+<!--                <input @blur="formatToCurrency(item.price)" class="uk-input" type="number" step="0.01" :placeholder="form.jform_base_price" v-model="item.price" pattern="(([1-9](\d*|\d{0,2}(,\d{3})*))|0)(\.\d{1,2})?$">-->
+                <p-inputnumber  mode="currency" :currency="p2s_currency.iso" :locale="p2s_locale" v-model="item.price" :placeholder="form.jform_base_price"></p-inputnumber>
             </td>
             <td class="">
                 <input class="uk-input uk-form-small " type="number" v-model="item.stock" placeholder="Stock">
             </td>
             <td class="">
-                <input class="uk-input uk-form-small uk-width-3-5" v-model="item.sku" placeholder="SKU">
+                <input class="uk-input uk-form-small uk-width-3-5" type="text" v-model="item.sku" placeholder="SKU">
             </td>
             <td class="">
                 <p-inputswitch v-model="item.active" @change="checkVariantDefault(index)"></p-inputswitch>

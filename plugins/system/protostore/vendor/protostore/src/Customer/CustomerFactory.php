@@ -15,6 +15,7 @@ defined('_JEXEC') or die('Restricted access');
 use Joomla\CMS\Factory;
 use Joomla\CMS\User\User;
 
+use Joomla\Input\Input;
 use Protostore\Address\AddressFactory;
 use Protostore\Currency\CurrencyFactory;
 use Protostore\Order\OrderFactory;
@@ -119,6 +120,34 @@ class CustomerFactory
 	}
 
 	/**
+	 * @param   Input  $data
+	 *
+	 * @return bool
+	 *
+	 * @since 1.6
+	 */
+
+
+	public static function saveFromInputData(Input $data)
+	{
+
+		$customer = json_decode($data->getString('customer'));
+
+
+		$result = Factory::getDbo()->updateObject('#__protostore_customer', $customer, 'id');
+
+		if ($result)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+
+	}
+
+	/**
 	 * @param $id
 	 *
 	 * @return User
@@ -205,7 +234,7 @@ class CustomerFactory
 	public static function getCustomerAddresses($cusomter_id)
 	{
 
-		return AddressFactory::getList(0,0,null, 'name', 'desc', $cusomter_id);
+		return AddressFactory::getList(0, 0, null, 'name', 'desc', $cusomter_id);
 
 	}
 

@@ -19,11 +19,11 @@ const p2s_orders = {
         base_url.remove();
 
         const items_data = document.getElementById('items_data');
-        if (items_data.length > 0) {
+        try {
             this.items = JSON.parse(items_data.innerText);
+            items_data.remove();
+        } catch (err) {
         }
-
-        // items_data.remove();
 
         const show = document.getElementById('page_size');
         this.show = show.innerText;
@@ -67,7 +67,7 @@ const p2s_orders = {
 
             const URLparams = this.serialize(params);
 
-            const request = await fetch(this.base_url + 'index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=orders.filter&format=raw&' + URLparams, {method: 'post'});
+            const request = await fetch(this.base_url + 'index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=order.filter&format=raw&' + URLparams, {method: 'post'});
 
             const response = await request.json();
 
@@ -97,6 +97,7 @@ const p2s_orders = {
             }, []);
             this.pages = this.itemsChunked.length;
             this.currentPage = 0;
+            console.log(this.itemsChunked);
         },
         changePage(i) {
             this.currentPage = i;
@@ -123,23 +124,7 @@ const p2s_orders = {
                 return 0;
             });
         },
-        async togglePublished(product) {
 
-            const params = {
-                'product_id': product.joomla_item_id
-            };
-
-            const URLparams = this.serialize(params);
-
-
-            const request = await fetch(this.base_url + 'index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=product.togglePublished&format=raw&' + URLparams, {method: 'post'});
-
-            const response = await request.json();
-
-            if (response.success) {
-                product.published = response.data
-            }
-        },
         serialize(obj) {
             var str = [];
             for (var p in obj)

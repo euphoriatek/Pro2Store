@@ -16,15 +16,8 @@ const stringreplace = require('replace-in-file');
                     compressor: terser,
                     input: './vuefiles/product.js',
                     output: './media/com_protostore/js/vue/product/product.min.js'
-                }).then(function (min) {
+                }).then(function () {
                     console.log('Product done on: ' + theTime);
-                });
-                minify({
-                    compressor: terser,
-                    input: './vuefiles/add_product.js',
-                    output: './media/com_protostore/js/vue/product/add_product.min.js'
-                }).then(function (min) {
-                    console.log('Add Product done on: ' + theTime);
                 });
 
             });
@@ -38,15 +31,23 @@ const stringreplace = require('replace-in-file');
                     compressor: terser,
                     input: './vuefiles/currency.js',
                     output: './media/com_protostore/js/vue/currency/currency.min.js'
-                }).then(function (min) {
+                }).then(function () {
                     console.log('currency done on: ' + theTime);
                 });
+
+            });
+        });
+    });
+
+    emptyDir('./media/com_protostore/js/vue/customer').then(() => {
+        remove('./media/com_protostore/js/vue/customer').then(() => {
+            mkdir('./media/com_protostore/js/vue/customer').then(() => {
                 minify({
                     compressor: terser,
-                    input: './vuefiles/add_currency.js',
-                    output: './media/com_protostore/js/vue/currency/add_currency.min.js'
-                }).then(function (min) {
-                    console.log('Add currency done on: ' + theTime);
+                    input: './vuefiles/customer.js',
+                    output: './media/com_protostore/js/vue/customer/customer.min.js'
+                }).then(function () {
+                    console.log('customer done on: ' + theTime);
                 });
 
             });
@@ -61,7 +62,7 @@ const stringreplace = require('replace-in-file');
                     compressor: terser,
                     input: './vuefiles/products.js',
                     output: './media/com_protostore/js/vue/products/products.min.js'
-                }).then(function (min) {
+                }).then(function () {
                     console.log('Products done on: ' + theTime);
                 });
             });
@@ -75,8 +76,34 @@ const stringreplace = require('replace-in-file');
                     compressor: terser,
                     input: './vuefiles/orders.js',
                     output: './media/com_protostore/js/vue/orders/orders.min.js'
-                }).then(function (min) {
+                }).then(function () {
                     console.log('Orders done on: ' + theTime);
+                });
+            });
+        });
+    });
+    emptyDir('./media/com_protostore/js/vue/order').then(() => {
+        remove('./media/com_protostore/js/vue/order').then(() => {
+            mkdir('./media/com_protostore/js/vue/order').then(() => {
+                minify({
+                    compressor: terser,
+                    input: './vuefiles/order.js',
+                    output: './media/com_protostore/js/vue/order/order.min.js'
+                }).then(function () {
+                    console.log('Order done on: ' + theTime);
+                });
+            });
+        });
+    });
+    emptyDir('./media/com_protostore/js/vue/productoptions').then(() => {
+        remove('./media/com_protostore/js/vue/productoptions').then(() => {
+            mkdir('./media/com_protostore/js/vue/productoptions').then(() => {
+                minify({
+                    compressor: terser,
+                    input: './vuefiles/productoptions.js',
+                    output: './media/com_protostore/js/vue/productoptions/productoptions.min.js'
+                }).then(function () {
+                    console.log('Productoptions done on: ' + theTime);
                 });
             });
         });
@@ -89,7 +116,7 @@ const stringreplace = require('replace-in-file');
                     compressor: terser,
                     input: './vuefiles/currencies.js',
                     output: './media/com_protostore/js/vue/currencies/currencies.min.js'
-                }).then(function (min) {
+                }).then(function () {
                     console.log('Currencies done on: ' + theTime);
                 });
             });
@@ -102,8 +129,34 @@ const stringreplace = require('replace-in-file');
                     compressor: terser,
                     input: './vuefiles/customers.js',
                     output: './media/com_protostore/js/vue/customers/customers.min.js'
-                }).then(function (min) {
+                }).then(function () {
                     console.log('Customers done on: ' + theTime);
+                });
+            });
+        });
+    });
+    emptyDir('./media/com_protostore/js/vue/discounts').then(() => {
+        remove('./media/com_protostore/js/vue/discounts').then(() => {
+            mkdir('./media/com_protostore/js/vue/discounts').then(() => {
+                minify({
+                    compressor: terser,
+                    input: './vuefiles/discounts.js',
+                    output: './media/com_protostore/js/vue/discounts/discounts.min.js'
+                }).then(function () {
+                    console.log('Discounts done on: ' + theTime);
+                });
+            });
+        });
+    });
+    emptyDir('./media/com_protostore/js/vue/discount').then(() => {
+        remove('./media/com_protostore/js/vue/discount').then(() => {
+            mkdir('./media/com_protostore/js/vue/discount').then(() => {
+                minify({
+                    compressor: terser,
+                    input: './vuefiles/discount.js',
+                    output: './media/com_protostore/js/vue/discount/discount.min.js'
+                }).then(function () {
+                    console.log('Discount done on: ' + theTime);
                 });
             });
         });
@@ -116,7 +169,7 @@ const stringreplace = require('replace-in-file');
                     compressor: terser,
                     input: './vuefiles/countries.js',
                     output: './media/com_protostore/js/vue/countries/countries.min.js'
-                }).then(function (min) {
+                }).then(function () {
                     console.log('Countries done on: ' + theTime);
                 });
             });
@@ -129,7 +182,7 @@ const stringreplace = require('replace-in-file');
                     compressor: terser,
                     input: './vuefiles/zones.js',
                     output: './media/com_protostore/js/vue/zones/zones.min.js'
-                }).then(function (min) {
+                }).then(function () {
                     console.log('zones done on: ' + theTime);
                 });
             });
@@ -145,7 +198,7 @@ const stringreplace = require('replace-in-file');
                     compressor: terser,
                     input: './vuefiles/dashboard.js',
                     output: './media/com_protostore/js/vue/dashboard/dashboard.min.js'
-                }).then(function (min) {
+                }).then(function () {
                     console.log('Dashboard done on: ' + theTime);
                 });
 
@@ -159,7 +212,7 @@ const stringreplace = require('replace-in-file');
                     compressor: terser,
                     input: './vuefiles/latestorders.js',
                     output: './media/com_protostore/js/vue/modules/latestorders/latestorders.min.js'
-                }).then(function (min) {
+                }).then(function () {
                     console.log('Latestorders done on: ' + theTime);
                 });
 

@@ -27,7 +27,7 @@ class JoomlaItem
 	public int $created_by;
 	public string $created_by_alias;
 	public string $modified;
-	public int $modified_by;
+	public ?int $modified_by;
 	public string $publish_up;
 	public string $publish_down;
 	public string $images;
@@ -36,7 +36,7 @@ class JoomlaItem
 	public string $metadesc;
 	public int $access;
 	public int $hits;
-	public string $featured;
+	public int $featured;
 
 
 

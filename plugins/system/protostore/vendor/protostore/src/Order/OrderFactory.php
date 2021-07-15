@@ -15,6 +15,7 @@ defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Factory;
 
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\User\User;
 use Protostore\Currency\CurrencyFactory;
 
@@ -422,5 +423,55 @@ class OrderFactory
 		return $acronym;
 	}
 
+
+	public static function getStatusFormatted($status)
+	{
+
+		switch ($status)
+		{
+			case 'P':
+				return Text::_('COM_PROTOSTORE_ORDER_PENDING');
+			case 'C':
+				return Text::_('COM_PROTOSTORE_ORDER_CONFIRMED');
+			case 'X':
+				return Text::_('COM_PROTOSTORE_ORDER_CANCELLED');
+			case 'R':
+				return Text::_('COM_PROTOSTORE_ORDER_REFUNDED');
+			case 'S':
+				return Text::_('COM_PROTOSTORE_ORDER_SHIPPED');
+			case 'F':
+				return Text::_('COM_PROTOSTORE_ORDER_COMPLETED');
+			case 'D':
+				return Text::_('COM_PROTOSTORE_ORDER_DENIED');
+
+		}
+
+	}
+
+	/**
+	 * @param $order_id
+	 *
+	 * @return mixed|null
+	 *
+	 * @since 1.6
+	 */
+
+
+	public static function getTracking($order_id)
+	{
+
+		$db = Factory::getDbo();
+
+		$query = $db->getQuery(true);
+
+		$query->select('*');
+		$query->from($db->quoteName('#__protostore_order_tracking'));
+		$query->where($db->quoteName('order_id') . ' = ' . $db->quote($order_id));
+
+		$db->setQuery($query);
+
+		return $db->loadObject();
+
+	}
 
 }

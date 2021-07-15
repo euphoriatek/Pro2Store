@@ -9,22 +9,25 @@
 namespace Protostore\Customer;
 
 // no direct access
+
 defined('_JEXEC') or die('Restricted access');
 
 
 class Customer
 {
 
-	public $id;
-	public $j_user_id;
-	public $name;
-	public $email;
-	public $j_user;
+	public int $id;
+	public int $j_user_id;
+	public string $name;
+	public string $email;
+	public int $published;
+	public \Joomla\CMS\User\User $j_user;
 	public $orders;
-	public $total_orders;
-	public $order_total;
+	public int $total_orders;
+	public string $order_total;
+	public int $order_total_integer;
 	public $addresses;
-	public $order_total_integer;
+
 
 
 	public function __construct($data)
@@ -33,7 +36,7 @@ class Customer
 		if ($data)
 		{
 			$this->hydrate($data);
-			$this->init($data);
+			$this->init();
 		}
 
 	}
@@ -65,14 +68,11 @@ class Customer
 	 *
 	 * Function to "hydrate" all non-database values.
 	 *
-	 * @param $data
-	 *
-	 *
 	 * @throws \Brick\Money\Exception\UnknownCurrencyException
 	 * @since 1.6
 	 */
 
-	private function init($data)
+	private function init()
 	{
 
 		$this->j_user = CustomerFactory::getUser($this->j_user_id);

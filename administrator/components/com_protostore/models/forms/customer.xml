@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+    <fieldset name="details" addfieldpath="/administrator/components/com_protostore/models/fields">
+
+        <field name="name" type="text" default="title" label="Name" description="" required="true" size="10"
+               class="uk-input uk-form-width-medium uk-form-large"/>
+
+        <field name="email" type="text" default="title" label="Email" required="true" description="" size="10"
+               class="uk-input uk-form-width-medium uk-form-large"/>
+
+        <field name="j_user_id" type="Userselect" label="Joomla User" readonly="false"   />
+
+
+        <field name="published" type="pinputswitch" default="0" label="Published" description=""
+               class="btn-group btn-group-yesno">
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+
+    </fieldset>
+
+</form>

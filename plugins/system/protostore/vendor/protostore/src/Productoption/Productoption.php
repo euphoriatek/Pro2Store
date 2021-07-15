@@ -10,21 +10,24 @@
 
 namespace Protostore\Productoption;
 
+
 defined('_JEXEC') or die('Restricted access');
 
 class Productoption
 {
 
 
-	public $id;
-	public $product_id;
-	public $optiontype;
-	public $optionname;
-	public $modifier;
-	public $modifiertype;
-	public $modifiervalue;
-	public $optionsku;
-	public $ordering;
+	public int $id;
+	public int $product_id;
+	public string $optiontype;
+	public string $optionname;
+	public string $modifier;
+	public string $modifiertype;
+	public int $modifiervalue;
+	public $modifiervalueFloat;
+	public ?string $modifiervalue_translated;
+	public string $optionsku;
+	public int $ordering;
 
 
 	public $optiontypename;
@@ -35,10 +38,20 @@ class Productoption
 		if ($data)
 		{
 			$this->hydrate($data);
-			$this->init($data);
+			$this->init();
 		}
 
 	}
+
+	/**
+	 *
+	 * Function to simply "hydrate" the database values directly to the class parameters.
+	 *
+	 * @param $data
+	 *
+	 *
+	 * @since 1.6
+	 */
 
 	private function hydrate($data)
 	{
@@ -53,9 +66,28 @@ class Productoption
 		}
 	}
 
-	private function init($data)
+	/**
+	 *
+	 * Function to "hydrate" all non-database values.
+	 *
+	 * @throws \Brick\Money\Exception\UnknownCurrencyException
+	 * @since 1.6
+	 */
+
+	private function init()
 	{
 		$this->optiontypename = ProductoptionFactory::getOptionTypeName($this->optiontype);
+		if($this->modifiertype === 'amount'){
+			$this->modifiervalueFloat = ProductoptionFactory::getFloat($this->modifiervalue);
+		} else {
+			$this->modifiervalueFloat = $this->modifiervalue;
+		}
+
+
+
+		$this->modifiervalue_translated = ProductoptionFactory::translateModifierValue($this->modifiervalue, $this->modifiertype);
+
+
 	}
 }
 

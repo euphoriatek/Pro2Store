@@ -15,9 +15,7 @@ use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Uri\Uri;
 
 ?>
-<script id="base_url" type="application/json"><?= Uri::base(); ?></script>
-<script id="items_data" type="application/json"><?= json_encode($vars['items']); ?></script>
-<script id="page_size" type="application/json"><?= $vars['list_limit']; ?></script>
+
 
 <div id="p2s_orders">
 	<div class="uk-margin-left">
@@ -57,30 +55,33 @@ use Joomla\CMS\Uri\Uri;
 
 								<th class="uk-text-left">
 								</th>
-								<th class="uk-text-left">Name
-									<a href="#" @click="sort('title')" class="uk-margin-small-right uk-icon"
+								<th class="uk-text-left">Order Number
+									<a href="#" @click="sort('order_number')" class="uk-margin-small-right uk-icon"
 									   uk-icon="triangle-down">
 									</a>
 								</th>
-								<th class="uk-text-left">Image
+								<th class="uk-text-left">Customer
+                                    <a href="#" @click="sort('customer')" class="uk-margin-small-right uk-icon"
+                                       uk-icon="triangle-down">
+                                    </a>
 								</th>
-								<th class="uk-text-left">Category
-									<a href="#" @click="sort('category')" class="uk-margin-small-right uk-icon"
+								<th class="uk-text-left">Status
+									<a href="#" @click="sort('status')" class="uk-margin-small-right uk-icon"
 									   uk-icon="triangle-down">
 									</a>
-								<th class="uk-text-left">Base Price
-									<a href="#" @click="sort('base_price')" class="uk-margin-small-right uk-icon"
+								<th class="uk-text-left">Date
+									<a href="#" @click="sort('order_date')" class="uk-margin-small-right uk-icon"
 									   uk-icon="triangle-down">
 									</a>
 								</th>
 
-								<th class="uk-text-left">Stock
-									<a href="#" @click="sort('stock')" class="uk-margin-small-right uk-icon"
+								<th class="uk-text-left">Paid
+									<a href="#" @click="sort('paid')" class="uk-margin-small-right uk-icon"
 									   uk-icon="triangle-down">
 									</a>
 								</th>
-								<th class="uk-text-left">Published
-									<a href="#" @click="sort('published')" class="uk-margin-small-right uk-icon"
+								<th class="uk-text-left">Total
+									<a href="#" @click="sort('order_total')" class="uk-margin-small-right uk-icon"
 									   uk-icon="triangle-down">
 									</a>
 								</th>
@@ -91,37 +92,32 @@ use Joomla\CMS\Uri\Uri;
 							</thead>
 
 							<tbody>
-							<tr class="el-item" v-for="product in products">
+							<tr  v-for="order in itemsChunked[currentPage]">
 								<td>
 									<div><input type="checkbox"></div>
 								</td>
 								<td>
-									<a :href="'index.php?option=com_protostore&view=product&id=' + product.joomla_item_id">{{product.title}}</a>
+									<a :href="'index.php?option=com_protostore&view=order&id=' + order.id">{{order.order_number}}</a>
 								</td>
 								<td>
-									<div><img :src="product.teaserImagePath" width="100"/></div>
+                                    {{order.customer}}
 								</td>
 								<td>
-									<div>{{product.category}}</div>
+                                    <div :class="'uk-label uk-label-'+ order.order_status.toLowerCase()">
+                                        {{order.order_status_formatted}}
+                                    </div>
 								</td>
 								<td>
-									<div>{{product.baseprice_formatted}}</div>
+									<div>{{order.baseprice_formatted}}</div>
 								</td>
 								<td>
-									<div>{{product.stock}}</div>
+									<div>{{order.order_paid}}</div>
 								</td>
-								<td class="uk-text-center">
-                                  <span v-if="product.published == '1'" class="yps_currency_published_icon" @click=""
-                                        style="font-size: 18px; color: green; cursor: pointer;">
-                                      <i class="fal fa-check-circle"></i>
-                                  </span>
-									<span id="unpublished{{product.itemid}}"
-									      v-if="product.published == '0'"
-									      class="yps_currency_published_icon"
-									      @click=""
-									      style="font-size: 18px; color: red; cursor: pointer;">
-                                        <i class="fal fa-times-circle"></i>
-                                    </span>
+								<td>
+                                    <div>{{order.order_total_formatted}}</div>
+								</td>
+								<td >
+
 								</td>
 
 

@@ -11,8 +11,10 @@
 defined('_JEXEC') or die('Restricted access');
 
 
-use Protostore\Render\Render;
+use Joomla\CMS\Factory;
 use Protostore\Product\ProductFactory;
+use Protostore\Render\Render;
+
 
 
 /**
@@ -44,10 +46,12 @@ class bootstrap
 		$vars = array();
 
 
-		$vars['items'] = $this->getItems();
-
+		$vars['items']      = $this->getItems();
+		$vars['list_limit'] = Factory::getConfig()->get('list_limit', '25');
+		$this->addScripts();
 
 		return $vars;
+
 
 
 	}
@@ -61,7 +65,24 @@ class bootstrap
 
 	private function getItems()
 	{
-		return ProductFactory::getList(25, 0);
+		return ProductFactory::getOptionList();
+	}
+
+
+	/**
+	 *
+	 *
+	 * @since 1.6
+	 */
+
+	private function addScripts($add = false)
+	{
+
+		// include the vue script - defer
+		Factory::getDocument()->addScript('../media/com_protostore/js/vue/productoptions/productoptions.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
+
+
+
 	}
 
 

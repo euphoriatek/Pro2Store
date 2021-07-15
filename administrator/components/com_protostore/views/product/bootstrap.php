@@ -11,12 +11,14 @@
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Helper\TagsHelper;
 use Joomla\CMS\MVC\Model\AdminModel;
 
+use Joomla\CMS\Uri\Uri;
 use Protostore\Render\Render;
 use Protostore\Product\ProductFactory;
 use Protostore\Utilities\Utilities;
-
+use Protostore\Currency\CurrencyFactory;
 
 /**
  *
@@ -25,6 +27,7 @@ use Protostore\Utilities\Utilities;
 class bootstrap extends AdminModel
 {
 
+	private array $vars;
 
 	public function __construct()
 	{
@@ -33,16 +36,9 @@ class bootstrap extends AdminModel
 		$input = Factory::getApplication()->input;
 		$id    = $input->get('id');
 
-		$vars = $this->init($id);
+		$this->init($id);
 
-		if ($vars['item'])
-		{
-			echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/product/product.php', $vars);
-		}
-		else
-		{
-			echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/product/add_product.php', $vars);
-		}
+		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/product/product.php', $this->vars);
 
 
 	}
@@ -57,27 +53,23 @@ class bootstrap extends AdminModel
 	private function init($id)
 	{
 
+		$this->vars['item']              = false;
+		$this->vars['available_options'] = ProductFactory::getOptionList();
+		$this->vars['available_tags']    = ProductFactory::getAvailableTags();
+		$this->vars['currency']          = CurrencyFactory::getDefault();
+		$this->vars['locale']            = Factory::getLanguage()->get('tag');
 
-		$vars         = array();
-		$vars['item'] = false;
 		if ($id)
 		{
-			$vars['item'] = $this->getTheItem($id);
-
-			$this->addScripts();
-			$this->addStylesheets();
-
-		}
-		else
-		{
-			$this->addScripts(true);
-			$this->addStylesheets(true);
+			$this->vars['item'] = $this->getTheItem($id);
+//			echo json_encode($this->vars['item']);
 		}
 
-		$vars['form'] = $this->getForm(array('item' => $vars['item']), true);
 
+		$this->addScripts();
+		$this->addStylesheets();
 
-		return $vars;
+		$this->vars['form'] = $this->getForm(array('item' => $this->vars['item']), true);
 
 
 	}
@@ -142,6 +134,9 @@ class bootstrap extends AdminModel
 			$form->setValue('base_price', null, $item->basepriceFloat);
 			$form->setValue('manage_stock', null, $item->manage_stock);
 
+			$tagsHelper = new TagsHelper();
+			$form->setValue('tags', null, $tagsHelper->getTagIds($item->joomlaItem->id, "com_content.article"));
+
 
 			switch ($item->product_type)
 			{
@@ -165,23 +160,57 @@ class bootstrap extends AdminModel
 	 * @since version
 	 */
 
-	private function addScripts($add = false)
+	private function addScripts()
 	{
 
-		if ($add)
-		{
-			// include the vue script - defer
-			Factory::getDocument()->addScript('../media/com_protostore/js/vue/product/add_product.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
+		$doc = Factory::getDocument();
 
-		}
-		else
-		{
-			// include the vue script - defer
-			Factory::getDocument()->addScript('../media/com_protostore/js/vue/product/product.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
-		}
+		// include the vue script - defer
+		$doc->addScript('../media/com_protostore/js/vue/product/product.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
+
+//		$doc->addScript('https://unpkg.com/primevue@3.5.1/api/api.min.js', array('type' => 'text/javascript'));
+//		$doc->addScript('https://unpkg.com/primevue@3.5.1/utils/utils.min.js', array('type' => 'text/javascript'));
+//		$doc->addScript('https://unpkg.com/primevue@3.5.1/config/config.min.js', array('type' => 'text/javascript'));
+//		$doc->addScript('https://unpkg.com/primevue@3.5.1/overlayeventbus/overlayeventbus.min.js', array('type' => 'text/javascript'));
+//		$doc->addScript('https://unpkg.com/primevue@3.5.1/ripple/ripple.min.js', array('type' => 'text/javascript'));
+//		$doc->addScript('https://unpkg.com/primevue@3.5.1/multiselect/multiselect.js', array('type' => 'text/javascript'));
 
 		// include prime
-		Utilities::includePrime(array('inputswitch','chips', 'inputtext'));
+		Utilities::includePrime(array('inputswitch', 'chips', 'inputtext', 'inputnumber'));
+
+		if ($this->vars['item'])
+		{
+
+			foreach ($this->vars['item'] as $key => $value)
+			{
+				if (is_string($value))
+				{
+					$doc->addCustomTag('<script id="jform_' . $key . '_data" type="application/json">' . $value . '</script>');
+				}
+				else
+				{
+					$doc->addCustomTag('<script id="jform_' . $key . '_data" type="application/json">' . json_encode($value) . '</script>');
+				}
+
+
+			}
+			foreach ($this->vars['item']->joomlaItem as $key => $value)
+			{
+				if (is_string($value))
+				{
+					$doc->addCustomTag('<script id="jform_' . $key . '_data" type="application/json">' . $value . '</script>');
+				}
+				else
+				{
+					$doc->addCustomTag('<script id="jform_' . $key . '_data" type="application/json">' . json_encode($value) . '</script>');
+				}
+
+			}
+
+		}
+		$doc->addCustomTag(' <script id="base_url" type="application/json">' . Uri::base() . '</script>');
+		$doc->addCustomTag(' <script id="p2s_currency" type="application/json">' . json_encode($this->vars['currency']) . '</script>');
+		$doc->addCustomTag(' <script id="p2s_locale" type="application/json">' . json_encode($this->vars['locale']) . '</script>');
 
 
 	}

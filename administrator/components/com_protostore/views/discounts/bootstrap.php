@@ -12,7 +12,10 @@ defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Factory;
 
+use Joomla\CMS\Language\Text;
 use Protostore\Render\Render;
+use Protostore\Discount\DiscountFactory;
+use Protostore\Utilities\Utilities;
 
 
 /**
@@ -22,13 +25,18 @@ use Protostore\Render\Render;
 class bootstrap
 {
 
+	private array $vars;
 
 	public function __construct()
 	{
 		$this->init();
-		$vars = $this->setVars();
+		$this->setVars();
 
-		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/discounts/discounts.php', $vars);
+		$this->addScripts();
+		$this->addTranslationStrings();
+
+
+		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/discounts/discounts.php', $this->vars);
 
 	}
 
@@ -42,27 +50,22 @@ class bootstrap
 	{
 
 
-
 	}
 
 
 	/**
 	 *
-	 * @return array
+	 * @return void
 	 *
-	 * @since 2.0
+	 * @since 1.6
 	 */
 
-	private function setVars()
+	private function setVars(): void
 	{
 
-		$vars = array();
 
-
-		$vars['items'] = $this->getItems();
-
-
-		return $vars;
+		$this->vars['items']      = $this->getItems();
+		$this->vars['list_limit'] = Factory::getConfig()->get('list_limit', '25');
 
 
 	}
@@ -71,13 +74,57 @@ class bootstrap
 	 *
 	 * @return array|false
 	 *
-	 * @since 2.0
+	 * @since 1.6
 	 */
 
 	private function getItems()
 	{
 
+
+		return DiscountFactory::getList();
+
 	}
 
+	/**
+	 *
+	 *
+	 * @since 1.6
+	 */
+
+	private function addScripts(): void
+	{
+
+		$doc = Factory::getDocument();
+
+
+		// include the vue script - defer
+		$doc->addScript('../media/com_protostore/js/vue/discounts/discounts.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
+
+		$doc->addCustomTag('<script id="items_data" type="application/json">' . json_encode($this->vars['items']) . '</script>');
+		$doc->addCustomTag('<script id="page_size" type="application/json">' . $this->vars['list_limit'] . '</script>');
+
+
+		// include prime
+		Utilities::includePrime(array('inputswitch'));
+
+
+	}
+
+	/**
+	 *
+	 *
+	 * @since 1.6
+	 */
+
+
+	private function addTranslationStrings(): void
+	{
+
+		$doc = Factory::getDocument();
+
+
+		$doc->addCustomTag('<script id="confirmLangString" type="application/json">' . Text::_('COM_PROTOSTORE_ORDER_ATTACH_CUSTOMER_CONFIRM_MODAL') . '</script>');
+
+	}
 }
 

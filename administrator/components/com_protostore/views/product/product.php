@@ -13,40 +13,18 @@ defined('_JEXEC') or die('Restricted access');
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Layout\LayoutHelper;
-use Joomla\CMS\Form\Field;
+use Joomla\CMS\Uri\Uri;
 
 
 HTMLHelper::_('behavior.keepalive');
 HTMLHelper::_('behavior.formvalidator');
 
+
 $item = $vars['item'];
 
 
-//
-//$variants = ["colour", "size"];
-//$variantLabels = [["Red", "Green", "Blue"], ["small", "medium"]];
-//$variantsListLocal = '[{"identifier":["Red","small"],"name":"Red / small","active":true,"default":false,"price":"","stock":0,"sku":""},{"identifier":["Red","medium"],"name":"Red / medium","active":true,"default":true,"price":"","stock":0,"sku":""},{"identifier":["Green","small"],"name":"Green / small","active":true,"default":false,"price":"","stock":100,"sku":"qwerty"},{"identifier":["Green","medium"],"name":"Green / medium","active":true,"default":false,"price":"","stock":0,"sku":""},{"identifier":["Blue","small"],"name":"Blue / small","active":true,"default":false,"price":"","stock":0,"sku":""},{"identifier":["Blue","medium"],"name":"Blue / medium","active":true,"default":false,"price":"","stock":0,"sku":""}]';
 ?>
 
-<?php if ($item) : ?>
-
-    <script id="jform_title_data" type="application/json"><?= $item->joomlaItem->title; ?></script>
-    <script id="jform_manage_stock_data"
-            type="application/json"><?= ($item->manage_stock == 1 ? 'true' : 'false'); ?></script>
-    <script id="jform_category_data" type="application/json"><?= $item->joomlaItem->catid; ?></script>
-    <script id="jform_state_data"
-            type="application/json"><?= ($item->joomlaItem->state == 1 ? 'true' : 'false'); ?></script>
-    <script id="jform_featured_data"
-            type="application/json"><?= ($item->joomlaItem->featured == 1 ? 'true' : 'false'); ?></script>
-    <script id="jform_taxable_data" type="application/json"><?= ($item->taxable == 1 ? 'true' : 'false'); ?></script>
-    <script id="jform_show_discount_data" type="application/json"><?= ($item->discount > 0 ? 'true' : 'false'); ?></script>
-    <script id="jform_discount_data" type="application/json"><?= $item->discountFloat; ?></script>
-    <script id="jform_shipping_mode_data" type="application/json"><?= $item->shipping_mode; ?></script>
-    <script id="jform_base_price_data" type="application/json"><?= $item->basepriceFloat; ?></script>
-    <script id="jform_variants" type="application/json"><?= $item->variants; ?></script>
-    <script id="jform_variantLabels" type="application/json"><?= $item->variantLabels; ?></script>
-    <script id="jform_variantsListLocal" type="application/json"><?= $item->variantList; ?></script>
-<?php endif; ?>
 
 <div id="p2s_product_form">
     <form @submit.prevent="saveItem">
@@ -79,8 +57,13 @@ $item = $vars['item'];
                                         class="uk-button uk-button-default button-success uk-button-small uk-margin-right">
                                     Save & Close
                                 </button>
-                                <a class="uk-button uk-button-default uk-button-small "
+                                <a class="uk-button uk-button-default uk-button-small uk-margin-right"
                                    href="index.php?option=com_protostore&view=products">Cancel</a>
+                                <button type="button" uk-toggle="target: #advancedOptions"
+                                        class="uk-button uk-button-primary uk-button-small uk-margin-right">
+                                    Advanced Options
+                                    <span uk-icon="icon: settings"></span>
+                                </button>
 
                             </div>
 
@@ -107,6 +90,15 @@ $item = $vars['item'];
 						'field_grid_width' => '1-2',
 					)); ?>
 
+					<?= LayoutHelper::render('card_options', array(
+						'form'             => $vars['form'],
+						'cardTitle'        => 'COM_PROTOSTORE_ADD_PRODUCT_OPTIONS',
+						'cardStyle'        => 'default',
+						'cardId'           => 'options',
+						'fields'           => array('options'),
+						'field_grid_width' => '1-1',
+					)); ?>
+
 					<?= LayoutHelper::render('card_variant', array(
 						'form'             => $vars['form'],
 						'cardTitle'        => 'COM_PROTOSTORE_ADD_PRODUCT_VARIANTS',
@@ -115,7 +107,6 @@ $item = $vars['item'];
 						'fields'           => array('variants'),
 						'field_grid_width' => '1-1',
 					)); ?>
-
 
 
                 </div>
@@ -159,16 +150,47 @@ $item = $vars['item'];
 							'cardTitle' => 'COM_PROTOSTORE_ADD_PRODUCT_SHIPPING',
 							'cardStyle' => 'default',
 							'cardId'    => 'shipping',
-							'fields'    => array('shipping_mode')
+							'fields'    => array('shipping_mode', 'flatfee')
 						)); ?>
 					<?php endif; ?>
-
 
                 </div>
             </div>
 
         </div>
     </form>
+
+
+    <div id="advancedOptions" class="uk-modal-container" uk-modal>
+        <div class="uk-modal-dialog">
+            <button class="uk-modal-close-default" type="button" uk-close></button>
+            <div class="uk-modal-header">
+                <h2 class="uk-modal-title">Advanced Options</h2>
+            </div>
+            <div class="uk-modal-body">
+                <div class="uk-grid uk-child-width-1-3@m">
+
+                    <div>
+                        <div class="uk-card uk-card-default">
+                            <div class="uk-card-header">
+                                <h5>Variants</h5>
+                            </div>
+                            <div class="uk-card-body">
+
+                            </div>
+                            <div class="uk-card-footer">
+                                <button type="button" class="uk-button uk-button-primary">Copy Variants <span uk-icon="icon: copy"></span></button>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="uk-modal-footer uk-text-right">
+                <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>
+            </div>
+        </div>
+    </div>
 </div>
-
-

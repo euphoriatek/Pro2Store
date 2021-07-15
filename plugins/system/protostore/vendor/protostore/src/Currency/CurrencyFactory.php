@@ -109,7 +109,9 @@ class CurrencyFactory
 		$query->from($db->quoteName('#__protostore_currency'));
 		$query->where($db->quoteName('default') . ' = 1');
 
-		$result = $db->setQuery($query);
+		$db->setQuery($query);
+
+		$result = $db->loadObject();
 
 		if ($result)
 		{
@@ -358,6 +360,49 @@ class CurrencyFactory
 		$float = Money::ofMinor((int) $number, $currencyISO, new CashContext(1), RoundingMode::DOWN);
 
 		return $float->getAmount();
+
+
+	}
+
+	/**
+	 * @param   float          $number
+	 * @param   string|null  $currencyISO
+	 *
+	 * @return int
+	 *
+	 * @throws Exception
+	 * @since 1.6
+	 */
+
+
+	public static function toInt(float $number, string $currencyISO = null): int
+	{
+
+		// if no $currencyISO is specified...
+		if (!$currencyISO)
+		{
+
+			// try getting the current selected currency
+			$currency = self::getCurrent();
+			if ($currency)
+			{
+				$currencyISO = $currency->iso;
+			}
+			else
+			{
+
+				// else ... get the default currency
+
+				$currency    = self::getDefault();
+				$currencyISO = $currency->iso;
+			}
+
+		}
+
+		$int = Money::of( $number, $currencyISO, new CashContext(1), RoundingMode::DOWN);
+
+		return $int->getMinorAmount()->toInt();
+
 
 
 	}

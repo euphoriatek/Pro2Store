@@ -5,7 +5,7 @@
         <field name="title" type="title" default="title" label="Title" description="" size="10"
                class="uk-input uk-form-width-medium uk-form-large"/>
 
-        <field name="base_price" type="text" default="0" label="Base Price" description="" size="10"
+        <field name="base_price" type="baseprice" default="0" label="Base Price" description="" size="10"
                class="uk-input uk-form-width-medium uk-form-large" filter="float"/>
 
         <field name="sku" type="text" default="0" label="SKU" description="" size="10"
@@ -30,11 +30,13 @@
 
         <field name="fullimage" type="media" directory="" preview="true" class="uk-input uk-form-width-small non-uk-input"  />
 
-        <field name="shipping_mode" type="list" default="" required="true" label="Shipping Mode" description="">
+        <field name="shipping_mode" type="list" default="" label="Shipping Mode" description="">
             <option value="">Please Select</option>
             <option value="flat">Flat</option>
             <option value="weight">By Weight</option>
         </field>
+        <field name="flatfee" type="flatfee" default="0" label="Flat Fee" description="" size="10"
+               class="uk-input uk-form-width-medium uk-form-large" />
 
         <field name="state" type="pinputswitch" default="0" label="Published" description=""
                class="btn-group btn-group-yesno">
@@ -55,7 +57,7 @@
 
         <field name="category" type="CategoryEdit" extension="com_content" label="Select a category" description="" class="uk-select" required="true"/>
 
-        <field name="tags" type="tag" label="JTAG" description="JTAG_DESC" mode="ajax" class="inputbox span12 small" multiple="true"/>
+        <field name="tags" type="tags" label="JTAG" description="JTAG_DESC" mode="ajax" class="inputbox span12 small" multiple="true"/>
 
         <field name="publish_up_date" type="calendar" default="now" label="Select a date" description=""
                class="input-medium uk-input non-uk-input" required="true" filter="user_utc" format="%Y-%m-%d %H:%M:%S"
@@ -78,6 +80,9 @@
                class="uk-input uk-form-width-medium uk-form-large" />
 
         <field name="variants" type="variants" default="0" label="Product Variants" description="" size="10"
+               class="uk-input uk-form-width-medium uk-form-large" />
+
+        <field name="options" type="options" default="0" label="Product Options" description="" size="10"
                class="uk-input uk-form-width-medium uk-form-large" />
 
 

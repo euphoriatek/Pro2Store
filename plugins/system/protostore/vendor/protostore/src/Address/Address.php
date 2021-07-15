@@ -31,6 +31,7 @@ class Address
 	public ?string $email;
 	public ?string $mobile_phone;
 	public string $created;
+	public ?string $address_as_csv;
 
 
 
@@ -40,7 +41,7 @@ class Address
 		if ($data)
 		{
 			$this->hydrate($data);
-			$this->init($data);
+			$this->init();
 		}
 
 	}
@@ -72,17 +73,16 @@ class Address
 	 *
 	 * Function to "hydrate" all non-database values.
 	 *
-	 * @param $data
-	 *
 	 *
 	 * @since 1.6
 	 */
 
-	private function init($data)
+	private function init()
 	{
 
 		$this->zone_name = AddressFactory::getZoneName($this->zone);
-		$this->country_name = AddressFactory::getCountryName($this->zone);
+		$this->country_name = AddressFactory::getCountryName($this->country);
+		$this->address_as_csv = AddressFactory::getAddressAsCSV($this);
 
 
 	}

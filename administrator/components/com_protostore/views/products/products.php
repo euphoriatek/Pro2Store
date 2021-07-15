@@ -22,6 +22,7 @@ use Joomla\CMS\Layout\LayoutHelper;
 <script id="categories_data" type="application/json"><?= json_encode($vars['categories']); ?></script>
 <script id="page_size" type="application/json"><?= $vars['list_limit']; ?></script>
 
+
 <div id="p2s_products">
     <div class="uk-margin-left">
         <div class="uk-grid" uk-grid="">

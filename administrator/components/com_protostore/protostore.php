@@ -12,37 +12,17 @@ defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Access\Exception\NotAllowed;
 
 HTMLHelper::_('behavior.keepalive');
 
-$input = Factory::getApplication()->input;
-$user  = Factory::getUser();
 
 // Access check.
-if (!$user->authorise('core.manage', 'com_protostore'))
+if (!Factory::getUser()->authorise('core.manage', 'com_protostore'))
 {
-	throw new JAccessExceptionNotallowed(JText::_('JERROR_ALERTNOAUTHOR'), 403);
+	throw new NotAllowed(Text::_('JERROR_ALERTNOAUTHOR'), 403);
 }
-
-// Add CSS file for all pages
-$document = Factory::getDocument();
-$document->addStyleSheet("https://cdn.jsdelivr.net/npm/uikit@latest/dist/css/uikit.min.css");
-$document->addStyleSheet("/media/com_protostore/css/theme.css");
-//$document->addStyleSheet("/media/com_protostore/css/themedark.css");
-$document->addStyleSheet("/media/com_protostore/css/style.css");
-$document->addStyleSheet("https://unpkg.com/primevue/resources/primevue.min.css");
-$document->addStyleSheet("https://unpkg.com/primevue/resources/themes/saga-blue/theme.css");
-$document->addScript("https://cdn.jsdelivr.net/npm/uikit@latest/dist/js/uikit.min.js");
-$document->addScript("https://cdn.jsdelivr.net/npm/uikit@latest/dist/js/uikit-icons.min.js");
-$document->addScript("https://kit.fontawesome.com/6afbbf2d93.js");
-
-// development only
-$document->addScript('../media/com_protostore/js/vue/bundle.js', array('type' => 'text/javascript'));
-
-// uncomment for production
-//$document->addScript('../media/com_protostore/js/vue/bundle.min.js', array('type' => 'text/javascript'));
-
-
 
 include ( JPATH_ADMINISTRATOR . '/components/com_protostore/views/wrapper/bootstrapWrapper.php');
 new bootstrapWrapper();

@@ -14,25 +14,40 @@ use Joomla\CMS\Factory;
 
 use Protostore\Render\Render;
 use Protostore\Order\OrderFactory;
+use Protostore\Utilities\Utilities;
 
 
 /**
  *
- * @since       2.0
+ * @since 2.0
  */
-
 class bootstrap
 {
 
-
+	private array $vars;
 
 	public function __construct()
 	{
-		$vars = $this->init();
+		$this->init();
+		$this->setVars();
 
-		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/orders/orders.php', $vars);
+		$this->addScripts();
+		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/orders/orders.php', $this->vars);
 
 	}
+
+	/**
+	 *
+	 *
+	 * @since 2.0
+	 */
+
+	private function init()
+	{
+
+
+	}
+
 
 	/**
 	 *
@@ -41,19 +56,16 @@ class bootstrap
 	 * @since 2.0
 	 */
 
-	private function init()
+	private function setVars()
 	{
 
-		$vars = array();
 
 
-		$vars['items'] = $this->getItems();
-		$vars['list_limit'] = Factory::getConfig()->get('list_limit', '25');
+
+		$this->vars['items'] = $this->getItems();
+		$this->vars['list_limit'] = Factory::getConfig()->get('list_limit', '25');
 
 
-		$this->addScripts();
-
-		return $vars;
 
 
 	}
@@ -67,10 +79,11 @@ class bootstrap
 
 	private function getItems()
 	{
+
+
 		return OrderFactory::getList();
+
 	}
-
-
 
 	/**
 	 *
@@ -78,18 +91,23 @@ class bootstrap
 	 * @since version
 	 */
 
-	private function addScripts($add = false)
+	private function addScripts()
 	{
+
+		$doc = Factory::getDocument();
 
 
 		// include the vue script - defer
-		Factory::getDocument()->addScript('../media/com_protostore/js/vue/orders/orders.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
+		$doc->addScript('../media/com_protostore/js/vue/orders/orders.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
 
+		$doc->addCustomTag('<script id="items_data" type="application/json">' . json_encode($this->vars['items']) . '</script>');
+		$doc->addCustomTag('<script id="page_size" type="application/json">' . $this->vars['list_limit'] . '</script>');
 
 		// include prime
-//		Utilities::includePrime(array('inputswitch'));
+		Utilities::includePrime(array('inputswitch'));
 
 
 	}
+
 }
 

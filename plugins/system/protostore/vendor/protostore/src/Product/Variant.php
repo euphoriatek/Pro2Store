@@ -59,14 +59,14 @@ class Variant
 	 *
 	 * Function to "hydrate" all non-database values.
 	 *
-	 * @param $data
-	 *
 	 *
 	 * @since 1.6
 	 */
 
 	private function init()
 	{
+
+		$this->variantList = ProductFactory::retrieveVariantPrices($this->variantList);
 
 
 	}

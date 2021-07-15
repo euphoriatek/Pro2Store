@@ -28,7 +28,7 @@ class JFormFieldDiscount extends JFormField
 
 	public function getLabel()
 	{
-		return '<div v-show="form.jform_show_discount">' . $this->element['label']  . '</div>';
+		return '<div v-show="form.jform_show_discount">' . $this->element['label'] . '</div>';
 	}
 
 	/**
@@ -44,14 +44,13 @@ class JFormFieldDiscount extends JFormField
 
 		$html = array();
 
+
 		$html[] = '<div v-show="form.jform_show_discount">';
-		$html[] = '<input class="input-small ' . $this->class . '" type="text" ';
-		$html[] = 'name="' . $this->name . '" ';
-		$html[] = 'v-model="form.' . $this->id . '" ';
-		$html[] = 'id="' . $this->id . '" ';
-		$html[] = ' />';
-		$html[] = ' <span>This product will sell for: {{sellPrice}}</span>';
+		$html[] = '<p-inputnumber @blur="logIt"  mode="currency" :currency="p2s_currency.iso" :locale="p2s_locale"  name="' . $this->name . '" v-model="form.' . $this->id . '" id="' . $this->id . '">';
+		$html[] = '</p-inputnumber> ';
+		$html[] = '<br/><span>This product will sell for: {{sellPrice}}</span>';
 		$html[] = ' </div>';
+
 
 		return implode('', $html);
 
