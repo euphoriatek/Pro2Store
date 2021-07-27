@@ -18,6 +18,8 @@ $order = $data['item'];
 
 ?>
 
+
+
 <div class="uk-card uk-card-<?= $data['cardStyle']; ?> uk-margin-bottom">
     <div class="uk-card-header">
         <div class="uk-grid uk-grid-small">
@@ -70,7 +72,7 @@ $order = $data['item'];
                         <div class="uk-grid">
                             <div class="uk-width-expand">
                                   <span
-                                          class="uk-label uk-label-<?= strtolower($order->order_status) ?>"><?= $order->order_status_formatted; ?></span>
+                                          :class="'uk-label uk-label-'+ order.order_status.toLowerCase()">{{order.order_status_formatted}}</span>
                             </div>
                         </div>
                     </div>
@@ -88,10 +90,10 @@ $order = $data['item'];
                 </td>
                 <td>
                     <div class="el-content uk-panel">
-                      <span v-show="order.order_paid === 1" @click="togglePaid()" style="font-size: 18px; color: green; cursor: pointer;">
+                      <span v-show="order.order_paid === 1" @click="togglePaid" style="font-size: 18px; color: green; cursor: pointer;">
                           <i class="fal fa-check-circle"></i>
                       </span>
-                        <span v-show="order.order_paid === 0" @click="togglePaid()" style="font-size: 18px; color: red; cursor: pointer;">
+                        <span v-show="order.order_paid === 0" @click="togglePaid" style="font-size: 18px; color: red; cursor: pointer;">
                         <i class="fal fa-times-circle"></i>
                       </span>
                     </div>
@@ -160,7 +162,7 @@ $order = $data['item'];
                 </td>
                 <td>
                     <div id="payment_method" class="el-content uk-panel"><img
-                                src="<?= $order->payment_method; ?>"
+                                src="../plugins/system/protostore_<?= strtolower($order->payment_method); ?>/modules/<?= str_replace(' ', '', strtolower($order->payment_method)); ?>/elements/protostore_<?= strtolower($order->payment_method); ?>/images/protostore_<?= strtolower($order->payment_method); ?>.svg"
                         />
 						<?= $order->payment_method; ?>
 						<?= $order->vendor_token; ?></div>
@@ -183,25 +185,21 @@ $order = $data['item'];
                     </ul>
                 </td>
             </tr>
-			<?php if (!empty($order->tracking_link)) : ?>
-                <tr>
+
+                <tr v-show="order.tracking_link">
                     <td class="uk-text-nowrap">
                         <div class="el-title"><?= Text::_('COM_PROTOSTORE_ORDER_TRACKING_CODE'); ?>:</div>
                     </td>
                     <td>
-                        <div class="el-content uk-panel"><a href="<?= $order->tracking_link; ?>"
-                                                            target="_blank"><?= $order->tracking_code; ?> <i
-                                        class="fal fa-external-link"></i></a></div>
-                    </td>
-                    <td class="uk-text-nowrap uk-table-shrink">
-                        <ul class="uk-iconnav uk-flex-right uk-preserve-width">
-                            <li><a href="#orderupdatemodal" uk-toggle><span
-                                            uk-icon="icon: more-vertical;"></span></a></li>
-                        </ul>
+                        <div class="el-content uk-panel">
+                            <a :href="order.tracking_link"  target="_blank">{{order.tracking_code}}
+                                <i class="fal fa-external-link"></i>
+                            </a>
+                        </div>
                     </td>
 
                 </tr>
-			<?php endif; ?>
+
             </tbody>
         </table>
 

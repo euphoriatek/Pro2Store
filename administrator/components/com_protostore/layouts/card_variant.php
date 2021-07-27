@@ -12,6 +12,7 @@ defined('_JEXEC') or die('Restricted access');
 
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\LayoutHelper;
 
 $data = $displayData;
 $form = $data['form'];
@@ -38,21 +39,10 @@ $form = $data['form'];
     </div>
 
     <div class="uk-card-body">
-		<?php if (isset($data['field_grid_width'])): ?>
-        <div class="uk-grid uk-child-width-<?= $data['field_grid_width']; ?>" uk-grid>
-			<?php endif; ?>
 
 
-			<?php foreach ($data['fields'] as $field) : ?>
-                <div class="">
-					<?php $form->setFieldAttribute($field, 'autofocus', 'p2s_product_form.' . $field, null); ?>
-					<?php echo $form->renderField($field); ?>
-                </div>
-			<?php endforeach; ?>
 
-			<?php if (isset($data['field_grid_width'])): ?>
-        </div>
-	<?php endif; ?>
+     <?=   LayoutHelper::render('variants', array()); ?>
 
     </div>
     <div class="uk-card-footer">

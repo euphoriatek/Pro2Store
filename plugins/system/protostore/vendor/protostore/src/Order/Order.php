@@ -10,6 +10,8 @@
 // no direct access
 namespace Protostore\Order;
 
+use Protostore\Address\Address;
+
 defined('_JEXEC') or die('Restricted access');
 
 
@@ -17,7 +19,9 @@ class Order
 {
 
 	public int $id;
-	public int $customer;
+	public int $customer_id;
+	public string $customer_name;
+	public string $customer_email;
 	public string $order_date;
 	public string $order_number;
 	public int $order_paid;
@@ -39,7 +43,13 @@ class Order
 	public ?int $discount_total;
 	public ?int $donation_total;
 
-	// price as formatted Strings:
+
+	// Addresses
+
+	public \Protostore\Address\Address $billing_address;
+	public \Protostore\Address\Address $shipping_address;
+
+	// Price as formatted Strings:
 
 	public ?string $order_total_formatted;
 	public ?string $order_subtotal_formatted;
@@ -48,7 +58,7 @@ class Order
 	public ?string $discount_total_formatted;
 	public ?string $donation_total_formatted;
 
-	// products
+	// Products
 
 	public ?array $ordered_products;
 	public ?int $product_count;
@@ -58,7 +68,14 @@ class Order
 
 	public ?string $tracking_code;
 	public ?string $tracking_link;
+	public ?string $tracking_provider;
 	public ?string $tracking_created;
+
+	// Logs
+
+	public ?array $logs;
+	public ?array $emailLogs;
+	public ?array $internal_notes;
 
 	public function __construct($data)
 	{
@@ -111,6 +128,30 @@ class Order
 
 		$this->order_subtotal_formatted = OrderFactory::intToFormat($this->order_subtotal, $this->currency);
 
+		// Customer
+
+		$this->customer_name  = '';
+		$this->customer_email = '';
+
+		$customer = OrderFactory::getCustomer($this->customer_id);
+		if ($customer)
+		{
+			$this->customer_name  = $customer->name;
+			$this->customer_email = $customer->email;
+		}
+
+
+		// Addresses
+
+		$this->billing_address  = OrderFactory::getAddress($this->billing_address_id);
+		$this->shipping_address = OrderFactory::getAddress($this->shipping_address_id);
+
+
+		// Logs
+		$this->logs           = OrderFactory::getOrderLogs($this->id);
+		$this->emailLogs      = OrderFactory::getEmailLogs($this->id);
+		$this->internal_notes = OrderFactory::getOrderNotes($this->id);
+		// Formatted values
 
 		// get the £0.00 value for use on all formatted values if they are set to 0.
 		$zeroFormatted = OrderFactory::intToFormat(0, $this->currency);
@@ -149,15 +190,19 @@ class Order
 			$this->product_count = count($this->ordered_products);
 		}
 
+		// Tracking
 
-		$this->tracking_code = '';
-		$this->tracking_link = '';
+
+		$this->tracking_code    = '';
+		$this->tracking_link    = '';
 		$this->tracking_created = '';
 
-		if($tracking = OrderFactory::getTracking($this->id)) {
+		if ($tracking = OrderFactory::getTracking($this->id))
+		{
 
-			$this->tracking_code = $tracking->tracking_code;
-			$this->tracking_link = $tracking->tracking_link;
+			$this->tracking_code    = $tracking->tracking_code;
+			$this->tracking_link    = $tracking->tracking_link;
+			$this->tracking_provider    = $tracking->tracking_provider;
 			$this->tracking_created = $tracking->created;
 
 		}

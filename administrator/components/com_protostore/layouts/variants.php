@@ -12,7 +12,6 @@ defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Language\Text;
 
-$data = $displayData;
 
 ?>
 
@@ -86,7 +85,6 @@ $data = $displayData;
                 {{item.name}}
             </td>
             <td class="">
-<!--                <input @blur="formatToCurrency(item.price)" class="uk-input" type="number" step="0.01" :placeholder="form.jform_base_price" v-model="item.price" pattern="(([1-9](\d*|\d{0,2}(,\d{3})*))|0)(\.\d{1,2})?$">-->
                 <p-inputnumber  mode="currency" :currency="p2s_currency.iso" :locale="p2s_locale" v-model="item.price" :placeholder="form.jform_base_price"></p-inputnumber>
             </td>
             <td class="">

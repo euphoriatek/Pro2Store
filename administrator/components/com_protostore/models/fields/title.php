@@ -41,6 +41,7 @@ class JFormFieldTitle extends JFormField
 		$html[] = '<input class="input-small ' . $this->class . '" type="text" ';
 		$html[] = 'name="' . $this->name . '" ';
 		$html[] = 'v-model="form.' . $this->id . '" ';
+		$html[] = ' required ';
 		$html[] = 'id="' . $this->id . '" ';
 		$html[] = ' />';
 

@@ -135,7 +135,7 @@ class bootstrap extends AdminModel
 
 
 		// include whatever PrimeVue component scripts we need
-		Utilities::includePrime(array('inputswitch'));
+		Utilities::includePrime(array('inputswitch', 'timeline', 'avatar'));
 
 
 	}

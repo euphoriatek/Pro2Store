@@ -69,7 +69,7 @@ class Orderlog
 	 * @since 1.6
 	 */
 
-	private function init($data)
+	private function init()
 	{
 
 

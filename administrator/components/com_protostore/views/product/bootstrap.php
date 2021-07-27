@@ -108,11 +108,14 @@ class bootstrap extends AdminModel
 		{
 			switch ($item->product_type)
 			{
-				case 0:
+				case 1:
 					$form_type = 'physical';
 					break;
-				case 1:
+				case 2:
 					$form_type = 'digital';
+					break;
+				case 3:
+					$form_type = 'subscription';
 					break;
 			}
 		}
@@ -140,12 +143,15 @@ class bootstrap extends AdminModel
 
 			switch ($item->product_type)
 			{
-				case 0:
+				case 1:
 					// add physical only form stuff here.
 					$form->setValue('shipping_mode', null, $item->shipping_mode);
 					break;
-				case 1:
+				case 2:
 					// add digital only form stuff here.
+					break;
+				case 3:
+					// add subscription stuff here only form stuff here.
 					break;
 			}
 

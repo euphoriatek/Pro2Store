@@ -46,7 +46,7 @@ class Product
 	public ?int $taxable;
 	public ?string $link;
 	public ?string $category_link;
-	public string $product_type;
+	public int $product_type;
 	public bool $published;
 
 

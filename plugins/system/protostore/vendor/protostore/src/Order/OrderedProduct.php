@@ -22,9 +22,12 @@ class OrderedProduct
 	public int $j_item_cat;
 	public string $j_item_name;
 	public ?string $item_options;
+	public ?array $item_options_array;
 	public int $price_at_sale;
 	public string $price_at_sale_formatted;
-	public int $amount;
+	public ?int $amount;
+	public ?int $subtotal;
+	public ?string $subtotal_formatted;
 
 
 
@@ -67,18 +70,20 @@ class OrderedProduct
 	 *
 	 * Function to "hydrate" all non-database values.
 	 *
-	 * @param $data
-	 *
 	 *
 	 * @throws \Brick\Money\Exception\UnknownCurrencyException
 	 * @since 1.6
 	 */
 
-	private function init($data)
+	private function init()
 	{
 
 		// set all the formats for the money values.
 		$this->price_at_sale_formatted = OrderFactory::intToFormat($this->price_at_sale, OrderFactory::getOrderCurrency($this->order_id));
+
+		$this->subtotal = $this->price_at_sale * $this->amount;
+		$this->subtotal_formatted = OrderFactory::intToFormat($this->subtotal);
+		$this->item_options_array = json_decode($this->item_options);
 
 	}
 

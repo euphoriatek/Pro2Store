@@ -13,14 +13,22 @@ namespace Protostore\Order;
 
 defined('_JEXEC') or die('Restricted access');
 
+use Exception;
 use Joomla\CMS\Factory;
-
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\User\User;
+use Joomla\Input\Input;
+
+use Protostore\Address\Address;
+use Protostore\Address\AddressFactory;
 use Protostore\Currency\CurrencyFactory;
+use Protostore\Emaillog\EmaillogFactory;
+use Protostore\Utilities\Utilities;
 
 use Brick\Money\Exception\UnknownCurrencyException;
-use Protostore\Utilities\Utilities;
+
+use stdClass;
 
 
 class OrderFactory
@@ -30,12 +38,12 @@ class OrderFactory
 	/**
 	 * @param   int  $id
 	 *
-	 * @return false|Order
+	 * @return Order
 	 *
 	 * @since 1.6
 	 */
 
-	public static function get(int $id)
+	public static function get(int $id): ?Order
 	{
 
 		$db = Factory::getDbo();
@@ -54,7 +62,7 @@ class OrderFactory
 			return new Order($result);
 		}
 
-		return false;
+		return null;
 	}
 
 
@@ -69,11 +77,11 @@ class OrderFactory
 	 * @param   string|null  $dateFrom
 	 * @param   string|null  $dateTo
 	 *
-	 * @return array|false
+	 * @return array
 	 * @since 1.6
 	 */
 
-	public static function getList(int $limit = 0, int $offset = 0, string $searchTerm = null, int $customerId = null, string $status = null, string $currency = null, string $dateFrom = null, string $dateTo = null)
+	public static function getList(int $limit = 0, int $offset = 0, string $searchTerm = null, int $customerId = null, string $status = null, string $currency = null, string $dateFrom = null, string $dateTo = null): ?array
 	{
 
 		$orders = array();
@@ -105,7 +113,7 @@ class OrderFactory
 
 		if ($customerId)
 		{
-			$query->where($db->quoteName('customer') . ' = ' . $db->quote($customerId));
+			$query->where($db->quoteName('customer_id') . ' = ' . $db->quote($customerId));
 		}
 
 		if ($dateFrom)
@@ -134,7 +142,7 @@ class OrderFactory
 		}
 
 
-		return false;
+		return null;
 	}
 
 	/**
@@ -182,17 +190,19 @@ class OrderFactory
 
 
 	/**
-	 * @param   int  $order_id
-	 * @param   int  $limit
-	 * @param   int  $offset
+	 * @param   int     $order_id
+	 * @param   int     $limit
+	 * @param   int     $offset
+	 * @param   string  $orderBy
+	 * @param   string  $orderDir
 	 *
-	 * @return array|false
+	 * @return array
 	 *
 	 * @since 1.6
 	 */
 
 
-	public static function getOrderLogs(int $order_id, int $limit = 0, int $offset = 0)
+	public static function getOrderLogs(int $order_id, int $limit = 0, int $offset = 0, string $orderBy = 'created', string $orderDir = 'DESC'): ?array
 	{
 		$orderLogs = array();
 
@@ -204,6 +214,8 @@ class OrderFactory
 		$query->from($db->quoteName('#__protostore_order_log'));
 
 		$query->where($db->quoteName('order_id') . ' = ' . $db->quote($order_id));
+
+		$query->order($orderBy . ' ' . $orderDir);
 
 		$db->setQuery($query, $offset, $limit);
 
@@ -221,13 +233,27 @@ class OrderFactory
 		}
 
 
-		return false;
+		return null;
+
+	}
+
+	/**
+	 * @param $order_id
+	 *
+	 * @return array|false
+	 *
+	 * @since 1.6
+	 */
+
+	public static function getEmailLogs($order_id)
+	{
+		return EmaillogFactory::getList(0, 0, '', null, $order_id);
 
 	}
 
 
 	/**
-	 * @param   int     $id
+	 * @param   int     $order_id
 	 * @param   string  $note
 	 *
 	 *
@@ -250,17 +276,33 @@ class OrderFactory
 	}
 
 	/**
-	 * @param   int  $order_id
-	 * @param   int  $limit
-	 * @param   int  $offset
+	 * @param $address_id
 	 *
-	 * @return array|false
+	 * @return false|Address
 	 *
 	 * @since 1.6
 	 */
 
 
-	public static function getOrderNotes(int $order_id, int $limit = 0, int $offset = 0)
+	public static function getAddress($address_id)
+	{
+
+		return AddressFactory::get($address_id);
+
+	}
+
+	/**
+	 * @param   int  $order_id
+	 * @param   int  $limit
+	 * @param   int  $offset
+	 *
+	 * @return array
+	 *
+	 * @since 1.6
+	 */
+
+
+	public static function getOrderNotes(int $order_id, int $limit = 0, int $offset = 0, string $orderBy = 'created', string $orderDir = 'ASC'): ?array
 	{
 		$orderNotes = array();
 
@@ -270,8 +312,9 @@ class OrderFactory
 
 		$query->select('*');
 		$query->from($db->quoteName('#__protostore_order_notes'));
-
 		$query->where($db->quoteName('order_id') . ' = ' . $db->quote($order_id));
+
+		$query->order($orderBy . ' ' . $orderDir);
 
 		$db->setQuery($query, $offset, $limit);
 
@@ -289,7 +332,7 @@ class OrderFactory
 		}
 
 
-		return false;
+		return null;
 	}
 
 	/**
@@ -402,6 +445,32 @@ class OrderFactory
 	}
 
 	/**
+	 * @param $customer_id
+	 *
+	 * @return mixed|null
+	 *
+	 * @since 1.6
+	 */
+
+
+	public static function getCustomer($customer_id)
+	{
+
+		$db = Factory::getDbo();
+
+		$query = $db->getQuery(true);
+
+		$query->select(array('name', 'email'));
+		$query->from($db->quoteName('#__protostore_customer'));
+		$query->where($db->quoteName('id') . ' = ' . $db->quote($customer_id));
+
+		$db->setQuery($query);
+
+		return $db->loadObject();
+
+	}
+
+	/**
 	 * @param $created_by_name
 	 *
 	 * @return string
@@ -426,6 +495,9 @@ class OrderFactory
 
 	public static function getStatusFormatted($status)
 	{
+
+		$language = Factory::getLanguage();
+		$language->load('com_protostore');
 
 		switch ($status)
 		{
@@ -473,5 +545,243 @@ class OrderFactory
 		return $db->loadObject();
 
 	}
+
+	/**
+	 * @param   Input  $data
+	 *
+	 * @return bool
+	 *
+	 * @since 1.6
+	 */
+
+
+	public static function saveNewNote(Input $data): bool
+	{
+
+		$db = Factory::getDbo();
+
+		$object             = new stdClass();
+		$object->id         = 0;
+		$object->order_id   = $data->getInt('orderid');
+		$object->note       = $data->getString('text');
+		$object->created_by = Factory::getUser()->id;
+		$object->created    = Utilities::getDate();
+
+		$result = $db->insertObject('#__protostore_order_notes', $object);
+
+		if ($result)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+
+	}
+
+	/**
+	 * @param   int  $order_id
+	 *
+	 * @return bool
+	 *
+	 * @throws Exception
+	 * @since 1.6
+	 */
+
+
+	public static function togglePaid(int $order_id)
+	{
+
+		$order = self::get($order_id);
+
+		$order->order_paid = ($order->order_paid === 0 ? 1 : 0);
+
+//		return $order->order_paid;
+
+		return self::update($order);
+
+
+	}
+
+	/**
+	 * @param   string  $status
+	 * @param   int     $order_id
+	 * @param   bool    $sendEmail
+	 *
+	 * @return bool
+	 *
+	 * @throws Exception
+	 * @since 1.6
+	 */
+
+
+	public static function updateStatus(string $status, int $order_id, bool $sendEmail = false): bool
+	{
+
+		$order = self::get($order_id);
+
+		$order->order_status = $status;
+
+		$update = self::update($order);
+
+		if ($update)
+		{
+
+			if ($sendEmail)
+			{
+				// send email
+				PluginHelper::importPlugin('protostoresystem');
+				Factory::getApplication()->triggerEvent('onSendProtoStoreEmail', array(Utilities::getOrderStatusFromCharacterCode($status), $order_id));
+			}
+
+			return true;
+		}
+
+		return false;
+
+	}
+
+
+	/**
+	 * @param   string  $tracking_code
+	 * @param   string  $tracking_link
+	 * @param   string  $tracking_provider
+	 * @param   int     $order_id
+	 * @param   bool    $sendEmail
+	 *
+	 * @return bool
+	 *
+	 * @throws Exception
+	 * @since 1.6
+	 */
+
+	public static function updateTracking(string $tracking_code, string $tracking_link, string $tracking_provider, int $order_id, bool $sendEmail = false): bool
+	{
+		$order = self::get($order_id);
+
+		$order->order_status      = 'S';
+		$order->tracking_code     = $tracking_code;
+		$order->tracking_link     = $tracking_link;
+		$order->tracking_provider = $tracking_provider;
+
+
+		$update = self::update($order);
+
+		if ($update)
+		{
+
+			// now update tracking table
+
+			if (self::saveTracking($order))
+			{
+				if ($sendEmail)
+				{
+					// send email
+					PluginHelper::importPlugin('protostoresystem');
+					Factory::getApplication()->triggerEvent('onSendProtoStoreEmail', array(Utilities::getOrderStatusFromCharacterCode($order->order_status), $order_id));
+				}
+
+				return true;
+			}
+
+			return false;
+
+		}
+
+		return false;
+
+	}
+
+	/**
+	 * @param   Order  $order
+	 *
+	 * @return bool
+	 *
+	 * @throws Exception
+	 * @since 1.6
+	 */
+
+
+	public static function update(Order $order): bool
+	{
+
+		$orderToSave = new stdClass();
+
+		// iterate through update-able fields:
+		$orderToSave->id                  = $order->id;
+		$orderToSave->order_paid          = $order->order_paid;
+		$orderToSave->order_status        = $order->order_status;
+		$orderToSave->billing_address_id  = $order->billing_address_id;
+		$orderToSave->shipping_address_id = $order->shipping_address_id;
+
+		// log
+
+		self::log($order->id, Text::sprintf('COM_PROTOSTORE_ORDER_UPDATE_LOG', self::getStatusFormatted($order->order_status), Factory::getUser()->name));
+
+		//event trigger
+
+		PluginHelper::importPlugin('protostoresystem');
+		Factory::getApplication()->triggerEvent('onOrderUpdated', array($order->id));
+
+		return Factory::getDbo()->updateObject('#__protostore_order', $orderToSave, 'id');
+
+
+	}
+
+	/**
+	 * @param   Order  $order
+	 *
+	 * @return bool
+	 *
+	 * @since 1.6
+	 */
+
+	public static function saveTracking(Order $order): bool
+	{
+
+		$db = Factory::getDbo();
+
+		//check if already in
+		$query = $db->getQuery(true);
+
+		$query->select('*');
+		$query->from($db->quoteName('#__protostore_order_tracking'));
+		$query->where($db->quoteName('order_id') . ' = ' . $db->quote($order->id));
+		$db->setQuery($query);
+
+		$result = $db->loadObject();
+
+		$trackingToSave = new stdClass();
+
+		if ($result)
+		{
+			//update
+
+			$trackingToSave->order_id          = $order->id;
+			$trackingToSave->tracking_code     = $order->tracking_code;
+			$trackingToSave->tracking_provider = $order->tracking_provider;
+			$trackingToSave->tracking_link     = $order->tracking_link;
+
+			return $db->updateObject('#__protostore_order_tracking', $trackingToSave, 'order_id');
+
+		}
+		else
+		{
+			//insert
+
+			$trackingToSave->id                = 0;
+			$trackingToSave->order_id          = $order->id;
+			$trackingToSave->tracking_code     = $order->tracking_code;
+			$trackingToSave->tracking_provider = $order->tracking_provider;
+			$trackingToSave->tracking_link     = $order->tracking_link;
+			$trackingToSave->created           = Utilities::getDate();
+
+			return $db->insertObject('#__protostore_order_tracking', $trackingToSave);
+		}
+
+
+	}
+
 
 }

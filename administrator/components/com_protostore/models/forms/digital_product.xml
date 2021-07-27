@@ -5,7 +5,7 @@
         <field name="title" type="title" default="title" label="Title" description="" size="10"
                class="uk-input uk-form-width-medium uk-form-large"/>
 
-        <field name="base_price" type="text" default="0" label="Base Price" description="" size="10"
+        <field name="base_price" type="baseprice" default="0" label="Base Prices" description="" size="10"
                class="uk-input uk-form-width-medium uk-form-large" filter="float"/>
 
         <field name="sku" type="text" default="0" label="SKU" description="" size="10"
@@ -30,11 +30,7 @@
 
         <field name="fullimage" type="media" directory="" preview="true" class="uk-input uk-form-width-small non-uk-input"  />
 
-        <field name="shipping_mode" type="list" default="" required="true" label="Shipping Mode" description="">
-            <option value="">Please Select</option>
-            <option value="flat">Flat</option>
-            <option value="weight">By Weight</option>
-        </field>
+        <field name="myfilevalue" type="file" label="Enter some text" description="Choose an image from your computer with maximum 100KB" size="10" accept="image/*" />
 
         <field name="featured" type="pinputswitch" default="0" label="Featured" description=""
                class="btn-group btn-group-yesno">

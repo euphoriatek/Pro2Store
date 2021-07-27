@@ -64,7 +64,6 @@ class plgAjaxProtostore_ajaxhelper extends JPlugin
 	private function _initTask()
 	{
 
-
 		$taskType = $this->input->get('type');
 		$taskType = explode('.', $taskType);
 		require_once JPATH_ADMINISTRATOR . '/components/com_protostore/tasks/' . $taskType[0] . '/' . $taskType[1] . '.php';

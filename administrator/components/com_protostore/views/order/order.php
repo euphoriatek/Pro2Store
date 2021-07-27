@@ -21,6 +21,7 @@ HTMLHelper::_('behavior.formvalidator');
 
 $item = $vars['item'];
 
+//echo json_encode($item);
 
 ?>
 
@@ -38,10 +39,10 @@ $item = $vars['item'];
 
                                 <span class="uk-navbar-item uk-logo">
 
-	                                    <?= Text::_('COM_PROTOSTORE_ORDER_NUMBER'); ?>:  <?= $item->order_number; ?>  <div
-                                            class="uk-label uk-label-<?= strtolower($item->order_status) ?>">
-                                        <?= $item->order_status_formatted; ?>
-                                    </div>
+	                                    <?= Text::_('COM_PROTOSTORE_ORDER_NUMBER'); ?>:  <?= $item->order_number; ?>
+
+                               <span
+                                       :class="'uk-label uk-label-'+ order.order_status.toLowerCase()">{{order.order_status_formatted}}</span>
 
                                 </span>
 
@@ -50,7 +51,7 @@ $item = $vars['item'];
                         <div class="uk-navbar-right">
 
                             <a class="uk-button uk-button-default uk-button-small "
-                               href="index.php?option=com_protostore&view=discounts"><< Back to Orders</a>
+                               href="index.php?option=com_protostore&view=orders"><< Back to Orders</a>
 
                         </div>
 
@@ -58,7 +59,7 @@ $item = $vars['item'];
                 </div>
 
             </div>
-            <div class="uk-width-2-3">
+            <div class="uk-width-3-4">
 
 
                 <ul uk-tab="animation: uk-animation-fade" class="uk-tab">
@@ -126,23 +127,20 @@ $item = $vars['item'];
 							'item'      => $item,
 							'cardStyle' => 'default',
 							'cardTitle' => 'COM_PROTOSTORE_ORDER_DETAILS',
-							'cardId'    => 'details',
-							'fields'    => array()
+							'cardId'    => 'details'
 						)); ?>
 
 						<?= LayoutHelper::render('order.products', array(
 							'item'      => $item,
 							'cardStyle' => 'default',
 							'cardTitle' => 'COM_PROTOSTORE_ORDER_PRODUCTS_ORDERED',
-							'cardId'    => 'products',
-							'fields'    => array()
+							'cardId'    => 'products'
 						)); ?>
 						<?= LayoutHelper::render('order.customer', array(
 							'item'      => $item,
 							'cardStyle' => 'default',
 							'cardTitle' => 'COM_PROTOSTORE_ORDER_CUSTOMER_DETAILS',
-							'cardId'    => 'products',
-							'fields'    => array()
+							'cardId'    => 'customer'
 						)); ?>
                     </li>
                     <li>
@@ -152,8 +150,7 @@ $item = $vars['item'];
 									'item'      => $item,
 									'cardStyle' => 'default',
 									'cardTitle' => 'COM_PROTOSTORE_ORDER_SHIPPING_DETAILS',
-									'cardId'    => 'products',
-									'fields'    => array()
+									'cardId'    => 'shipping'
 								)); ?>
                             </div>
                             <div class="uk-width-1-2">
@@ -161,8 +158,7 @@ $item = $vars['item'];
 									'item'      => $item,
 									'cardStyle' => 'default',
 									'cardTitle' => 'COM_PROTOSTORE_ORDER_BILLING_DETAILS',
-									'cardId'    => 'products',
-									'fields'    => array()
+									'cardId'    => 'billing'
 								)); ?>
                             </div>
                         </div>
@@ -174,15 +170,13 @@ $item = $vars['item'];
 									'item'      => $item,
 									'cardStyle' => 'default',
 									'cardTitle' => 'COM_PROTOSTORE_ORDER_EMAIL_ACTIONS',
-									'cardId'    => 'products',
-									'fields'    => array()
+									'cardId'    => 'emailactions'
 								)); ?>
 								<?= LayoutHelper::render('order.log', array(
 									'item'      => $item,
 									'cardStyle' => 'default',
 									'cardTitle' => 'COM_PROTOSTORE_ORDER_LOG',
-									'cardId'    => 'products',
-									'fields'    => array()
+									'cardId'    => 'log'
 								)); ?>
                             </div>
                             <div class="uk-width-1-2">
@@ -190,15 +184,13 @@ $item = $vars['item'];
 									'item'      => $item,
 									'cardStyle' => 'default',
 									'cardTitle' => 'COM_PROTOSTORE_ORDER_EMAIL_LOG',
-									'cardId'    => 'products',
-									'fields'    => array()
+									'cardId'    => 'emaillog'
 								)); ?>
 								<?= LayoutHelper::render('order.internalnotes', array(
 									'item'      => $item,
 									'cardStyle' => 'default',
 									'cardTitle' => 'COM_PROTOSTORE_ORDER_INTERNAL_NOTES',
-									'cardId'    => 'products',
-									'fields'    => array()
+									'cardId'    => 'internalnotes'
 								)); ?>
                             </div>
                         </div>
@@ -209,7 +201,7 @@ $item = $vars['item'];
             </div>
 
 
-            <div class="uk-width-1-3">
+            <div class="uk-width-1-4">
                 <div class="uk-card uk-card-default uk-margin-medium-top">
 
                     <div class="uk-card-header">
@@ -219,30 +211,79 @@ $item = $vars['item'];
                         <ul class="uk-nav-default uk-nav-parent-icon" uk-nav>
 
                             <li>
-                                <a class="uk-text-emphasis" href="index.php?option=com_protostore&view=discount">
-                                    <span class="uk-margin-small-right" uk-icon="icon: plus-circle"></span>
-                                    Mark as Paid
+                                <a @click="togglePaid">
+                                    <span class="uk-margin-small-right">
+                                        <i class="far fa-money-bill-wave" v-show="order.order_paid === 0"></i>
+                                        <i class="fad fa-money-bill-wave" v-show="order.order_paid === 1"></i>
+                                    </span>
+                                    <span v-show="order.order_paid === 0"><?= Text::_('COM_PROTOSTORE_ORDER_MARK_AS_PAID'); ?></span>
+                                    <span v-show="order.order_paid === 1"><?= Text::_('COM_PROTOSTORE_ORDER_MARK_AS_UNPAID'); ?></span>
+
                                 </a>
                             </li>
 
-                            <li class="uk-nav-divider"></li>
                             <li>
                                 <a>
-                                    <span class="uk-margin-small-right" uk-icon="icon: trash"></span>
+                                    <span class="uk-margin-small-right"> <i class="fal fa-box-check"></i></span>
                                     Change Status
                                 </a>
-                            </li>
-                            <li>
-                                <a>
-                                    <span class="uk-margin-small-right" uk-icon="icon: check"></span>
-                                    Toggle Published
-                                </a>
+                                <div uk-dropdown="mode: click">
+                                    <div class="uk-grid" uk-grid="">
+                                        <div class="uk-width-expand">
+                                            <p-inputswitch v-model="emailActive"></p-inputswitch>
+                                        </div>
+                                        <div class="uk-width-auto"><span class="uk-text-meta"> Email on change?</span>
+                                        </div>
+                                    </div>
 
+
+                                    <ul class="uk-list uk-dropdown-nav">
+                                        <li class="uk-nav-header">Choose Status</li>
+
+                                        <li>
+                                            <button @click="changeStatus('P')"
+                                                    class="uk-button uk-button-default uk-button-small uk-width-1-1"
+                                                    href="#"><?= Text::_('COM_PROTOSTORE_ORDER_PENDING'); ?></button>
+                                        </li>
+                                        <li>
+                                            <button @click="changeStatus('C')"
+                                                    class="uk-button uk-button-default uk-button-small uk-width-1-1"
+                                                    href="#"><?= Text::_('COM_PROTOSTORE_ORDER_CONFIRMED'); ?></button>
+                                        </li>
+                                        <li>
+                                            <button @click="changeStatus('X')"
+                                                    class="uk-button uk-button-default uk-button-small uk-width-1-1"
+                                                    href="#"><?= Text::_('COM_PROTOSTORE_ORDER_CANCELLED'); ?></button>
+                                        </li>
+                                        <li>
+                                            <button @click="changeStatus('R')"
+                                                    class="uk-button uk-button-default uk-button-small uk-width-1-1"
+                                                    href="#"><?= Text::_('COM_PROTOSTORE_ORDER_REFUNDED'); ?></button>
+                                        </li>
+                                        <li>
+                                            <button @click="changeStatus('S')"
+                                                    class="uk-button uk-button-default uk-button-small uk-width-1-1"
+                                                    href="#"><?= Text::_('COM_PROTOSTORE_ORDER_SHIPPED'); ?></button>
+                                        </li>
+                                        <li>
+                                            <button @click="changeStatus('F')"
+                                                    class="uk-button uk-button-default uk-button-small uk-width-1-1"
+                                                    href="#"><?= Text::_('COM_PROTOSTORE_ORDER_COMPLETED'); ?></button>
+                                        </li>
+                                        <li>
+                                            <button @click="changeStatus('D')"
+                                                    class="uk-button uk-button-default uk-button-small uk-width-1-1"
+                                                    href="#"><?= Text::_('COM_PROTOSTORE_ORDER_DENIED'); ?></button>
+                                        </li>
+
+                                    </ul>
+                                </div>
                             </li>
+
                             <li>
-                                <a>
-                                    <span class="uk-margin-small-right" uk-icon="icon: check"></span>
-                                    Print Invoice
+                                <a href="#shipmodal" uk-toggle>
+                                    <span class="uk-margin-small-right"><i class="fal fa-shipping-fast"></i></span>
+                                    Ship
                                 </a>
 
                             </li>
@@ -255,6 +296,11 @@ $item = $vars['item'];
 
     </div>
 
+
+	<?= LayoutHelper::render('order.shipmodal', array(
+		'item' => $item
+	)); ?>
+
 </div>
 
 <script>
@@ -263,7 +309,10 @@ $item = $vars['item'];
             return {
                 base_url: '',
                 order: [],
-                andClose: false
+                andClose: false,
+                newNoteText: '',
+                emailActive: false,
+                emailTrackingActive: false
 
             }
 
@@ -300,6 +349,34 @@ $item = $vars['item'];
         },
         methods: {
 
+            async getOrder() {
+
+                const params = {
+                    orderid: this.order.id,
+
+                };
+
+                const URLparams = this.serialize(params);
+
+                const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=order.get&format=raw&" + URLparams);
+
+                const response = await request.json();
+
+
+                if (response.success) {
+                    this.order = response.data;
+
+                } else {
+                    UIkit.notification({
+                        message: 'There was an error.',
+                        status: 'danger',
+                        pos: 'top-center',
+                        timeout: 5000
+                    });
+                }
+
+            },
+
             async saveItem() {
 
                 const params = {
@@ -323,13 +400,6 @@ $item = $vars['item'];
                         timeout: 5000
                     });
 
-                    if (this.andClose) {
-                        // if 'andClose' is true, redirect back to the discounts list page
-                        window.location.href = this.base_url + 'index.php?option=com_protostore&view=discounts';
-                    } else {
-
-                    }
-
                 } else {
                     UIkit.notification({
                         message: 'There was an error.',
@@ -351,9 +421,6 @@ $item = $vars['item'];
             },
             copyToClipboard(str) {
 
-
-                str = JSON.stringify(str);
-
                 const el = document.createElement('textarea');
                 el.value = str;
                 el.setAttribute('readonly', '');
@@ -366,6 +433,194 @@ $item = $vars['item'];
             },
             togglePaid() {
                 console.log(this.order);
+            },
+            async sendEmail(type) {
+                const params = {
+                    orderid: this.order.id,
+                    emailtype: type,
+
+                };
+                const URLparams = this.serialize(params);
+
+                const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=order.sendemail&format=raw&" + URLparams);
+
+                const response = await request.json();
+
+                if (response.success) {
+
+                    this.getOrder();
+
+                    UIkit.notification({
+                        message: 'Saved!',
+                        status: 'success',
+                        pos: 'top-right',
+                        timeout: 5000
+                    });
+
+
+                } else {
+                    UIkit.notification({
+                        message: 'There was an error.',
+                        status: 'danger',
+                        pos: 'top-center',
+                        timeout: 5000
+                    });
+                }
+            },
+            clearNote() {
+                this.newNoteText = '';
+            },
+            async saveNote() {
+                const params = {
+                    orderid: this.order.id,
+                    text: this.newNoteText,
+
+                };
+                const URLparams = this.serialize(params);
+
+                const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=order.newnote&format=raw&" + URLparams);
+
+                const response = await request.json();
+
+
+                if (response.success) {
+
+                    this.getOrder();
+                    await UIkit.modal('#addnotemodal').hide();
+                    this.clearNote();
+
+                    UIkit.notification({
+                        message: 'Saved!',
+                        status: 'success',
+                        pos: 'top-right',
+                        timeout: 5000
+                    });
+
+
+                } else {
+                    UIkit.notification({
+                        message: 'There was an error.',
+                        status: 'danger',
+                        pos: 'top-center',
+                        timeout: 5000
+                    });
+                }
+
+            },
+            async changeStatus(status) {
+
+                await UIkit.modal.confirm('Are you sure?');
+
+                const params = {
+                    order_id: this.order.id,
+                    status: status,
+                    sendEmail: this.emailActive,
+
+                };
+                const URLparams = this.serialize(params);
+
+                const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=order.updatestatus&format=raw&" + URLparams);
+
+                const response = await request.json();
+
+
+                if (response.success) {
+
+                    this.getOrder();
+
+
+                    UIkit.notification({
+                        message: 'Saved!',
+                        status: 'success',
+                        pos: 'top-right',
+                        timeout: 5000
+                    });
+
+
+                } else {
+                    UIkit.notification({
+                        message: 'There was an error.',
+                        status: 'danger',
+                        pos: 'top-center',
+                        timeout: 5000
+                    });
+                }
+            },
+            async saveTracking() {
+
+                await UIkit.modal.confirm('Are you sure?');
+
+                const params = {
+                    order_id: this.order.id,
+                    tracking_code: this.order.tracking_code,
+                    tracking_link: this.order.tracking_link,
+                    tracking_provider: this.order.tracking_provider,
+                    sendEmail: this.emailTrackingActive,
+
+                };
+                const URLparams = this.serialize(params);
+
+                const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=order.updatetracking&format=raw&" + URLparams);
+
+                const response = await request.json();
+
+
+                if (response.success) {
+
+                    this.getOrder();
+
+
+                    UIkit.notification({
+                        message: 'Saved!',
+                        status: 'success',
+                        pos: 'top-right',
+                        timeout: 5000
+                    });
+
+
+                } else {
+                    UIkit.notification({
+                        message: 'There was an error.',
+                        status: 'danger',
+                        pos: 'top-center',
+                        timeout: 5000
+                    });
+                }
+            },
+            async togglePaid(){
+
+                const params = {
+                    order_id: this.order.id,
+
+                };
+                const URLparams = this.serialize(params);
+
+                const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=order.togglepaid&format=raw&" + URLparams);
+
+                const response = await request.json();
+
+
+                if (response.success) {
+
+                    this.getOrder();
+
+
+                    UIkit.notification({
+                        message: 'Saved!',
+                        status: 'success',
+                        pos: 'top-right',
+                        timeout: 5000
+                    });
+
+
+                } else {
+                    UIkit.notification({
+                        message: 'There was an error.',
+                        status: 'danger',
+                        pos: 'top-center',
+                        timeout: 5000
+                    });
+                }
             },
             setData() {
                 const keys = Object.keys(this.form);
@@ -388,7 +643,9 @@ $item = $vars['item'];
             }
         },
         components: {
-            'p-inputswitch': primevue.inputswitch
+            'p-inputswitch': primevue.inputswitch,
+            'p-timeline': primevue.timeline,
+            'p-avatar': primevue.avatar
         }
     }
     Vue.createApp(p2s_order_form).mount('#p2s_order_form');

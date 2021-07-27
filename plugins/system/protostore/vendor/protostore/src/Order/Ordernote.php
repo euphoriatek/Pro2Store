@@ -26,6 +26,17 @@ class Ordernote
     public $created;
 
 
+	public function __construct($data)
+	{
+
+		if ($data)
+		{
+			$this->hydrate($data);
+			$this->init();
+		}
+
+	}
+
 	/**
 	 *
 	 * Function to simply "hydrate" the database values directly to the class parameters.
@@ -53,13 +64,11 @@ class Ordernote
 	 *
 	 * Function to "hydrate" all non-database values.
 	 *
-	 * @param $data
-	 *
 	 *
 	 * @since 1.6
 	 */
 
-	private function init($data)
+	private function init()
 	{
 
 		$user = OrderFactory::getUser($this->created_by);

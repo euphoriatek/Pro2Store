@@ -35,7 +35,6 @@ class JFormFieldBaseprice extends JFormField
 	protected function getInput()
 	{
 
-
 		$html = array();
 
 

@@ -21,6 +21,7 @@ use Joomla\Input\Input;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Table\Table;
+use Joomla\CMS\Filter\OutputFilter;
 
 use Brick\Math\BigDecimal;
 use Brick\Money\Exception\UnknownCurrencyException;
@@ -28,6 +29,8 @@ use Brick\Money\Exception\UnknownCurrencyException;
 use Protostore\Currency\CurrencyFactory;
 use Protostore\Productoption\ProductoptionFactory;
 use Protostore\Utilities\Utilities;
+
+use StathisG\GreekSlugGenerator\GreekSlugGenerator;
 
 use Exception;
 use stdClass;
@@ -38,9 +41,9 @@ class ProductFactory
 
 
 	/**
-	 * @param $id
+	 * @param   int  $joomla_item_id
 	 *
-	 *
+	 * @return Product|PurchaseProduct|SubscriptionProduct|null
 	 * @since 1.0
 	 */
 
@@ -72,8 +75,9 @@ class ProductFactory
 			return new Product($result);
 		}
 
-		return false;
+		return null;
 	}
+
 
 	/**
 	 * @param   int          $limit
@@ -81,12 +85,14 @@ class ProductFactory
 	 * @param   int          $offset
 	 * @param   int          $category
 	 * @param   string|null  $searchTerm
+	 * @param   string       $orderBy
+	 * @param   string       $orderDir
 	 *
-	 * @return array|false
+	 * @return array
 	 * @since version
 	 */
 
-	public static function getList(int $limit = 0, int $offset = 0, int $category = 0, string $searchTerm = null)
+	public static function getList(int $limit = 0, int $offset = 0, int $category = 0, string $searchTerm = null, string $orderBy = 'id', string $orderDir = 'DESC'): ?array
 	{
 
 		$products = array();
@@ -108,6 +114,7 @@ class ProductFactory
 			$query->where($db->quoteName('catid') . ' = ' . $db->quote($category));
 		}
 
+		$query->order($orderBy . ' ' . $orderDir);
 
 		$db->setQuery($query, $offset, $limit);
 
@@ -139,63 +146,80 @@ class ProductFactory
 		}
 
 
-		return false;
+		return null;
 	}
+
 
 	/**
 	 * @param   Input  $data
 	 *
 	 *
-	 * @return bool
+	 * @return Product
 	 * @throws Exception
 	 * @since 1.6
 	 */
 	public static function saveFromInputData(Input $data)
 	{
 
+//		return $data->json->get('title');
+
+		// if there's no item id, then we need to create a new product
+		if ($data->json->getInt('itemid') === 0)
+		{
+			return self::createNewProduct($data);
+		}
+
+
+		// product exists so we can run an update
+
+
 		// get current product object
-		$currentProduct = self::get($data->getInt('itemid'));
+		$currentProduct = self::get($data->json->getInt('itemid'));
 
-
+//		return $currentProduct;
 
 		// set up Joomla Item:
 
-		$currentProduct->joomlaItem->title       = $data->getString('title', $currentProduct->joomlaItem->title);
-		$currentProduct->joomlaItem->introtext   = $data->getString('introtext', $currentProduct->joomlaItem->introtext);
-		$currentProduct->joomlaItem->fulltext    = $data->getString('fulltext', $currentProduct->joomlaItem->fulltext);
+		$currentProduct->joomlaItem->title       = $data->json->getString('title', $currentProduct->joomlaItem->title);
+		$currentProduct->joomlaItem->introtext   = $data->json->getString('introtext', $currentProduct->joomlaItem->introtext);
+		$currentProduct->joomlaItem->fulltext    = $data->json->getString('fulltext', $currentProduct->joomlaItem->fulltext);
 		$currentProduct->joomlaItem->modified_by = Factory::getUser()->id;
 		$currentProduct->joomlaItem->modified    = Utilities::getDate();
 		$currentProduct->joomlaItem->images      = self::processImagesForSave(
-			$data->getString('teaserimage', $currentProduct->teaserImagePath),
-			$data->getString('fullimage', $currentProduct->fullimage)
+			$data->json->getString('teaserimage', $currentProduct->teaserImagePath),
+			$data->json->getString('fullimage', $currentProduct->fullimage)
 		);
-		$currentProduct->joomlaItem->featured    = $data->getInt('featured', $currentProduct->joomlaItem->featured);
-		$currentProduct->joomlaItem->state       = $data->getInt('state', $currentProduct->joomlaItem->state);
-		$currentProduct->joomlaItem->publish_up  = $data->getString('publish_up_date', $currentProduct->joomlaItem->publish_up);
-		$currentProduct->joomlaItem->catid       = $data->getInt('jcategory', $currentProduct->joomlaItem->catid);
+		$currentProduct->joomlaItem->featured    = $data->json->getInt('featured', $currentProduct->joomlaItem->featured);
+		$currentProduct->joomlaItem->state       = $data->json->getInt('state', $currentProduct->joomlaItem->state);
+		$currentProduct->joomlaItem->publish_up  = $data->json->getString('publish_up_date', $currentProduct->joomlaItem->publish_up);
+		$currentProduct->joomlaItem->catid       = $data->json->getInt('category', $currentProduct->joomlaItem->catid);
 
 
 		// with prices... we need to run it through the Brick system first.
-		$base_price = $data->getFloat('base_price', $currentProduct->base_price);
+		$base_price = $data->json->getFloat('base_price', $currentProduct->base_price);
 
 
 		if ($base_price)
 		{
 			$currentProduct->base_price = CurrencyFactory::toInt($base_price);
 		}
+		else
+		{
+			$currentProduct->base_price = 0;
+		}
 
-		$discount = $data->getFloat('discount', $currentProduct->discount);
+		$discount = $data->json->getFloat('discount', $currentProduct->discount);
 		if ($discount)
 		{
 			$currentProduct->discount = CurrencyFactory::toInt($discount);
 		}
 
-		$currentProduct->shipping_mode = $data->getString('shipping_mode', $currentProduct->shipping_mode);
+		$currentProduct->shipping_mode = $data->json->getString('shipping_mode', $currentProduct->shipping_mode);
 
 		if ($currentProduct->shipping_mode == 'flat')
 		{
 
-			$currentProduct->flatfee = $data->getFloat('flatfee', $currentProduct->flatfee);
+			$currentProduct->flatfee = $data->json->getFloat('flatfee', $currentProduct->flatfee);
 
 			if ($currentProduct->flatfee)
 			{
@@ -209,26 +233,168 @@ class ProductFactory
 		}
 
 
-		$currentProduct->manage_stock  = $data->getInt('manage_stock', $currentProduct->manage_stock);
-		$currentProduct->stock         = $data->getInt('stock', $currentProduct->stock);
-		$currentProduct->maxPerOrder   = $data->getInt('maxPerOrder', $currentProduct->maxPerOrder);
-		$currentProduct->taxable       = $data->getInt('taxable', $currentProduct->taxable);
-		$currentProduct->weight        = $data->getInt('weight', $currentProduct->weight);
-		$currentProduct->product_type  = $data->getInt('product_type', $currentProduct->product_type);
-		$currentProduct->weight_unit   = $data->getString('weight_unit', $currentProduct->weight_unit);
-		$currentProduct->sku           = $data->getString('sku', $currentProduct->sku);
-		$currentProduct->discount_type = $data->getString('discount_type', $currentProduct->discount_type);
-		$currentProduct->tags          = json_decode($data->getString('tags', json_encode($currentProduct->tags)));
+		$currentProduct->manage_stock  = $data->json->getInt('manage_stock', $currentProduct->manage_stock);
+		$currentProduct->stock         = $data->json->getInt('stock', $currentProduct->stock);
+		$currentProduct->maxPerOrder   = $data->json->getInt('maxPerOrder', $currentProduct->maxPerOrder);
+		$currentProduct->taxable       = $data->json->getInt('taxable', $currentProduct->taxable);
+		$currentProduct->weight        = $data->json->getInt('weight', $currentProduct->weight);
+		$currentProduct->product_type  = $data->json->getInt('product_type', $currentProduct->product_type);
+		$currentProduct->weight_unit   = $data->json->getString('weight_unit', $currentProduct->weight_unit);
+		$currentProduct->sku           = $data->json->getString('sku', $currentProduct->sku);
+		$currentProduct->discount_type = $data->json->getString('discount_type', $currentProduct->discount_type);
+		$currentProduct->tags          = json_decode($data->json->getString('tags', json_encode($currentProduct->tags)));
 
-		$currentProduct->options       = $data->getString('options', $currentProduct->options);
-		$currentProduct->variants      = $data->getString('variants', $currentProduct->variants);
-		$currentProduct->variantLabels = $data->getString('variantLabels', $currentProduct->variantLabels);
-		$currentProduct->variantList   = $data->getString('variantList', $currentProduct->variantList);
+		$currentProduct->options       = $data->json->getString('options', $currentProduct->options);
+		$currentProduct->variants      = $data->json->getString('variants', $currentProduct->variants);
+		$currentProduct->variantLabels = $data->json->getString('variantLabels', $currentProduct->variantLabels);
+		$currentProduct->variantList   = $data->json->getString('variantList', $currentProduct->variantList);
 
 
-		return self::commitToDatabase($currentProduct);
+		if (self::commitToDatabase($currentProduct))
+		{
+			return self::get($data->json->getInt('itemid'));
+		}
 
 	}
+
+
+	/**
+	 * @param   Input  $data
+	 *
+	 * @return Product
+	 *
+	 * @throws Exception
+	 * @since 1.6
+	 */
+
+	private static function createNewProduct(Input $data): Product
+	{
+
+		$db = Factory::getDbo();
+
+		// create the Joomla Item
+
+		$content        = new stdClass();
+		$content->id    = 0;
+		$content->title = $data->json->getString('title');
+
+		//alias:
+		// Workaround for Greek titles.
+		$alias = GreekSlugGenerator::getSlug($content->title);
+		$alias = OutputFilter::stringUrlUnicodeSlug($alias);
+		$alias = Utilities::generateUniqueAlias($alias);
+
+		$content->alias            = $alias;
+		$content->introtext        = $data->json->getString('introtext');
+		$content->fulltext         = $data->json->getString('fulltext');
+		$content->state            = $data->json->getInt('state');
+		$content->catid            = $data->json->getInt('category');
+		$content->featured         = $data->json->getInt('featured');
+		$content->created          = Utilities::getDate();
+		$content->created_by       = Factory::getUser()->id;
+		$content->created_by_alias = Factory::getUser()->alias;
+		$content->modified         = Utilities::getDate();;
+		$content->modified_by = Factory::getUser()->id;
+		$content->publish_up  = $data->json->getString('publish_up_date');
+		$content->images      = self::processImagesForSave(
+			$data->json->getString('teaserimage'),
+			$data->json->getString('fullimage')
+		);
+		if (!$db->insertObject('#__content', $content))
+		{
+			return false;
+		}
+
+
+		// create the item in Pro2Store Products table
+
+
+		$product                 = new stdClass();
+		$product->joomla_item_id = $db->insertid();
+
+
+		$base_price          = $data->json->getFloat('base_price', 0);
+		$product->base_price = CurrencyFactory::toInt($base_price);
+
+
+		$product->shipping_mode = $data->json->getString('shipping_mode');
+
+
+		// flat fee
+		if ($product->shipping_mode == 'flat')
+		{
+
+			$product->flatfee = $data->json->getFloat('flatfee', 0);
+			$product->flatfee = CurrencyFactory::toInt($product->flatfee);
+
+		}
+		else
+		{
+			$product->flatfee = 0;
+		}
+
+		$discount = $data->json->getFloat('discount', 0);
+		if ($discount)
+		{
+			$product->discount = CurrencyFactory::toInt($discount);
+		}
+
+
+		$product->manage_stock  = $data->json->getInt('manage_stock', 0);
+		$product->stock         = $data->json->getInt('stock', 0);
+		$product->maxPerOrder   = $data->json->getInt('maxPerOrder', 0);
+		$product->taxable       = $data->json->getInt('taxable', 0);
+		$product->weight        = $data->json->getInt('weight', 0);
+		$product->product_type  = $data->json->getInt('product_type', 1);
+		$product->weight_unit   = $data->json->getString('weight_unit');
+		$product->sku           = $data->json->getString('sku');
+		$product->discount_type = $data->json->getString('discount_type');
+
+
+		if (!$db->insertObject('#__protostore_product', $product))
+		{
+			return false;
+		}
+
+
+		// Create the Variants
+
+		if ($data->json->getString('variants'))
+		{
+			self::commitVariants($product);
+		}
+
+
+		// Create the Tags
+
+		if ($tags = $data->json->getString('tags'))
+		{
+
+			$tags = Utilities::processTagsByName($tags);
+
+			$table = Table::getInstance('Content');
+			$table->load($product->joomla_item_id);
+			$table->newTags = $tags;
+			$table->store();
+			if (!$table->store())
+			{
+
+				return false;
+
+			}
+		}
+
+
+		// Create the Old Options (deprecated)
+		if ($data->json->getString('options'))
+		{
+			self::commitOptions($product);
+		}
+
+		return self::get($product->joomla_item_id);
+
+	}
+
 
 	/**
 	 * @param   Product  $product
@@ -275,145 +441,14 @@ class ProductFactory
 			{
 				// now do variants
 
-				// check if we already have variants for this product
-				$query = $db->getQuery(true);
+				self::commitVariants($product);
 
-				$query->select('*');
-				$query->from($db->quoteName('#__protostore_product_variant'));
-				$query->where($db->quoteName('product_id') . ' = ' . $db->quote($product->id));
-				$db->setQuery($query);
-
-				$currentVariants = $db->loadObject();
-
-				if ($currentVariants)
-				{
-					// if we have variants already,  update
-
-					$currentVariants->variants      = $product->variants;
-					$currentVariants->variantLabels = $product->variantLabels;
-					$currentVariants->variantList   = self::processVariantPrices($product->variantList);
-
-					$db->updateObject('#__protostore_product_variant', $currentVariants, 'product_id');
-
-				}
-				else
-				{
-					// if not, then insert new ones
-
-					$object                = new stdClass();
-					$object->product_id    = $product->id;
-					$object->variants      = $product->variants;
-					$object->variantLabels = $product->variantLabels;
-					$object->variantList   = $product->variantList;
-
-					$db->insertObject('#__protostore_product_variant', $object);
-				}
 
 			}
 
 			// now do options
 
-
-			$product_options = json_decode($product->options);
-
-			$i = 0;
-
-			//now reinsert the new ones
-			foreach ($product_options as $option)
-			{
-
-				if (isset($option->id))
-				{
-					//first check if the option exists
-					$query = $db->getQuery(true);
-
-					$query->select('*');
-					$query->from($db->quoteName('#__protostore_product_option_values'));
-					$query->where($db->quoteName('id') . ' = ' . $db->quote($option->id));
-
-					$db->setQuery($query);
-
-					$option_exists = $db->loadObject();
-				}
-				else
-				{
-					$option_exists = false;
-				}
-
-
-				if ($option_exists)
-				{
-
-					if ($option->modifiervalue)
-					{
-
-						if ($option->modifiertype == 'perc')
-						{
-							$modifiervalue = $option->modifiervalue;
-						}
-						else
-						{
-
-							$modifiervalue = CurrencyFactory::toInt($option->modifiervalueFloat);
-						}
-
-					}
-					else
-					{
-						$modifiervalue = "";
-					}
-					//run update
-					$query = $db->getQuery(true);
-
-					$fields = array(
-						$db->quoteName('optionname') . ' = ' . $db->quote($option->optionname),
-						$db->quoteName('optiontype') . ' = ' . $db->quote($option->optiontype),
-						$db->quoteName('modifier') . ' = ' . $db->quote($option->modifier),
-						$db->quoteName('modifiertype') . ' = ' . $db->quote($option->modifiertype),
-						$db->quoteName('modifiervalue') . ' = ' . $db->quote($modifiervalue),
-						$db->quoteName('optionsku') . ' = ' . $db->quote($option->optionsku),
-						$db->quoteName('ordering') . ' = ' . $db->quote($i)
-					);
-
-					$conditions = array(
-						$db->quoteName('id') . ' = ' . $db->quote($option->id),
-					);
-
-					$query->update($db->quoteName('#__protostore_product_option_values'))->set($fields)->where($conditions);
-
-					$db->setQuery($query);
-
-					$db->execute();
-					$i++;
-				}
-				else
-				{
-					//run insert
-					$object               = new stdClass();
-					$object->id           = 0;
-					$object->product_id   = $product->id;
-					$object->optiontype   = $option->optiontype;
-					$object->optionname   = $option->optionname;
-					$object->modifier     = $option->modifier;
-					$object->modifiertype = $option->modifiertype;
-					if ($option->modifiertype == 'perc')
-					{
-						$object->modifiervalue = $option->modifiervalue;
-					}
-					else
-					{
-
-						$object->modifiervalue = CurrencyFactory::toInt($option->modifiervalueFloat);
-					}
-					$object->optionsku = $option->optionsku;
-					$object->ordering  = $i;
-
-					$db->insertObject('#__protostore_product_option_values', $object);
-					$i++;
-				}
-
-
-			}
+			self::commitOptions($product);
 
 
 			// now do TAGS
@@ -426,21 +461,194 @@ class ProductFactory
 				$table = Table::getInstance('Content');
 				$table->load($product->joomla_item_id);
 				$table->newTags = $tags;
-				$table->store();
 
 			}
 			else
 			{
 				$table = Table::getInstance('Content');
 				$table->load($product->joomla_item_id);
-				$table->store();
 
 			}
+			$table->store();
 
 		}
 
 
 		return true;
+
+	}
+
+
+	/**
+	 * @param $options
+	 * @param $product
+	 *
+	 *
+	 * @throws Exception
+	 * @since 1.6
+	 */
+
+	private static function commitOptions($product)
+	{
+
+		$db = Factory::getDbo();
+
+		$product_options = json_decode($product->options);
+
+		$i = 0;
+
+		//now reinsert the new ones
+		foreach ($product_options as $option)
+		{
+
+			if (isset($option->id))
+			{
+				//first check if the option exists
+				$query = $db->getQuery(true);
+
+				$query->select('*');
+				$query->from($db->quoteName('#__protostore_product_option_values'));
+				$query->where($db->quoteName('id') . ' = ' . $db->quote($option->id));
+
+				$db->setQuery($query);
+
+				$option_exists = $db->loadObject();
+			}
+			else
+			{
+				$option_exists = false;
+			}
+
+
+			if ($option_exists)
+			{
+
+				if ($option->modifiervalue)
+				{
+
+					if ($option->modifiertype == 'perc')
+					{
+						$modifiervalue = $option->modifiervalue;
+					}
+					else
+					{
+
+						$modifiervalue = CurrencyFactory::toInt($option->modifiervalueFloat);
+					}
+
+				}
+				else
+				{
+					$modifiervalue = "";
+				}
+				//run update
+				$query = $db->getQuery(true);
+
+				$fields = array(
+					$db->quoteName('optionname') . ' = ' . $db->quote($option->optionname),
+					$db->quoteName('optiontype') . ' = ' . $db->quote($option->optiontype),
+					$db->quoteName('modifier') . ' = ' . $db->quote($option->modifier),
+					$db->quoteName('modifiertype') . ' = ' . $db->quote($option->modifiertype),
+					$db->quoteName('modifiervalue') . ' = ' . $db->quote($modifiervalue),
+					$db->quoteName('optionsku') . ' = ' . $db->quote($option->optionsku),
+					$db->quoteName('ordering') . ' = ' . $db->quote($i)
+				);
+
+				$conditions = array(
+					$db->quoteName('id') . ' = ' . $db->quote($option->id),
+				);
+
+				$query->update($db->quoteName('#__protostore_product_option_values'))->set($fields)->where($conditions);
+
+				$db->setQuery($query);
+
+				$db->execute();
+			}
+			else
+			{
+				//run insert
+				$object               = new stdClass();
+				$object->id           = 0;
+				$object->product_id   = $product->id;
+				$object->optiontype   = $option->optiontype;
+				$object->optionname   = $option->optionname;
+				$object->modifier     = $option->modifier;
+				$object->modifiertype = $option->modifiertype;
+				if ($option->modifiertype == 'perc')
+				{
+					$object->modifiervalue = $option->modifiervalue;
+				}
+				else
+				{
+
+					$object->modifiervalue = CurrencyFactory::toInt($option->modifiervalueFloat);
+				}
+				$object->optionsku = $option->optionsku;
+				$object->ordering  = $i;
+
+				$db->insertObject('#__protostore_product_option_values', $object);
+			}
+			$i++;
+
+
+		}
+
+
+	}
+
+
+	/**
+	 * @param $product
+	 *
+	 * @return bool
+	 *
+	 * @throws Exception
+	 * @since 1.6
+	 */
+
+	public static function commitVariants($product): bool
+	{
+
+		$db = Factory::getDbo();
+
+		// check if we already have variants for this product
+		$query = $db->getQuery(true);
+
+		$query->select('*');
+		$query->from($db->quoteName('#__protostore_product_variant'));
+		$query->where($db->quoteName('product_id') . ' = ' . $db->quote($product->id));
+		$db->setQuery($query);
+
+		$currentVariants = $db->loadObject();
+
+		if ($currentVariants)
+		{
+			// if we have variants already,  update
+
+			$currentVariants->variants      = $product->variants;
+			$currentVariants->variantLabels = $product->variantLabels;
+			$currentVariants->variantList   = self::processVariantPrices($product);
+
+			$db->updateObject('#__protostore_product_variant', $currentVariants, 'product_id');
+
+			return true;
+
+		}
+		else
+		{
+			// if not, then insert new ones
+
+			$object                = new stdClass();
+			$object->product_id    = $product->id;
+			$object->variants      = $product->variants;
+			$object->variantLabels = $product->variantLabels;
+			$object->variantList   = $product->variantList;
+
+			$db->insertObject('#__protostore_product_variant', $object);
+
+			return true;
+
+		}
 
 	}
 
@@ -455,7 +663,6 @@ class ProductFactory
 	 *
 	 * @since 1.6
 	 */
-
 
 	public static function getOptionList(int $limit = 0, int $offset = 0, string $searchTerm = null, string $optionType = null)
 	{
@@ -502,6 +709,7 @@ class ProductFactory
 
 	}
 
+
 	/**
 	 * @param $joomla_item_id
 	 *
@@ -509,7 +717,6 @@ class ProductFactory
 	 *
 	 * @since 1.6
 	 */
-
 
 	public static function getJoomlaItem($joomla_item_id): ?JoomlaItem
 	{
@@ -561,6 +768,7 @@ class ProductFactory
 
 	}
 
+
 	/**
 	 * @param $price
 	 *
@@ -577,6 +785,7 @@ class ProductFactory
 
 	}
 
+
 	/**
 	 * @param $price
 	 *
@@ -586,13 +795,13 @@ class ProductFactory
 	 * @since 1.6
 	 */
 
-
 	public static function getFormattedPrice($price): string
 	{
 
 		return CurrencyFactory::formatNumberWithCurrency($price);
 
 	}
+
 
 	/**
 	 * @param $category_id
@@ -612,6 +821,7 @@ class ProductFactory
 
 	}
 
+
 	/**
 	 * @param $joomla_item_id
 	 *
@@ -630,14 +840,15 @@ class ProductFactory
 
 	}
 
+
 	/**
 	 *
-	 * @return false|Tag
+	 * @return array|null
 	 *
 	 * @since 1.6
 	 */
 
-	public static function getAvailableTags()
+	public static function getAvailableTags(): ?array
 	{
 
 		$tags = array();
@@ -669,10 +880,11 @@ class ProductFactory
 		}
 
 
-		return false;
+		return null;
 
 
 	}
+
 
 	/**
 	 * @param $product_id
@@ -681,7 +893,6 @@ class ProductFactory
 	 *
 	 * @since 1.6
 	 */
-
 
 	public static function getOptions($product_id)
 	{
@@ -698,7 +909,6 @@ class ProductFactory
 	 *
 	 * @since 1.6
 	 */
-
 
 	public static function togglePublished($id)
 	{
@@ -723,6 +933,7 @@ class ProductFactory
 
 	}
 
+
 	/**
 	 * @param $image
 	 *
@@ -744,6 +955,7 @@ class ProductFactory
 
 	}
 
+
 	/**
 	 * @param $product_id
 	 *
@@ -751,7 +963,6 @@ class ProductFactory
 	 *
 	 * @since 1.6
 	 */
-
 
 	public static function getVariantData($product_id): ?Variant
 	{
@@ -777,6 +988,29 @@ class ProductFactory
 
 	}
 
+
+	/**
+	 * @param   string  $variantList
+	 *
+	 * @return string
+	 *
+	 * @throws Exception
+	 * @since 1.6
+	 */
+
+	public static function retrieveVariantPrices(string $variantList): string
+	{
+		$variantList = json_decode($variantList);
+
+		foreach ($variantList as $variant)
+		{
+			$variant->price = CurrencyFactory::toFloat($variant->price);
+		}
+
+		return json_encode($variantList);
+	}
+
+
 	/**
 	 * @param   string  $teaserImage
 	 * @param   string  $fullImage
@@ -798,8 +1032,9 @@ class ProductFactory
 
 	}
 
+
 	/**
-	 * @param   string  $variantList
+	 * @param $product
 	 *
 	 * @return string
 	 *
@@ -807,38 +1042,26 @@ class ProductFactory
 	 * @since 1.6
 	 */
 
-	private static function processVariantPrices(string $variantList): string
+	private static function processVariantPrices($product): string
 	{
 
-		$variantList = json_decode($variantList);
+		$variantList = json_decode($product->variantList);
 
 		foreach ($variantList as $variant)
 		{
-			$variant->price = CurrencyFactory::toInt($variant->price);
+
+			if ($variant->price)
+			{
+				$variant->price = CurrencyFactory::toInt($variant->price);
+			}
+			else
+			{
+				$variant->price = $product->base_price;
+			}
+
 		}
 
 		return json_encode($variantList);
 
-	}
-
-	/**
-	 * @param   string  $variantList
-	 *
-	 * @return string
-	 *
-	 * @throws Exception
-	 * @since 1.6
-	 */
-
-	public static function retrieveVariantPrices(string $variantList): string
-	{
-		$variantList = json_decode($variantList);
-
-		foreach ($variantList as $variant)
-		{
-			$variant->price = CurrencyFactory::toFloat($variant->price);
-		}
-
-		return json_encode($variantList);
 	}
 }

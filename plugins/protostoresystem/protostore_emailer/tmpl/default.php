@@ -15,13 +15,8 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
-use Protostore\Currency\Currency;
 use Protostore\Utilities\Utilities;
 
-//
-//$app = Factory::getApplication();
-//$config = $app->getParams('com_protostore');
-//
 
 $language = Factory::getLanguage();
 $language->load('com_protostore', JPATH_ADMINISTRATOR);
@@ -36,9 +31,6 @@ $shop_brandcolour_light = Utilities::adjustBrightness($shop_brandcolour, 2);
 
 $order = $displayData['order'];
 $body  = $displayData['body'];
-
-$language = Factory::getLanguage();
-$language->load('com_protostore', JPATH_ADMINISTRATOR);
 
 
 ?>
@@ -214,7 +206,7 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
                                         </td>
                                         <td style="font-weight: 700; padding-top: 14px; text-align: right; color: #4a5566; vertical-align: top; min-width:100px"
                                             align="right"
-                                            valign="top"><?= Currency::formatNumberWithCurrency(($product->price_at_sale * $product->amount), $order->currency, '', true); ?>
+                                            valign="top"><?= $product->subtotal_formatted; ?>
                                         </td>
                                     </tr>
 
@@ -241,7 +233,7 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
                                     </td>
                                     <td style="font-weight: 700; padding-top: 14px; text-align: right; color: #4a5566; vertical-align: top;"
                                         align="right"
-                                        valign="top"><?= Currency::formatNumberWithCurrency($order->subtotal, $order->currency, '', true); ?>
+                                        valign="top"><?= $order->order_subtotal_formatted; ?>
                                     </td>
                                 </tr>
 
@@ -257,7 +249,7 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
                                     </td>
                                     <td style="font-weight: 700; padding-top: 14px; text-align: right; color: #4a5566; vertical-align: top; "
                                         align="right"
-                                        valign="top"><?= $order->shipping_total_as_string; ?>
+                                        valign="top"><?= $order->shipping_total_formatted; ?>
                                     </td>
                                 </tr>
 
@@ -271,7 +263,7 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
                                     </td>
                                     <td style="font-weight: 700; padding-top: 14px; text-align: right; color: #4a5566; vertical-align: top; min-width:185px"
 
-                                        valign="top"><?= Currency::formatNumberWithCurrency($order->tax_total, $order->currency, '', true); ?>
+                                        valign="top"><?= $order->tax_total_formatted; ?>
                                     </td>
                                 </tr>
                                 <tr>
@@ -284,7 +276,7 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
                                     </td>
                                     <td style="font-weight: 700; padding-top: 14px; text-align: right; color: #4a5566; vertical-align: top; min-width:185px"
 
-                                        valign="top"><?= Currency::formatNumberWithCurrency($order->discount_total, $order->currency, '', true); ?>
+                                        valign="top"><?= $order->discount_total_formatted; ?>
                                     </td>
                                 </tr>
 
@@ -298,7 +290,7 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
                                     </td>
                                     <td style="font-weight: 700; font-size: 21px; line-height: 28px; margin: 0; color: #4a5566""
                                         align="right"
-                                        valign="top"><?= Currency::formatNumberWithCurrency($order->total, $order->currency, '', true); ?>
+                                        valign="top"><?= $order->order_total_formatted; ?>
                                     </td>
                                 </tr>
 
@@ -318,11 +310,7 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
                                                     valign="top">
                                                     <h4 style="font-size: 16px; line-height: 22px; margin: 0 0 8px; color: #8492a6"><?= Text::_('COM_PROTOSTORE_DEFAULT_EMAIL_SHIPPING_ADDRESS'); ?></h4>
                                                     <p style="font-size: 16px; line-height: 22px; margin: 0; color: #8492a6">
-														<?php foreach ($order->shipping_address->getAddressDetailsAsObject() as $line) : ?>
-															<?php if (!empty($line)) : ?>
-																<?= $line; ?>, <br/>
-															<?php endif; ?>
-														<?php endforeach; ?>
+	                                                    <?= $order->shipping_address->address_as_csv; ?>
                                                     </p>
                                                 </td>
                                             </tr>
@@ -335,11 +323,7 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
                                                     valign="top">
                                                     <h4 style="font-size: 16px; line-height: 22px; margin: 0 0 8px; color: #8492a6"><?= Text::_('COM_PROTOSTORE_DEFAULT_EMAIL_BILLING_ADDRESS'); ?></h4>
                                                     <p style="font-size: 16px; line-height: 22px; margin: 0; color: #8492a6">
-														<?php foreach ($order->billing_address->getAddressDetailsAsObject() as $line) : ?>
-															<?php if (!empty($line)) : ?>
-																<?= $line; ?>, <br/>
-															<?php endif; ?>
-														<?php endforeach; ?>
+                                                        <?= $order->billing_address->address_as_csv; ?>
                                                     </p>
                                                 </td>
                                             </tr>

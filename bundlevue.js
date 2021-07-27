@@ -189,6 +189,20 @@ const stringreplace = require('replace-in-file');
         });
     });
 
+    emptyDir('./media/com_protostore/js/vue/emailmanager').then(() => {
+        remove('./media/com_protostore/js/vue/emailmanager').then(() => {
+            mkdir('./media/com_protostore/js/vue/emailmanager').then(() => {
+                minify({
+                    compressor: terser,
+                    input: './vuefiles/emailmanager.js',
+                    output: './media/com_protostore/js/vue/emailmanager/emailmanager.min.js'
+                }).then(function () {
+                    console.log('emailmanager done on: ' + theTime);
+                });
+            });
+        });
+    });
+
 
 
     emptyDir('./media/com_protostore/js/vue/dashboard').then(() => {
