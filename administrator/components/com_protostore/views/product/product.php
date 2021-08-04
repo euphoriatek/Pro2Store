@@ -74,7 +74,7 @@ $item = $vars['item'];
 
                 <div class="uk-width-2-3">
 
-					<?= LayoutHelper::render('card_details', array(
+					<?= LayoutHelper::render('product/card_details', array(
 						'form'      => $vars['form'],
 						'cardStyle' => 'default',
 						'cardTitle' => 'COM_PROTOSTORE_ADD_PRODUCT_PRODUCT_DETAILS',
@@ -91,7 +91,7 @@ $item = $vars['item'];
 						'field_grid_width' => '1-2',
 					)); ?>
                     <span v-show="form.jform_product_type == 2">
-						<?= LayoutHelper::render('card_digital', array(
+						<?= LayoutHelper::render('product/card_digital', array(
 							'form'      => $vars['form'],
 							'cardTitle' => 'Digital Details',
 							'cardStyle' => 'default',
@@ -99,7 +99,7 @@ $item = $vars['item'];
 						)); ?>
 					</span>
 
-					<?= LayoutHelper::render('card_options', array(
+					<?= LayoutHelper::render('product/card_options', array(
 						'form'             => $vars['form'],
 						'cardTitle'        => 'COM_PROTOSTORE_ADD_PRODUCT_OPTIONS',
 						'cardStyle'        => 'default',
@@ -108,7 +108,7 @@ $item = $vars['item'];
 						'field_grid_width' => '1-1',
 					)); ?>
 
-					<?= LayoutHelper::render('card_variant', array(
+					<?= LayoutHelper::render('product/card_variant', array(
 						'form'             => $vars['form'],
 						'cardTitle'        => 'COM_PROTOSTORE_ADD_PRODUCT_VARIANTS',
 						'cardStyle'        => 'default',
@@ -218,6 +218,7 @@ $item = $vars['item'];
                     jform_title: '',
                     jform_short_description: '',
                     jform_long_description: '',
+                    jform_access: '',
                     jform_base_price: '',
                     jform_sku: '',
                     jform_category: '',
@@ -239,8 +240,10 @@ $item = $vars['item'];
                     jform_variants: [],
                     variantLabels: [],
                     variantsList: [],
-                    variantsListLocal: []
+                    variantsListLocal: [],
+                    files: []
                 },
+                product_id: 0,
                 product_type: 1,
                 available_tags: [],
                 available_options: [],
@@ -248,9 +251,14 @@ $item = $vars['item'];
                 p2s_currency: [],
                 p2s_local: '',
                 andClose: false,
-                variantsSet: false
+                variantsSet: false,
+                successMessage: '',
+                file_for_edit: {}
             }
 
+        },
+        created() {
+            emitter.on('p2s_product_file_upload', this.fileUploaded)
         },
         mounted() {
             if (this.form.jform_variants.length > 0) {
@@ -314,6 +322,13 @@ $item = $vars['item'];
             } catch (err) {
             }
 
+            const productid = document.getElementById('jform_product_id_data');
+            try {
+                this.product_id = productid.innerText;
+                // itemid.remove();
+            } catch (err) {
+            }
+
             const product_type = document.getElementById('jform_product_type_data');
             try {
                 this.form.jform_product_type = product_type.innerText;
@@ -347,13 +362,6 @@ $item = $vars['item'];
             try {
                 this.form.jform_show_discount = (jform_show_discount.innerText == 1);
                 //   jform_show_discount.remove();
-            } catch (err) {
-            }
-
-            const jform_discount = document.getElementById('jform_discount_data');
-            try {
-                this.form.jform_discount = jform_discount.innerText;
-                //   jform_discount.remove();
             } catch (err) {
             }
 
@@ -405,6 +413,14 @@ $item = $vars['item'];
                 //  jform_base_price.remove();
             } catch (err) {
             }
+
+            const jform_discount = document.getElementById('jform_discount_formatted_data');
+            try {
+                this.form.jform_discount = parseFloat(jform_discount.innerText);
+                //  jform_discount.remove();
+            } catch (err) {
+            }
+
 
             const jform_options = document.getElementById('jform_options');
             try {
@@ -461,7 +477,7 @@ $item = $vars['item'];
                 this.form.variantsListLocal = new Array(0);
             }
 
-            const p2s_currency = document.getElementById('p2s_currency');
+            const p2s_currency = document.getElementById('currency');
             try {
                 this.p2s_currency = JSON.parse(p2s_currency.innerText);
                 // p2s_currency.remove();
@@ -469,7 +485,7 @@ $item = $vars['item'];
             }
 
 
-            const p2s_locale = document.getElementById('p2s_locale');
+            const p2s_locale = document.getElementById('locale');
             try {
                 this.p2s_local = p2s_locale.innerText;
                 // p2s_local.remove();
@@ -483,8 +499,23 @@ $item = $vars['item'];
             } catch (err) {
             }
 
+            const files = document.getElementById('jform_files_data');
+            try {
+                this.form.files = JSON.parse(files.innerText);
+                // available_tags.remove();
+            } catch (err) {
+            }
+
+            const successMessage = document.getElementById('successMessage');
+            try {
+                this.successMessage = successMessage.innerText;
+                // available_tags.remove();
+            } catch (err) {
+            }
+
         },
         methods: {
+
 
             logIt() {
                 // console.log("jform_base_price", this.form.jform_base_price);
@@ -626,6 +657,92 @@ $item = $vars['item'];
                 await UIkit.modal.confirm('Are you sure?');
                 this.form.jform_options.splice(i, 1);
             },
+
+
+            /**
+             * FILE EDIT
+             */
+
+            openFileEdit(file) {
+                this.file_for_edit = file;
+                this.openAddFile();
+            },
+            openAddFile(){
+                UIkit.modal("#fileEditModal").show();
+            },
+            removeFile(){
+                this.file_for_edit.filename_obscured = false;
+            },
+            fileUploaded(data) {
+                console.log("Data is: ", data)
+                this.file_for_edit.filename_obscured = data.path;
+                this.file_for_edit.filename = data.filename;
+            },
+            async saveFile() {
+
+                const params = {
+                    'fileid': this.file_for_edit.id,
+                    'created': this.file_for_edit.created,
+                    'download_access': this.file_for_edit.download_access,
+                    'filename': this.file_for_edit.filename,
+                    'filename_obscured': this.file_for_edit.filename_obscured,
+                    'isjoomla': (this.file_for_edit.isjoomla ? 1 : 0),
+                    'php_min': this.file_for_edit.php_min,
+                    'published': (this.file_for_edit.published ? 1 : 0),
+                    'stability_level': this.file_for_edit.stability_level,
+                    'type': this.file_for_edit.type,
+                    'version': this.file_for_edit.version,
+                    'product_id': this.product_id
+                };
+
+
+                const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=file.save&format=raw", {
+                    method: 'POST',
+                    mode: 'cors',
+                    cache: 'no-cache',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    redirect: 'follow',
+                    referrerPolicy: 'no-referrer',
+                    body: JSON.stringify(params)
+                });
+
+
+                const response = await request.json();
+
+                if (response.success) {
+
+                    UIkit.notification({
+                        message: this.successMessage,
+                        status: 'success',
+                        pos: 'top-center',
+                        timeout: 5000
+                    });
+
+
+                } else {
+                    UIkit.notification({
+                        message: 'There was an error.',
+                        status: 'danger',
+                        pos: 'top-center',
+                        timeout: 5000
+                    });
+                }
+
+            },
+
+            cancelFile(){
+                this.file_for_edit = {};
+            },
+
+
+            /**
+             * SAVE AND UTILITIES
+             */
+
+
             async saveItem() {
 
                 this.form.jform_long_description = this.getFrameContents('jform_long_description');
@@ -633,6 +750,7 @@ $item = $vars['item'];
                 this.form.jform_teaserimage = document.getElementById("jform_teaserimage").value;
                 this.form.jform_fullimage = document.getElementById("jform_fullimage").value;
                 this.form.jform_publish_up_date = document.getElementById("jform_publish_up_date").value;
+                this.form.jform_access = document.getElementById("jform_access").value;
 
 
                 // this.form.jform_tags = [];
@@ -651,7 +769,9 @@ $item = $vars['item'];
                     'introtext': this.form.jform_short_description,
                     'fulltext': this.form.jform_long_description,
                     'category': this.form.jform_category,
+                    'access': this.form.jform_access,
                     'base_price': this.form.jform_base_price,
+                    'discount': this.form.jform_discount,
                     'tags': this.form.jform_tags,
                     'sku': this.form.jform_sku,
                     'stock': this.form.jform_stock,
@@ -659,7 +779,7 @@ $item = $vars['item'];
                     'featured': (this.form.jform_featured ? 1 : 0),
                     'state': (this.form.jform_state ? 1 : 0),
                     'taxable': (this.form.jform_taxable ? 1 : 0),
-                    'discount': this.form.jform_discount,
+
                     'teaserimage': this.form.jform_teaserimage,
                     'fullimage': this.form.jform_fullimage,
                     'shipping_mode': this.form.jform_shipping_mode,
@@ -690,7 +810,13 @@ $item = $vars['item'];
 
                 if (response.success) {
 
-                    console.log(response)
+                    UIkit.notification({
+                        message: this.successMessage,
+                        status: 'success',
+                        pos: 'top-center',
+                        timeout: 5000
+                    });
+
 
                     if (this.andClose) {
                         // if 'andClose' is true, redirect back to the list page
@@ -746,5 +872,70 @@ $item = $vars['item'];
         }
     }
     Vue.createApp(p2s_product_form).mount('#p2s_product_form');
+
+</script>
+
+
+<script>
+
+    var bar = document.getElementById('js-progressbar');
+
+
+    UIkit.upload('.p2s_file_upload', {
+
+        url: '',
+        multiple: false,
+        beforeAll: function () {
+            this.url = '<?= Uri::base(); ?>index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=file.upload&format=raw';
+            console.log('beforeAll', arguments);
+        },
+
+        loadStart: function (e) {
+
+            bar.removeAttribute('hidden');
+            bar.max = e.total;
+            bar.value = e.loaded;
+        },
+
+        progress: function (e) {
+
+            bar.max = e.total;
+            bar.value = e.loaded;
+        },
+
+        loadEnd: function (e) {
+
+            bar.max = e.total;
+            bar.value = e.loaded;
+        },
+
+        completeAll: function () {
+
+
+            const response = JSON.parse(arguments[0].response);
+
+            if (response.success) {
+                setTimeout(function () {
+                    bar.setAttribute('hidden', 'hidden');
+                }, 1000);
+                emitter.emit('p2s_product_file_upload', response.data);
+                UIkit.notification({
+                    message: 'Uploaded',
+                    status: 'success',
+                    pos: 'top-right',
+                    timeout: 5000
+                });
+            } else {
+                UIkit.notification({
+                    message: 'There was an error',
+                    status: 'danger',
+                    pos: 'top-right',
+                    timeout: 5000
+                });
+            }
+        }
+
+
+    });
 
 </script>

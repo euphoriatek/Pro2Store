@@ -161,6 +161,45 @@ const stringreplace = require('replace-in-file');
             });
         });
     });
+    emptyDir('./media/com_protostore/js/vue/email').then(() => {
+        remove('./media/com_protostore/js/vue/email').then(() => {
+            mkdir('./media/com_protostore/js/vue/email').then(() => {
+                minify({
+                    compressor: terser,
+                    input: './vuefiles/email.js',
+                    output: './media/com_protostore/js/vue/email/email.min.js'
+                }).then(function () {
+                    console.log('Email done on: ' + theTime);
+                });
+            });
+        });
+    });
+    emptyDir('./media/com_protostore/js/vue/emaillogs').then(() => {
+        remove('./media/com_protostore/js/vue/emaillogs').then(() => {
+            mkdir('./media/com_protostore/js/vue/emaillogs').then(() => {
+                minify({
+                    compressor: terser,
+                    input: './vuefiles/emaillogs.js',
+                    output: './media/com_protostore/js/vue/emaillogs/emaillogs.min.js'
+                }).then(function () {
+                    console.log('Email Logs done on: ' + theTime);
+                });
+            });
+        });
+    });
+    emptyDir('./media/com_protostore/js/vue/shippingratescountry').then(() => {
+        remove('./media/com_protostore/js/vue/shippingratescountry').then(() => {
+            mkdir('./media/com_protostore/js/vue/shippingratescountry').then(() => {
+                minify({
+                    compressor: terser,
+                    input: './vuefiles/shippingratescountry.js',
+                    output: './media/com_protostore/js/vue/shippingratescountry/shippingratescountry.min.js'
+                }).then(function () {
+                    console.log('Shippingratescountry done on: ' + theTime);
+                });
+            });
+        });
+    });
 
     emptyDir('./media/com_protostore/js/vue/countries').then(() => {
         remove('./media/com_protostore/js/vue/countries').then(() => {

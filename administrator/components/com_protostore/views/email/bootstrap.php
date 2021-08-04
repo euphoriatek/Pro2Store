@@ -11,72 +11,138 @@
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Model\AdminModel;
 
+use Protostore\Currency\CurrencyFactory;
+use Protostore\Email\EmailFactory;
 use Protostore\Render\Render;
+use Protostore\Utilities\Utilities;
 
 
 /**
  *
- * @since 2.0
+ * @since       2.0
  */
-class bootstrap
+class bootstrap extends AdminModel
 {
+
+	private array $vars;
 
 
 	public function __construct()
 	{
-		$this->init();
-		$vars = $this->setVars();
-
-		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/emailadd/emailadd.php', $vars);
-
-	}
-
-	/**
-	 *
-	 *
-	 * @since 2.0
-	 */
-
-	private function init()
-	{
 
 
+		$input = Factory::getApplication()->input;
+		$id    = $input->get('id');
 
-	}
+		$this->init($id);
 
-
-	/**
-	 *
-	 * @return array
-	 *
-	 * @since 2.0
-	 */
-
-	private function setVars()
-	{
-
-		$vars = array();
-
-
-		$vars['items'] = $this->getItems();
-
-
-		return $vars;
+		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/email/email.php', $this->vars);
 
 
 	}
 
 	/**
 	 *
-	 * @return array|false
+	 * @return void
 	 *
 	 * @since 2.0
 	 */
 
-	private function getItems()
+	private function init($id): void
 	{
 
+
+		$this->vars['item']     = false;
+		$this->vars['currency'] = CurrencyFactory::getDefault();
+		$this->vars['locale']   = Factory::getLanguage()->get('tag');
+
+		if ($id)
+		{
+			$this->vars['item'] = EmailFactory::get($id);
+		}
+
+		$this->addScripts();
+		$this->addStylesheets();
+
+
+		$this->vars['form'] = $this->getForm(array('item' => $this->vars['item']), true);
+
+
+	}
+
+
+	/**
+	 * @param   array  $data
+	 * @param   bool   $loadData
+	 *
+	 * @return bool|JForm
+	 *
+	 * @since version
+	 */
+
+	public function getForm($data = array(), $loadData = true)
+	{
+		// Get the form.
+
+		$item = $data['item'];
+
+
+		$form = $this->loadForm('com_protostore.email', 'email', array('control' => 'jform', 'load_data' => $loadData));
+
+		if ($item)
+		{
+
+			$form->setValue('body', null, $item->body);
+
+
+		}
+
+		return $form;
+	}
+
+	/**
+	 *
+	 *
+	 * @since version
+	 */
+
+	private function addScripts()
+	{
+
+		$doc = Factory::getDocument();
+
+
+		// include the vue script - defer
+		$doc->addScript('../media/com_protostore/js/vue/email/email.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
+
+
+		//set up data for vue:
+		if ($this->vars['item'])
+		{
+
+
+			$doc->addCustomTag('<script id="p2s_email" type="application/json">' . json_encode($this->vars['item']) . '</script>');
+
+
+		}
+
+
+		// include whatever PrimeVue component scripts we need
+		Utilities::includePrime(array('inputswitch'));
+
+
+	}
+
+	/**
+	 *
+	 *
+	 * @since version
+	 */
+
+	private function addStylesheets()
+	{
 	}
 
 }

@@ -38,7 +38,7 @@ class JFormFieldVariants extends JFormField
 	{
 
 
-	 return LayoutHelper::render('variants', array());
+	 return LayoutHelper::render('product/variants', array());
 
 
 	}

@@ -17,11 +17,13 @@ defined('_JEXEC') or die('Restricted access');
 use Joomla\CMS\Factory;
 use Joomla\CMS\Categories\Categories;
 use Joomla\CMS\Helper\TagsHelper;
+use Joomla\CMS\Language\Text;
 use Joomla\Input\Input;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Filter\OutputFilter;
+use Joomla\CMS\Filesystem\File as JoomlaFile;
 
 use Brick\Math\BigDecimal;
 use Brick\Money\Exception\UnknownCurrencyException;
@@ -64,13 +66,14 @@ class ProductFactory
 		if ($result && is_object($result))
 		{
 
-			switch ($result->product_type)
-			{
-				case 0:
-					return new PurchaseProduct($result);
-				case 1:
-					return new SubscriptionProduct($result);
-			}
+
+//			switch ($result->product_type)
+//			{
+//				case 0:
+//					return new PurchaseProduct($result);
+//				case 1:
+//					return new DigitalProduct($result);
+//			}
 
 			return new Product($result);
 		}
@@ -131,9 +134,9 @@ class ProductFactory
 				$query->where($db->quoteName('joomla_item_id') . ' = ' . $db->quote($result));
 				$db->setQuery($query);
 
-				$result = $db->loadObject();
+				$results = $db->loadObject();
 
-				if ($result)
+				if ($results)
 				{
 					$products[] = new Product($result);
 				}
@@ -183,6 +186,7 @@ class ProductFactory
 		$currentProduct->joomlaItem->title       = $data->json->getString('title', $currentProduct->joomlaItem->title);
 		$currentProduct->joomlaItem->introtext   = $data->json->getString('introtext', $currentProduct->joomlaItem->introtext);
 		$currentProduct->joomlaItem->fulltext    = $data->json->getString('fulltext', $currentProduct->joomlaItem->fulltext);
+		$currentProduct->joomlaItem->access      = $data->json->getInt('access', $currentProduct->joomlaItem->access);
 		$currentProduct->joomlaItem->modified_by = Factory::getUser()->id;
 		$currentProduct->joomlaItem->modified    = Utilities::getDate();
 		$currentProduct->joomlaItem->images      = self::processImagesForSave(
@@ -212,6 +216,10 @@ class ProductFactory
 		if ($discount)
 		{
 			$currentProduct->discount = CurrencyFactory::toInt($discount);
+		}
+		else
+		{
+			$currentProduct->discount = 0;
 		}
 
 		$currentProduct->shipping_mode = $data->json->getString('shipping_mode', $currentProduct->shipping_mode);
@@ -1010,6 +1018,257 @@ class ProductFactory
 		return json_encode($variantList);
 	}
 
+	/**
+	 * @param $id
+	 *
+	 * @return File|null
+	 *
+	 * @since 1.6
+	 */
+
+
+	public static function getFile($id): ?File
+	{
+
+		$db    = Factory::getDbo();
+		$query = $db->getQuery(true);
+
+		$query->select('*');
+		$query->from($db->quoteName('#__protostore_product_file'));
+		$query->where($db->quoteName('id') . ' = ' . $db->quote($id));
+
+		$db->setQuery($query);
+
+		$result = $db->loadObject();
+		if ($result && is_object($result))
+		{
+
+
+			return new File($result);
+		}
+
+		return null;
+
+	}
+
+
+	/**
+	 * @param   int  $product_id
+	 *
+	 * @return array|mixed|null
+	 *
+	 * @since 1.6
+	 */
+
+	public static function getFiles(int $product_id)
+	{
+
+		$db    = Factory::getDbo();
+		$query = $db->getQuery(true);
+
+		$query->select('*');
+		$query->from($db->quoteName('#__protostore_product_file'));
+		$query->where($db->quoteName('product_id') . ' = ' . $db->quote($product_id));
+
+		$db->setQuery($query);
+
+		$results = $db->loadObjectList();
+
+		$files = array();
+
+		if ($results)
+		{
+			foreach ($results as $result)
+			{
+				$files[] = new File($result);
+
+			}
+
+			return $files;
+		}
+
+
+		return null;
+
+	}
+
+	/**
+	 * @param   int  $type
+	 *
+	 * @return string|void
+	 *
+	 * @since 1.6
+	 */
+
+	public static function getFileStabilityLevelString(int $type)
+	{
+
+		switch ($type)
+		{
+			case 1;
+				return Text::_('COM_PROTOSTORE_FILE_STABILITY_TYPE_ALPHA');
+
+			case 2;
+				return Text::_('COM_PROTOSTORE_FILE_STABILITY_TYPE_BETA');
+
+			case 3;
+				return Text::_('COM_PROTOSTORE_FILE_STABILITY_TYPE_RELEASE_CANDIDATE');
+
+			case 4;
+				return Text::_('COM_PROTOSTORE_FILE_STABILITY_TYPE_RELEASE_STABLE');
+
+		}
+
+	}
+
+	/**
+	 * @param   Input  $data
+	 *
+	 * @return File
+	 *
+	 * @since 1.6
+	 */
+
+
+	public static function saveFileFromInputData(Input $data)
+	{
+
+		$db = Factory::getDbo();
+
+		// if there's no item id, then we need to create a new product
+		if ($data->json->getInt('fileid'))
+		{
+			$current = self::getFile($data->json->getInt('fileid'));
+
+			if ($current)
+			{
+
+				$update = new stdClass();
+
+				$update->id                = $current->id;
+				$update->download_access   = $data->json->getInt('download_access', $current->download_access);
+				$update->product_id        = $data->json->getInt('product_id', $current->product_id);
+				$update->filename          = $data->json->getString('filename', $current->filename);
+				$update->filename_obscured = $data->json->getString('filename_obscured', $current->filename_obscured);
+				$update->isjoomla          = $data->json->getInt('isjoomla', $current->isjoomla);
+				$update->version           = $data->json->getString('version', $current->version);
+				$update->type              = $data->json->getString('type', $current->type);
+				$update->stability_level   = $data->json->getInt('stability_level', $current->stability_level);
+				$update->php_min           = $data->json->getFloat('php_min', $current->php_min);
+				$update->download_access   = $data->json->getInt('download_access', $current->download_access);
+				$update->published         = $data->json->getInt('published', $current->published);
+
+				$db->updateObject('#__protostore_product_file', $update, 'id');
+
+				return self::getFile($current->id);
+			}
+			else
+			{
+				return self::createNewFile($data);
+			}
+
+		}
+
+		return self::createNewFile($data);
+	}
+
+	/**
+	 * @param   Input  $data
+	 *
+	 * @return ?File
+	 *
+	 * @since 1.6
+	 */
+
+
+	public static function createNewFile(Input $data): ?File
+	{
+		$db = Factory::getDbo();
+
+		$file = new stdClass();
+
+		$file->id                = 0;
+		$file->product_id        = $data->json->get('product_id');
+		$file->filename          = $data->json->getString('filename');
+		$file->filename_obscured = $data->json->getString('filename_obscured');
+		$file->isjoomla          = $data->json->getInt('isjoomla');
+		$file->version           = $data->json->getString('version');
+		$file->type              = $data->json->getString('type');
+		$file->stability_level   = $data->json->getInt('stability_level');
+		$file->php_min           = $data->json->getFloat('php_min');
+		$file->download_access   = $data->json->getInt('download_access', 1);
+		$file->downloads         = 0;
+		$file->published         = $data->json->getInt('published');
+		$file->created           = Utilities::getDate();
+
+
+		$result = $db->insertObject('#__protostore_product_file', $file);
+
+		if ($result)
+		{
+			return self::getFile($db->insertid());
+		}
+
+		return null;
+
+	}
+
+	/**
+	 * @param   Input  $data
+	 *
+	 * @return array|false
+	 *
+	 * @since 1.6
+	 */
+
+
+	public static function uploadFileFromInputData(Input $data)
+	{
+
+		// first, create the MD5's for folder creation
+
+		$md5_1 = md5(uniqid());
+		$md5_2 = md5(uniqid());
+		$md5_3 = md5(uniqid());
+		$md5_4 = md5(uniqid());
+
+		// build the path
+		$path = $md5_1 . '/' . $md5_2 . '/' . $md5_3 . '/' . $md5_4;
+
+		// get the file from the POST data
+		$file = $data->files->get('files');
+		$file = $file[0];
+
+		// is this needed these days?
+		jimport('joomla.filesystem.file');
+
+		// sluggify the filename
+		$filename = JoomlaFile::makeSafe($file['name']);
+		$src      = $file['tmp_name'];
+
+		// create the destination
+		$dest = JPATH_SITE . '/images/pro2store_files/' . $path . '/' . $filename;
+
+		//Upload the file
+		if (JoomlaFile::upload($src, $dest))
+		{
+
+			$response['uploaded']     = true;
+			$response['path']         = $path;
+			$response['relativepath'] = $path . '/' . $filename;
+			$response['filename']     = $filename;
+			$response['dest']         = $dest;
+
+
+			return $response;
+		}
+		else
+		{
+			return false;
+		}
+
+
+	}
 
 	/**
 	 * @param   string  $teaserImage

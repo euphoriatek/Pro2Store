@@ -88,7 +88,7 @@ use Joomla\CMS\Layout\LayoutHelper;
 									<a :href="'index.php?option=com_protostore&view=email&id=' + item.id">{{item.subject}}</a>
 								</td>
 								<td>
-									{{item.emailtype}}
+									{{item.emailtype_string}}
 								</td>
 
 								<td class="uk-text-center">
@@ -139,9 +139,9 @@ use Joomla\CMS\Layout\LayoutHelper;
 							<ul class="uk-nav-default uk-nav-parent-icon" uk-nav>
 
 								<li>
-									<a class="uk-text-emphasis" href="index.php?option=com_protostore&view=discount">
+									<a class="uk-text-emphasis" href="index.php?option=com_protostore&view=email">
 										<span class="uk-margin-small-right" uk-icon="icon: plus-circle"></span>
-										Add Discount
+										Add Email
 									</a>
 								</li>
 

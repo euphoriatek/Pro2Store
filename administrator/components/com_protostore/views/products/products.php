@@ -96,7 +96,12 @@ use Joomla\CMS\Layout\LayoutHelper;
                                        uk-icon="triangle-down">
                                     </a>
                                 </th>
-                                <th class="uk-text-left">Published
+                                <th class="uk-text-center">
+                                    <a href="#" @click="sort('product_type')" class="uk-margin-small-right uk-icon"
+                                       uk-icon="triangle-down">
+                                    </a>
+                                </th>
+                                <th class="uk-text-left">
                                     <a href="#" @click="sort('published')" class="uk-margin-small-right uk-icon"
                                        uk-icon="triangle-down">
                                     </a>
@@ -126,6 +131,13 @@ use Joomla\CMS\Layout\LayoutHelper;
                                 </td>
                                 <td>
                                     <div>{{product.stock}}</div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <span v-show="product.product_type == 1"><i class="fal fa-box"></i></span>
+                                        <span v-show="product.product_type == 2"><i class="fal fa-download"></i></span>
+
+                                    </div>
                                 </td>
                                 <td class="uk-text-center">
                                   <span v-if="product.published == '1'" class="yps_currency_published_icon" @click="togglePublished(product)"

@@ -31,26 +31,27 @@ const p2s_customer_form = {
         this.setData();
 
         const base_url = document.getElementById('base_url');
-        this.base_url = base_url.innerText;
-        base_url.remove();
+        try {
+            this.base_url = base_url.innerText;
+            base_url.remove();
+        } catch (err) {
+        }
+
 
         const currency = document.getElementById('currency');
-        if (currency) {
-            this.currency = JSON.parse(currency.innerText);
+        try {
+            this.currency = currency.innerText;
+            currency.remove();
+        } catch (err) {
         }
-        currency.remove();
+
 
         const locale = document.getElementById('locale');
-        if (locale) {
+        try {
             this.locale = locale.innerText;
+            locale.remove();
+        } catch (err) {
         }
-        locale.remove();
-
-        const countries = document.getElementById('p2s_countries');
-        if (countries) {
-            this.countries = JSON.parse(countries.innerText);
-        }
-        countries.remove();
 
 
     },

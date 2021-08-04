@@ -137,7 +137,7 @@ class EmaillogFactory
 	 */
 
 
-	public static function getCustomerName($customer_id): string
+	public static function getCustomerName($customer_id): ?string
 	{
 		$db = Factory::getDbo();
 
@@ -163,7 +163,7 @@ class EmaillogFactory
 	 */
 
 
-	public static function getOrderNumber($order_id): string
+	public static function getOrderNumber($order_id): ?string
 	{
 		$db = Factory::getDbo();
 

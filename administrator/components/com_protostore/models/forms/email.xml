@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+    <fieldset name="details"  addfieldpath="/administrator/components/com_protostore/models/fields">
+
+        <field name="to" type="text" default="title" label="To" description="" size="10"
+               class="uk-input uk-form-width-medium uk-form-large"/>
+
+        <field name="subject" type="text" default="0" label="Subject" description="" size="10"
+               class="uk-input uk-form-width-medium uk-form-large" />
+
+        <field name="emailtype" type="list" default="" required="true" label="Email Type" description="">
+            <option value="">Please Select</option>
+            <option value="thankyou">COM_PROTOSTORE_EMAILTYPE_THANK_YOU</option>
+            <option value="confirmed">COM_PROTOSTORE_EMAILTYPE_CONFIRMED</option>
+            <option value="created">COM_PROTOSTORE_EMAILTYPE_CREATED</option>
+            <option value="pending">COM_PROTOSTORE_EMAILTYPE_PENDING</option>
+            <option value="shipped">COM_PROTOSTORE_EMAILTYPE_SHIPPED</option>
+        </field>
+
+        <field name="body" type="editor" label="Email Body" description="" filter="safehtml" />
+
+
+        <field name="published" type="pinputswitch" default="0" label="Published" description=""
+               class="btn-group btn-group-yesno">
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+
+    </fieldset>
+
+</form>

@@ -1,4 +1,4 @@
-const p2s_customers = {
+const p2s_emaillogs = {
     data() {
         return {
             base_url: '',
@@ -12,10 +12,11 @@ const p2s_customers = {
             show: 25,
             enteredText: '',
             publishedOnly: false,
+            selected: [],
+            confirm_LangString: ''
         };
     },
     async beforeMount() {
-
 
         const base_url = document.getElementById('base_url');
         try {
@@ -31,7 +32,6 @@ const p2s_customers = {
         } catch (err) {
         }
 
-
         const show = document.getElementById('page_size');
         try {
             this.show = show.innerText;
@@ -39,7 +39,12 @@ const p2s_customers = {
         } catch (err) {
         }
 
-
+        const confirmLangString = document.getElementById('confirmLangString');
+        try {
+            this.confirm_LangString = confirmLangString.innerText;
+            confirmLangString.remove();
+        } catch (err) {
+        }
 
     },
     mounted: function () {
@@ -48,8 +53,104 @@ const p2s_customers = {
     computed: {},
     methods: {
 
+        async trashSelected() {
+
+            await UIkit.modal.confirm(this.confirm_LangString);
+
+            const params = {
+                'items': JSON.stringify(this.selected)
+            };
+
+            const URLparams = this.serialize(params);
+            const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=emaillogs.trash&format=raw&" + URLparams, {
+                method: 'post'
+            });
+
+            const response = await request.json();
+
+            if (response.success) {
+                await this.filter();
+
+            } else {
+                UIkit.notification({
+                    message: 'There was an error.',
+                    status: 'danger',
+                    pos: 'top-center',
+                    timeout: 5000
+                });
+            }
+
+
+        },
+        async toggleSelected() {
+
+            console.table(this.selected);
+
+            const params = {
+                'items': JSON.stringify(this.selected)
+            };
+
+            const URLparams = this.serialize(params);
+            const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=emaillogs.togglePublished&format=raw&" + URLparams, {
+                method: 'post'
+            });
+
+            const response = await request.json();
+
+            if (response.success) {
+                await this.filter();
+                this.selected = [];
+
+            } else {
+                UIkit.notification({
+                    message: 'There was an error.',
+                    status: 'danger',
+                    pos: 'top-center',
+                    timeout: 5000
+                });
+            }
+
+        },
+        async togglePublished(item) {
+
+            this.selected = [];
+
+            let items = [];
+            items.push(item);
+
+            const params = {
+                'items': JSON.stringify(items)
+            };
+
+            const URLparams = this.serialize(params);
+            const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=emaillogs.togglePublished&format=raw&" + URLparams, {
+                method: 'post'
+            });
+
+            const response = await request.json();
+
+            if (response.success) {
+                await this.filter();
+
+            } else {
+                UIkit.notification({
+                    message: 'There was an error.',
+                    status: 'danger',
+                    pos: 'top-center',
+                    timeout: 5000
+                });
+            }
+        },
+        selectAll(e) {
+            if (e.target.checked) {
+                this.selected = this.itemsChunked[this.currentPage];
+            } else {
+                this.selected = [];
+            }
+
+        },
         async updateList() {
-            const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=customers.updatelist&format=raw&limit=0", {
+            const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=emaillogs.updatelist&format=raw&limit=0", {
                 method: 'post'
             });
 
@@ -80,13 +181,13 @@ const p2s_customers = {
 
             const URLparams = this.serialize(params);
 
-            const request = await fetch(this.base_url + 'index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=customers.filter&format=raw&' + URLparams, {method: 'post'});
+            const request = await fetch(this.base_url + 'index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=emaillogs.filter&format=raw&' + URLparams, {method: 'post'});
 
             const response = await request.json();
 
 
             if (response.success) {
-                this.items = response.data.countries;
+                this.items = response.data.items;
                 this.loading = false;
 
                 if (this.items) {
@@ -137,22 +238,6 @@ const p2s_customers = {
                 return 0;
             });
         },
-        async togglePublished(item) {
-
-            const params = {
-                'item_id': item.id
-            };
-
-            const URLparams = this.serialize(params);
-
-            const request = await fetch(this.base_url + 'index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=customers.togglePublished&format=raw&' + URLparams, {method: 'post'});
-
-            const response = await request.json();
-
-            if (response.success) {
-                item.published = response.data
-            }
-        },
         serialize(obj) {
             var str = [];
             for (var p in obj)
@@ -161,11 +246,10 @@ const p2s_customers = {
                 }
             return str.join("&");
         }
-
     },
     components: {
         'p-inputswitch': primevue.inputswitch,
     }
 }
 
-Vue.createApp(p2s_customers).mount('#p2s_customers')
+Vue.createApp(p2s_emaillogs).mount('#p2s_emaillogs')

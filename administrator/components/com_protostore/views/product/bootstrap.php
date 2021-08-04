@@ -13,8 +13,9 @@ defined('_JEXEC') or die('Restricted access');
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\TagsHelper;
 use Joomla\CMS\MVC\Model\AdminModel;
-
 use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Language\Text;
+
 use Protostore\Render\Render;
 use Protostore\Product\ProductFactory;
 use Protostore\Utilities\Utilities;
@@ -56,8 +57,6 @@ class bootstrap extends AdminModel
 		$this->vars['item']              = false;
 		$this->vars['available_options'] = ProductFactory::getOptionList();
 		$this->vars['available_tags']    = ProductFactory::getAvailableTags();
-		$this->vars['currency']          = CurrencyFactory::getDefault();
-		$this->vars['locale']            = Factory::getLanguage()->get('tag');
 
 		if ($id)
 		{
@@ -68,6 +67,7 @@ class bootstrap extends AdminModel
 
 		$this->addScripts();
 		$this->addStylesheets();
+		$this->addTranslationStrings();
 
 		$this->vars['form'] = $this->getForm(array('item' => $this->vars['item']), true);
 
@@ -128,12 +128,13 @@ class bootstrap extends AdminModel
 			$form->setValue('title', null, $item->joomlaItem->title);
 			$form->setValue('short_description', null, $item->joomlaItem->introtext);
 			$form->setValue('long_description', null, $item->joomlaItem->fulltext);
+			$form->setValue('access', null, $item->joomlaItem->access);
 			$form->setValue('teaserimage', null, $item->images['image_intro']);
 			$form->setValue('fullimage', null, $item->images['image_fulltext']);
 			$form->setValue('state', null, $item->joomlaItem->state);
 			$form->setValue('publish_up_date', null, $item->joomlaItem->publish_up);
 			$form->setValue('taxable', null, $item->taxable);
-			$form->setValue('discount', null, $item->discount);
+			$form->setValue('discount', null, $item->discountFloat);
 			$form->setValue('base_price', null, $item->basepriceFloat);
 			$form->setValue('manage_stock', null, $item->manage_stock);
 
@@ -174,12 +175,6 @@ class bootstrap extends AdminModel
 		// include the vue script - defer
 		$doc->addScript('../media/com_protostore/js/vue/product/product.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
 
-//		$doc->addScript('https://unpkg.com/primevue@3.5.1/api/api.min.js', array('type' => 'text/javascript'));
-//		$doc->addScript('https://unpkg.com/primevue@3.5.1/utils/utils.min.js', array('type' => 'text/javascript'));
-//		$doc->addScript('https://unpkg.com/primevue@3.5.1/config/config.min.js', array('type' => 'text/javascript'));
-//		$doc->addScript('https://unpkg.com/primevue@3.5.1/overlayeventbus/overlayeventbus.min.js', array('type' => 'text/javascript'));
-//		$doc->addScript('https://unpkg.com/primevue@3.5.1/ripple/ripple.min.js', array('type' => 'text/javascript'));
-//		$doc->addScript('https://unpkg.com/primevue@3.5.1/multiselect/multiselect.js', array('type' => 'text/javascript'));
 
 		// include prime
 		Utilities::includePrime(array('inputswitch', 'chips', 'inputtext', 'inputnumber'));
@@ -191,10 +186,15 @@ class bootstrap extends AdminModel
 			{
 				if (is_string($value))
 				{
+
 					$doc->addCustomTag('<script id="jform_' . $key . '_data" type="application/json">' . $value . '</script>');
 				}
 				else
 				{
+					if($key === 'id') {
+						$key = 'product_id';
+					}
+
 					$doc->addCustomTag('<script id="jform_' . $key . '_data" type="application/json">' . json_encode($value) . '</script>');
 				}
 
@@ -214,9 +214,9 @@ class bootstrap extends AdminModel
 			}
 
 		}
-		$doc->addCustomTag(' <script id="base_url" type="application/json">' . Uri::base() . '</script>');
-		$doc->addCustomTag(' <script id="p2s_currency" type="application/json">' . json_encode($this->vars['currency']) . '</script>');
-		$doc->addCustomTag(' <script id="p2s_locale" type="application/json">' . json_encode($this->vars['locale']) . '</script>');
+//		$doc->addCustomTag(' <script id="base_url" type="application/json">' . Uri::base() . '</script>');
+//		$doc->addCustomTag(' <script id="p2s_currency" type="application/json">' . json_encode($this->vars['currency']) . '</script>');
+//		$doc->addCustomTag(' <script id="p2s_locale" type="application/json">' . json_encode($this->vars['locale']) . '</script>');
 
 
 	}
@@ -229,6 +229,23 @@ class bootstrap extends AdminModel
 
 	private function addStylesheets()
 	{
+	}
+
+	/**
+	 *
+	 *
+	 * @since 1.6
+	 */
+
+
+	private function addTranslationStrings(): void
+	{
+
+		$doc = Factory::getDocument();
+
+
+		$doc->addCustomTag('<script id="successMessage" type="application/json">' . Text::_('COM_PROTOSTORE_ADD_PRODUCT_ALERT_SAVED') . '</script>');
+
 	}
 
 }

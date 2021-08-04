@@ -46,7 +46,7 @@ class JFormFieldDiscount extends JFormField
 
 
 		$html[] = '<div v-show="form.jform_show_discount">';
-		$html[] = '<p-inputnumber @blur="logIt"  mode="currency" :currency="p2s_currency.iso" :locale="p2s_locale"  name="' . $this->name . '" v-model="form.' . $this->id . '" id="' . $this->id . '">';
+		$html[] = '<p-inputnumber mode="currency" :currency="p2s_currency.iso" :locale="p2s_locale"  name="' . $this->name . '" v-model="form.' . $this->id . '" id="' . $this->id . '">';
 		$html[] = '</p-inputnumber> ';
 		$html[] = '<br/><span>This product will sell for: {{sellPrice}}</span>';
 		$html[] = ' </div>';

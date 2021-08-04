@@ -112,9 +112,9 @@ class bootstrapWrapper
 
 		$doc->addScript('../media/com_protostore/js/vue/bundle.min.js', array('type' => 'text/javascript'));
 
-		$doc->addCustomTag(' <script id="base_url" type="application/json">' . Uri::base() . '</script>');
+		$doc->addCustomTag('<script id="base_url" type="application/json">' . Uri::base() . '</script>');
 		$doc->addCustomTag(' <script id="currency" type="application/json">' . json_encode($this->vars['currency']) . '</script>');
-		$doc->addCustomTag(' <script id="locale" type="application/json">' . json_encode($this->vars['locale']) . '</script>');
+		$doc->addCustomTag(' <script id="locale" type="application/json">' . $this->vars['locale'] . '</script>');
 
 
 	}

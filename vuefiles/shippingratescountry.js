@@ -1,9 +1,12 @@
-const p2s_emailmanager = {
+const p2s_shippingratescountry = {
     data() {
         return {
             base_url: '',
+            p2s_currency: '',
+            p2s_locale: '',
             items: [],
             itemsChunked: [],
+            countries: [],
             currentSort: 'name',
             currentSortDir: 'asc',
             currentPage: 0,
@@ -25,10 +28,32 @@ const p2s_emailmanager = {
         } catch (err) {
         }
 
+        const p2s_currency = document.getElementById('currency');
+        try {
+            this.p2s_currency = JSON.parse(p2s_currency.innerText);
+            // p2s_currency.remove();
+        } catch (err) {
+        }
+
+
+        const p2s_locale = document.getElementById('locale');
+        try {
+            this.p2s_local = p2s_locale.innerText;
+            // p2s_local.remove();
+        } catch (err) {
+        }
+
         const items_data = document.getElementById('items_data');
         try {
             this.items = JSON.parse(items_data.innerText);
             // items_data.remove();
+        } catch (err) {
+        }
+
+        const countries_data = document.getElementById('countries_data');
+        try {
+            this.countries = JSON.parse(countries_data.innerText);
+            // countries_data.remove();
         } catch (err) {
         }
 
@@ -46,12 +71,55 @@ const p2s_emailmanager = {
         } catch (err) {
         }
 
+
     },
     mounted: function () {
         this.changeShow();
     },
     computed: {},
     methods: {
+
+
+       async save(item) {
+
+
+           const params = {
+               'item': JSON.stringify(item)
+           };
+
+           const URLparams = this.serialize(params);
+           const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=shippingratescountry.save&format=raw&" + URLparams, {
+               method: 'post'
+           });
+
+           const response = await request.json();
+
+           if (response.success) {
+               await this.filter();
+               item.showEdit = false;
+               UIkit.notification({
+                   message: 'Saved',
+                   status: 'success',
+                   pos: 'top-center',
+                   timeout: 5000
+               });
+           } else {
+               UIkit.notification({
+                   message: 'There was an error.',
+                   status: 'danger',
+                   pos: 'top-center',
+                   timeout: 5000
+               });
+           }
+
+
+
+
+        },
+
+        cancel() {
+            this.filter();
+        },
 
         async trashSelected() {
 
@@ -62,7 +130,7 @@ const p2s_emailmanager = {
             };
 
             const URLparams = this.serialize(params);
-            const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=email.trash&format=raw&" + URLparams, {
+            const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=shippingratescountry.trash&format=raw&" + URLparams, {
                 method: 'post'
             });
 
@@ -84,14 +152,12 @@ const p2s_emailmanager = {
         },
         async toggleSelected() {
 
-            console.table(this.selected);
-
             const params = {
                 'items': JSON.stringify(this.selected)
             };
 
             const URLparams = this.serialize(params);
-            const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=email.togglePublished&format=raw&" + URLparams, {
+            const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=shippingratescountry.togglePublished&format=raw&" + URLparams, {
                 method: 'post'
             });
 
@@ -99,7 +165,6 @@ const p2s_emailmanager = {
 
             if (response.success) {
                 await this.filter();
-                this.selected = [];
 
             } else {
                 UIkit.notification({
@@ -113,8 +178,6 @@ const p2s_emailmanager = {
         },
         async togglePublished(item) {
 
-            this.selected = [];
-
             let items = [];
             items.push(item);
 
@@ -123,7 +186,7 @@ const p2s_emailmanager = {
             };
 
             const URLparams = this.serialize(params);
-            const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=email.togglePublished&format=raw&" + URLparams, {
+            const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=shippingratescountry.togglePublished&format=raw&" + URLparams, {
                 method: 'post'
             });
 
@@ -150,7 +213,7 @@ const p2s_emailmanager = {
 
         },
         async updateList() {
-            const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=email.updatelist&format=raw&limit=0", {
+            const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=shippingratescountry.updatelist&format=raw&limit=0", {
                 method: 'post'
             });
 
@@ -181,7 +244,7 @@ const p2s_emailmanager = {
 
             const URLparams = this.serialize(params);
 
-            const request = await fetch(this.base_url + 'index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=email.filter&format=raw&' + URLparams, {method: 'post'});
+            const request = await fetch(this.base_url + 'index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=shippingratescountry.filter&format=raw&' + URLparams, {method: 'post'});
 
             const response = await request.json();
 
@@ -249,7 +312,8 @@ const p2s_emailmanager = {
     },
     components: {
         'p-inputswitch': primevue.inputswitch,
+        'p-inputnumber': primevue.inputnumber
     }
 }
 
-Vue.createApp(p2s_emailmanager).mount('#p2s_emailmanager')
+Vue.createApp(p2s_shippingratescountry).mount('#p2s_shippingratescountry')

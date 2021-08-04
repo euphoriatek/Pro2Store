@@ -13,14 +13,16 @@ error_reporting(0);
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Response\JsonResponse;
-
+use Joomla\CMS\Filesystem\Folder;
+use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Uri\Uri;
 
 class plgAjaxProtostore_ajaxhelper extends JPlugin
 {
 
-	private $db;
-	private $app;
-	private $input;
+	private ?JDatabaseDriver $db;
+	private ?\Joomla\CMS\Application\CMSApplication $app;
+	private JInput $input;
 
 	public function onAjaxProtostore_ajaxhelper()
 	{
@@ -42,6 +44,8 @@ class plgAjaxProtostore_ajaxhelper extends JPlugin
 		{
 			case 'task':
 				return $this->_initTask();
+			case 'upload':
+				return $this->_upload();
 
 		}
 
@@ -80,6 +84,65 @@ class plgAjaxProtostore_ajaxhelper extends JPlugin
 		catch (Exception $e)
 		{
 			return new JsonResponse('ko', $e->getMessage(), true);
+		}
+
+
+	}
+
+	private function _upload()
+	{
+
+
+		$md5_1 = md5(uniqid());
+		$md5_2 = md5(uniqid());
+		$md5_3 = md5(uniqid());
+		$md5_4 = md5(uniqid());
+
+		$path = $md5_1 . '/' . $md5_2 . '/' . $md5_3 . '/' . $md5_4;
+
+		$file = $this->input->files->get('files');
+		$file = $file[0];
+
+		jimport('joomla.filesystem.file');
+		$filename = File::makeSafe($file['name']);
+		$src      = $file['tmp_name'];
+
+		$dest     = JPATH_SITE . '/images/' . $path . '/' . $filename;
+		if (File::upload($src, $dest))
+		{
+
+			$response['uploaded']     = true;
+			$response['path']         = $path;
+			$response['relativepath'] = $path . '/' . $filename;
+			$response['dest'] = $dest;
+
+			// now update the database for this item
+
+//			$object = new stdClass();
+//			$object->id = 0;
+//			$object->product_id = $this->input->getInt('productid');
+//			$object->filename = $filename;
+//			$object->filename_obscured = $response['path'];
+//			$object->isjoomla = $this->input->get('isjoomla');
+//			$object->version = $this->input->get('version');
+//			$object->type = $this->input->get('type');
+//			$object->stability_level = $this->input->get('stability_level');
+//			$object->php_min = $this->input->get('php_min');
+//			$object->download_access = $this->input->get('download_access');
+//			$object->published = $this->input->get('published');
+//			$object->created = \Protostore\Utilities\Utilities::getDate();
+//
+//			$result = Factory::getDbo()->updateObject('#__protostore_product_file', $object, 'id');
+//
+//			if($result) {
+//				$response['dbupdated'] = true;
+//			}
+
+			return new JsonResponse($response, 'Uploaded');
+		}
+		else
+		{
+			return new JsonResponse('', '', 'Unable to upload file');
 		}
 
 

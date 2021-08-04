@@ -1,32 +1,36 @@
 <?php
 
 /**
- * @package   Pro2Store - Helper
+ * @package   Pro2Store
  * @author    Ray Lawlor - pro2.store
- * @copyright Copyright (C) 2020 Ray Lawlor - pro2.store
+ * @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
  * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
  */
 
 // no direct access
-namespace Protostore\Email;
+namespace Protostore\Product;
 
 defined('_JEXEC') or die('Restricted access');
 
 
-class Email
+class File
 {
 
 	public int $id;
-	public string $to;
-	public string $body;
-	public string $emailtype;
-	public string $emailtype_string;
-	public string $subject;
+	public int $product_id;
+	public string $filename;
+	public string $filename_obscured;
+	public int $isjoomla;
+	public string $version;
+	public string $type;
+	public string $stability_level;
+	public string $stability_level_string;
+	public string $php_min;
+	public int $download_access;
 	public int $published;
-	public int $created_by;
-	public ?int $modified_by;
-	public string $created;
-	public string $modified;
+	public int $downloads;
+	public ?string $created;
+	public ?string $modified;
 
 
 	public function __construct($data)
@@ -67,14 +71,15 @@ class Email
 	 *
 	 * Function to "hydrate" all non-database values.
 	 *
+	 * @param $data
+	 *
+	 *
 	 * @since 1.6
 	 */
 
 	private function init()
 	{
-
-		$this->emailtype_string = EmailFactory::emailTypeToString($this->emailtype);
-
+		$this->stability_level_string = ProductFactory::getFileStabilityLevelString($this->stability_level);
 
 	}
 

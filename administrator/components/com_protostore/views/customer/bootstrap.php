@@ -168,6 +168,9 @@ class bootstrap extends AdminModel
 			}
 
 		}
+//		$doc->addCustomTag(' <script id="base_url" type="application/json">' . Uri::base() . '</script>');
+//		$doc->addCustomTag(' <script id="p2s_currency" type="application/json">' . json_encode($this->vars['currency']) . '</script>');
+//		$doc->addCustomTag(' <script id="p2s_locale" type="application/json">' . json_encode($this->vars['locale']) . '</script>');
 
 
 

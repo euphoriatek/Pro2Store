@@ -7,108 +7,82 @@
  */
 
 namespace Protostore\Shippingrate;
+
 // no direct access
+use Brick\Math\BigDecimal;
+
 defined('_JEXEC') or die('Restricted access');
 
-use Joomla\CMS\Factory;
-
-use Protostore\Currency\Currency;
-
-use Brick\Money\Money;
-use Brick\Money\Context\CashContext;
-use Brick\Math\RoundingMode;
 
 class Shippingrate
 {
 
-    private $db;
-
-    public $id;
-    public $country_id;
-    public $country_name;
-    public $weight_from;
-    public $weight_to;
-    public $cost;
-    public $costAsFloat;
-    public $handling_cost;
-    public $handling_costAsFloat;
-    public $published;
-
-    public function __construct($id)
-    {
-        $this->db = Factory::getDbo();
-
-        $this->initShippingrate($id);
+	public int $id;
+	public int $country_id;
+	public string $country_name;
+	public int $weight_from;
+	public int $weight_to;
+	public int $cost;
+	public \Brick\Math\BigDecimal $costFloat;
+	public string $costFormatted;
+	public int $handling_cost;
+	public string $handling_costFormatted;
+	public \Brick\Math\BigDecimal $handling_costFloat;
+	public int $published;
 
 
-    }
+	public function __construct($data)
+	{
 
-    private function initShippingrate($id)
-    {
+		if ($data)
+		{
+			$this->hydrate($data);
+			$this->init();
+		}
 
-        $query = $this->db->getQuery(true);
+	}
 
-        $query->select('*');
-        $query->from($this->db->quoteName('#__protostore_shipping_rate'));
-        $query->where($this->db->quoteName('id') . ' = ' . $this->db->quote($id));
+	/**
+	 *
+	 * Function to simply "hydrate" the database values directly to the class parameters.
+	 *
+	 * @param $data
+	 *
+	 *
+	 * @since 1.6
+	 */
 
-        $this->db->setQuery($query);
+	private function hydrate($data) : void
+	{
+		foreach ($data as $key => $value)
+		{
+			if (property_exists($this, $key))
+			{
+				$this->{$key} = $value;
+			}
 
-        $result = $this->db->loadObject();
+		}
+	}
 
-        $this->id = $id;
-        $this->country_id = $result->country_id;
-        $this->country_name = $this->getCountryName($result->country_id);
-        $this->weight_from = $result->weight_from;
-        $this->weight_to = $result->weight_to;
-        $this->cost = $result->cost;
-        $this->costAsFloat = $this->getCostAsFloat();
-        $this->handling_cost = $result->handling_cost;
-        $this->handling_costAsFloat = $this->getHandlingCostAsFloat();
-        $this->published = $result->published;
+	/**
+	 *
+	 * Function to "hydrate" all non-database values.
+	 *
+	 * @throws \Brick\Money\Exception\UnknownCurrencyException
+	 * @since 1.6
+	 */
 
-    }
+	private function init() : void
+	{
 
-    private function getCountryName($id)
-    {
-        $query = $this->db->getQuery(true);
-
-        $query->select('country_name');
-        $query->from($this->db->quoteName('#__protostore_country'));
-        $query->where($this->db->quoteName('id') . ' = ' . $this->db->quote($id));
-
-        $this->db->setQuery($query);
-
-        return $this->db->loadResult();
-    }
-
-    private function getCostAsFloat()
-    {
-        $currency = new Currency();
-
-        if ($this->cost) {
-
-            $cost = Money::ofMinor($this->cost, $currency->_getDefaultCurrencyFromDB()->iso,new CashContext(1), RoundingMode::DOWN);
-
-            return $cost->getAmount();
-
-
-        }
-    }
-
-    private function getHandlingCostAsFloat()
-    {
-        $currency = new Currency();
-
-        if ($this->handling_cost) {
-
-            $handling_cost = Money::ofMinor($this->handling_cost, $currency->_getDefaultCurrencyFromDB()->iso,new CashContext(1), RoundingMode::DOWN);
-
-            return $handling_cost->getAmount();
+		$this->country_name = ShippingrateFactory::getCountryName($this->country_id);
+		$this->costFormatted = ShippingrateFactory::intToFormat($this->cost);
+		$this->costFloat = ShippingrateFactory::getFloat($this->cost);
+		$this->handling_costFloat = ShippingrateFactory::getFloat($this->handling_cost);
+		$this->handling_costFormatted = ShippingrateFactory::intToFormat($this->handling_cost);
 
 
-        }
-    }
+	}
 
 
 }

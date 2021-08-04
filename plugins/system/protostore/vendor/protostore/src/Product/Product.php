@@ -30,6 +30,7 @@ class Product
 	public ?int $show_discount;
 	public ?int $discount;
 	public ?\Brick\Math\BigDecimal $discountFloat;
+	public string $discount_formatted;
 	public ?string $discount_type;
 	public int $discounted_total;
 
@@ -66,6 +67,9 @@ class Product
 	public $variants;
 	public $variantLabels;
 	public $variantList;
+
+	// files
+	public ?array $files;
 
 
 	public function __construct($data)
@@ -133,6 +137,7 @@ class Product
 		$this->flatfeeFloat        = ProductFactory::getFloat(($this->flatfee ?: 0));
 		$this->show_discount       = ($this->discount ? 1 : 0);
 		$this->discountFloat       = ProductFactory::getFloat(($this->discount ?: 0));
+		$this->discount_formatted  = ProductFactory::getFloat(($this->discount ?: 0));
 
 		//		$this->discounted_total           = $this->getDiscountedTotal(); // todo
 		//		$this->discounted_total_formatted = $this->getFormattedDiscountPrice(); // todo
@@ -154,6 +159,16 @@ class Product
 			$this->variants      = $variantData->variants;
 			$this->variantLabels = $variantData->variantLabels;
 			$this->variantList   = $variantData->variantList;
+		}
+
+		//get files data if digital
+		if ($this->product_type == 2)
+		{
+			$this->files = ProductFactory::getFiles($this->id);
+		}
+		else
+		{
+			$this->files = null;
 		}
 
 

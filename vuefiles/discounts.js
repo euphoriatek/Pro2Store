@@ -19,21 +19,33 @@ const p2s_discounts = {
     async beforeMount() {
 
         const base_url = document.getElementById('base_url');
-        this.base_url = base_url.innerText;
-        base_url.remove();
+        try {
+            this.base_url = base_url.innerText;
+            base_url.remove();
+        } catch (err) {
+        }
 
         const items_data = document.getElementById('items_data');
-        this.items = JSON.parse(items_data.innerText);
-        items_data.remove();
+        try {
+            this.items = JSON.parse(items_data.innerText);
+            // items_data.remove();
+        } catch (err) {
+        }
+
 
         const show = document.getElementById('page_size');
-        this.show = show.innerText;
-        show.remove();
+        try {
+            this.show = show.innerText;
+            show.remove();
+        } catch (err) {
+        }
 
         const confirmLangString = document.getElementById('confirmLangString');
-        this.confirm_LangString = confirmLangString.innerText;
-        confirmLangString.remove();
-
+        try {
+            this.confirm_LangString = confirmLangString.innerText;
+            confirmLangString.remove();
+        } catch (err) {
+        }
 
     },
     mounted: function () {
