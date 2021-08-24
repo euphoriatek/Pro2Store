@@ -14,6 +14,10 @@ use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\Input\Input;
+
+use Protostore\Order\Order;
+use Protostore\Order\OrderFactory;
 
 use YOOtheme\Application;
 use YOOtheme\Path;
@@ -53,4 +57,24 @@ class plgSystemProtostore_offlinepay extends CMSPlugin
         }
 
     }
+
+	/**
+	 * @param   Input  $data
+	 *
+	 * @return Order
+	 *
+	 * @since 1.1
+	 */
+
+	public function onInitP2SPaymentOfflinepay(Input $data): Order
+	{
+
+		//first create the order in the Pro2StoreDB
+//		$orderid = Cart::convertToOrder('Offline Pay', '', '', true);
+
+		return OrderFactory::createOrderFromCart('Offline Pay', '', '', true);
+
+
+	}
+
 }

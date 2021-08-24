@@ -25,6 +25,11 @@ class JFormFieldPinputnumber extends JFormField
 	 */
 	protected $type = 'pinputnumber';
 
+	public function getLabel()
+	{
+		return '';
+	}
+
 	/**
 	 * Method to get the field input markup.
 	 *
@@ -34,15 +39,31 @@ class JFormFieldPinputnumber extends JFormField
 	 */
 	protected function getInput()
 	{
-
-
 		$html = array();
 
-		$html[] = '<p-inputnumber v-model="form.'.$this->id.'" mode="currency" currency="USD" locale="en-US"></p-inputnumber>';
+		switch ($this->element['formName'])
+		{
+			case 'discount_amount':
+
+				$html[] = '<div v-show="form.jform_discount_type == 1">';
+				$html[] = '<div>' . $this->element['label'] . '</div>';
+				$html[] = '<p-inputnumber v-model="form.' . $this->id . '" mode="currency" :currency="p2s_currency.iso" :locale="p2s_locale"></p-inputnumber>';
+				$html[] = '</div>';
+				break;
+
+			case 'discount_percentage':
+
+				$html[] = '<div v-show="form.jform_discount_type == 2">';
+				$html[] = '<div>' . $this->element['label'] . '</div>';
+				$html[] = '<p-inputnumber v-model="form.' . $this->id . '"  mode="decimal" max="100" min="1" minFractionDigits="2" useGrouping="false"></p-inputnumber>';
+				$html[] = '</div>';
+				break;
+
+
+		}
 
 
 		return implode('', $html);
-
 
 	}
 }

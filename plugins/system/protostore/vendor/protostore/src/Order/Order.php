@@ -18,64 +18,64 @@ defined('_JEXEC') or die('Restricted access');
 class Order
 {
 
-	public int $id;
-	public int $customer_id;
-	public string $customer_name;
-	public string $customer_email;
-	public string $order_date;
-	public string $order_number;
-	public int $order_paid;
-	public int $order_subtotal;
-	public string $order_status;
-	public string $order_status_formatted;
-	public int $order_total;
-	public ?int $shipping_total;
-	public ?int $tax_total;
-	public string $currency;
-	public ?string $payment_method;
-	public ?string $customer_notes;
-	public ?string $vendor_token;
-	public ?string $guest_pin;
-	public ?int $billing_address_id;
-	public ?int $shipping_address_id;
-	public int $published;
-	public ?string $discount_code;
-	public ?int $discount_total;
-	public ?int $donation_total;
+	public $id;
+	public $customer_id;
+	public $customer_name;
+	public $customer_email;
+	public $order_date;
+	public $order_number;
+	public $order_paid;
+	public $order_subtotal;
+	public $order_status;
+	public $order_status_formatted;
+	public $order_total;
+	public $shipping_total;
+	public $tax_total;
+	public $currency;
+	public $payment_method;
+	public $customer_notes;
+	public $vendor_token;
+	public $guest_pin;
+	public $billing_address_id;
+	public $shipping_address_id;
+	public $published;
+	public $discount_code;
+	public $discount_total;
+	public $donation_total;
 
 
 	// Addresses
 
-	public \Protostore\Address\Address $billing_address;
-	public \Protostore\Address\Address $shipping_address;
+	public $billing_address;
+	public $shipping_address;
 
 	// Price as formatted Strings:
 
-	public ?string $order_total_formatted;
-	public ?string $order_subtotal_formatted;
-	public ?string $shipping_total_formatted;
-	public ?string $tax_total_formatted;
-	public ?string $discount_total_formatted;
-	public ?string $donation_total_formatted;
+	public $order_total_formatted;
+	public $order_subtotal_formatted;
+	public $shipping_total_formatted;
+	public $tax_total_formatted;
+	public $discount_total_formatted;
+	public $donation_total_formatted;
 
 	// Products
 
-	public ?array $ordered_products;
-	public ?int $product_count;
+	public $ordered_products;
+	public $product_count;
 
 
 	// Tracking
 
-	public ?string $tracking_code;
-	public ?string $tracking_link;
-	public ?string $tracking_provider;
-	public ?string $tracking_created;
+	public $tracking_code;
+	public $tracking_link;
+	public $tracking_provider;
+	public $tracking_created;
 
 	// Logs
 
-	public ?array $logs;
-	public ?array $emailLogs;
-	public ?array $internal_notes;
+	public $logs;
+	public $emailLogs;
+	public $internal_notes;
 
 	public function __construct($data)
 	{
@@ -200,10 +200,10 @@ class Order
 		if ($tracking = OrderFactory::getTracking($this->id))
 		{
 
-			$this->tracking_code    = $tracking->tracking_code;
-			$this->tracking_link    = $tracking->tracking_link;
-			$this->tracking_provider    = $tracking->tracking_provider;
-			$this->tracking_created = $tracking->created;
+			$this->tracking_code     = $tracking->tracking_code;
+			$this->tracking_link     = $tracking->tracking_link;
+			$this->tracking_provider = $tracking->tracking_provider;
+			$this->tracking_created  = $tracking->created;
 
 		}
 

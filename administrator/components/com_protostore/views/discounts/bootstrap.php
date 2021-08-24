@@ -11,8 +11,9 @@
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Factory;
-
 use Joomla\CMS\Language\Text;
+
+use Protostore\Bootstrap\listView;
 use Protostore\Render\Render;
 use Protostore\Discount\DiscountFactory;
 use Protostore\Utilities\Utilities;
@@ -20,20 +21,21 @@ use Protostore\Utilities\Utilities;
 
 /**
  *
- * @since 2.0
+ * @since 1.6
  */
-class bootstrap
+class bootstrap implements listView
 {
 
-	private array $vars;
+	public $vars;
 
 	public function __construct()
 	{
 		$this->init();
 		$this->setVars();
-
 		$this->addScripts();
+		$this->addStylesheets();
 		$this->addTranslationStrings();
+
 
 
 		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/discounts/discounts.php', $this->vars);
@@ -43,10 +45,10 @@ class bootstrap
 	/**
 	 *
 	 *
-	 * @since 2.0
+	 * @since 1.6
 	 */
 
-	private function init()
+	public function init(): void
 	{
 
 
@@ -60,7 +62,7 @@ class bootstrap
 	 * @since 1.6
 	 */
 
-	private function setVars(): void
+	public function setVars(): void
 	{
 
 
@@ -77,7 +79,7 @@ class bootstrap
 	 * @since 1.6
 	 */
 
-	private function getItems()
+	public function getItems(): ?array
 	{
 
 
@@ -91,7 +93,7 @@ class bootstrap
 	 * @since 1.6
 	 */
 
-	private function addScripts(): void
+	public function addScripts(): void
 	{
 
 		$doc = Factory::getDocument();
@@ -117,7 +119,7 @@ class bootstrap
 	 */
 
 
-	private function addTranslationStrings(): void
+	public function addTranslationStrings(): void
 	{
 
 		$doc = Factory::getDocument();
@@ -125,6 +127,11 @@ class bootstrap
 
 		$doc->addCustomTag('<script id="confirmLangString" type="application/json">' . Text::_('COM_PROTOSTORE_ORDER_ATTACH_CUSTOMER_CONFIRM_MODAL') . '</script>');
 
+	}
+
+	public function addStylesheets(): void
+	{
+		// TODO: Implement addStylesheets() method.
 	}
 }
 

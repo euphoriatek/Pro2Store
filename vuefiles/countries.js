@@ -21,8 +21,12 @@ const p2s_countries = {
         base_url.remove();
 
         const items_data = document.getElementById('items_data');
-        this.items = JSON.parse(items_data.innerText);
-        items_data.remove();
+        try {
+            this.items = JSON.parse(items_data.innerText);
+            items_data.remove();
+        } catch (err) {
+        }
+
 
         const show = document.getElementById('page_size');
         this.show = show.innerText;
@@ -62,7 +66,8 @@ const p2s_countries = {
             const params = {
                 'limit': this.show,
                 'offset': (this.currentPage * this.show),
-                'searchTerm': this.enteredText,
+               'searchTerm': (this.enteredText ? this.enteredText.trim() : ''),
+
                 'publishedOnly': this.publishedOnly,
             };
 
@@ -103,11 +108,13 @@ const p2s_countries = {
         changePage(i) {
             this.currentPage = i;
         },
+        cleartext(){
+            this.enteredText = null;
+            this.doTextSearch();
+        },
         async doTextSearch(event) {
-            this.enteredText = null
             clearTimeout(this.debounce)
             this.debounce = setTimeout(() => {
-                this.enteredText = event.target.value
                 this.filter();
             }, 600)
         },

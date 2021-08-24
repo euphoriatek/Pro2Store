@@ -24,6 +24,7 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\Filesystem\File as JoomlaFile;
+use Joomla\Utilities\ArrayHelper;
 
 use Brick\Math\BigDecimal;
 use Brick\Money\Exception\UnknownCurrencyException;
@@ -45,11 +46,11 @@ class ProductFactory
 	/**
 	 * @param   int  $joomla_item_id
 	 *
-	 * @return Product|PurchaseProduct|SubscriptionProduct|null
+	 * @return Product|null
 	 * @since 1.0
 	 */
 
-	public static function get(int $joomla_item_id)
+	public static function get($joomla_item_id): ?Product
 	{
 
 		$db = Factory::getDbo();
@@ -65,15 +66,6 @@ class ProductFactory
 		$result = $db->loadObject();
 		if ($result && is_object($result))
 		{
-
-
-//			switch ($result->product_type)
-//			{
-//				case 0:
-//					return new PurchaseProduct($result);
-//				case 1:
-//					return new DigitalProduct($result);
-//			}
 
 			return new Product($result);
 		}
@@ -121,24 +113,24 @@ class ProductFactory
 
 		$db->setQuery($query, $offset, $limit);
 
-		$results = $db->loadColumn();
+		$contentResults = $db->loadColumn();
 
-		if ($results)
+		if ($contentResults)
 		{
-			foreach ($results as $result)
+			foreach ($contentResults as $contentId)
 			{
 				$query = $db->getQuery(true);
 
 				$query->select('*');
 				$query->from($db->quoteName('#__protostore_product'));
-				$query->where($db->quoteName('joomla_item_id') . ' = ' . $db->quote($result));
+				$query->where($db->quoteName('joomla_item_id') . ' = ' . $db->quote($contentId));
 				$db->setQuery($query);
 
-				$results = $db->loadObject();
+				$productResult = $db->loadObject();
 
-				if ($results)
+				if ($productResult)
 				{
-					$products[] = new Product($result);
+					$products[] = new Product($productResult);
 				}
 
 
@@ -164,22 +156,18 @@ class ProductFactory
 	public static function saveFromInputData(Input $data)
 	{
 
-//		return $data->json->get('title');
 
 		// if there's no item id, then we need to create a new product
 		if ($data->json->getInt('itemid') === 0)
 		{
 			return self::createNewProduct($data);
 		}
-
-
 		// product exists so we can run an update
 
 
 		// get current product object
 		$currentProduct = self::get($data->json->getInt('itemid'));
-
-//		return $currentProduct;
+//		return $data->json->getString('tags', json_encode($currentProduct->tags));
 
 		// set up Joomla Item:
 
@@ -250,7 +238,7 @@ class ProductFactory
 		$currentProduct->weight_unit   = $data->json->getString('weight_unit', $currentProduct->weight_unit);
 		$currentProduct->sku           = $data->json->getString('sku', $currentProduct->sku);
 		$currentProduct->discount_type = $data->json->getString('discount_type', $currentProduct->discount_type);
-		$currentProduct->tags          = json_decode($data->json->getString('tags', json_encode($currentProduct->tags)));
+		$currentProduct->tags          = $data->json->getString('tags');
 
 		$currentProduct->options       = $data->json->getString('options', $currentProduct->options);
 		$currentProduct->variants      = $data->json->getString('variants', $currentProduct->variants);
@@ -260,6 +248,7 @@ class ProductFactory
 
 		if (self::commitToDatabase($currentProduct))
 		{
+
 			return self::get($data->json->getInt('itemid'));
 		}
 
@@ -275,7 +264,7 @@ class ProductFactory
 	 * @since 1.6
 	 */
 
-	private static function createNewProduct(Input $data): Product
+	private static function createNewProduct(Input $data)
 	{
 
 		$db = Factory::getDbo();
@@ -292,16 +281,16 @@ class ProductFactory
 		$alias = OutputFilter::stringUrlUnicodeSlug($alias);
 		$alias = Utilities::generateUniqueAlias($alias);
 
-		$content->alias            = $alias;
-		$content->introtext        = $data->json->getString('introtext');
-		$content->fulltext         = $data->json->getString('fulltext');
-		$content->state            = $data->json->getInt('state');
-		$content->catid            = $data->json->getInt('category');
-		$content->featured         = $data->json->getInt('featured');
-		$content->created          = Utilities::getDate();
-		$content->created_by       = Factory::getUser()->id;
-		$content->created_by_alias = Factory::getUser()->alias;
-		$content->modified         = Utilities::getDate();;
+		$content->alias       = $alias;
+		$content->introtext   = $data->json->getString('introtext');
+		$content->fulltext    = $data->json->getString('fulltext');
+		$content->state       = $data->json->getInt('state');
+		$content->catid       = $data->json->getInt('category');
+		$content->access      = $data->json->getInt('access');
+		$content->featured    = $data->json->getInt('featured');
+		$content->created     = Utilities::getDate();
+		$content->created_by  = Factory::getUser()->id;
+		$content->modified    = Utilities::getDate();
 		$content->modified_by = Factory::getUser()->id;
 		$content->publish_up  = $data->json->getString('publish_up_date');
 		$content->images      = self::processImagesForSave(
@@ -466,6 +455,7 @@ class ProductFactory
 
 				$tags = Utilities::processTagsByName($tags);
 
+
 				$table = Table::getInstance('Content');
 				$table->load($product->joomla_item_id);
 				$table->newTags = $tags;
@@ -509,34 +499,28 @@ class ProductFactory
 		foreach ($product_options as $option)
 		{
 
-			if (isset($option->id))
-			{
-				//first check if the option exists
-				$query = $db->getQuery(true);
 
-				$query->select('*');
-				$query->from($db->quoteName('#__protostore_product_option_values'));
-				$query->where($db->quoteName('id') . ' = ' . $db->quote($option->id));
+			//first check if the option exists
+			$query = $db->getQuery(true);
 
-				$db->setQuery($query);
+			$query->select('*');
+			$query->from($db->quoteName('#__protostore_product_option_values'));
+			$query->where($db->quoteName('id') . ' = ' . $db->quote($option->id));
 
-				$option_exists = $db->loadObject();
-			}
-			else
-			{
-				$option_exists = false;
-			}
+			$db->setQuery($query);
+
+			$option_exists = $db->loadObject();
 
 
 			if ($option_exists)
 			{
 
-				if ($option->modifiervalue)
+				if ($option->modifiervalueFloat)
 				{
 
 					if ($option->modifiertype == 'perc')
 					{
-						$modifiervalue = $option->modifiervalue;
+						$modifiervalue = $option->modifiervalueFloat;
 					}
 					else
 					{
@@ -547,7 +531,7 @@ class ProductFactory
 				}
 				else
 				{
-					$modifiervalue = "";
+					$modifiervalue = 0;
 				}
 				//run update
 				$query = $db->getQuery(true);
@@ -584,7 +568,7 @@ class ProductFactory
 				$object->modifiertype = $option->modifiertype;
 				if ($option->modifiertype == 'perc')
 				{
-					$object->modifiervalue = $option->modifiervalue;
+					$object->modifiervalue = $option->modifiervalueFloat;
 				}
 				else
 				{
@@ -667,12 +651,12 @@ class ProductFactory
 	 * @param   string|null  $searchTerm
 	 * @param   string|null  $optionType
 	 *
-	 * @return array|false
+	 * @return array
 	 *
 	 * @since 1.6
 	 */
 
-	public static function getOptionList(int $limit = 0, int $offset = 0, string $searchTerm = null, string $optionType = null)
+	public static function getOptionList(int $limit = 0, int $offset = 0, $searchTerm = null, string $optionType = null): ?array
 	{
 
 		$options = array();
@@ -713,7 +697,7 @@ class ProductFactory
 		}
 
 
-		return false;
+		return null;
 
 	}
 
@@ -721,7 +705,7 @@ class ProductFactory
 	/**
 	 * @param $joomla_item_id
 	 *
-	 * @return false|JoomlaItem
+	 * @return JoomlaItem
 	 *
 	 * @since 1.6
 	 */
@@ -747,7 +731,7 @@ class ProductFactory
 			return new JoomlaItem($result);
 		}
 
-		return false;
+		return null;
 
 	}
 
@@ -762,7 +746,7 @@ class ProductFactory
 	 * @since 1.6
 	 */
 
-	public static function getRoute(string $type, int $joomla_item_id, int $catid): string
+	public static function getRoute(string $type, int $joomla_item_id, int $catid): ?string
 	{
 
 		switch ($type)
@@ -783,7 +767,7 @@ class ProductFactory
 	 * @return BigDecimal
 	 *
 	 * @throws UnknownCurrencyException
-	 * @since version
+	 * @since 1.6
 	 */
 
 	public static function getFloat($price): BigDecimal
@@ -795,7 +779,7 @@ class ProductFactory
 
 
 	/**
-	 * @param $price
+	 * @param   int  $price
 	 *
 	 * @return string
 	 *
@@ -803,7 +787,7 @@ class ProductFactory
 	 * @since 1.6
 	 */
 
-	public static function getFormattedPrice($price): string
+	public static function getFormattedPrice(int $price): string
 	{
 
 		return CurrencyFactory::formatNumberWithCurrency($price);
@@ -838,25 +822,29 @@ class ProductFactory
 	 * @since 1.6
 	 */
 
-	public static function getTags($joomla_item_id)
+	public static function getTags($joomla_item_id): array
 	{
 
 		$tagsHelper = new TagsHelper();
 
-		return $tagsHelper->getItemTags('com_content.article', $joomla_item_id);
+		$tags = $tagsHelper->getItemTags('com_content.article', $joomla_item_id);
 
+		return ArrayHelper::getColumn($tags, 'title');
 
 	}
 
 
 	/**
 	 *
+	 * Gets the available tags.
+	 * If the ID of the item is supplied, then the function removes the currently selected tags and returns the remaining, unselected tags.
+	 *
 	 * @return array|null
 	 *
 	 * @since 1.6
 	 */
 
-	public static function getAvailableTags(): ?array
+	public static function getAvailableTags($id = null): ?array
 	{
 
 		$tags = array();
@@ -865,7 +853,7 @@ class ProductFactory
 
 		$query = $db->getQuery(true);
 
-		$query->select('*');
+		$query->select('title');
 		$query->from($db->quoteName('#__tags'));
 		$query->where($db->quoteName('published') . ' = 1');
 		$query->where($db->quoteName('title') . ' != ' . $db->quote('ROOT'));
@@ -883,12 +871,157 @@ class ProductFactory
 
 			}
 
+			$allTags = ArrayHelper::getColumn($tags, 'title');
 
-			return $tags;
+			if ($id)
+			{
+				$diffs = array_diff($allTags, self::getTags($id));
+
+				$newArray = array();
+
+				foreach ($diffs as $key => $diff)
+				{
+
+					$newArray[] = $allTags[$key];
+				}
+
+				return $newArray;
+
+			}
+			else
+			{
+				return $allTags;
+			}
+
+
 		}
 
 
 		return null;
+
+
+	}
+
+	/**
+	 * @param   int  $itemid
+	 * @param   int  $catid
+	 *
+	 * @return array
+	 *
+	 * @since 1.6
+	 */
+
+	public static function getAvailableCustomFields(int $itemid, int $catid = 0): array
+	{
+
+		$db = Factory::getDbo();
+
+		$availableFields = array();
+
+		$query = $db->getQuery(true);
+
+		$query->select('field_id');
+		$query->from($db->quoteName('#__fields_categories'));
+		$query->where($db->quoteName('category_id') . ' = ' . $db->quote($catid));
+
+		$db->setQuery($query);
+
+		$results = $db->loadColumn();
+
+
+		if ($results)
+		{
+
+
+			$query = $db->getQuery(true);
+
+			$query->select('*');
+			$query->from($db->quoteName('#__fields'));
+			$query->where($db->quoteName('context') . ' = ' . $db->quote('com_content.article'));
+			$query->where($db->quoteName('state') . ' = 1');
+			$query->where($db->quoteName('type') . ' IN (\'text\', \'list\', \'radio\', \'textarea\', \'media\', \'editor\')', 'AND');
+			$query->where($db->quoteName('id') . ' IN (' . implode(",", $results) . ')');
+			$query->order('ordering ASC');
+
+			$db->setQuery($query);
+
+			$fields = $db->loadObjectList();
+
+			foreach ($fields as $field)
+			{
+
+				$availableFields[] = new Customfield($field, $itemid);
+			}
+
+
+		}
+
+		//now get fields that have no category i.e. set to "all"
+
+		$query = $db->getQuery(true);
+
+		$query->select('field_id');
+		$query->from($db->quoteName('#__fields_categories'));
+
+		$db->setQuery($query);
+
+		$listedIds = $db->loadColumn();
+
+		if (!$listedIds)
+		{
+			$listedIds = array(0);
+		}
+		$query = $db->getQuery(true);
+
+		$query->select('*');
+		$query->from($db->quoteName('#__fields'));
+		$query->where($db->quoteName('context') . ' = ' . $db->quote('com_content.article'));
+		$query->where($db->quoteName('state') . ' = 1', 'AND');
+		$query->where($db->quoteName('type') . ' IN (\'text\', \'list\', \'radio\', \'textarea\', \'media\', \'editor\')', 'AND');
+		$query->where($db->quoteName('id') . ' NOT IN (' . implode(",", $listedIds) . ')');
+		$query->order('ordering ASC');
+
+		$db->setQuery($query);
+
+		$fields = $db->loadObjectList();
+
+		foreach ($fields as $field)
+		{
+
+			$availableFields[] = new Customfield($field, $itemid);
+		}
+
+
+		return $availableFields;
+
+
+	}
+
+
+	/**
+	 * @param   int  $custom_field_id
+	 * @param   int  $itemId
+	 *
+	 * @return mixed|null
+	 *
+	 * @since 1.6
+	 */
+
+	public static function setCustomFieldValue(int $custom_field_id, int $itemId)
+	{
+
+		$db = Factory::getDbo();
+
+		$query = $db->getQuery(true);
+
+		$query->select('value');
+		$query->from($db->quoteName('#__fields_values'));
+		$query->where($db->quoteName('field_id') . ' = ' . $db->quote($custom_field_id));
+		$query->where($db->quoteName('item_id') . ' = ' . $db->quote($itemId));
+
+		$db->setQuery($query);
+
+		return $db->loadResult();
 
 
 	}
@@ -950,7 +1083,7 @@ class ProductFactory
 	 * @since version
 	 */
 
-	public static function getImagePath($image): ?string
+	public static function getImagePath($image)
 	{
 
 		if ($image)
@@ -972,7 +1105,7 @@ class ProductFactory
 	 * @since 1.6
 	 */
 
-	public static function getVariantData($product_id): ?Variant
+	public static function getVariantData($product_id)
 	{
 		$db = Factory::getDbo();
 
@@ -1010,12 +1143,15 @@ class ProductFactory
 	{
 		$variantList = json_decode($variantList);
 
+		$returnedVariantList = array();
+
 		foreach ($variantList as $variant)
 		{
-			$variant->price = CurrencyFactory::toFloat($variant->price);
+			$variant->price        = CurrencyFactory::toFloat($variant->price);
+			$returnedVariantList[] = $variant;
 		}
 
-		return json_encode($variantList);
+		return json_encode($returnedVariantList);
 	}
 
 	/**
@@ -1130,7 +1266,7 @@ class ProductFactory
 	 */
 
 
-	public static function saveFileFromInputData(Input $data)
+	public static function saveFileFromInputData(Input $data): ?File
 	{
 
 		$db = Factory::getDbo();
@@ -1279,7 +1415,7 @@ class ProductFactory
 	 * @since 1.6
 	 */
 
-	private static function processImagesForSave(string $teaserImage, string $fullImage): string
+	private static function processImagesForSave($teaserImage, $fullImage)
 	{
 
 		$images = array();

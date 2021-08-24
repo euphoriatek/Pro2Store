@@ -25,10 +25,17 @@ class protostoreTask_filter
 		// init
 		$response = array();
 
-		$items = \Protostore\Email\EmailFactory::getList(
+
+		$searchTerm = $data->getString('searchTerm', null);
+
+		if($searchTerm == "null") {
+			$searchTerm = null;
+		}
+
+		$items = EmailFactory::getList(
 			$data->getInt('limit', 0),
 			$data->getInt('offset', 0),
-			$data->getString('searchTerm', null)
+			$searchTerm
 		);
 
 		$response['items'] = $items;

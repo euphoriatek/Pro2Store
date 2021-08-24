@@ -13,6 +13,8 @@ defined('_JEXEC') or die('Restricted access');
 use Joomla\CMS\Factory;
 
 use Joomla\CMS\Language\Text;
+
+use Protostore\Bootstrap\listView;
 use Protostore\Render\Render;
 use Protostore\Email\EmailFactory;
 use Protostore\Utilities\Utilities;
@@ -20,21 +22,20 @@ use Protostore\Utilities\Utilities;
 
 /**
  *
- * @since 2.0
+ * @since 1.6
  */
-class bootstrap
+class bootstrap implements listView
 {
 
-	private array $vars;
+	private $vars;
 
 	public function __construct()
 	{
 		$this->init();
 		$this->setVars();
-
 		$this->addScripts();
+		$this->addStylesheets();
 		$this->addTranslationStrings();
-
 
 		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/emailmanager/emailmanager.php', $this->vars);
 
@@ -42,14 +43,13 @@ class bootstrap
 
 	/**
 	 *
+	 * @return void
 	 *
-	 * @since 2.0
+	 * @since 1.6
 	 */
 
-	private function init()
+	public function init(): void
 	{
-
-
 	}
 
 
@@ -60,7 +60,7 @@ class bootstrap
 	 * @since 1.6
 	 */
 
-	private function setVars(): void
+	public function setVars(): void
 	{
 
 
@@ -77,7 +77,7 @@ class bootstrap
 	 * @since 1.6
 	 */
 
-	private function getItems()
+	public function getItems(): ?array
 	{
 
 
@@ -91,7 +91,7 @@ class bootstrap
 	 * @since 1.6
 	 */
 
-	private function addScripts(): void
+	public function addScripts(): void
 	{
 
 		$doc = Factory::getDocument();
@@ -113,11 +113,12 @@ class bootstrap
 	/**
 	 *
 	 *
+	 *
 	 * @since 1.6
 	 */
 
 
-	private function addTranslationStrings(): void
+	public function addTranslationStrings(): void
 	{
 
 		$doc = Factory::getDocument();
@@ -125,6 +126,16 @@ class bootstrap
 
 		$doc->addCustomTag('<script id="confirmLangString" type="application/json">' . Text::_('COM_PROTOSTORE_ORDER_ATTACH_CUSTOMER_CONFIRM_MODAL') . '</script>');
 
+	}
+
+	/**
+	 *
+	 *
+	 * @since 1.6
+	 */
+
+	public function addStylesheets(): void
+	{
 	}
 }
 

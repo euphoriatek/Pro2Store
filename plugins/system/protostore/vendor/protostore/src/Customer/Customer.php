@@ -16,18 +16,17 @@ defined('_JEXEC') or die('Restricted access');
 class Customer
 {
 
-	public int $id;
-	public int $j_user_id;
-	public string $name;
-	public string $email;
-	public int $published;
-	public \Joomla\CMS\User\User $j_user;
+	public $id;
+	public $j_user_id;
+	public $name;
+	public $email;
+	public $published;
+	public $j_user;
 	public $orders;
-	public int $total_orders;
-	public string $order_total;
-	public int $order_total_integer;
+	public $total_orders;
+	public $order_total;
+	public $order_total_integer;
 	public $addresses;
-
 
 
 	public function __construct($data)
@@ -90,9 +89,9 @@ class Customer
 		}
 
 
-		$this->order_total = CustomerFactory::getOrderTotal($this->orders);
+		$this->order_total         = CustomerFactory::getOrderTotal($this->orders);
 		$this->order_total_integer = CustomerFactory::getOrderTotal($this->orders, true);
-		$this->addresses = CustomerFactory::getCustomerAddresses($this->id);
+		$this->addresses           = CustomerFactory::getCustomerAddresses($this->id);
 	}
 
 

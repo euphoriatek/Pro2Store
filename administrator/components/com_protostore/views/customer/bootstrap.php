@@ -21,12 +21,12 @@ use Protostore\Utilities\Utilities;
 
 /**
  *
- * @since       2.0
+ * @since       1.6
  */
 class bootstrap extends AdminModel
 {
 
-	private array $vars;
+	private $vars;
 
 
 	public function __construct()
@@ -52,7 +52,7 @@ class bootstrap extends AdminModel
 	 * @since 1.6
 	 */
 
-	private function init($id): void
+	private function init($id)
 	{
 
 
@@ -80,7 +80,7 @@ class bootstrap extends AdminModel
 	 *
 	 * @return false|Customer
 	 *
-	 * @since 2.0
+	 * @since 1.6
 	 */
 
 	public function getTheItem($id)
@@ -132,7 +132,7 @@ class bootstrap extends AdminModel
 	 * @since 1.6
 	 */
 
-	private function addScripts(): void
+	private function addScripts()
 	{
 
 		$doc = Factory::getDocument();

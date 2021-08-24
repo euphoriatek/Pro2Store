@@ -23,7 +23,9 @@ use Joomla\Input\Input;
 use Protostore\Address\Address;
 use Protostore\Address\AddressFactory;
 use Protostore\Currency\CurrencyFactory;
+use Protostore\Customer\CustomerFactory;
 use Protostore\Emaillog\EmaillogFactory;
+use Protostore\Total\Total;
 use Protostore\Utilities\Utilities;
 
 use Brick\Money\Exception\UnknownCurrencyException;
@@ -81,8 +83,9 @@ class OrderFactory
 	 * @since 1.6
 	 */
 
-	public static function getList(int $limit = 0, int $offset = 0, string $searchTerm = null, int $customerId = null, string $status = null, string $currency = null, string $dateFrom = null, string $dateTo = null): ?array
+	public static function getList(int $limit = 0, int $offset = 0, string $searchTerm = null, int $customerId = null, string $status = null, string $currency = null, string $dateFrom = null, string $dateTo = null)
 	{
+
 
 		$orders = array();
 
@@ -95,10 +98,7 @@ class OrderFactory
 
 		if ($searchTerm)
 		{
-			$query->where($db->quoteName('order_number') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'), 'OR');
-			$query->where($db->quoteName('payment_method') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'), 'OR');
-			$query->where($db->quoteName('customer_notes') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'), 'OR');
-			$query->where($db->quoteName('vendor_token') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'), 'OR');
+			$query->where($db->quoteName('order_number') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'));
 		}
 
 		if ($currency)
@@ -150,7 +150,7 @@ class OrderFactory
 	 *
 	 * @return array
 	 *
-	 * @since version
+	 * @since 1.6
 	 */
 
 
@@ -240,12 +240,12 @@ class OrderFactory
 	/**
 	 * @param $order_id
 	 *
-	 * @return array|false
+	 * @return array
 	 *
 	 * @since 1.6
 	 */
 
-	public static function getEmailLogs($order_id)
+	public static function getEmailLogs($order_id): ?array
 	{
 		return EmaillogFactory::getList(0, 0, '', null, $order_id);
 
@@ -276,15 +276,15 @@ class OrderFactory
 	}
 
 	/**
-	 * @param $address_id
+	 * @param   int  $address_id
 	 *
-	 * @return false|Address
+	 * @return Address
 	 *
 	 * @since 1.6
 	 */
 
 
-	public static function getAddress($address_id)
+	public static function getAddress(int $address_id): ?Address
 	{
 
 		return AddressFactory::get($address_id);
@@ -292,9 +292,11 @@ class OrderFactory
 	}
 
 	/**
-	 * @param   int  $order_id
-	 * @param   int  $limit
-	 * @param   int  $offset
+	 * @param   int     $order_id
+	 * @param   int     $limit
+	 * @param   int     $offset
+	 * @param   string  $orderBy
+	 * @param   string  $orderDir
 	 *
 	 * @return array
 	 *
@@ -404,13 +406,13 @@ class OrderFactory
 	 *
 	 * @param $id
 	 *
-	 * @return mixed|null
+	 * @return string
 	 *
 	 * @since 1.6
 	 */
 
 
-	public static function getOrderCurrency($id)
+	public static function getOrderCurrency($id): string
 	{
 
 		$db = Factory::getDbo();
@@ -471,14 +473,14 @@ class OrderFactory
 	}
 
 	/**
-	 * @param $created_by_name
+	 * @param   string  $name
 	 *
 	 * @return string
 	 *
 	 * @since 1.6
 	 */
 
-	public static function getAvatarAbb($name): string
+	public static function getAvatarAbb(string $name): string
 	{
 
 		$words   = preg_split("/[\s,_-]+/", $name);
@@ -492,8 +494,16 @@ class OrderFactory
 		return $acronym;
 	}
 
+	/**
+	 * @param   string  $status
+	 *
+	 * @return string
+	 *
+	 * @since 1.6
+	 */
 
-	public static function getStatusFormatted($status)
+
+	public static function getStatusFormatted(string $status): string
 	{
 
 		$language = Factory::getLanguage();
@@ -518,10 +528,12 @@ class OrderFactory
 
 		}
 
+		return '';
+
 	}
 
 	/**
-	 * @param $order_id
+	 * @param   int  $order_id
 	 *
 	 * @return mixed|null
 	 *
@@ -529,7 +541,7 @@ class OrderFactory
 	 */
 
 
-	public static function getTracking($order_id)
+	public static function getTracking(int $order_id)
 	{
 
 		$db = Factory::getDbo();
@@ -590,7 +602,7 @@ class OrderFactory
 	 */
 
 
-	public static function togglePaid(int $order_id)
+	public static function togglePaid(int $order_id): bool
 	{
 
 		$order = self::get($order_id);
@@ -616,7 +628,7 @@ class OrderFactory
 	 */
 
 
-	public static function updateStatus(string $status, int $order_id, bool $sendEmail = false): bool
+	public static function updateStatus($status, $order_id, $sendEmail = false): bool
 	{
 
 		$order = self::get($order_id);
@@ -656,7 +668,7 @@ class OrderFactory
 	 * @since 1.6
 	 */
 
-	public static function updateTracking(string $tracking_code, string $tracking_link, string $tracking_provider, int $order_id, bool $sendEmail = false): bool
+	public static function updateTracking(string $tracking_code, string $tracking_link, string $tracking_provider, int $order_id, bool $sendEmail): bool
 	{
 		$order = self::get($order_id);
 
@@ -781,6 +793,115 @@ class OrderFactory
 		}
 
 
+	}
+
+	/**
+	 * @param   string  $paymentMethod
+	 * @param   string  $shippingMethod
+	 * @param   string  $vendorToken
+	 * @param   false   $sendEmail
+	 *
+	 * @return Order
+	 *
+	 * @since 1.6
+	 */
+
+
+	public static function createOrderFromCart(string $paymentMethod, string $shippingMethod = 'default', string $vendorToken = '', bool $sendEmail = false): Order
+	{
+
+		// init vars
+		$db        = Factory::getDbo();
+		$date      = Utilities::getDate();
+		$cookie_id = Utilities::getCookieID();
+		$customer  = CustomerFactory::get();
+
+		// Build Order Object
+		$object     = new stdClass();
+		$object->id = 0;
+
+		if (!$customer)
+		{
+			//Todo - "guest checkout" - for the minute lets generate a uniqid() to identify the order for guest customers
+			$object->guest_pin = uniqid();
+		}
+
+		$object->order_date     = $date;
+		$object->order_number   = self::_generateOrderId(rand(10000, 99999));
+		$object->order_paid     = 0;
+		$object->order_status   = 'P';
+		$object->order_total    = Total::getGrandTotal(true);
+		$object->order_subtotal = Total::getSubTotal(true);
+
+
+		return self::get();
+
+	}
+
+	/**
+	 * @param $seed
+	 *
+	 * @return string
+	 *
+	 * @since 1.0
+	 */
+
+
+	private static function _generateOrderId($seed): string
+	{
+
+		$charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		$base    = strlen($charset);
+		$result  = '';
+		$len     = 5;
+		$now     = explode(' ', microtime())[1];
+		while ($now >= $base)
+		{
+			$i      = $now % $base;
+			$result = $charset[$i] . $result;
+			$now    /= $base;
+		}
+		$rand = substr($result, -$len);
+
+		return strtoupper($rand . $seed);
+	}
+
+	/**
+	 *
+	 * @return array
+	 *
+	 * @since 1.6
+	 */
+
+
+	public static function getStatuses(): array
+	{
+
+		$statuses = array();
+
+		$statuses[0]['id']    = 'P';
+		$statuses[0]['title'] = Text::_('COM_PROTOSTORE_ORDER_PENDING');
+
+		$statuses[1]['id']    = 'C';
+		$statuses[1]['title'] = Text::_('COM_PROTOSTORE_ORDER_CONFIRMED');
+
+		$statuses[2]['id']    = 'X';
+		$statuses[2]['title'] = Text::_('COM_PROTOSTORE_ORDER_CANCELLED');
+
+		$statuses[3]['id']    = 'R';
+		$statuses[3]['title'] = Text::_('COM_PROTOSTORE_ORDER_REFUNDED');
+
+		$statuses[4]['id']    = 'S';
+		$statuses[4]['title'] = Text::_('COM_PROTOSTORE_ORDER_SHIPPED');
+
+		$statuses[5]['id']    = 'F';
+		$statuses[5]['title'] = Text::_('COM_PROTOSTORE_ORDER_COMPLETED');
+
+		$statuses[6]['id']    = 'D';
+		$statuses[6]['title'] = Text::_('COM_PROTOSTORE_ORDER_DENIED');
+
+
+		return $statuses;
 	}
 
 

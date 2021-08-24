@@ -55,7 +55,7 @@ $item = $vars['item'];
                                     Save & Close
                                 </button>
                                 <a class="uk-button uk-button-default uk-button-small "
-                                   href="index.php?option=com_protostore&view=discounts">Cancel</a>
+                                   href="index.php?option=com_protostore&view=customers">Cancel</a>
 
                             </div>
 
@@ -63,7 +63,7 @@ $item = $vars['item'];
                     </div>
 
                 </div>
-                <div class="uk-width-1-2">
+                <div class="uk-width-1-2 uk-animation-fade">
 
 					<?= LayoutHelper::render('card', array(
 						'form'      => $vars['form'],
@@ -76,19 +76,19 @@ $item = $vars['item'];
 
 
 
-					<?= LayoutHelper::render('address_grid_card', array(
-						'addresses'      => $item->addresses,
+					<?= LayoutHelper::render('customer/address_grid_card', [
+						'addresses'      => ($item->addresses ? $item->addresses : ''),
 						'cardStyle' => 'default',
 						'cardTitle' => 'Addresses',
 						'cardId'    => 'customer_addresses',
-					)); ?>
+					]); ?>
 
                 </div>
 
 
 
                 <div class="uk-width-1-2">
-	                <?= LayoutHelper::render('order_grid_card', array(
+	                <?= LayoutHelper::render('customer/order_grid_card', array(
 		                'form'      => $vars['form'],
 		                'cardStyle' => 'default',
 		                'cardTitle' => 'Orders',

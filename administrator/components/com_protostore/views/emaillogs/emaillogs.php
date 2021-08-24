@@ -39,7 +39,7 @@ use Joomla\CMS\Layout\LayoutHelper;
 							<div class="uk-width-auto uk-text-right">
 								<div class="uk-grid uk-grid-small " uk-grid="">
 									<div class="uk-width-auto">
-										<input @input="doTextSearch($event)" type="text" placeholder="Search...">
+										<input @input="doTextSearch($event)" type="text" placeholder="<?= Text::_('COM_PROTOSTORE_TABLE_SEARCH_PLACEHOLDER'); ?>">
 									</div>
 									<div class="uk-width-auto">
 

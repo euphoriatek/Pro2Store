@@ -20,10 +20,10 @@ class protostoreTask_addtocart
 	{
 
 		// init
-		$amount = $data->get('amount', false, 'INT');
-		$itemid = $data->get('contentitemid', null, 'INT');
+		$amount = $data->json->getInt('amount', false);
+		$itemid = $data->json->getInt('contentitemid', null, 'INT');
 
-		$itemOptions = $data->getString('itemoptions');
+		$itemOptions = $data->json->getString('itemoptions');
 		$itemOptions = json_decode($itemOptions, true);
 
 

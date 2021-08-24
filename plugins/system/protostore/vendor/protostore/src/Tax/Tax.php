@@ -19,7 +19,6 @@ use Protostore\Product\Product;
 use Protostore\Product\ProductFactory;
 use Protostore\Utilities\Utilities;
 use Protostore\Shipping\Shipping;
-use Protostore\Config\Config;
 
 use Brick\Money\Money;
 use Brick\Money\Context\CashContext;
@@ -41,8 +40,7 @@ class Tax
 	public static function calculateTotalTax(Cart $cart)
 	{
 
-		$config = new Config();
-		$config = $config->config;
+
 
 		$cartitems = $cart->cartItems;
 
@@ -54,10 +52,10 @@ class Tax
 
 		}
 
-		if ($config->get('add_tax_to_shipping'))
-		{
-			$totalTaxableValue += Shipping::getTotalShippingFromPlugin();
-		}
+//		if ($config->get('add_tax_to_shipping'))
+//		{
+//			$totalTaxableValue += Shipping::getTotalShippingFromPlugin();
+//		}
 
 		$total = self::getTotalTax($cart, $totalTaxableValue);
 
@@ -96,61 +94,61 @@ class Tax
 		{
 			return 0;
 		}
-
-		if ($selectedShippingAddress = Address::getAssignedShippingAddressID())
-		{
-
-			$db = Factory::getDbo();
-
-			// get the full address using the class
-			$address = new Address($selectedShippingAddress);
-
-
-			// first get zone tax rate
-			$query = $db->getQuery(true);
-
-			$query->select('taxrate');
-			$query->from($db->quoteName('#__protostore_zone'));
-			$query->where($db->quoteName('id') . ' = ' . $db->quote($address->zone_id));
-
-			$db->setQuery($query);
-
-			$zoneTaxrate = $db->loadResult();
-
-			if ($zoneTaxrate)
-			{
-				// if we have a zone tax rate... return the added tax
-				return Utilities::getPercentOfNumber($price, $zoneTaxrate);
-			}
-			else
-			{
-
-				// there is no zone tax rate... perhaps there is a country level tax rate.
-				// get country tax rate
-				$query = $db->getQuery(true);
-
-				$query->select('taxrate');
-				$query->from($db->quoteName('#__protostore_country'));
-				$query->where($db->quoteName('id') . ' = ' . $db->quote($address->country_id));
-
-				$db->setQuery($query);
-
-				$countryTaxrate = $db->loadResult();
-
-				if ($countryTaxrate)
-				{
-
-					// if there is a country tax rate, return the added tax
-					return Utilities::getPercentOfNumber($price, $countryTaxrate);
-				}
-
-			}
-
-			// or you know... whatever....
-			return 0;
-
-
-		}
+//
+//		if ($selectedShippingAddress = Address::getAssignedShippingAddressID())
+//		{
+//
+//			$db = Factory::getDbo();
+//
+//			// get the full address using the class
+//			$address = new Address($selectedShippingAddress);
+//
+//
+//			// first get zone tax rate
+//			$query = $db->getQuery(true);
+//
+//			$query->select('taxrate');
+//			$query->from($db->quoteName('#__protostore_zone'));
+//			$query->where($db->quoteName('id') . ' = ' . $db->quote($address->zone_id));
+//
+//			$db->setQuery($query);
+//
+//			$zoneTaxrate = $db->loadResult();
+//
+//			if ($zoneTaxrate)
+//			{
+//				// if we have a zone tax rate... return the added tax
+//				return Utilities::getPercentOfNumber($price, $zoneTaxrate);
+//			}
+//			else
+//			{
+//
+//				// there is no zone tax rate... perhaps there is a country level tax rate.
+//				// get country tax rate
+//				$query = $db->getQuery(true);
+//
+//				$query->select('taxrate');
+//				$query->from($db->quoteName('#__protostore_country'));
+//				$query->where($db->quoteName('id') . ' = ' . $db->quote($address->country_id));
+//
+//				$db->setQuery($query);
+//
+//				$countryTaxrate = $db->loadResult();
+//
+//				if ($countryTaxrate)
+//				{
+//
+//					// if there is a country tax rate, return the added tax
+//					return Utilities::getPercentOfNumber($price, $countryTaxrate);
+//				}
+//
+//			}
+//
+//			// or you know... whatever....
+//			return 0;
+//
+//
+//		}
 
 	}
 
@@ -158,65 +156,65 @@ class Tax
 	public static function getTotalTax(Cart $cart, $total)
 	{
 
-
-		if ($selectedShippingAddress = Address::getAssignedShippingAddressID($cart))
-		{
-
-			$db = Factory::getDbo();
-
-			// get the full address using the class
-			$address = new Address($selectedShippingAddress);
-
-
-			// first get zone tax rate
-			$query = $db->getQuery(true);
-
-			$query->select('taxrate');
-			$query->from($db->quoteName('#__protostore_zone'));
-			$query->where($db->quoteName('id') . ' = ' . $db->quote($address->zone_id));
-
-			$db->setQuery($query);
-
-			$zoneTaxrate = $db->loadResult();
-
-			if ($zoneTaxrate)
-			{
-				// if we have a zone tax rate... return the added tax
-				return Utilities::getPercentOfNumber($total, $zoneTaxrate);
-			}
-			else
-			{
-
-				// there is no zone tax rate... perhaps there is a country level tax rate.
-				// get country tax rate
-				$query = $db->getQuery(true);
-
-				$query->select('taxrate');
-				$query->from($db->quoteName('#__protostore_country'));
-				$query->where($db->quoteName('id') . ' = ' . $db->quote($address->country_id));
-
-				$db->setQuery($query);
-
-				$countryTaxrate = $db->loadResult();
-
-				if ($countryTaxrate)
-				{
-
-					// if there is a country tax rate, return the added tax
-					return Utilities::getPercentOfNumber($total, $countryTaxrate);
-				}
-
-			}
-
-			// or you know... whatever....
-			return 0;
-
-
-		}
-		else
-		{
-			return 0;
-		}
-
+//
+//		if ($selectedShippingAddress = Address::getAssignedShippingAddressID($cart))
+//		{
+//
+//			$db = Factory::getDbo();
+//
+//			// get the full address using the class
+//			$address = new Address($selectedShippingAddress);
+//
+//
+//			// first get zone tax rate
+//			$query = $db->getQuery(true);
+//
+//			$query->select('taxrate');
+//			$query->from($db->quoteName('#__protostore_zone'));
+//			$query->where($db->quoteName('id') . ' = ' . $db->quote($address->zone_id));
+//
+//			$db->setQuery($query);
+//
+//			$zoneTaxrate = $db->loadResult();
+//
+//			if ($zoneTaxrate)
+//			{
+//				// if we have a zone tax rate... return the added tax
+//				return Utilities::getPercentOfNumber($total, $zoneTaxrate);
+//			}
+//			else
+//			{
+//
+//				// there is no zone tax rate... perhaps there is a country level tax rate.
+//				// get country tax rate
+//				$query = $db->getQuery(true);
+//
+//				$query->select('taxrate');
+//				$query->from($db->quoteName('#__protostore_country'));
+//				$query->where($db->quoteName('id') . ' = ' . $db->quote($address->country_id));
+//
+//				$db->setQuery($query);
+//
+//				$countryTaxrate = $db->loadResult();
+//
+//				if ($countryTaxrate)
+//				{
+//
+//					// if there is a country tax rate, return the added tax
+//					return Utilities::getPercentOfNumber($total, $countryTaxrate);
+//				}
+//
+//			}
+//
+//			// or you know... whatever....
+//			return 0;
+//
+//
+//		}
+//		else
+//		{
+//			return 0;
+//		}
+		return 0;
 	}
 }

@@ -29,6 +29,7 @@
         <field name="teaserimage" type="media" directory="" preview="true" class="uk-input uk-form-width-small non-uk-input"  />
 
         <field name="fullimage" type="media" directory="" preview="true" class="uk-input uk-form-width-small non-uk-input"  />
+        <field name="custom_field_image" type="media" directory="" preview="true" class="uk-input uk-form-width-small non-uk-input"  />
 
         <field name="myfilevalue" type="file" label="Enter some text" description="Choose an image from your computer with maximum 100KB" size="10" accept="image/*" />
 
@@ -45,7 +46,7 @@
 
         <field name="category" type="CategoryEdit" extension="com_content" label="Select a category" description="" class="uk-select" required="true"/>
 
-        <field name="tags" type="tag" label="JTAG" description="JTAG_DESC" mode="nested" class="inputbox span12 small" multiple="true"/>
+        <field name="tags" type="tags" label="JTAG" description="JTAG_DESC" mode="nested" class="inputbox span12 small" multiple="true"/>
 
         <field name="publish_up_date" type="calendar" default="now" label="Select a date" description=""
                class="input-medium uk-input non-uk-input" required="true" filter="user_utc" format="%Y-%m-%d %H:%M:%S"

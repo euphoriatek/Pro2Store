@@ -40,21 +40,38 @@ use Joomla\CMS\Layout\LayoutHelper;
                                         </path>
                                     </svg>
                                     &nbsp
-                                    <?= Text::_('COM_PROTOSTORE_COUNTRIES_TITLE'); ?>
+									<?= Text::_('COM_PROTOSTORE_COUNTRIES'); ?>
                                 </h3>
                             </div>
                             <div class="uk-width-auto uk-text-right">
                                 <div class="uk-grid uk-grid-small " uk-grid="">
-                                    <div class="uk-width-auto">
-                                        <span>Show only Published items </span>
-                                        <p-inputswitch v-model="publishedOnly" @change="filter"></p-inputswitch>
-                                    </div>
-                                    <div class="uk-width-auto">
-                                        <input @input="doTextSearch($event)" type="text" placeholder="Search...">
+                                    <div class="uk-width-auto uk-grid-item-match uk-flex-middle">
+                                        <div class="uk-grid uk-grid-small" uk-grid="">
+                                            <div class="uk-width-expand uk-grid-item-match uk-flex-middle ">  <?= Text::_('COM_PROTOSTORE_SHOW_ONLY_PUBLISHED'); ?></div>
+                                            <div class="uk-width-auto">
+                                                <p-inputswitch v-model="publishedOnly" @change="filter"></p-inputswitch>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="uk-width-auto">
 
+                                        <div class="uk-grid uk-grid-small" uk-grid="">
+                                            <div class="uk-width-expand  ">
+                                                <input v-model="enteredText"
+                                                       @input="doTextSearch($event)"
+                                                       type="text"
+                                                       placeholder="<?= Text::_('COM_PROTOSTORE_TABLE_SEARCH_PLACEHOLDER'); ?>">
+                                            </div>
+                                            <div class="uk-width-auto uk-grid-item-match uk-flex-middle">
+                                            <span style="width: 20px">
+                                            <span @click="cleartext" v-show="enteredText" style="cursor: pointer" uk-icon="icon: close"></span>
+                                                </span>
+                                            </div>
+                                        </div>
+
+
                                     </div>
+
                                 </div>
                             </div>
                         </div>
@@ -120,7 +137,19 @@ use Joomla\CMS\Layout\LayoutHelper;
                                     {{item.country_isocode_3}}
                                 </td>
                                 <td>
-                                    {{item.requires_vat}}
+
+                                    <span v-if="item.requires_vat == '1'"
+                                          style="font-size: 18px; color: green;">
+                                      <i class="fal fa-check-circle"></i>
+                                  </span>
+                                    <span
+                                            v-if="item.requires_vat == '0'"
+
+                                            style="font-size: 18px; color: red;">
+                                        <i class="fal fa-times-circle"></i>
+                                    </span>
+
+
                                 </td>
                                 <td>
                                     {{item.taxrate}}

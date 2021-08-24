@@ -10,8 +10,7 @@ const p2s_customers = {
             pages: [],
             pagesizes: [5, 10, 15, 20, 25, 30, 50, 100, 200, 500],
             show: 25,
-            enteredText: '',
-            publishedOnly: false,
+            enteredText: ''
         };
     },
     async beforeMount() {
@@ -74,8 +73,7 @@ const p2s_customers = {
             const params = {
                 'limit': this.show,
                 'offset': (this.currentPage * this.show),
-                'searchTerm': this.enteredText,
-                'publishedOnly': this.publishedOnly,
+                'searchTerm': this.enteredText
             };
 
             const URLparams = this.serialize(params);
@@ -86,7 +84,7 @@ const p2s_customers = {
 
 
             if (response.success) {
-                this.items = response.data.countries;
+                this.items = response.data.customers;
                 this.loading = false;
 
                 if (this.items) {
@@ -115,11 +113,13 @@ const p2s_customers = {
         changePage(i) {
             this.currentPage = i;
         },
+        cleartext(){
+            this.enteredText = null;
+            this.doTextSearch();
+        },
         async doTextSearch(event) {
-            this.enteredText = null
             clearTimeout(this.debounce)
             this.debounce = setTimeout(() => {
-                this.enteredText = event.target.value
                 this.filter();
             }, 600)
         },

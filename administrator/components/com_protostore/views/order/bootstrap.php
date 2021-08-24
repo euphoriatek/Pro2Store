@@ -26,7 +26,19 @@ use Protostore\Utilities\Utilities;
 class bootstrap extends AdminModel
 {
 
-	private array $vars;
+	/**
+	 * @var array $vars
+
+
+	 * @since 1.6
+	 */
+	public $vars;
+
+	/**
+	 * @var string $view
+	 * @since 1.6
+	 */
+	public static $view = 'order';
 
 
 	public function __construct()
@@ -38,7 +50,7 @@ class bootstrap extends AdminModel
 
 		$this->init($id);
 
-		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/order/order.php', $this->vars);
+		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/'.self::$view.'/'.self::$view.'.php', $this->vars);
 
 
 	}
@@ -50,7 +62,7 @@ class bootstrap extends AdminModel
 	 * @since 2.0
 	 */
 
-	private function init($id): void
+	private function init($id)
 	{
 
 
@@ -120,7 +132,7 @@ class bootstrap extends AdminModel
 
 
 		// include the vue script - defer
-		$doc->addScript('../media/com_protostore/js/vue/order/order.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
+		$doc->addScript('../media/com_protostore/js/vue/'.self::$view.'/'.self::$view.'.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
 
 
 		//set up data for vue:

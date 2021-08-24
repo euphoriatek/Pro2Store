@@ -25,7 +25,7 @@ class protostoreTask_save
 	 * @throws Exception
 	 * @since 1.6
 	 */
-	public function getResponse(Input $data): bool
+	public function getResponse(Input $data)
 	{
 
 

@@ -56,6 +56,8 @@ class EmaillogFactory
 	 * @param   string|null  $searchTerm
 	 * @param   int|null     $customerId
 	 * @param   int|null     $orderId
+	 * @param   string       $orderBy
+	 * @param   string       $orderDir
 	 * @param   string|null  $dateFrom
 	 * @param   string|null  $dateTo
 	 *

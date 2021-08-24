@@ -8,10 +8,10 @@
         <field name="coupon_code" type="text" default="title" label="Coupon Code" required="true" description="" size="10"
                class="uk-input uk-form-width-medium uk-form-large"/>
 
-        <field name="amount" type="number" default="0" label="Amount" description="" size="10"
+        <field name="amount" type="pinputnumber" default="0" label="Amount" description="" size="10" formName="discount_amount"
                class="uk-input uk-form-width-medium uk-form-large" />
 
-        <field name="percentage" type="text" default="8" label="Percentage" description="Percentage" filter="float" />
+        <field name="percentage" type="pinputnumber" label="Percentage" description="Percentage" formName="discount_percentage" />
 
         <field name="discount_type" type="discounttype" default="" required="true" label="Discount Type" description="" />
 

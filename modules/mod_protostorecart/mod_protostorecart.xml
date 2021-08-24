@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="module" version="3.5" client="site" method="upgrade">
+    <name>Pro2Store - Cart</name>
+    <author>Ray Lawlor - Pro2Store</author>
+    <creationDate>February 2020</creationDate>
+    <copyright>Copyright (C) 2020 Ray Lawlor - Pro2Store. All rights reserved.</copyright>
+    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+    <authorEmail>info@pro2.store</authorEmail>
+    <authorUrl>https://pro2.store</authorUrl>
+    <version>1.0.0</version>
+    <description>Pro2Store Cart - by Ray Lawlor - Pro2Store</description>
+    <files>
+        <filename module="mod_protostorecart">mod_protostorecart.php</filename>
+        <folder>tmpl</folder>
+    </files>
+    <config>
+        <fields name="params">
+            <fieldset name="basic" label="Basic">
+                <field
+                        name="layout"
+                        type="modulelayout"
+                        label="JFIELD_ALT_LAYOUT_LABEL"
+                        description="JFIELD_ALT_MODULE_LAYOUT_DESC"
+                />
+                <field name="cartmenuitem" type="menuitem" default="45" label="Cart Menu Item" description="What is the Cart Menu Item" />
+
+                <field name="show_drop" type="radio" default="0" label="Show Dropdown on Hover?" description="" class="btn-group btn-group-yesno" showon="layout:_:icon">
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="total_type" type="list" default="" label="Total Type" description=""  showon="layout:_:default">
+                    <option value="subtotal">Subtotal</option>
+                    <option value="grandtotal">Grand Total</option>
+                </field>
+                <field name="button_type" type="list" default="default" label="Button Type" description=""  showon="layout:_:default">
+                    <option value="default">Default</option>
+                    <option value="primary">Primary</option>
+                    <option value="secondary">Secondary</option>
+                </field>
+                <field name="button_size" type="list" default="" label="Button Size" description=""  showon="layout:_:default">
+                    <option value="">Default</option>
+                    <option value="small">Small</option>
+                    <option value="large">Large</option>
+                </field>
+
+
+                <field name="drop_card_style" type="list" default="uk-card-default" label="Dropdown Card Style" description=""  showon="layout:_:icon[AND]show_drop:1">
+                    <option value="uk-card-default">Default</option>
+                    <option value="uk-card-primary">Primary</option>
+                    <option value="uk-card-secondary">Secondary</option>
+                </field>
+
+                <field name="min_width" type="text" label="Min Width (px)" description="" size="10" defualt="650" showon="layout:_:icon[AND]show_drop:1" />
+                <field name="text_colour" type="list" default="" label="Text colour" description=""  showon="layout:_:icon[AND]show_drop:1">
+                    <option value="">Default</option>
+                    <option value="uk-light">Light</option>
+                    <option value="uk-dark">Dark</option>
+                </field>
+
+
+            </fieldset>
+        </fields>
+    </config>
+</extension>

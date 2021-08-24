@@ -14,24 +14,25 @@ defined('_JEXEC') or die('Restricted access');
 
 class Address
 {
-
-	public int $id;
-	public int $customer_id;
-	public string $name;
-	public ?string $address1;
-	public ?string $address2;
-	public ?string $address3;
-	public ?string $town;
-	public ?int $zone;
-	public ?string $zone_name;
-	public ?int $country;
-	public ?string $country_name;
-	public ?string $postcode;
-	public ?string $phone;
-	public ?string $email;
-	public ?string $mobile_phone;
-	public string $created;
-	public ?string $address_as_csv;
+	public $id;
+	public $customer_id;
+	public $name;
+	public $address1;
+	public $address2;
+	public $address3;
+	public $town;
+	public $zone;
+	public $zone_name;
+	public $country;
+	public $country_name;
+	public $postcode;
+	public $phone;
+	public $email;
+	public $mobile_phone;
+	public $created;
+	public $address_as_csv;
+	public $isAssignedShipping;
+	public $isAssignedBilling;
 
 
 
@@ -83,6 +84,8 @@ class Address
 		$this->zone_name = AddressFactory::getZoneName($this->zone);
 		$this->country_name = AddressFactory::getCountryName($this->country);
 		$this->address_as_csv = AddressFactory::getAddressAsCSV($this);
+		$this->isAssignedShipping = AddressFactory::checkAssigned($this->id, 'shipping');
+		$this->isAssignedBilling = AddressFactory::checkAssigned($this->id, 'billing');
 
 
 	}

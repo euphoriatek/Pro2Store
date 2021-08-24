@@ -21,7 +21,6 @@ HTMLHelper::_('behavior.formvalidator');
 
 $item = $vars['item'];
 
-//echo json_encode($item);
 
 ?>
 
@@ -41,8 +40,7 @@ $item = $vars['item'];
 
 	                                    <?= Text::_('COM_PROTOSTORE_ORDER_NUMBER'); ?>:  <?= $item->order_number; ?>
 
-                               <span
-                                       :class="'uk-label uk-label-'+ order.order_status.toLowerCase()">{{order.order_status_formatted}}</span>
+                               <span :class="'uk-label uk-label-'+ order.order_status.toLowerCase()">{{order.order_status_formatted}}</span>
 
                                 </span>
 
@@ -66,7 +64,7 @@ $item = $vars['item'];
                     <li class="uk-active">
                         <a href="#" aria-expanded="true">
 							<?= Text::_('COM_PROTOSTORE_ORDER_DETAILS'); ?>
-                            <svg width="10px"
+                            <svg width="14px"
                                  class="svg-inline--fa fa-box-check fa-w-20" aria-hidden="true" focusable="false"
                                  data-prefix="fad"
                                  data-icon="box-check" role="img" xmlns="http://www.w3.org/2000/svg"
@@ -85,7 +83,7 @@ $item = $vars['item'];
                     <li>
                         <a href="#" aria-expanded="false">
 							<?= Text::_('COM_PROTOSTORE_ORDER_ADDRESS_DETAILS'); ?>
-                            <svg width="10px"
+                            <svg width="14px"
                                  class="svg-inline--fa fa-shipping-fast fa-w-20"
                                  aria-hidden="true" focusable="false" data-prefix="fad" data-icon="shipping-fast"
                                  role="img"
@@ -104,7 +102,7 @@ $item = $vars['item'];
                     <li>
                         <a href="#" aria-expanded="false">
 							<?= Text::_('COM_PROTOSTORE_ORDER_EMAILS_AND_LOGS'); ?>
-                            <svg width="10px"
+                            <svg width="14px"
                                  class="svg-inline--fa fa-envelope-open-text fa-w-16"
                                  aria-hidden="true" focusable="false" data-prefix="fad"
                                  data-icon="envelope-open-text" role="img"

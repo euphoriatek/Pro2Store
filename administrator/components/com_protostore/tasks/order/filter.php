@@ -23,10 +23,26 @@ class protostoreTask_filter
 		// init
 		$response = array();
 
+		// pull out the values since VUE has them untyped.
+		$searchTerm = $data->getString('searchTerm', null);
+
+		if($searchTerm == "null") {
+			$searchTerm = null;
+		}
+
+		$status = $data->getString('status', null);
+
+		if($status == "null" || $status == "0") {
+			$status = null;
+		}
+
+
 		$response['items'] = OrderFactory::getList(
 			$data->getInt('limit', 0),
 			$data->getInt('offset', 0),
-			$data->getString('searchTerm', null)
+			$searchTerm,
+			null,
+			$status
 		);
 
 

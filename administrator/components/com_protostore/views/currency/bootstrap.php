@@ -20,7 +20,7 @@ use Protostore\Utilities\Utilities;
 
 /**
  *
- * @since       2.0
+ * @since       1.6
  */
 class bootstrap extends AdminModel
 {
@@ -51,7 +51,7 @@ class bootstrap extends AdminModel
 	 *
 	 * @return array
 	 *
-	 * @since 2.0
+	 * @since 1.6
 	 */
 
 	private function init($id)
@@ -86,7 +86,7 @@ class bootstrap extends AdminModel
 	 *
 	 * @return array|false
 	 *
-	 * @since 2.0
+	 * @since 1.6
 	 */
 
 	public function getTheItem($id)

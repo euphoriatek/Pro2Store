@@ -12,6 +12,7 @@ namespace Protostore\Customer;
 defined('_JEXEC') or die('Restricted access');
 
 
+use Brick\Money\Exception\UnknownCurrencyException;
 use Joomla\CMS\Factory;
 use Joomla\CMS\User\User;
 
@@ -27,16 +28,16 @@ class CustomerFactory
 
 	/**
 	 *
-	 * Gets the currency based on the given ID.
+	 * Gets the customer based on the given ID.
 	 *
 	 * @param $id
 	 *
-	 * @return false|Customer
+	 * @return Customer
 	 *
 	 * @since 1.6
 	 */
 
-	public static function get($id)
+	public static function get($id = null): ?Customer
 	{
 
 		$db = Factory::getDbo();
@@ -45,7 +46,27 @@ class CustomerFactory
 
 		$query->select('*');
 		$query->from($db->quoteName('#__protostore_customer'));
-		$query->where($db->quoteName('id') . ' = ' . $db->quote($id));
+
+		// if the id is set... use it to grab the Customer
+		if ($id)
+		{
+			$query->where($db->quoteName('id') . ' = ' . $db->quote($id));
+		}
+		else
+		{
+			$id = Factory::getUser()->id;
+			// if the id is not set, try to retrieve using the current logged in user
+
+				if ($id !== 0)
+				{
+					$query->where($db->quoteName('j_user_id') . ' = ' . $db->quote($id));
+				}
+
+				else
+				{
+					return null;
+				}
+		}
 
 		$db->setQuery($query);
 
@@ -57,7 +78,7 @@ class CustomerFactory
 			return new Customer($result);
 		}
 
-		return false;
+		return null;
 
 	}
 
@@ -70,11 +91,12 @@ class CustomerFactory
 	 * @param   string       $orderDir
 	 *
 	 *
-	 * @return array|false
+	 * @return array
 	 * @since 1.5
 	 */
 
-	public static function getList(int $limit = 0, int $offset = 0, string $searchTerm = null, string $orderBy = 'name', string $orderDir = 'DESC')
+	public
+	static function getList(int $limit = 0, int $offset = 0, string $searchTerm = null, string $orderBy = 'name', string $orderDir = 'DESC'): ?array
 	{
 
 		// init items
@@ -92,8 +114,7 @@ class CustomerFactory
 		// if there is a search term, iterate over the columns looking for a match
 		if ($searchTerm)
 		{
-			$query->where($db->quoteName('name') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'), 'OR');
-			$query->where($db->quoteName('email') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'));
+			$query->where($db->quoteName('name') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'));
 		}
 
 		$query->order($orderBy . ' ' . $orderDir);
@@ -115,7 +136,7 @@ class CustomerFactory
 			return $items;
 		}
 
-		return false;
+		return null;
 
 	}
 
@@ -128,7 +149,8 @@ class CustomerFactory
 	 */
 
 
-	public static function saveFromInputData(Input $data)
+	public
+	static function saveFromInputData(Input $data): bool
 	{
 
 		$customer = json_decode($data->getString('customer'));
@@ -155,7 +177,8 @@ class CustomerFactory
 	 * @since version
 	 */
 
-	public static function getUser($joomla_user_id): User
+	public
+	static function getUser($joomla_user_id): User
 	{
 
 		return User::getInstance($joomla_user_id);
@@ -167,11 +190,12 @@ class CustomerFactory
 	 * @param $id  - customer id NOT Joomla user ID
 	 *
 	 *
-	 * @since version
+	 * @since 1.6
 	 */
 
 
-	public static function getCustomersOrders($cusomter_id)
+	public
+	static function getCustomersOrders($cusomter_id): ?array
 	{
 
 
@@ -187,12 +211,13 @@ class CustomerFactory
 	 *
 	 * @return int|mixed|string
 	 *
-	 * @throws \Brick\Money\Exception\UnknownCurrencyException
+	 * @throws UnknownCurrencyException
 	 * @since 1.6
 	 *
 	 */
 
-	public static function getOrderTotal($orders, bool $integer = false)
+	public
+	static function getOrderTotal($orders, bool $integer = false)
 	{
 
 
@@ -226,12 +251,13 @@ class CustomerFactory
 	/**
 	 * @param $cusomter_id
 	 *
-	 * @return array|false
+	 * @return array
 	 *
 	 * @since 1.6
 	 */
 
-	public static function getCustomerAddresses($cusomter_id)
+	public
+	static function getCustomerAddresses($cusomter_id): ?array
 	{
 
 		return AddressFactory::getList(0, 0, null, 'name', 'desc', $cusomter_id);

@@ -17,17 +17,17 @@ class Productoption
 {
 
 
-	public int $id;
-	public int $product_id;
-	public string $optiontype;
-	public string $optionname;
-	public string $modifier;
-	public string $modifiertype;
-	public int $modifiervalue;
+	public $id;
+	public $product_id;
+	public $optiontype;
+	public $optionname;
+	public $modifier;
+	public $modifiertype;
+	public $modifiervalue;
 	public $modifiervalueFloat;
-	public ?string $modifiervalue_translated;
-	public string $optionsku;
-	public int $ordering;
+	public $modifiervalue_translated;
+	public $optionsku;
+	public $ordering;
 
 
 	public $optiontypename;

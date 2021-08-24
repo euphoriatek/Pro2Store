@@ -16,27 +16,27 @@ defined('_JEXEC') or die('Restricted access');
 class JoomlaItem
 {
 
-	public int $id;
-	public string $title;
-	public string $alias;
-	public string $introtext;
-	public string $fulltext;
-	public int $state;
-	public int $catid;
-	public string $created;
-	public int $created_by;
-	public string $created_by_alias;
-	public string $modified;
-	public ?int $modified_by;
-	public string $publish_up;
-	public string $publish_down;
-	public string $images;
-	public int $ordering;
-	public string $metakey;
-	public string $metadesc;
-	public int $access;
-	public int $hits;
-	public int $featured;
+	public $id;
+	public $title;
+	public $alias;
+	public $introtext;
+	public $fulltext;
+	public $state;
+	public $catid;
+	public $created;
+	public $created_by;
+	public $created_by_alias;
+	public $modified;
+	public $modified_by;
+	public $publish_up;
+	public $publish_down;
+	public $images;
+	public $ordering;
+	public $metakey;
+	public $metadesc;
+	public $access;
+	public $hits;
+	public $featured;
 
 
 

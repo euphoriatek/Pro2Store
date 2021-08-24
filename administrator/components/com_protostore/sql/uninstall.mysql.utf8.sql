@@ -13,7 +13,7 @@ DROP TABLE IF EXISTS `#__protostore_coupon_cart`;
 DROP TABLE IF EXISTS `#__protostore_option_preset`;
 DROP TABLE IF EXISTS `#__protostore_cart_addresses`;
 DROP TABLE IF EXISTS `#__protostore_cart`;
-DROP TABLE IF EXISTS `#__protostore_carts`;
+DROP TABLE IF EXISTS `#__protostore_cart_item`;
 DROP TABLE IF EXISTS `#__protostore_zone`;
 DROP TABLE IF EXISTS `#__protostore_country`;
 DROP TABLE IF EXISTS `#__protostore_shipping_rate`;

@@ -12,6 +12,8 @@ defined('_JEXEC') or die('Restricted access');
 
 
 use Joomla\CMS\Factory;
+
+use Protostore\Bootstrap\listView;
 use Protostore\Product\ProductFactory;
 use Protostore\Render\Render;
 
@@ -19,51 +21,72 @@ use Protostore\Render\Render;
 
 /**
  *
- * @since       2.0
+ * @since       1.6
  */
-class bootstrap
+class bootstrap implements listView
 {
 
+	/**
+	 * @var array $vars
+
+
+	 * @since 1.6
+	 */
+	public $vars;
+
+	/**
+	 * @var string $view
+	 * @since 1.6
+	 */
+	public static $view = 'productoptions';
 
 	public function __construct()
 	{
-		$vars = $this->init();
+		$this->init();
+		$this->addScripts();
+		$this->addStylesheets();
+		$this->addTranslationStrings();
+		$this->setVars();
 
-		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/productoptions/productoptions.php', $vars);
+		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/'.self::$view.'/'.self::$view.'.php', $this->vars);
 
+	}
+
+	/**
+	 *
+	 * @return void
+	 *
+	 * @since 1.6
+	 */
+
+	public function init(): void
+	{
+		
+
+
+	}
+
+	/**
+	 *
+	 * @return void
+	 *
+	 * @since 1.6
+	 */
+
+	public function setVars(): void
+	{
+		$this->vars['items']      = $this->getItems();
+		$this->vars['list_limit'] = Factory::getConfig()->get('list_limit', '25');
 	}
 
 	/**
 	 *
 	 * @return array
 	 *
-	 * @since 2.0
+	 * @since 1.6
 	 */
 
-	private function init()
-	{
-
-		$vars = array();
-
-
-		$vars['items']      = $this->getItems();
-		$vars['list_limit'] = Factory::getConfig()->get('list_limit', '25');
-		$this->addScripts();
-
-		return $vars;
-
-
-
-	}
-
-	/**
-	 *
-	 * @return array|false
-	 *
-	 * @since 2.0
-	 */
-
-	private function getItems()
+	public function getItems(): ?array
 	{
 		return ProductFactory::getOptionList();
 	}
@@ -75,16 +98,27 @@ class bootstrap
 	 * @since 1.6
 	 */
 
-	private function addScripts($add = false)
+	public function addScripts(): void
 	{
 
 		// include the vue script - defer
-		Factory::getDocument()->addScript('../media/com_protostore/js/vue/productoptions/productoptions.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
+		Factory::getDocument()->addScript('../media/com_protostore/js/vue/'.self::$view.'/'.self::$view.'.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
 
 
 
 	}
 
 
+
+
+	public function addStylesheets(): void
+	{
+		// TODO: Implement addStylesheets() method.
+	}
+
+	public function addTranslationStrings(): void
+	{
+		// TODO: Implement addTranslationStrings() method.
+	}
 }
 

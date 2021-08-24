@@ -12,14 +12,13 @@ namespace Protostore\Cart;
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-use Protostore\Currency\CurrencyFactory;
+
 use Protostore\Coupon\CouponFactory;
-use Protostore\Cartitem\Cartitem;
+use Protostore\Currency\CurrencyFactory;
+use Protostore\Shipping\ShippingFactory;
+use Protostore\Tax\TaxFactory;
 
-use Protostore\Total\Total;
-use Protostore\Shipping\Shipping;
-
-use Protostore\Tax\Tax;
+use Exception;
 
 
 class Cart
@@ -36,15 +35,16 @@ class Cart
 	public $count;
 	public $cartItems;
 
-	public string $total;
-	public int $totalInt;
-	public string $subtotal;
-	public int $subtotalInt;
-	public string $tax;
-	public int $taxInt;
-	public string $totalShipping;
-	public string $totalDiscount;
-	public int $totalDiscountInt;
+	public $total;
+	public $totalInt;
+	public $subtotal;
+	public $subtotalInt;
+	public $tax;
+	public $taxInt;
+	public $totalShipping;
+	public $totalShippingFormatted;
+	public $totalDiscount;
+	public $totalDiscountInt;
 
 
 	public function __construct($data)
@@ -53,10 +53,17 @@ class Cart
 		if ($data)
 		{
 			$this->hydrate($data);
-			$this->init($data);
+			$this->init();
 		}
 
 	}
+
+	/**
+	 * @param $data
+	 *
+	 *
+	 * @since 1.6
+	 */
 
 	private function hydrate($data)
 	{
@@ -71,39 +78,46 @@ class Cart
 		}
 	}
 
+	/**
+	 *
+	 *
+	 * @throws Exception
+	 * @since 1.6
+	 */
 
-	private function init($data)
+
+	private function init()
 	{
 
-		$currency = CurrencyFactory::getCurrent();
 
 		$this->cartItems = CartFactory::getCartItems($this->id);
 		$this->count     = CartFactory::getCount($this->cartItems);
 
-		$this->subtotalInt = Total::getSubTotal($this);
-		$this->subtotal    = CurrencyFactory::translate($this->subtotalInt, $currency);
+		$this->subtotalInt = CartFactory::getSubTotal($this);
+		$this->subtotal    = CurrencyFactory::translate($this->subtotalInt);
 
-		$this->totalInt = Total::getGrandTotal($this);
-		$this->total    = CurrencyFactory::translate($this->totalInt, $currency);
+		$this->totalInt = CartFactory::getGrandTotal($this);
+		$this->total    = CurrencyFactory::translate($this->totalInt);
 
-		$this->taxInt = Tax::calculateTotalTax($this);
-		$this->tax    = CurrencyFactory::translate($this->taxInt, $currency);
+		$this->taxInt = TaxFactory::getTotalTax($this);
+		$this->tax    = CurrencyFactory::translate($this->taxInt);
 
 
-		$this->totalShipping = Shipping::calculateTotalShippingForCart($this, $currency);
+		$this->totalShipping = ShippingFactory::getShipping($this);
+		$this->totalShippingFormatted = ShippingFactory::getShippingFormatted($this);
 
 
 		$couponDiscount = CouponFactory::calculateDiscount($this);
 
 		if ($couponDiscount > $this->subtotalInt)
 		{
-			$this->totalDiscount    = CurrencyFactory::translate($this->subtotalInt, $currency);
+			$this->totalDiscount    = CurrencyFactory::translate($this->subtotalInt);
 			$this->totalDiscountInt = $this->subtotal;
 		}
 		else
 		{
 			$discount               = CouponFactory::calculateDiscount($this);
-			$this->totalDiscount    = CurrencyFactory::translate($discount, $currency);
+			$this->totalDiscount    = CurrencyFactory::translate($discount);
 			$this->totalDiscountInt = CouponFactory::calculateDiscount($this);
 		}
 

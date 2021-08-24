@@ -27,12 +27,12 @@ class CouponFactory
 	/**
 	 * @param $id
 	 *
-	 * @return false|Coupon
+	 * @return Coupon
 	 *
 	 * @since 1.5
 	 */
 
-	public static function get($id)
+	public static function get($id): ?Coupon
 	{
 
 		$db = Factory::getDbo();
@@ -53,7 +53,7 @@ class CouponFactory
 		}
 		else
 		{
-			return false;
+			return null;
 		}
 
 	}
@@ -61,12 +61,12 @@ class CouponFactory
 	/**
 	 * @param $couponCode
 	 *
-	 * @return false|Coupon
+	 * @return Coupon
 	 *
 	 * @since 1.5
 	 */
 
-	public static function getByCode($couponCode)
+	public static function getByCode($couponCode): ?Coupon
 	{
 
 		$db = Factory::getDbo();
@@ -87,20 +87,20 @@ class CouponFactory
 		}
 		else
 		{
-			return false;
+			return null;
 		}
 
 	}
 
 	/**
 	 *
-	 * @return false|Coupon
+	 * @return Coupon
 	 *
 	 * @since 1.5
 	 */
 
 
-	public static function getCurrentAppliedCoupon()
+	public static function getCurrentAppliedCoupon(): ?Coupon
 	{
 
 		$cookieId = Utilities::getCookieID();
@@ -136,13 +136,13 @@ class CouponFactory
 			}
 			else
 			{
-				return false;
+				return null;
 			}
 
 		}
 		else
 		{
-			return false;
+			return null;
 		}
 
 	}
@@ -152,11 +152,11 @@ class CouponFactory
 	 *
 	 * @return bool
 	 *
-	 * @since version
+	 * @since 1.6
 	 */
 
 
-	public static function apply($couponCode)
+	public static function apply($couponCode): bool
 	{
 
 		// check if coupon is valid
@@ -199,7 +199,7 @@ class CouponFactory
 	 * @since version
 	 */
 
-	public static function remove()
+	public static function remove(): bool
 	{
 
 		$cookieId = Utilities::getCookieID();
@@ -243,7 +243,7 @@ class CouponFactory
 	 */
 
 
-	public static function checkCouponValidity($couponCode)
+	public static function checkCouponValidity($couponCode): bool
 	{
 
 		$db = Factory::getDbo();
@@ -281,7 +281,7 @@ class CouponFactory
 	 * @since 1.5
 	 */
 
-	public static function isCouponInDate(Coupon $coupon)
+	public static function isCouponInDate(Coupon $coupon): bool
 	{
 
 		$today  = new Date();
@@ -308,7 +308,7 @@ class CouponFactory
 	 */
 
 
-	public static function isCouponApplied()
+	public static function isCouponApplied(): bool
 	{
 
 		$cookieId = Utilities::getCookieID();
@@ -344,7 +344,7 @@ class CouponFactory
 	 *
 	 * @param $subTotal
 	 *
-	 * @return float|int|mixed
+	 * @return float|int
 	 *
 	 * @since 1.5
 	 */

@@ -11,6 +11,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 use Protostore\Render\Render;
 use Protostore\Utilities\Utilities;
@@ -18,57 +19,41 @@ use Protostore\Utilities\Utilities;
 
 /**
  *
- * @since 2.0
+ * @since       1.6
  */
 class bootstrap
 {
 
+	private $vars;
 
 	public function __construct()
 	{
-		$this->init();
-		$vars = $this->setVars();
 
-		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/dashboard/dashboard.php', $vars);
 
-	}
+		$input = Factory::getApplication()->input;
+		$id    = $input->get('id');
 
-	/**
-	 *
-	 *
-	 * @since 2.0
-	 */
+		$this->init($id);
 
-	private function init()
-	{
+		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/dashboard/dashboard.php', $this->vars);
 
-		// include the vue script - defer
-		Factory::getDocument()->addScript('../media/com_protostore/js/vue/product/product.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
-
-		// include prime
-		Utilities::includePrime(array());
 
 	}
-
 
 	/**
 	 *
 	 * @return array
 	 *
-	 * @since 2.0
+	 * @since 1.6
 	 */
 
-	private function setVars()
+	private function init($id)
 	{
 
-		$vars = array();
-
-
-		$vars['items'] = $this->getItems();
-
-
-		return $vars;
-
+		$this->vars = array();
+		$this->addScripts();
+		$this->addStylesheets();
+		$this->addTranslationStrings();
 
 	}
 
@@ -76,11 +61,60 @@ class bootstrap
 	 *
 	 * @return array|false
 	 *
-	 * @since 2.0
+	 * @since 1.6
 	 */
 
-	private function getItems()
+	public function getTheItem($id)
 	{
+
+	}
+
+
+	/**
+	 *
+	 *
+	 * @since version
+	 */
+
+	private function addScripts()
+	{
+
+		$doc = Factory::getDocument();
+
+		// include the vue script - defer
+		$doc->addScript('/media/com_protostore/js/vue/dashboard/dashboard.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
+
+
+		// include prime
+//		Utilities::includePrime(array('chart'));
+
+
+	}
+
+	/**
+	 *
+	 *
+	 * @since 1.6
+	 */
+
+	private function addStylesheets()
+	{
+	}
+
+	/**
+	 *
+	 *
+	 * @since 1.6
+	 */
+
+
+	private function addTranslationStrings()
+	{
+
+		$doc = Factory::getDocument();
+
+
+		$doc->addCustomTag('<script id="successMessage" type="application/json">' . Text::_('COM_PROTOSTORE_ADD_PRODUCT_ALERT_SAVED') . '</script>');
 
 	}
 

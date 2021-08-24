@@ -12,62 +12,85 @@ defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Factory;
 
+use Protostore\Bootstrap\listView;
 use Protostore\Render\Render;
 use Protostore\Product\ProductFactory;
 
 
 /**
  *
- * @since       2.0
+ * @since       1.6
  */
-class bootstrap
+class bootstrap implements listView
 {
+
+
+	/**
+	 * @var array $vars
+
+
+	 * @since 1.6
+	 */
+	public $vars;
+
+	/**
+	 * @var string $view
+	 * @since 1.6
+	 */
+	public static $view = 'products';
 
 
 	public function __construct()
 	{
-		$vars = $this->init();
-
-		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/products/products.php', $vars);
-
-	}
-
-	/**
-	 *
-	 * @return array
-	 *
-	 * @since 2.0
-	 */
-
-	private function init()
-	{
-
-		$vars = array();
-
-
-		$vars['items']      = $this->getItems();
-		$vars['categories'] = $this->getCategories();
-		$vars['list_limit'] = Factory::getConfig()->get('list_limit', '25');
+		$this->init();
+		$this->setVars();
 		$this->addScripts();
+		$this->addStylesheets();
+		$this->addTranslationStrings();
 
-		return $vars;
 
+		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/' . self::$view . '/' . self::$view . '.php', $this->vars);
+
+	}
+
+	/**
+	 *
+	 * @return void
+	 *
+	 * @since 1.6
+	 */
+
+	public function init(): void
+	{
+
+
+	}
+
+	public function setVars(): void
+	{
+
+		$this->vars['items']      = $this->getItems();
+		$this->vars['categories'] = $this->getCategories();
+		$this->vars['list_limit'] = Factory::getConfig()->get('list_limit', '25');
 
 	}
 
 	/**
 	 *
 	 *
-	 * @since version
+	 * @since 1.6
 	 */
 
-	private function addScripts($add = false)
+	public function addScripts(): void
 	{
-
+		$doc = Factory::getDocument();
 
 		// include the vue script - defer
-		Factory::getDocument()->addScript('../media/com_protostore/js/vue/products/products.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
+		$doc->addScript('../media/com_protostore/js/vue/' . self::$view . '/' . self::$view . '.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
 
+		$doc->addCustomTag('<script id="items_data" type="application/json">' . json_encode($this->vars['items']) . '</script>');
+		$doc->addCustomTag('<script id="categories_data" type="application/json">' . json_encode($this->vars['categories']) . '</script>');
+		$doc->addCustomTag('<script id="page_size" type="application/json">' . $this->vars['list_limit'] . '</script>');
 
 		// include prime
 //		Utilities::includePrime(array('inputswitch'));
@@ -79,13 +102,44 @@ class bootstrap
 	 *
 	 * @return array|false
 	 *
-	 * @since 2.0
+	 * @since 1.6
 	 */
 
-	private function getItems()
+	public function getItems(): ?array
 	{
 		return ProductFactory::getList();
 	}
+
+
+	/**
+	 *
+	 *
+	 * @since 1.6
+	 */
+
+	public function addStylesheets(): void
+	{
+
+	}
+
+	/**
+	 *
+	 *
+	 * @since 1.6
+	 */
+
+	public function addTranslationStrings(): void
+	{
+
+	}
+
+	/**
+	 *
+	 * @return array|mixed
+	 *
+	 * @since 1.6
+	 */
+
 
 	private function getCategories()
 	{

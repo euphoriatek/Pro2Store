@@ -15,6 +15,7 @@ defined('_JEXEC') or die('Restricted access');
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\Input\Input;
+use Protostore\Language\LanguageFactory;
 use Protostore\Utilities\Utilities;
 
 use stdClass;
@@ -35,7 +36,7 @@ class EmailFactory
 	 * @since 1.6
 	 */
 
-	public static function get($id)
+	public static function get($id): ?Email
 	{
 
 		$db = Factory::getDbo();
@@ -74,7 +75,7 @@ class EmailFactory
 	 * @since 1.6
 	 */
 
-	public static function getList(int $limit = 0, int $offset = 0, string $searchTerm = null, string $type = null, string $orderBy = 'id', string $orderDir = 'DESC')
+	public static function getList(int $limit = 0, int $offset = 0, string $searchTerm = null, string $type = null, string $orderBy = 'id', string $orderDir = 'DESC'): ?array
 	{
 
 		// init items
@@ -92,9 +93,7 @@ class EmailFactory
 		// if there is a search term, iterate over the columns looking for a match
 		if ($searchTerm)
 		{
-			$query->where($db->quoteName('body') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'), 'OR');
-			$query->where($db->quoteName('subject') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'), 'OR');
-			$query->where($db->quoteName('to') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'), 'OR');
+			$query->where($db->quoteName('subject') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'));
 		}
 
 		if ($type)
@@ -137,6 +136,8 @@ class EmailFactory
 
 	public static function emailTypeToString($emailType): string
 	{
+
+		LanguageFactory::load();
 
 		switch ($emailType)
 		{
@@ -193,9 +194,8 @@ class EmailFactory
 	 */
 
 
-	public static function saveFromInputData(Input $data): Email
+	public static function saveFromInputData(Input $data)
 	{
-
 
 
 		if ($id = $data->json->getInt('itemid', null))
@@ -228,6 +228,7 @@ class EmailFactory
 
 		}
 
+		return null;
 
 	}
 

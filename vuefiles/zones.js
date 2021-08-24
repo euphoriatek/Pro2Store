@@ -8,10 +8,12 @@ const p2s_zones = {
             currentSortDir: 'asc',
             currentPage: 0,
             pages: [],
+            countries: [],
             pagesizes: [5, 10, 15, 20, 25, 30, 50, 100, 200, 500],
             show: 25,
             enteredText: '',
-            publishedOnly: false
+            publishedOnly: false,
+            selectedCountry: 0
         };
     },
     async beforeMount() {
@@ -21,8 +23,18 @@ const p2s_zones = {
         base_url.remove();
 
         const items_data = document.getElementById('items_data');
-        this.items = JSON.parse(items_data.innerText);
-        items_data.remove();
+        try {
+            this.items = JSON.parse(items_data.innerText);
+            items_data.remove();
+        } catch (err) {
+        }
+
+        const countries_data = document.getElementById('countries_data');
+        try {
+            this.countries = JSON.parse(countries_data.innerText);
+            // countries_data.remove();
+        } catch (err) {
+        }
 
         const show = document.getElementById('page_size');
         this.show = show.innerText;
@@ -67,8 +79,9 @@ const p2s_zones = {
             const params = {
                 'limit': this.show,
                 'offset': (this.currentPage * this.show),
-                'searchTerm': this.enteredText,
+                'searchTerm': (this.enteredText ? this.enteredText.trim() : ''),
                 'publishedOnly': this.publishedOnly,
+                'country_id': this.selectedCountry,
             };
 
             const URLparams = this.serialize(params);
@@ -108,11 +121,13 @@ const p2s_zones = {
         changePage(i) {
             this.currentPage = i;
         },
+        cleartext(){
+            this.enteredText = null;
+            this.doTextSearch();
+        },
         async doTextSearch(event) {
-            this.enteredText = null
             clearTimeout(this.debounce)
             this.debounce = setTimeout(() => {
-                this.enteredText = event.target.value
                 this.filter();
             }, 600)
         },

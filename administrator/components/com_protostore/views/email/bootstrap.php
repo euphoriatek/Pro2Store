@@ -26,7 +26,7 @@ use Protostore\Utilities\Utilities;
 class bootstrap extends AdminModel
 {
 
-	private array $vars;
+	private $vars;
 
 
 	public function __construct()
@@ -50,7 +50,7 @@ class bootstrap extends AdminModel
 	 * @since 2.0
 	 */
 
-	private function init($id): void
+	private function init($id)
 	{
 
 

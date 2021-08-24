@@ -19,6 +19,7 @@ use phpDocumentor\Reflection\Types\Integer;
 use Protostore\Address\Address;
 use Protostore\Cart\CartFactory;
 use Protostore\Currency\Currency;
+use Protostore\Currency\CurrencyFactory;
 use Protostore\Product\Product;
 use Protostore\Cart\Cart;
 

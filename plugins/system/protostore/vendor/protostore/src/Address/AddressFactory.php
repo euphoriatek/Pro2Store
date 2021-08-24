@@ -13,8 +13,13 @@ defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Factory;
 use Joomla\Input\Input;
+
+
+use Protostore\Cart\CartFactory;
 use Protostore\Country\CountryFactory;
 
+use Protostore\Customer\CustomerFactory;
+use stdClass;
 
 class AddressFactory
 {
@@ -26,12 +31,12 @@ class AddressFactory
 	 *
 	 * @param $id
 	 *
-	 * @return false|Address
+	 * @return Address
 	 *
 	 * @since 1.6
 	 */
 
-	public static function get($id)
+	public static function get($id): ?Address
 	{
 
 		$db = Factory::getDbo();
@@ -52,7 +57,7 @@ class AddressFactory
 			return new Address($result);
 		}
 
-		return false;
+		return null;
 
 	}
 
@@ -101,11 +106,11 @@ class AddressFactory
 	 * @param   int|null     $zoneId
 	 * @param   int|null     $countryId
 	 *
-	 * @return array|false
+	 * @return array|null
 	 * @since 1.6
 	 */
 
-	public static function getList(int $limit = 0, int $offset = 0, string $searchTerm = null, string $orderBy = 'name', string $orderDir = 'DESC', int $customerId = null, int $zoneId = null, int $countryId = null)
+	public static function getList(int $limit = 0, int $offset = 0, string $searchTerm = null, string $orderBy = 'name', string $orderDir = 'DESC', int $customerId = null, int $zoneId = null, int $countryId = null): ?array
 	{
 
 
@@ -169,68 +174,101 @@ class AddressFactory
 			return $items;
 		}
 
-		return false;
+		return null;
 
 	}
 
 	/**
 	 * @param   Input  $data
 	 *
-	 * @return bool
+	 * @return Address|bool
 	 *
 	 * @since 1.6
 	 */
 
 
-	public static function saveFromInputData(Input $data)
+	public static function saveFromInputData(Input $data): Address
 	{
 
-		$address = json_decode($data->getString('address'));
-
-		unset($address->zones);
-		unset($address->zone_name);
-		unset($address->country_name);
-		unset($address->created);
-		unset($address->address_as_csv);
-		unset($address->edit);
+		$db = Factory::getDbo();
 
 
-		$result = Factory::getDbo()->updateObject('#__protostore_customer_address', $address, 'id');
-
-		if ($result)
+		if ($address_id = $data->json->get('id'))
 		{
-			return true;
-		}
-		else
-		{
+//			run update
+
+			$currentAddress = self::get($address_id);
+
+			$addressForUpdate               = new stdClass();
+			$addressForUpdate->id           = $address_id;
+			$addressForUpdate->name         = $data->json->getString('name', $currentAddress->name);
+			$addressForUpdate->address1     = $data->json->getString('address1', $currentAddress->address1);
+			$addressForUpdate->address2     = $data->json->getString('address2', $currentAddress->address2);
+			$addressForUpdate->address3     = $data->json->getString('address3', $currentAddress->address3);
+			$addressForUpdate->town         = $data->json->getString('town', $currentAddress->town);
+			$addressForUpdate->country      = $data->json->getInt('country', $currentAddress->country);
+			$addressForUpdate->zone         = $data->json->getInt('zone', $currentAddress->zone);
+			$addressForUpdate->postcode     = $data->json->getString('postcode', $currentAddress->postcode);
+			$addressForUpdate->phone        = $data->json->getString('phone', $currentAddress->phone);
+			$addressForUpdate->mobile_phone = $data->json->getString('mobile_phone', $currentAddress->mobile_phone);
+			$addressForUpdate->email        = $data->json->getString('email', $currentAddress->email);
+
+			$update = $db->updateObject('#__protostore_customer_address', $addressForUpdate, 'id');
+
+			if ($update)
+			{
+				return self::get($address_id);
+			}
+
 			return false;
-		}
 
-	}
-
-	/**
-	 * @param $zone_id
-	 *
-	 * @return string
-	 *
-	 * @since version
-	 */
-
-
-	public static function getZoneName($zone_id): string
-	{
-
-		if ($zone = CountryFactory::getZone($zone_id))
-		{
-			return $zone->zone_name;
 		}
 		else
 		{
-			return '';
+
+//			run insert
+			$addressForInsert     = new stdClass();
+			$addressForInsert->id = 0;
+
+			// if there's a customer id in the request, use it for the data
+			if ($customer_id = $data->json->get('customer_id'))
+			{
+				$addressForInsert->customer_id = $customer_id;
+			}
+			else
+			{
+				// if there is no customer id in the request, retrieve the customer id from the Customer Factory, or just set to 0
+				$addressForInsert->customer_id = (CustomerFactory::get()->id ?: 0);
+			}
+
+			$addressForInsert->name         = $data->json->getString('name');
+			$addressForInsert->address1     = $data->json->getString('address1');
+			$addressForInsert->address2     = $data->json->getString('address2', '');
+			$addressForInsert->address3     = $data->json->getString('address3', '');
+			$addressForInsert->town         = $data->json->getString('town', '');
+			$addressForInsert->country      = $data->json->getInt('country', '');
+			$addressForInsert->zone         = $data->json->getInt('zone', '');
+			$addressForInsert->postcode     = $data->json->getString('postcode', '');
+			$addressForInsert->phone        = $data->json->getString('phone', '');
+			$addressForInsert->mobile_phone = $data->json->getString('mobile_phone', '');
+			$addressForInsert->email        = $data->json->getString('email', '');
+
+
+			$insert = $db->insertObject('#__protostore_customer_address', $addressForInsert);
+
+			if ($insert)
+			{
+				return self::get($db->insertid());
+			}
+
+			return false;
+
+
 		}
 
 
 	}
+
 
 	/**
 	 * @param $country_id
@@ -256,6 +294,29 @@ class AddressFactory
 	}
 
 	/**
+	 * @param $zone_id
+	 *
+	 * @return string
+	 *
+	 * @since 1.6
+	 */
+
+	public static function getZoneName($zone_id): string
+	{
+
+		if ($zone = CountryFactory::getZone($zone_id))
+		{
+			return $zone->zone_name;
+		}
+		else
+		{
+			return '';
+		}
+
+
+	}
+
+	/**
 	 *
 	 * Gets the CSV from the given full address object
 	 *
@@ -267,7 +328,7 @@ class AddressFactory
 	 */
 
 
-	public static function getAddressAsCSV(Address $address)
+	public static function getAddressAsCSV(Address $address): string
 	{
 
 		// clone the $address to prevent actual values being unset
@@ -294,5 +355,133 @@ class AddressFactory
 
 	}
 
+
+	/**
+	 *
+	 * @return Address|null
+	 *
+	 * @since 1.6
+	 */
+
+
+	public static function getCurrentShippingAddress(): ?Address
+	{
+
+		$db    = Factory::getDbo();
+		$query = $db->getQuery(true);
+
+		$query->select('shipping_address_id');
+		$query->from($db->quoteName('#__protostore_cart'));
+		$query->where($db->quoteName('id') . ' = ' . $db->quote(CartFactory::getCurrentCartId()));
+
+		$db->setQuery($query);
+
+		$result = $db->loadResult();
+
+		if ($result)
+		{
+			return self::get($result);
+		}
+
+		return null;
+
+
+	}
+
+
+	/**
+	 *
+	 * @return Address|null
+	 *
+	 * @since 1.6
+	 */
+
+	public static function getCurrentBillingAddress(): ?Address
+	{
+
+
+		$db    = Factory::getDbo();
+		$query = $db->getQuery(true);
+
+		$query->select('billing_address_id');
+		$query->from($db->quoteName('#__protostore_cart'));
+		$query->where($db->quoteName('id') . ' = ' . $db->quote(CartFactory::getCurrentCartId()));
+
+		$db->setQuery($query);
+
+		$result = $db->loadResult();
+
+		if ($result)
+		{
+			return self::get($result);
+		}
+
+		return null;
+
+	}
+
+
+	/**
+	 *
+	 * This static function determines if the billing address is different from the shipping address.
+	 *
+	 *
+	 * @return bool|false
+	 * @since 1.0
+	 *
+	 */
+
+
+	public static function doesOrderHaveUniqueBillingAddressAssigned(): bool
+	{
+
+		$cart = CartFactory::get();
+
+		if ($cart->billing_address_id === $cart->shipping_address_id)
+		{
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+
+
+	}
+
+	/**
+	 * @param $address_id
+	 * @param $type
+	 *
+	 * @return bool
+	 *
+	 * @since 1.6
+	 */
+
+
+	public static function checkAssigned($address_id, $type): bool
+	{
+
+		$cartId = CartFactory::getCurrentCartId();
+
+		$db    = Factory::getDbo();
+		$query = $db->getQuery(true);
+
+		$query->select('*');
+		$query->from($db->quoteName('#__protostore_cart'));
+		$query->where($db->quoteName('id') . ' = ' . $db->quote($cartId));
+		$query->where($db->quoteName($type . '_address_id') . ' = ' . $db->quote($address_id));
+
+		$db->setQuery($query);
+
+		$result = $db->loadObject();
+		if ($result)
+		{
+			return true;
+		}
+
+		return false;
+
+	}
 
 }

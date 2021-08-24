@@ -21,8 +21,14 @@ class TandcsFactory
 {
 
 
+	/**
+	 *
+	 * @return bool
+	 *
+	 * @since 1.6
+	 */
 
-	public static function isChecked()
+	public static function isChecked(): bool
 	{
 
 		$db        = Factory::getDbo();

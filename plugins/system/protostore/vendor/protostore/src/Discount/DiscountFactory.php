@@ -12,9 +12,11 @@ namespace Protostore\Discount;
 defined('_JEXEC') or die('Restricted access');
 
 
+use Brick\Money\Exception\UnknownCurrencyException;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\Input\Input;
+use Protostore\Currency\CurrencyFactory;
 use Protostore\Utilities\Utilities;
 use stdClass;
 
@@ -29,12 +31,12 @@ class DiscountFactory
 	 *
 	 * @param $id
 	 *
-	 * @return false|Discount
+	 * @return Discount
 	 *
 	 * @since 1.6
 	 */
 
-	public static function get($id)
+	public static function get($id): ?Discount
 	{
 
 		$db = Factory::getDbo();
@@ -55,7 +57,7 @@ class DiscountFactory
 			return new Discount($result);
 		}
 
-		return false;
+		return null;
 
 	}
 
@@ -68,11 +70,11 @@ class DiscountFactory
 	 * @param   string       $orderDir
 	 *
 	 *
-	 * @return array|false
+	 * @return array
 	 * @since 1.5
 	 */
 
-	public static function getList(int $limit = 0, int $offset = 0, string $searchTerm = null, string $orderBy = 'id', string $orderDir = 'DESC')
+	public static function getList(int $limit = 0, int $offset = 0, string $searchTerm = null, string $orderBy = 'id', string $orderDir = 'DESC'): ?array
 	{
 
 		// init items
@@ -112,7 +114,7 @@ class DiscountFactory
 			return $items;
 		}
 
-		return false;
+		return null;
 
 	}
 
@@ -138,17 +140,45 @@ class DiscountFactory
 				return Text::_('COM_PROTOSTORE_ADD_DISCOUNTS_MODAL_DISCOUNT_TYPE_PERCENT');
 		}
 
+		return '';
+
+	}
+
+	/**
+	 * @param   int    $amount
+	 * @param   float  $percentage
+	 * @param   int    $type
+	 *
+	 *
+	 * @return string|void
+	 * @throws UnknownCurrencyException
+	 * @since 1.6
+	 */
+
+
+	public static function getDiscountAmountFormatted(?int $amount, ?float $percentage, int $type)
+	{
+
+		switch ($type)
+		{
+			case 1:
+				return CurrencyFactory::formatNumberWithCurrency($amount * 100);
+			case 2 :
+				return $percentage . "%";
+		}
+
 	}
 
 	/**
 	 * @param   Input  $data
 	 *
 	 *
+	 * @return Discount
 	 * @since 1.6
 	 */
 
 
-	public static function saveFromInputData(Input $data): Discount
+	public static function saveFromInputData(Input $data)
 	{
 
 
@@ -183,7 +213,7 @@ class DiscountFactory
 
 		}
 
-
+		return null;
 	}
 
 	/**
@@ -310,7 +340,7 @@ class DiscountFactory
 		foreach ($items as $item)
 		{
 
-			$query = 'UPDATE ' . $db->quoteName('#__protostore_discount') . ' SET ' . $db->quoteName('published') . ' = IF(' . $db->quoteName('published') . '=1, 0, 1) WHERE '.$db->quoteName('id').' = ' . $db->quote($item->id) . ';';
+			$query = 'UPDATE ' . $db->quoteName('#__protostore_discount') . ' SET ' . $db->quoteName('published') . ' = IF(' . $db->quoteName('published') . '=1, 0, 1) WHERE ' . $db->quoteName('id') . ' = ' . $db->quote($item->id) . ';';
 			$db->setQuery($query);
 			$db->execute();
 

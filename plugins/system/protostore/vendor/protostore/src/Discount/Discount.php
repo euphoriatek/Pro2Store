@@ -18,20 +18,20 @@ class Discount
 	//TODO - WRITE A FUNCTION IN THE INSTALL/UPGRADE SCRIPT TO CONVERT OLD DISCOUNT STRUCTURE TO THIS NEW ONE.
 
 
-    public int $id;
-	public string $name;
-    public ?int $amount;
-    public ?float $percentage;
-    public string $coupon_code;
-
-    public string $expiry_date;
-    public int $discount_type;
-    public string $discount_type_string;
-    public int $published;
-    public string $created;
-    public string $modified;
-    public ?int $created_by;
-    public ?int $modified_by;
+	public $id;
+	public $name;
+	public $amount;
+	public $amount_formatted;
+	public $percentage;
+	public $coupon_code;
+	public $expiry_date;
+	public $discount_type;
+	public $discount_type_string;
+	public $published;
+	public $created;
+	public $modified;
+	public $created_by;
+	public $modified_by;
 
 
 	public function __construct($data)
@@ -79,6 +79,7 @@ class Discount
 	{
 
 		$this->discount_type_string = DiscountFactory::getDiscountTypeAsString($this->discount_type);
+		$this->amount_formatted = DiscountFactory::getDiscountAmountFormatted($this->amount, $this->percentage, $this->discount_type);
 
 	}
 }

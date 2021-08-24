@@ -13,6 +13,9 @@ defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Layout\LayoutHelper;
+use Joomla\CMS\Plugin\PluginHelper;
+
+
 
 $input = Factory::getApplication()->input;
 $view  = $input->get('view', 'dashboard');
@@ -55,7 +58,7 @@ $view  = $input->get('view', 'dashboard');
 
                                 <li class="">
                                     <a class="el-link" href="index.php?option=com_protostore">
-                                        <svg width="10px" class="svg-inline--fa fa-house-user fa-w-18 fa-lg"
+                                        <svg width="18px" class="svg-inline--fa fa-house-user fa-w-18 fa-lg"
                                              uk-tooltip="Dashboard"
                                              title="" aria-expanded="false" tabindex="0" aria-hidden="true"
                                              focusable="false" data-prefix="fas" data-icon="house-user" role="img"
@@ -80,7 +83,8 @@ $view  = $input->get('view', 'dashboard');
                     <div class="uk-text-lowercase uk-visible@s">
                         <ul class="uk-margin-remove-bottom uk-subnav uk-margin-right" uk-margin>
                             <li class="el-item uk-first-column">
-                                <a class="el-content" href="index.php?option=com_users&task=user.edit&id=295"><?= Factory::getUser()->name; ?></a>
+                                <a class="el-content"
+                                   href="index.php?option=com_users&task=user.edit&id=295"><?= Factory::getUser()->name; ?></a>
                             </li>
                             <li class="el-item">
                                 <a class="el-link"
@@ -105,7 +109,18 @@ $view  = $input->get('view', 'dashboard');
             <div class="uk-container uk-container-xlarge uk-margin-xlarge-bottom">
 
 				<?php if ($view) : ?>
-					<?php include(JPATH_ADMINISTRATOR . '/components/com_protostore/views/' . $view . '/bootstrap.php'); ?>
+					<?php
+
+					if (file_exists(JPATH_PLUGINS . '/protostore_extended/' . $view . '/views/' . $view . '/bootstrap.php') && PluginHelper::isEnabled('protostore_extended', $view))
+					{
+						include (JPATH_PLUGINS . '/protostore_extended/' . $view . '/views/' . $view . '/bootstrap.php');
+					}
+					else
+					{
+						include(JPATH_ADMINISTRATOR . '/components/com_protostore/views/' . $view . '/bootstrap.php');
+					}
+
+					?>
 					<?php new bootstrap(); ?>
 				<?php endif; ?>
             </div>

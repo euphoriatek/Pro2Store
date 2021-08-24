@@ -16,13 +16,13 @@ defined('_JEXEC') or die('Restricted access');
 class Tag
 {
 
-	public int $id;
-	public int $parent_id;
-	public string $path;
-	public string $title;
-	public string $alias;
-	public int $published;
-	public int $access;
+	public $id;
+	public $parent_id;
+	public $path;
+	public $title;
+	public $alias;
+	public $published;
+	public $access;
 
 
 	public function __construct($data)

@@ -13,7 +13,6 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Router\Route;
 
-use Protostore\Config\Config;
 use Protostore\Utilities\Utilities;
 use Protostore\Tandcs\TandcsFactory;
 
@@ -31,9 +30,9 @@ return [
 
 			$node->props['checked'] = TandcsFactory::isChecked();
 
-			$configHelper = new Config();
-			$termsId = $configHelper->termsConditionsItemid;
-			$termsUrl = Utilities::getUrlFromMenuItem($termsId);
+
+
+			$termsUrl = Utilities::getUrlFromMenuItem(45);
 
 
 			$node->props['termsUrl'] = Route::_($termsUrl . '&Itemid=' . $termsId);

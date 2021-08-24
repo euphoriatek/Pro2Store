@@ -175,7 +175,8 @@ const p2s_emaillogs = {
             const params = {
                 'limit': this.show,
                 'offset': (this.currentPage * this.show),
-                'searchTerm': this.enteredText,
+                'searchTerm': (this.enteredText ? this.enteredText.trim() : ''),
+
                 'publishedOnly': this.publishedOnly,
             };
 
@@ -201,17 +202,19 @@ const p2s_emaillogs = {
 
         },
         changeShow() {
+            if (this.items) {
 
-            this.itemsChunked = this.items.reduce((resultArray, item, index) => {
-                const chunkIndex = Math.floor(index / this.show)
-                if (!resultArray[chunkIndex]) {
-                    resultArray[chunkIndex] = []
-                }
-                resultArray[chunkIndex].push(item)
-                return resultArray
-            }, []);
-            this.pages = this.itemsChunked.length;
-            this.currentPage = 0;
+                this.itemsChunked = this.items.reduce((resultArray, item, index) => {
+                    const chunkIndex = Math.floor(index / this.show)
+                    if (!resultArray[chunkIndex]) {
+                        resultArray[chunkIndex] = []
+                    }
+                    resultArray[chunkIndex].push(item)
+                    return resultArray
+                }, []);
+                this.pages = this.itemsChunked.length;
+                this.currentPage = 0;
+            }
         },
         changePage(i) {
             this.currentPage = i;

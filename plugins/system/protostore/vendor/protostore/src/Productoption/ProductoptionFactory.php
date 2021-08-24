@@ -18,8 +18,10 @@ use Joomla\CMS\Factory;
 
 use Brick\Money\Exception\UnknownCurrencyException;
 
+use Joomla\Input\Input;
 use Protostore\Currency\CurrencyFactory;
 
+use stdClass;
 
 class ProductoptionFactory
 {
@@ -28,12 +30,12 @@ class ProductoptionFactory
 	/**
 	 * @param $id
 	 *
-	 * @return false|Productoption
+	 * @return Productoption
 	 *
 	 * @since 1.6
 	 */
 
-	public static function get($id)
+	public static function get($id): ?Productoption
 	{
 		$db = Factory::getDbo();
 
@@ -52,18 +54,67 @@ class ProductoptionFactory
 			return new Productoption($result);
 		}
 
-		return false;
+		return null;
+	}
+
+	/**
+	 * @param   array  $ids
+	 *
+	 * @return array|null
+	 *
+	 * @since 1.6
+	 */
+
+	public static function getListFromGivenIds($ids = array()): ?array
+	{
+
+		if(empty($ids)) {
+			return null;
+		}
+
+		if (!is_array($ids))
+		{
+			$ids = array($ids);
+		}
+
+		$db = Factory::getDbo();
+
+		$selectedOptions = array();
+
+
+		foreach ($ids as $id)
+		{
+
+			$query = $db->getQuery(true);
+
+			$query->select('*');
+			$query->from($db->quoteName('#__protostore_product_option_values'));
+			$query->where($db->quoteName('id') . ' = ' . $db->quote($id));
+
+			$db->setQuery($query);
+
+			$result = $db->loadObject();
+
+			if ($result)
+			{
+				$selectedOptions[] = new Productoption($result);
+			}
+
+		}
+
+		return $selectedOptions;
+
 	}
 
 	/**
 	 * @param $product_id
 	 *
-	 * @return array|false
+	 * @return array
 	 *
 	 * @since 1.6
 	 */
 
-	public static function getProductOptions($product_id)
+	public static function getProductOptions($product_id): ?array
 	{
 
 		$options = array();
@@ -91,14 +142,14 @@ class ProductoptionFactory
 			return $options;
 		}
 
-		return false;
+		return null;
 
 
 	}
 
 
 	/**
-	 * @param $optiontypeid
+	 * @param   int  $optiontype
 	 *
 	 * @return mixed|null
 	 *
@@ -106,7 +157,7 @@ class ProductoptionFactory
 	 */
 
 
-	public static function getOptionTypeName($optiontype)
+	public static function getOptionTypeName(int $optiontype)
 	{
 
 		$db = Factory::getDbo();
@@ -143,6 +194,7 @@ class ProductoptionFactory
 				return CurrencyFactory::formatNumberWithCurrency($value);
 		}
 
+		return '';
 
 	}
 
@@ -162,4 +214,45 @@ class ProductoptionFactory
 
 	}
 
+
+	public static function getOptionTypes()
+	{
+
+		$db    = Factory::getDbo();
+		$query = $db->getQuery(true);
+
+		$query->select('*');
+		$query->from($db->quoteName('#__protostore_product_option'));
+
+		$db->setQuery($query);
+
+		$result = $db->loadObjectList();
+
+	}
+
+	/**
+	 * @param   Input  $data
+	 *
+	 * @return bool
+	 *
+	 * @since 1.6
+	 */
+
+
+	public static function createOptionTypeFromInputData(Input $data): bool
+	{
+
+		$db = Factory::getDbo();
+
+
+		$object              = new stdClass();
+		$object->id          = 0;
+		$object->name        = $data->json->get('optionTypeName');
+		$object->option_type = $data->json->get('optionType');
+
+		$result = $db->insertObject('#__protostore_product_option', $object);
+
+		return $result;
+
+	}
 }

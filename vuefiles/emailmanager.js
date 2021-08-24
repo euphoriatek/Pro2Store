@@ -175,8 +175,7 @@ const p2s_emailmanager = {
             const params = {
                 'limit': this.show,
                 'offset': (this.currentPage * this.show),
-                'searchTerm': this.enteredText,
-                'publishedOnly': this.publishedOnly,
+                'searchTerm': (this.enteredText ? this.enteredText.trim() : '')
             };
 
             const URLparams = this.serialize(params);
@@ -216,11 +215,13 @@ const p2s_emailmanager = {
         changePage(i) {
             this.currentPage = i;
         },
+        cleartext() {
+            this.enteredText = null;
+            this.doTextSearch();
+        },
         async doTextSearch(event) {
-            this.enteredText = null
             clearTimeout(this.debounce)
             this.debounce = setTimeout(() => {
-                this.enteredText = event.target.value
                 this.filter();
             }, 600)
         },

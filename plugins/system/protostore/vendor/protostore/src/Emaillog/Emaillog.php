@@ -16,19 +16,19 @@ defined('_JEXEC') or die('Restricted access');
 class Emaillog
 {
 
-	public int $id;
-	public string $emailaddress;
-	public string $emailtype;
-	public string $sentdate;
-	public int $customer_id;
-	public ?string $customer_name;
-	public int $order_id;
-	public ?string $order_number;
-	public int $created_by;
-	public ?string $created_by_name;
-	public int $modified_by;
-	public string $created;
-	public string $modified;
+	public $id;
+	public $emailaddress;
+	public $emailtype;
+	public $sentdate;
+	public $customer_id;
+	public $customer_name;
+	public $order_id;
+	public $order_number;
+	public $created_by;
+	public $created_by_name;
+	public $modified_by;
+	public $created;
+	public $modified;
 
 
 	public function __construct($data)
@@ -75,8 +75,8 @@ class Emaillog
 	private function init()
 	{
 
-		$this->customer_name = EmaillogFactory::getCustomerName($this->customer_id);
-		$this->order_number = EmaillogFactory::getOrderNumber($this->order_id);
+		$this->customer_name   = EmaillogFactory::getCustomerName($this->customer_id);
+		$this->order_number    = EmaillogFactory::getOrderNumber($this->order_id);
 		$this->created_by_name = EmaillogFactory::getCreatedName($this->created_by);
 
 	}

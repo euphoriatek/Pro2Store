@@ -48,7 +48,10 @@ $item = $vars['item'];
 
                             <div class="uk-navbar-right">
 
-
+                                <button type="button"
+                                        class="uk-button uk-button-primary uk-button-small uk-margin-right"
+                                        @click="logIt">LogIt
+                                </button>
                                 <button type="submit" @click="andClose = false"
                                         class="uk-button uk-button-default button-success uk-button-small uk-margin-right">
                                     Save
@@ -117,6 +120,14 @@ $item = $vars['item'];
 						'field_grid_width' => '1-1',
 					)); ?>
 
+					<?= LayoutHelper::render('product/card_custom_fields', array(
+						'form'      => $vars['form'],
+						'cardTitle'        => 'COM_PROTOSTORE_ADD_PRODUCT_JOOMLA_CUSTOM_FIELDS',
+						'cardStyle'        => 'default',
+						'cardId'           => 'custom_fields',
+						'field_grid_width' => '1-1',
+					)); ?>
+
 
                 </div>
 
@@ -143,7 +154,7 @@ $item = $vars['item'];
 						'cardTitle' => 'COM_PROTOSTORE_ADD_PRODUCT_PRODUCT_PRICING',
 						'cardStyle' => 'default',
 						'cardId'    => 'pricing',
-						'fields'    => array('base_price', 'taxable', 'show_discount', 'discount', 'myfilevalue')
+						'fields'    => array('base_price', 'taxable', 'show_discount', 'discount')
 					)); ?>
                     <span v-show="form.jform_product_type == 1">
                         <?= LayoutHelper::render('card', array(
@@ -188,16 +199,43 @@ $item = $vars['item'];
                                 <h5>Variants</h5>
                             </div>
                             <div class="uk-card-body">
-
-                            </div>
-                            <div class="uk-card-footer">
-                                <button type="button" class="uk-button uk-button-primary">Copy Variants <span
+                                <button type="button" class="uk-button uk-button-primary uk-width-1-1 uk-margin-bottom">
+                                    Copy Variants <span
                                             uk-icon="icon: copy"></span></button>
                             </div>
+
                         </div>
-
-
                     </div>
+                    <div>
+                        <div class="uk-card uk-card-default">
+                            <div class="uk-card-header">
+                                <h5>Data</h5>
+                            </div>
+                            <div class="uk-card-body">
+                                <button type="button" class="uk-button uk-button-primary uk-width-1-1 uk-margin-bottom">
+                                    Export Data <span
+                                            uk-icon="icon: copy"></span></button>
+                                <button type="button" class="uk-button uk-button-primary uk-width-1-1 uk-margin-bottom">
+                                    Import Data <span
+                                            uk-icon="icon: copy"></span></button>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div>
+                        <div class="uk-card uk-card-default">
+                            <div class="uk-card-header">
+                                <h5>Variants</h5>
+                            </div>
+                            <div class="uk-card-body">
+                                <button type="button" class="uk-button uk-button-primary uk-width-1-1 uk-margin-bottom">
+                                    Copy Variants <span
+                                            uk-icon="icon: copy"></span></button>
+                            </div>
+
+                        </div>
+                    </div>
+
                 </div>
             </div>
             <div class="uk-modal-footer uk-text-right">
@@ -245,6 +283,7 @@ $item = $vars['item'];
                 },
                 product_id: 0,
                 product_type: 1,
+                available_custom_fields: [],
                 available_tags: [],
                 available_options: [],
                 option_for_edit: [],
@@ -253,7 +292,10 @@ $item = $vars['item'];
                 andClose: false,
                 variantsSet: false,
                 successMessage: '',
-                file_for_edit: {}
+                file_for_edit: {},
+                newOptionTypeName: '',
+                newOptionTypeType: 'Dropdown',
+                showNewOptionTypeNameWarning: false,
             }
 
         },
@@ -261,13 +303,14 @@ $item = $vars['item'];
             emitter.on('p2s_product_file_upload', this.fileUploaded)
         },
         mounted() {
-            if (this.form.jform_variants.length > 0) {
-                this.variantsSet = true;
-            }
-
-            if (this.form.variantLabels.length > 0 && this.form.variantsListLocal.length == 0) {
-                this.runCartesian();
-            }
+            // console.log(this.form.variantsListLocal);
+            // if (this.form.jform_variants.length > 0) {
+            //     this.variantsSet = true;
+            // }
+            //
+            // if (this.form.variantLabels.length > 0) {
+            //     this.runCartesian();
+            // }
         },
         computed: {
             showVariantItemsBlock() {
@@ -402,14 +445,14 @@ $item = $vars['item'];
 
             const jform_flatfee = document.getElementById('jform_flatfee_data');
             try {
-                this.form.jform_flatfee = jform_flatfee.innerText
+                this.form.jform_flatfee = jform_flatfee.innerText / 100
                 //  jform_flatfee.remove();
             } catch (err) {
             }
 
-            const jform_base_price = document.getElementById('jform_baseprice_formatted_data');
+            const jform_base_price = document.getElementById('jform_base_price_data');
             try {
-                this.form.jform_base_price = parseFloat(jform_base_price.innerText);
+                this.form.jform_base_price = jform_base_price.innerText / 100;
                 //  jform_base_price.remove();
             } catch (err) {
             }
@@ -420,15 +463,34 @@ $item = $vars['item'];
                 //  jform_discount.remove();
             } catch (err) {
             }
-
-
-            const jform_options = document.getElementById('jform_options');
+            const jform_tags = document.getElementById('jform_tags_data');
             try {
-                this.form.jform_options = JSON.parse(jform_options.innerText);
-                //  jform_options.remove();
+                this.form.jform_tags = JSON.parse(jform_tags.innerText);
+                //  jform_tags.remove();
             } catch (err) {
             }
 
+
+            const jform_options = document.getElementById('jform_options_data');
+            try {
+
+                if (jform_options.innerText === 'false') {
+                    this.form.jform_options = [];
+                } else {
+                    this.form.jform_options = JSON.parse(jform_options.innerText);
+                }
+
+
+            } catch (err) {
+                this.form.jform_options = [];
+            }
+
+            const available_custom_fields = document.getElementById('available_custom_fields_data');
+            try {
+                this.available_custom_fields = JSON.parse(available_custom_fields.innerText);
+                //  available_custom_fields.remove();
+            } catch (err) {
+            }
             const available_options = document.getElementById('available_options_data');
             try {
                 this.available_options = JSON.parse(available_options.innerText);
@@ -492,7 +554,7 @@ $item = $vars['item'];
             } catch (err) {
             }
 
-            const available_tags = document.getElementById('available_tags');
+            const available_tags = document.getElementById('available_tags_data');
             try {
                 this.available_tags = JSON.parse(available_tags.innerText);
                 // available_tags.remove();
@@ -502,14 +564,14 @@ $item = $vars['item'];
             const files = document.getElementById('jform_files_data');
             try {
                 this.form.files = JSON.parse(files.innerText);
-                // available_tags.remove();
+                // files.remove();
             } catch (err) {
             }
 
             const successMessage = document.getElementById('successMessage');
             try {
                 this.successMessage = successMessage.innerText;
-                // available_tags.remove();
+                // successMessage.remove();
             } catch (err) {
             }
 
@@ -518,8 +580,20 @@ $item = $vars['item'];
 
 
             logIt() {
-                // console.log("jform_base_price", this.form.jform_base_price);
-                // console.log("jform_discount", this.form.jform_discount);
+                console.log(this.available_custom_fields);
+            },
+
+            /**
+             * TAGS
+             */
+
+            addTagFromChip(tag, i) {
+                this.form.jform_tags.push(tag);
+                this.available_tags.splice(i, 1);
+            },
+
+            addBackToAvailable(e) {
+                this.available_tags.push(e.value[0]);
             },
 
             /**
@@ -631,10 +705,95 @@ $item = $vars['item'];
              * OPTIONS
              */
 
+            addNewOptionType() {
+                UIkit.modal("#addOptionTypeModal").show();
+            },
+            async saveNewOptionType() {
+                if (this.newOptionTypeName === '') {
+                    this.showNewOptionTypeNameWarning = true;
+                    return;
+                }
+
+                const params = {
+                    'optionTypeName': this.newOptionTypeName,
+                    'optionType': this.newOptionTypeType,
+
+                };
+
+                const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=product.createoptiontype&format=raw", {
+                    method: 'POST',
+                    mode: 'cors',
+                    cache: 'no-cache',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    redirect: 'follow',
+                    referrerPolicy: 'no-referrer',
+                    body: JSON.stringify(params)
+                });
+
+
+                const response = await request.json();
+
+                if (response.success) {
+
+                    UIkit.notification({
+                        message: this.successMessage,
+                        status: 'success',
+                        pos: 'top-center',
+                        timeout: 5000
+                    });
+                    UIkit.modal("#addOptionTypeModal").hide();
+                    this.updateOptionType();
+
+
+                } else {
+                    UIkit.notification({
+                        message: 'There was an error.',
+                        status: 'danger',
+                        pos: 'top-center',
+                        timeout: 5000
+                    });
+                }
+
+
+            },
+            async updateOptionType() {
+                const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=product.getoptiontypes&format=raw", {
+                    method: 'POST',
+                    mode: 'cors',
+                    cache: 'no-cache',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    redirect: 'follow',
+                    referrerPolicy: 'no-referrer',
+                    body: ''
+                });
+
+                const response = await request.json();
+
+                if (response.success) {
+                    this.available_options = response.data;
+
+                } else {
+                    UIkit.notification({
+                        message: 'There was an error.',
+                        status: 'danger',
+                        pos: 'top-center',
+                        timeout: 5000
+                    });
+                }
+            },
             addOptionOfType(i) {
                 this.form.jform_options.push({
-                    optiontype: this.available_options[i].identifier,
-                    optiontypename: this.available_options[i].name
+                    optiontype: this.available_options[i].id,
+                    optiontypename: this.available_options[i].name,
+                    modifier: '',
+                    modifiervalue_translated: '',
+                    optionsku: '',
                 })
             },
             openEditoptionModal(option) {
@@ -667,10 +826,10 @@ $item = $vars['item'];
                 this.file_for_edit = file;
                 this.openAddFile();
             },
-            openAddFile(){
+            openAddFile() {
                 UIkit.modal("#fileEditModal").show();
             },
-            removeFile(){
+            removeFile() {
                 this.file_for_edit.filename_obscured = false;
             },
             fileUploaded(data) {
@@ -733,7 +892,7 @@ $item = $vars['item'];
 
             },
 
-            cancelFile(){
+            cancelFile() {
                 this.file_for_edit = {};
             },
 
@@ -751,12 +910,6 @@ $item = $vars['item'];
                 this.form.jform_fullimage = document.getElementById("jform_fullimage").value;
                 this.form.jform_publish_up_date = document.getElementById("jform_publish_up_date").value;
                 this.form.jform_access = document.getElementById("jform_access").value;
-
-
-                // this.form.jform_tags = [];
-                // for (var option of document.getElementById("jform_tags").options) {
-                //     this.form.jform_tags.push(option.value);
-                // }
 
 
                 console.log(this.form);
@@ -867,6 +1020,7 @@ $item = $vars['item'];
         components: {
             'p-inputswitch': primevue.inputswitch,
             'p-chips': primevue.chips,
+            'p-chip': primevue.chip,
             'p-inputnumber': primevue.inputnumber,
             'p-multiselect': primevue.multiselect
         }

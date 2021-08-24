@@ -11,8 +11,9 @@
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Factory;
-
 use Joomla\CMS\Language\Text;
+
+use Protostore\Bootstrap\listView;
 use Protostore\Render\Render;
 use Protostore\Shippingrate\ShippingrateFactory;
 use Protostore\Country\CountryFactory;
@@ -21,33 +22,44 @@ use Protostore\Utilities\Utilities;
 
 /**
  *
- * @since 2.0
+ * @since 1.6
  */
-class bootstrap
+class bootstrap implements listView
 {
 
-	private array $vars;
+	/**
+	 * @var array $vars
+
+
+	 * @since 1.6
+	 */
+	public $vars;
+
+	/**
+	 * @var string $view
+	 * @since 1.6
+	 */
+	public static $view = 'shippingratescountry';
 
 	public function __construct()
 	{
 		$this->init();
 		$this->setVars();
-
 		$this->addScripts();
+		$this->addStylesheets();
 		$this->addTranslationStrings();
 
-
-		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/shippingratescountry/shippingratescountry.php', $this->vars);
+		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/'.self::$view.'/'.self::$view.'.php', $this->vars);
 
 	}
 
 	/**
 	 *
 	 *
-	 * @since 2.0
+	 * @since 1.6
 	 */
 
-	private function init()
+	public function init(): void
 	{
 
 
@@ -61,11 +73,11 @@ class bootstrap
 	 * @since 1.6
 	 */
 
-	private function setVars(): void
+	public function setVars(): void
 	{
 
-		$this->vars['items']      = ShippingrateFactory::getList();
-		$this->vars['countries']  = CountryFactory::getList();
+		$this->vars['items']      = $this->getItems();
+		$this->vars['countries']  = CountryFactory::getList(0,0,true);
 		$this->vars['list_limit'] = Factory::getConfig()->get('list_limit', '25');
 
 
@@ -74,18 +86,32 @@ class bootstrap
 
 	/**
 	 *
+	 * @return array
+	 *
+	 * @since version
+	 */
+
+	public function getItems(): ?array
+	{
+		return ShippingrateFactory::getList();
+	}
+
+
+
+	/**
+	 *
 	 *
 	 * @since 1.6
 	 */
 
-	private function addScripts(): void
+	public function addScripts(): void
 	{
 
 		$doc = Factory::getDocument();
 
 
 		// include the vue script - defer
-		$doc->addScript('../media/com_protostore/js/vue/shippingratescountry/shippingratescountry.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
+		$doc->addScript('../media/com_protostore/js/vue/'.self::$view.'/'.self::$view.'.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
 
 		$doc->addCustomTag('<script id="items_data" type="application/json">' . json_encode($this->vars['items']) . '</script>');
 		$doc->addCustomTag('<script id="countries_data" type="application/json">' . json_encode($this->vars['countries']) . '</script>');
@@ -93,7 +119,7 @@ class bootstrap
 
 
 		// include prime
-		Utilities::includePrime(array('inputtext', 'inputnumber'));
+		Utilities::includePrime(array('inputswitch', 'inputtext', 'inputnumber'));
 
 
 	}
@@ -105,7 +131,7 @@ class bootstrap
 	 */
 
 
-	private function addTranslationStrings(): void
+	public function addTranslationStrings(): void
 	{
 
 		$doc = Factory::getDocument();
@@ -113,6 +139,12 @@ class bootstrap
 
 		$doc->addCustomTag('<script id="confirmLangString" type="application/json">' . Text::_('COM_PROTOSTORE_ORDER_ATTACH_CUSTOMER_CONFIRM_MODAL') . '</script>');
 
+	}
+
+
+	public function addStylesheets(): void
+	{
+		// TODO: Implement addStylesheets() method.
 	}
 }
 

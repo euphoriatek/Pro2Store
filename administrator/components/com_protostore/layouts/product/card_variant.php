@@ -19,7 +19,7 @@ $form = $data['form'];
 
 ?>
 
-<div class="uk-card uk-card-<?= $data['cardStyle']; ?> uk-margin-bottom">
+<div class="uk-card uk-card-<?= $data['cardStyle']; ?> uk-margin-bottom uk-animation-fade">
     <div class="uk-card-header">
         <div class="uk-grid uk-grid-small">
             <div class="uk-width-expand">
@@ -41,8 +41,7 @@ $form = $data['form'];
     <div class="uk-card-body">
 
 
-
-     <?=   LayoutHelper::render('variants', array()); ?>
+		<?= LayoutHelper::render('product/variants', array()); ?>
 
     </div>
     <div class="uk-card-footer">
@@ -50,7 +49,9 @@ $form = $data['form'];
             <div class="uk-width-expand"></div>
             <div class="uk-width-auto">
 
-                <button class="uk-button uk-button-link" type="button"> <spa uk-icon="icon: settings" uk-tooltip="Advanced Options"></spa></button>
+                <button class="uk-button uk-button-link" type="button">
+                    <spa uk-icon="icon: settings" uk-tooltip="Advanced Options"></spa>
+                </button>
                 <div uk-dropdown="mode: click">
                     <ul class="uk-nav uk-dropdown-nav">
                         <li class="uk-active"><a href="#">Active</a></li>

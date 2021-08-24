@@ -37,7 +37,7 @@ class JFormFieldOptions extends JFormField
 	protected function getInput()
 	{
 
-	 return	LayoutHelper::render('options', array());
+	 return	LayoutHelper::render('product/options', array());
 
 	}
 }

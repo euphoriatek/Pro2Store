@@ -23,7 +23,7 @@ class Render
 	 *
 	 * @return bool|string|null
 	 *
-	 * @since 2.0
+	 * @since 1.6
 	 */
 
 	public static function render($path, array $vars)

@@ -22,7 +22,7 @@ const p2s_products = {
 
         const items_data = document.getElementById('items_data');
         this.items = JSON.parse(items_data.innerText);
-        items_data.remove();
+        // items_data.remove();
 
         const categories_data = document.getElementById('categories_data');
         this.categories = JSON.parse(categories_data.innerText);
@@ -66,7 +66,8 @@ const p2s_products = {
                 'limit': this.show,
                 'offset': (this.currentPage * this.show),
                 'category': this.selectedCategory,
-                'searchTerm': this.enteredText,
+               'searchTerm': (this.enteredText ? this.enteredText.trim() : ''),
+
             };
 
             const URLparams = this.serialize(params);

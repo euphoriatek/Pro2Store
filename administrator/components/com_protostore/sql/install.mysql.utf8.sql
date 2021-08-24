@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS `#__protostore_tandcs_checked` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 
-CREATE TABLE IF NOT EXISTS `#__protostore_carts` (
+CREATE TABLE IF NOT EXISTS `#__protostore_cart_item` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `cart_id` int(11) NOT NULL,
   `joomla_item_id` int(11) DEFAULT NULL,

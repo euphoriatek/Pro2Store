@@ -16,21 +16,21 @@ defined('_JEXEC') or die('Restricted access');
 class File
 {
 
-	public int $id;
-	public int $product_id;
-	public string $filename;
-	public string $filename_obscured;
-	public int $isjoomla;
-	public string $version;
-	public string $type;
-	public string $stability_level;
-	public string $stability_level_string;
-	public string $php_min;
-	public int $download_access;
-	public int $published;
-	public int $downloads;
-	public ?string $created;
-	public ?string $modified;
+	public $id;
+	public $product_id;
+	public $filename;
+	public $filename_obscured;
+	public $isjoomla;
+	public $version;
+	public $type;
+	public $stability_level;
+	public $stability_level_string;
+	public $php_min;
+	public $download_access;
+	public $published;
+	public $downloads;
+	public $created;
+	public $modified;
 
 
 	public function __construct($data)

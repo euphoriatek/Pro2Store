@@ -24,12 +24,12 @@ class CheckoutnoteFactory
 	/**
 	 * @param $id
 	 *
-	 * @return false|Checkoutnote
+	 * @return Checkoutnote
 	 *
 	 * @since 1.5
 	 */
 
-	public static function get($id)
+	public static function get($id): ?Checkoutnote
 	{
 
 		$db = Factory::getDbo();
@@ -50,7 +50,7 @@ class CheckoutnoteFactory
 		}
 		else
 		{
-			return false;
+			return null;
 		}
 		
 	}
@@ -63,7 +63,7 @@ class CheckoutnoteFactory
 	 * @since 1.5
 	 */
 
-	public static function create($data)
+	public static function create($data): bool
 	{
 
 		$object            = new stdClass();
@@ -87,12 +87,12 @@ class CheckoutnoteFactory
 
 	/**
 	 *
-	 * @return false|Checkoutnote
+	 * @return Checkoutnote
 	 *
 	 * @since 1.5
 	 */
 
-	public static function getCurrentNote()
+	public static function getCurrentNote(): ?Checkoutnote
 	{
 		$db = Factory::getDbo();
 
@@ -112,7 +112,7 @@ class CheckoutnoteFactory
 		}
 		else
 		{
-			return false;
+			return null;
 		}
 
 	}
@@ -120,12 +120,12 @@ class CheckoutnoteFactory
 	/**
 	 * @param $data
 	 *
-	 * @return false|Checkoutnote
+	 * @return Checkoutnote
 	 *
 	 * @since 1.5
 	 */
 
-	public static function save($data)
+	public static function save($data): ?Checkoutnote
 	{
 
 		$note = self::getCurrentNote();
@@ -151,7 +151,7 @@ class CheckoutnoteFactory
 			}
 		}
 
-		return false;
+		return null;
 
 	}
 

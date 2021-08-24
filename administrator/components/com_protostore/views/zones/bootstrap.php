@@ -12,35 +12,49 @@ defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Factory;
 
+use Protostore\Bootstrap\listView;
 use Protostore\Render\Render;
 use Protostore\Country\CountryFactory;
 use Protostore\Utilities\Utilities;
 
 /**
  *
- * @since 2.0
+ * @since 1.6
  */
-class bootstrap
+class bootstrap implements listView
 {
 
+	/**
+	 * @var array $vars
+	 * @since 1.6
+	 */
+	public $vars;
+
+	/**
+	 * @var string $view
+	 * @since 1.6
+	 */
+	public static $view = 'zones';
 
 	public function __construct()
 	{
 		$this->init();
+		$this->setVars();
 		$this->addScripts();
-		$vars = $this->setVars();
+		$this->addStylesheets();
+		$this->addTranslationStrings();
 
-		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/zones/zones.php', $vars);
+		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/' . self::$view . '/' . self::$view . '.php', $this->vars);
 
 	}
 
 	/**
 	 *
 	 *
-	 * @since 2.0
+	 * @since 1.6
 	 */
 
-	private function init()
+	public function init(): void
 	{
 
 
@@ -51,31 +65,26 @@ class bootstrap
 	 *
 	 * @return array
 	 *
-	 * @since 2.0
+	 * @since 1.6
 	 */
 
-	private function setVars()
+	public function setVars(): void
 	{
 
-		$vars = array();
-
-
-		$vars['items']      = $this->getItems();
-		$vars['list_limit'] = Factory::getConfig()->get('list_limit', '25');
-
-		return $vars;
-
+		$this->vars['items']      = $this->getItems();
+		$this->vars['countries']  = CountryFactory::getList(0, 0, true);
+		$this->vars['list_limit'] = Factory::getConfig()->get('list_limit', '25');
 
 	}
 
 	/**
 	 *
-	 * @return array|false
+	 * @return array|null
 	 *
-	 * @since 2.0
+	 * @since 1.6
 	 */
 
-	private function getItems()
+	public function getItems(): ?array
 	{
 
 		return CountryFactory::getZoneList(0, 0, false, '', null, 'published', 'desc');
@@ -86,22 +95,33 @@ class bootstrap
 	/**
 	 *
 	 *
-	 * @since version
+	 * @since 1.6
 	 */
 
-	private function addScripts()
+	public function addScripts(): void
 	{
-
+		$doc = Factory::getDocument();
 
 		// include the vue script - defer
-		Factory::getDocument()->addScript('../media/com_protostore/js/vue/zones/zones.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
+		$doc->addScript('../media/com_protostore/js/vue/' . self::$view . '/' . self::$view . '.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
 
+		$doc->addCustomTag('<script id="countries_data" type="application/json">' . json_encode($this->vars['countries']) . '</script>');
+		$doc->addCustomTag('<script id="items_data" type="application/json">' . json_encode($this->vars['items']) . '</script>');
+		$doc->addCustomTag('<script id="page_size" type="application/json">' . $this->vars['list_limit'] . '</script>');
 
 		// include prime
 		Utilities::includePrime(array('inputswitch'));
 
-
 	}
 
+	public function addStylesheets(): void
+	{
+		// TODO: Implement addStylesheets() method.
+	}
+
+	public function addTranslationStrings(): void
+	{
+		// TODO: Implement addTranslationStrings() method.
+	}
 }
 

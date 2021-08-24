@@ -21,12 +21,12 @@ use Protostore\Utilities\Utilities;
 
 /**
  *
- * @since       2.0
+ * @since       1.6
  */
 class bootstrap extends AdminModel
 {
 
-	private array $vars;
+	private $vars;
 
 
 	public function __construct()
@@ -47,7 +47,7 @@ class bootstrap extends AdminModel
 	 *
 	 * @return array
 	 *
-	 * @since 2.0
+	 * @since 1.6
 	 */
 
 	private function init($id)
@@ -76,7 +76,7 @@ class bootstrap extends AdminModel
 	 *
 	 * @return array|false
 	 *
-	 * @since 2.0
+	 * @since 1.6
 	 */
 
 	public function getTheItem($id)
@@ -90,7 +90,7 @@ class bootstrap extends AdminModel
 	 *
 	 * @return bool|JForm
 	 *
-	 * @since version
+	 * @since 1.6
 	 */
 
 	public function getForm($data = array(), $loadData = true)
@@ -121,7 +121,7 @@ class bootstrap extends AdminModel
 	/**
 	 *
 	 *
-	 * @since version
+	 * @since 1.6
 	 */
 
 	private function addScripts()
@@ -147,7 +147,7 @@ class bootstrap extends AdminModel
 
 
 		// include whatever PrimeVue component scripts we need
-		Utilities::includePrime(array('inputswitch'));
+		Utilities::includePrime(array('inputswitch', 'inputtext', 'inputnumber'));
 
 
 	}

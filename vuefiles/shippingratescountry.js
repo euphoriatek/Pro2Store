@@ -16,6 +16,7 @@ const p2s_shippingratescountry = {
             enteredText: '',
             publishedOnly: false,
             selected: [],
+            selectedCountry: 0,
             confirm_LangString: ''
         };
     },
@@ -238,7 +239,7 @@ const p2s_shippingratescountry = {
             const params = {
                 'limit': this.show,
                 'offset': (this.currentPage * this.show),
-                'searchTerm': this.enteredText,
+                'country_id': this.selectedCountry,
                 'publishedOnly': this.publishedOnly,
             };
 
@@ -279,11 +280,13 @@ const p2s_shippingratescountry = {
         changePage(i) {
             this.currentPage = i;
         },
+        cleartext(){
+            this.enteredText = null;
+            this.doTextSearch();
+        },
         async doTextSearch(event) {
-            this.enteredText = null
             clearTimeout(this.debounce)
             this.debounce = setTimeout(() => {
-                this.enteredText = event.target.value
                 this.filter();
             }, 600)
         },

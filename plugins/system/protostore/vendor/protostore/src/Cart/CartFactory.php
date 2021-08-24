@@ -13,7 +13,10 @@ namespace Protostore\Cart;
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Factory;
-use Protostore\Price\Price;
+
+use Protostore\Address\AddressFactory;
+use Protostore\Coupon\CouponFactory;
+use Protostore\Price\PriceFactory;
 use Protostore\Product\ProductFactory;
 use Protostore\Productoption\ProductoptionFactory;
 use Protostore\Shipping\Shipping;
@@ -31,10 +34,10 @@ class CartFactory
 	 *
 	 * @return Cart
 	 *
-	 * @since version
+	 * @since 1.6
 	 */
 
-	public static function get()
+	public static function get(): Cart
 	{
 
 		$db   = Factory::getDbo();
@@ -75,12 +78,12 @@ class CartFactory
 	 *
 	 * creates a new cart and then runs the get function.
 	 *
-	 * @return Cart|void
+	 * @return Cart
 	 *
-	 * @since version
+	 * @since 1.6
 	 */
 
-	public static function init()
+	public static function init(): Cart
 	{
 
 		$db       = Factory::getDbo();
@@ -108,6 +111,55 @@ class CartFactory
 
 
 	/**
+	 *
+	 *
+	 *
+	 * AVOID USING self::get() here as it seems to cause infinite loops. Not sure why!
+	 *
+	 * @return false|mixed
+	 *
+	 * @since 1.5
+	 */
+
+
+	public static function getCurrentCartId()
+	{
+
+		$db   = Factory::getDbo();
+		$user = Factory::getUser();
+
+		// now check if there is already a cart for this cookie
+		$query = $db->getQuery(true);
+
+		$query->select('id');
+		$query->from($db->quoteName('#__protostore_cart'));
+
+		if ($user->guest)
+		{
+			$query->where($db->quoteName('cookie_id') . ' = ' . $db->quote(Utilities::getCookieID()));
+		}
+		else
+		{
+			$query->where($db->quoteName('user_id') . ' = ' . $db->quote($user->id));
+		}
+
+		$db->setQuery($query);
+
+		$currentCartId = $db->loadResult();
+
+		if ($currentCartId)
+		{
+			return $currentCartId;
+		}
+		else
+		{
+			return false;
+
+		}
+	}
+
+
+	/**
 	 * @param $id
 	 *
 	 * @return false|CartItem
@@ -122,7 +174,7 @@ class CartFactory
 		$query = $db->getQuery(true);
 
 		$query->select('*');
-		$query->from($db->quoteName('#__protostore_carts'));
+		$query->from($db->quoteName('#__protostore_cart_item'));
 		$query->where($db->quoteName('id') . ' = ' . $db->quote($id));
 
 		$db->setQuery($query);
@@ -151,7 +203,7 @@ class CartFactory
 	 */
 
 
-	public static function getCartItems($carId)
+	public static function getCartItems($carId): array
 	{
 
 		$db = Factory::getDbo();
@@ -159,7 +211,7 @@ class CartFactory
 		$query = $db->getQuery(true);
 
 		$query->select('*');
-		$query->from($db->quoteName('#__protostore_carts'));
+		$query->from($db->quoteName('#__protostore_cart_item'));
 
 		$query->where($db->quoteName('cart_id') . ' = ' . $db->quote($carId));
 
@@ -210,7 +262,7 @@ class CartFactory
 	 */
 
 
-	public static function getSelectedOptions($item_options)
+	public static function getSelectedOptions($item_options): array
 	{
 		$selectedOptions = array();
 		$itemOptions     = json_decode($item_options);
@@ -250,7 +302,7 @@ class CartFactory
 					$db->quoteName('item_options') . ' = ' . $db->quote($item_options_raw)
 				);
 
-				$query->delete($db->quoteName('#__protostore_carts'));
+				$query->delete($db->quoteName('#__protostore_cart_item'));
 				$query->where($conditions);
 				$query->setLimit('1');
 				$db->setQuery($query);
@@ -267,7 +319,7 @@ class CartFactory
 			$query = $db->getQuery(true);
 
 			$query->select('*');
-			$query->from($db->quoteName('#__protostore_carts'));
+			$query->from($db->quoteName('#__protostore_cart_item'));
 			$query->where($db->quoteName('id') . ' = ' . $db->quote($cartItemId));
 			$db->setQuery($query);
 			$result = $db->loadObject();
@@ -276,7 +328,7 @@ class CartFactory
 			for ($x = 1; $x <= $change; $x++)
 			{
 				$result->id = 0;
-				$db->insertObject('#__protostore_carts', $result);
+				$db->insertObject('#__protostore_cart_item', $result);
 
 			}
 
@@ -285,8 +337,16 @@ class CartFactory
 
 	}
 
+	/**
+	 * @param $id
+	 *
+	 * @return bool
+	 *
+	 * @since 1.6
+	 */
 
-	public static function removeAll($id)
+
+	public static function removeAll($id): bool
 	{
 
 		$db    = Factory::getDbo();
@@ -296,7 +356,7 @@ class CartFactory
 			$db->quoteName('id') . " = " . $db->quote($id),
 		);
 
-		$query->delete($db->quoteName('#__protostore_carts'));
+		$query->delete($db->quoteName('#__protostore_cart_item'));
 		$query->where($conditions);
 		$db->setQuery($query);
 		$done = $db->execute();
@@ -309,8 +369,18 @@ class CartFactory
 		return false;
 	}
 
+	/**
+	 * @param $cartItemId
+	 * @param $itemId
+	 * @param $newAmount
+	 *
+	 * @return bool
+	 *
+	 * @since 1.6
+	 */
 
-	public static function changeCount($cartItemId, $itemId, $newAmount)
+
+	public static function changeCount($cartItemId, $itemId, $newAmount): bool
 	{
 
 		$product = ProductFactory::get($itemId);
@@ -332,6 +402,16 @@ class CartFactory
 
 
 	}
+
+	/**
+	 * @param $itemid
+	 * @param $amount
+	 * @param $itemOptions
+	 *
+	 * @return array|false|void
+	 *
+	 * @since 1.6
+	 */
 
 	public static function addToCart($itemid, $amount, $itemOptions)
 	{
@@ -379,7 +459,7 @@ class CartFactory
 
 		$item_options = json_encode($data);
 
-		$cartId = self::get()->id;
+		$cartId = self::getCurrentCartId();
 
 
 		// check if this item is already in the cart
@@ -396,7 +476,7 @@ class CartFactory
 			// if so, check if in stock
 			if ($product->stock >= 1)
 			{
-				// if so, check the current cart to see if the items are accounted for
+				// if there is stock available, check the current cart to see if the items are accounted for
 
 				//first, does current cart exist?
 				if ($cart_item)
@@ -432,7 +512,7 @@ class CartFactory
 					{
 						//all stock is added to cart already
 						$response['status'] = 'ko';
-						$response['error']  = 'There was an error adding to cart, ALL STOCK ALREADY ADDED';
+						$response['error']  = 'There was an error adding to cart, ALL STOCK ALREADY ADDED'; // TODO - TRANSLATE
 
 						return $response;
 					}
@@ -455,7 +535,7 @@ class CartFactory
 						else
 						{
 							$response['status'] = 'ko';
-							$response['error']  = 'There was an error adding to cart, AMOUNT LESS THAN STOCK';
+							$response['error']  = 'There was an error adding to cart, AMOUNT LESS THAN STOCK'; // TODO - TRANSLATE
 
 							return $response;
 						}
@@ -475,7 +555,7 @@ class CartFactory
 						else
 						{
 							$response['status'] = 'ko';
-							$response['error']  = 'There was an error adding to cart, ADDING STOCK';
+							$response['error']  = 'There was an error adding to cart, ADDING STOCK'; // TODO - TRANSLATE
 
 							return $response;
 						}
@@ -490,10 +570,44 @@ class CartFactory
 
 				//out of stock
 				$response['status']  = 'ko';
-				$response['message'] = Text::_('Out of Stock'); // TODO - Translate
+				$response['message'] = Text::_('COM_PROTOSTORE_OUT_OF_STOCK');
 
 				return $response;
 			}
+
+		}
+		else
+		{
+			// FUCK ME!! WE STILL NEED TO ADD IT IF WE'RE NOT TRACKING STOCK!
+
+
+			// check if the item is already in cart
+			//if so, increment
+			//if not, add afresh
+
+			if ($cartitem = self::getCurrentCartItem($cartId, $itemid, $item_options))
+			{
+
+
+				$newAmount = $cartitem->amount + $amount;
+
+				self::updateExistingCartAmount($cartitem->id, $newAmount);
+				$response['status'] = 'ok';
+
+				return $response;
+
+			}
+			else
+			{
+				$insert = self::addToCart_afresh($cartId, $data, $itemid, $amount, $selected_option_ids);
+				if ($insert)
+				{
+					$response['status'] = 'ok';
+
+					return $response;
+				}
+			}
+
 
 		}
 
@@ -520,7 +634,7 @@ class CartFactory
 		$query = $db->getQuery(true);
 
 		$query->select('*');
-		$query->from($db->quoteName('#__protostore_carts'));
+		$query->from($db->quoteName('#__protostore_cart_item'));
 		$query->where($db->quoteName('cart_id') . ' = ' . $db->quote($cartId), 'AND');
 		$query->where($db->quoteName('joomla_item_id') . ' = ' . $db->quote($itemid), 'AND');
 		$query->where($db->quoteName('item_options') . ' = ' . $db->quote($item_options));
@@ -548,7 +662,7 @@ class CartFactory
 		$query = $db->getQuery(true);
 
 		$query->select('amount');
-		$query->from($db->quoteName('#__protostore_carts'));
+		$query->from($db->quoteName('#__protostore_cart_item'));
 		$query->where($db->quoteName('id') . ' = ' . $db->quote($cart_itemid));
 
 		$db->setQuery($query);
@@ -584,34 +698,45 @@ class CartFactory
 		$cart_item->amount = ((int) $currentAmount + (int) $amountToBeAdded);
 		$object->id        = $cart_item->id;
 
-		Factory::getDbo()->updateObject('#__protostore_carts', $object, 'id');
+		Factory::getDbo()->updateObject('#__protostore_cart_item', $object, 'id');
 
 	}
 
 	/**
-	 * @param $cart_item
-	 * @param $currentAmount
-	 * @param $amountToBeAdded
+	 * @param   int  $cartItemId
+	 * @param   int  $amountToBeAdded
 	 *
 	 *
-	 * @since 1.5
+	 * @since 1.6
 	 */
 
-	private static function updateExistingCartAmount($cartItemId, int $amountToBeAdded)
+	private static function updateExistingCartAmount($cartItemId, $newAmount)
 	{
 
 
 		$object = new stdClass();
 
-		$object->amount = $amountToBeAdded;
+		$object->amount = $newAmount;
 		$object->id     = $cartItemId;
 
-		Factory::getDbo()->updateObject('#__protostore_carts', $object, 'id');
+		Factory::getDbo()->updateObject('#__protostore_cart_item', $object, 'id');
 
 	}
 
+	/**
+	 * @param $cartId
+	 * @param $data
+	 * @param $itemid
+	 * @param $amount
+	 * @param $selected_option_ids
+	 *
+	 * @return bool
+	 *
+	 * @since 1.6
+	 */
 
-	private static function addToCart_afresh($cartId, $data, $itemid, $amount, $selected_option_ids)
+
+	private static function addToCart_afresh($cartId, $data, $itemid, $amount, $selected_option_ids): bool
 	{
 
 		$object = new stdClass();
@@ -622,9 +747,9 @@ class CartFactory
 		$object->added           = Utilities::getDate();
 		$object->joomla_item_id  = $itemid;
 		$object->amount          = $amount;
-		$object->bought_at_price = Price::calculatePrice($selected_option_ids, $itemid);
+		$object->bought_at_price = PriceFactory::calculatePrice($selected_option_ids, $itemid);
 
-		$insert = Factory::getDbo()->insertObject('#__protostore_carts', $object);
+		$insert = Factory::getDbo()->insertObject('#__protostore_cart_item', $object);
 
 		if ($insert)
 		{
@@ -667,7 +792,7 @@ class CartFactory
 	 * @since 1.5
 	 */
 
-	public static function isGuestAddressSet(Cart $cart)
+	public static function isGuestAddressSet(): bool
 	{
 
 		$db = Factory::getDbo();
@@ -676,7 +801,7 @@ class CartFactory
 
 		$query->select('shipping_address_id');
 		$query->from($db->quoteName('#__protostore_cart'));
-		$query->where($db->quoteName('id') . ' = ' . $db->quote($cart->id));
+		$query->where($db->quoteName('id') . ' = ' . $db->quote(self::getCurrentCartId()));
 
 		$db->setQuery($query);
 
@@ -695,6 +820,73 @@ class CartFactory
 	}
 
 
+	/**
+	 *
+	 * Called when logging out to clear all remaining data
+	 * Called when guest user clicks "Start Over"
+	 *
+	 * @return bool
+	 * @since 1.6
+	 */
+
+	public static function destroyCartAddress(): bool
+	{
+
+		$db = Factory::getDbo();
+
+		$object                      = new stdClass();
+		$object->id                  = self::getCurrentCartId();
+		$object->shipping_address_id = '';
+		$object->billing_address_id  = '';
+
+		$result = $db->updateObject('#__protostore_cart', $object, 'id');
+
+		if ($result)
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 *
+	 * @return bool
+	 *
+	 * @since 1.6
+	 */
+
+
+	public static function setBillingAsShipping(): bool
+	{
+
+		$currentCartId = self::getCurrentCartId();
+
+		$object = new stdClass();
+
+		$object->id                 = $currentCartId;
+		$object->billing_address_id = AddressFactory::getCurrentShippingAddress()->id;
+
+		$result = Factory::getDbo()->updateObject('#__protostore_cart', $object, 'id');
+
+		if ($result)
+		{
+			return true;
+		}
+
+		return false;
+
+
+	}
+
+	/**
+	 * @param $type
+	 * @param $cartId
+	 *
+	 * @return mixed|null
+	 *
+	 * @since 1.6
+	 */
 
 
 	/****** OLD FUNCTIONS *****/
@@ -709,6 +901,24 @@ class CartFactory
 	/****** OLD FUNCTIONS *****/
 	/****** OLD FUNCTIONS *****/
 	/****** OLD FUNCTIONS *****/
+
+
+	private static function getCartAddressID($cartId, $type = 'shipping')
+	{
+
+		$db = Factory::getDbo();
+
+		$query = $db->getQuery(true);
+
+		$query->select($type . '_address_id');
+		$query->from($db->quoteName('#__protostore_cart'));
+		$query->where($db->quoteName('id') . ' = ' . $db->quote($cartId));
+
+		$db->setQuery($query);
+
+		return $db->loadResult();
+
+	}
 
 	private function getShippingType($shippingType)
 	{
@@ -724,60 +934,6 @@ class CartFactory
 	}
 
 
-	/**
-	 * @param   mixed  $shipping_address_id
-	 */
-	public function setShippingAddressId($shipping_address_id)
-	{
-		$this->shipping_address_id = $shipping_address_id;
-	}
-
-	/**
-	 * @param   mixed  $billing_address_id
-	 */
-	public function setBillingAddressId($billing_address_id)
-	{
-		$this->billing_address_id = $billing_address_id;
-	}
-
-
-	public static function getCurrentCartId()
-	{
-
-		$db   = Factory::getDbo();
-		$user = Factory::getUser();
-
-		// now check if there is already a cart for this cookie
-		$query = $db->getQuery(true);
-
-		$query->select('id');
-		$query->from($db->quoteName('#__protostore_cart'));
-
-		if ($user->guest)
-		{
-			$query->where($db->quoteName('cookie_id') . ' = ' . $db->quote(Utilities::getCookieID()));
-		}
-		else
-		{
-			$query->where($db->quoteName('user_id') . ' = ' . $db->quote($user->id));
-		}
-
-		$db->setQuery($query);
-
-		$currentCartId = $db->loadResult();
-
-		if ($currentCartId)
-		{
-			return $currentCartId;
-		}
-		else
-		{
-			return false;
-
-		}
-
-	}
-
 	public static function countCartItems($cartId)
 	{
 
@@ -786,7 +942,7 @@ class CartFactory
 		$query = $db->getQuery(true);
 
 		$query->select('COUNT(*)');
-		$query->from($db->quoteName('#__protostore_carts'));
+		$query->from($db->quoteName('#__protostore_cart_item'));
 		$query->where($db->quoteName('cart_id') . ' = ' . $db->quote($cartId));
 
 		$db->setQuery($query);
@@ -795,31 +951,6 @@ class CartFactory
 
 	}
 
-
-
-
-	/**
-	 *
-	 * function destroyCartAddress()
-	 *
-	 * Called when logging out to clear all remaining data
-	 *
-	 *
-	 */
-
-	public static function destroyCartAddress()
-	{
-
-		$db = Factory::getDbo();
-
-		$object                      = new stdClass();
-		$object->id                  = Cart::getCurrentCartId();
-		$object->shipping_address_id = '';
-		$object->billing_address_id  = '';
-
-		$result = $db->updateObject('#__protostore_cart', $object, 'id');
-
-	}
 
 	/**
 	 *
@@ -843,12 +974,21 @@ class CartFactory
 
 	}
 
+	/**
+	 * @param   int     $address_id
+	 * @param   string  $type
+	 *
+	 * @return bool|void
+	 *
+	 * @since 1.6
+	 */
+
 
 	public static function setCartAddress($address_id, $type)
 	{
 
 
-		$currentCartId = self::getCurrentCartId();
+		$cart = self::get();
 
 		switch ($type)
 		{
@@ -857,65 +997,39 @@ class CartFactory
 
 				$object = new stdClass();
 
-				$object->id                  = $currentCartId;
+				$object->id                  = $cart->id;
 				$object->shipping_address_id = $address_id;
 
 				$result = Factory::getDbo()->updateObject('#__protostore_cart', $object, 'id');
 
 				if ($result)
 				{
-					return 'ok';
+					return true;
 				}
-				else
-				{
-					return 'ko';
-				}
+
+				return false;
+
 
 			case 'billing':
 
 				$object = new stdClass();
 
-				$object->id                 = $currentCartId;
+				$object->id                 = $cart->id;
 				$object->billing_address_id = $address_id;
 
 				$result = Factory::getDbo()->updateObject('#__protostore_cart', $object, 'id');
 
 				if ($result)
 				{
-					return 'ok';
+					return true;
 				}
-				else
-				{
-					return 'ko';
-				}
+
+				return false;
 
 		}
 
 	}
 
-
-	public static function setBillingAsShipping()
-	{
-
-		$currentCartId = Cart::getCurrentCartId();
-
-		$object = new stdClass();
-
-		$object->id                 = $currentCartId;
-		$object->billing_address_id = self::getCartAddressID('shipping');
-
-		$result = Factory::getDbo()->updateObject('#__protostore_cart', $object, 'id');
-
-		if ($result)
-		{
-			return 'ok';
-		}
-		else
-		{
-			return 'ko';
-		}
-
-	}
 
 	public static function removeBillingAsShipping()
 	{
@@ -940,20 +1054,74 @@ class CartFactory
 	}
 
 
-	public static function getCartAddressID($type)
+	/**
+	 *
+	 * Function - getSubTotal
+	 *
+	 * Returns the subtotal for any given cart as an integer
+	 * (Moved from Total in 1.6)
+	 *
+	 * @param   Cart  $cart
+	 *
+	 * @return int
+	 * @since 1.6
+	 */
+
+	public static function getSubTotal(Cart $cart): int
 	{
 
-		$db = Factory::getDbo();
 
-		$query = $db->getQuery(true);
+		// init total var at 0
+		$total = 0;
 
-		$query->select($type . '_address_id');
-		$query->from($db->quoteName('#__protostore_cart'));
-		$query->where($db->quoteName('id') . ' = ' . $db->quote(Cart::getCurrentCartId()));
+		// iterate through the cart items and sum their totals.
+		if ($results = $cart->cartItems)
+		{
 
-		$db->setQuery($query);
+			// loop through the cart list
+			foreach ($results as $result)
+			{
 
-		return $db->loadResult();
+				$total += (int) $result->totalCost;
+			}
+
+		}
+
+		return $total;
+
+	}
+
+
+	/**
+	 * @param   Cart  $cart
+	 *
+	 * Returns the grand total for any given cart as an integer
+	 * (Moved from Total in 1.6)
+	 * @return int
+	 *
+	 * @since 1.6
+	 */
+
+	public static function getGrandTotal(Cart $cart): int
+	{
+
+		// get the current subtotal
+		$total = $cart->subtotalInt;
+
+		// look to see if any coupons are applied
+		$couponDiscount = CouponFactory::calculateDiscount($cart);
+
+		// if the coupon discount is greater than the actual total,
+		// then set the coupon discount top the value of the total to
+		// avoid negative values.
+		if ($couponDiscount > $total)
+		{
+			$couponDiscount = $total;
+		}
+
+
+		// now return the value (in int) of the total minus the discount total
+		return $total - $couponDiscount;
 
 	}
 
@@ -976,7 +1144,7 @@ class CartFactory
 		$date           = Utilities::getDate();
 		$cookie_id      = Utilities::getCookieID();
 
-		$cart = new Cart(self::getCurrentCartId());
+		$cart = self::get();
 
 
 		if (Factory::getUser()->guest)
@@ -1008,9 +1176,9 @@ class CartFactory
 		$object->order_number   = self::_generateOrderId(rand(10000, 99999));
 		$object->order_paid     = 0;
 		$object->order_status   = 'P';
-		$object->order_total    = Total::getGrandTotal(true);
-		$object->order_subtotal = Total::getSubTotal(true);
-//        $object->shipping_total = Shipping::calculateTotalShipping(true);
+		$object->order_total    = self::getGrandTotal($cart);
+		$object->order_subtotal = self::getSubTotal($cart);
+
 		$object->shipping_total      = Shipping::getTotalShippingFromPlugin(true);
 		$object->tax_total           = Tax::calculateTotalTax(true);
 		$object->currency            = $currencyHelper->currency->iso;
@@ -1082,7 +1250,7 @@ class CartFactory
 		$conditions = array(
 			$db->quoteName('cart_id') . ' = ' . $db->quote($cart->id),
 		);
-		$query->delete($db->quoteName('#__protostore_carts'));
+		$query->delete($db->quoteName('#__protostore_cart_item'));
 		$query->where($conditions);
 		$db->setQuery($query);
 		$db->execute();
@@ -1119,8 +1287,16 @@ class CartFactory
 
 	}
 
+	/**
+	 * @param $seed
+	 *
+	 * @return string
+	 *
+	 * @since 1.0
+	 */
 
-	private static function _generateOrderId($seed)
+
+	private static function _generateOrderId($seed): string
 	{
 
 		$charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";

@@ -66,7 +66,8 @@ const p2s_productoptions = {
                 'limit': this.show,
                 'offset': (this.currentPage * this.show),
                 'category': this.selectedCategory,
-                'searchTerm': this.enteredText,
+               'searchTerm': (this.enteredText ? this.enteredText.trim() : ''),
+
             };
 
             const URLparams = this.serialize(params);

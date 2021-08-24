@@ -23,13 +23,20 @@ class protostoreTask_filter
 		// init
 		$response = array();
 
-		$items = ShippingrateFactory::getList(
+		$publishedOnly = $data->get('publishedOnly', false) === "true";
+		$searchTerm = $data->getString('searchTerm', null);
+
+		if($searchTerm == "null") {
+			$searchTerm = null;
+		}
+
+		$response['items'] = ShippingrateFactory::getList(
 			$data->getInt('limit', 0),
 			$data->getInt('offset', 0),
-			$data->getString('searchTerm', null)
+			$publishedOnly,
+			$data->getInt('country_id', 0)
 		);
 
-		$response['items'] = $items;
 
 		return $response;
 	}

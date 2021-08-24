@@ -12,34 +12,31 @@ namespace Protostore\Cart;
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-use Joomla\CMS\Factory;
+use Exception;
+
 use Protostore\Currency\CurrencyFactory;
 use Protostore\Product\ProductFactory;
-use Protostore\Product\Product;
-use Protostore\Productoption\Productoption;
 
-
-use stdClass;
 
 class CartItem
 {
 
-	public int $id;
-	public int $cart_id;
-	public int $joomla_item_id;
-	public string $item_options;
-	public int $bought_at_price;
-	public string $added;
-	public ?int $order_id;
-	public ?string $cookie_id;
-	public ?int $user_id;
-	public int $amount;
+	public $id;
+	public $cart_id;
+	public $joomla_item_id;
+	public $item_options;
+	public $bought_at_price;
+	public $added;
+	public $order_id;
+	public $cookie_id;
+	public $user_id;
+	public $amount;
 
-	public ?string $bought_at_price_formatted;
-	public int $manage_stock_enabled;
-	public Product $product;
-	public int $totalCost;
-	public array $selected_options;
+	public $bought_at_price_formatted;
+	public $manage_stock_enabled;
+	public $product;
+	public $totalCost;
+	public $selected_options;
 
 	public function __construct($data)
 	{
@@ -47,10 +44,17 @@ class CartItem
 		if ($data)
 		{
 			$this->hydrate($data);
-			$this->init($data);
+			$this->init();
 		}
 
 	}
+
+	/**
+	 * @param $data
+	 *
+	 *
+	 * @since 1.6
+	 */
 
 	private function hydrate($data)
 	{
@@ -65,7 +69,14 @@ class CartItem
 		}
 	}
 
-	private function init($data)
+	/**
+	 *
+	 *
+	 * @throws Exception
+	 * @since 1.6
+	 */
+
+	private function init()
 	{
 
 		$this->bought_at_price_formatted = CurrencyFactory::translate($this->bought_at_price);
@@ -75,8 +86,6 @@ class CartItem
 		$this->selected_options          = CartFactory::getSelectedOptions($this->item_options);
 
 	}
-
-
 
 
 }

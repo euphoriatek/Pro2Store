@@ -16,17 +16,17 @@ defined('_JEXEC') or die('Restricted access');
 class Email
 {
 
-	public int $id;
-	public string $to;
-	public string $body;
-	public string $emailtype;
-	public string $emailtype_string;
-	public string $subject;
-	public int $published;
-	public int $created_by;
-	public ?int $modified_by;
-	public string $created;
-	public string $modified;
+	public $id;
+	public $to;
+	public $body;
+	public $emailtype;
+	public $emailtype_string;
+	public $subject;
+	public $published;
+	public $created_by;
+	public $modified_by;
+	public $created;
+	public $modified;
 
 
 	public function __construct($data)

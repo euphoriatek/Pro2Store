@@ -17,18 +17,18 @@ defined('_JEXEC') or die('Restricted access');
 class Shippingrate
 {
 
-	public int $id;
-	public int $country_id;
-	public string $country_name;
-	public int $weight_from;
-	public int $weight_to;
-	public int $cost;
-	public \Brick\Math\BigDecimal $costFloat;
-	public string $costFormatted;
-	public int $handling_cost;
-	public string $handling_costFormatted;
-	public \Brick\Math\BigDecimal $handling_costFloat;
-	public int $published;
+	public $id;
+	public $country_id;
+	public $country_name;
+	public $weight_from;
+	public $weight_to;
+	public $cost;
+	public $costFloat;
+	public $costFormatted;
+	public $handling_cost;
+	public $handling_costFormatted;
+	public $handling_costFloat;
+	public $published;
 
 
 	public function __construct($data)
@@ -52,7 +52,7 @@ class Shippingrate
 	 * @since 1.6
 	 */
 
-	private function hydrate($data) : void
+	private function hydrate($data)
 	{
 		foreach ($data as $key => $value)
 		{
@@ -72,13 +72,13 @@ class Shippingrate
 	 * @since 1.6
 	 */
 
-	private function init() : void
+	private function init()
 	{
 
-		$this->country_name = ShippingrateFactory::getCountryName($this->country_id);
-		$this->costFormatted = ShippingrateFactory::intToFormat($this->cost);
-		$this->costFloat = ShippingrateFactory::getFloat($this->cost);
-		$this->handling_costFloat = ShippingrateFactory::getFloat($this->handling_cost);
+		$this->country_name           = ShippingrateFactory::getCountryName($this->country_id);
+		$this->costFormatted          = ShippingrateFactory::intToFormat($this->cost);
+		$this->costFloat              = ShippingrateFactory::getFloat($this->cost);
+		$this->handling_costFloat     = ShippingrateFactory::getFloat($this->handling_cost);
 		$this->handling_costFormatted = ShippingrateFactory::intToFormat($this->handling_cost);
 
 

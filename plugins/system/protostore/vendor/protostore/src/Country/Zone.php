@@ -16,13 +16,13 @@ defined('_JEXEC') or die('Restricted access');
 class Zone
 {
 
-	public int $id;
-	public int $country_id;
-	public string $country_name;
-	public string $zone_name;
-	public string $zone_isocode;
-	public int $taxrate;
-	public int $published;
+	public $id;
+	public $country_id;
+	public $country_name;
+	public $zone_name;
+	public $zone_isocode;
+	public $taxrate;
+	public $published;
 
 
 	public function __construct($data)
@@ -31,7 +31,7 @@ class Zone
 		if ($data)
 		{
 			$this->hydrate($data);
-			$this->init($data);
+			$this->init();
 		}
 
 	}
@@ -49,15 +49,15 @@ class Zone
 		}
 	}
 
-	private function init($data)
+	private function init()
 	{
 
 		$country = CountryFactory::get($this->country_id);
 
-		if($country) {
+		if ($country)
+		{
 			$this->country_name = $country->country_name;
 		}
-
 
 
 	}

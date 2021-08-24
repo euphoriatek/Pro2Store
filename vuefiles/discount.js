@@ -17,13 +17,15 @@ const p2s_discount_form = {
                 jform_modified_by: '',
                 jform_discount_type_string: '',
             },
-            andClose: false
+            andClose: false,
+            p2s_currency: [],
+            p2s_locale: false
 
         }
 
     },
     mounted() {
-
+        console.log(this.p2s_currency);
     },
     computed: {},
     async beforeMount() {
@@ -31,19 +33,19 @@ const p2s_discount_form = {
 
         const base_url = document.getElementById('base_url');
         this.base_url = base_url.innerText;
-        base_url.remove();
+        // base_url.remove();
 
         const currency = document.getElementById('currency');
         if (currency) {
-            this.currency = JSON.parse(currency.innerText);
+            this.p2s_currency = JSON.parse(currency.innerText);
         }
-        currency.remove();
+        // currency.remove();
 
         const locale = document.getElementById('locale');
         if (locale) {
-            this.locale = locale.innerText;
+            this.p2s_locale = locale.innerText;
         }
-        locale.remove();
+        // locale.remove();
 
 
     },
@@ -129,7 +131,9 @@ const p2s_discount_form = {
         }
     },
     components: {
-        'p-inputswitch': primevue.inputswitch
+        'p-inputswitch': primevue.inputswitch,
+        'p-inputnumber': primevue.inputnumber,
+        'p-inputtext': primevue.inputtext
     }
 }
 Vue.createApp(p2s_discount_form).mount('#p2s_discount_form');

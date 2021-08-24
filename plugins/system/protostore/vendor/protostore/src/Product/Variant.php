@@ -16,9 +16,9 @@ defined('_JEXEC') or die('Restricted access');
 class Variant
 {
 
-	public string $variants;
-	public string $variantLabels;
-	public string $variantList;
+	public $variants;
+	public $variantLabels;
+	public $variantList;
 
 
 	public function __construct($data)

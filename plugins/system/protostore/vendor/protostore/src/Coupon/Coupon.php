@@ -16,14 +16,13 @@ defined('_JEXEC') or die('Restricted access');
 class Coupon
 {
 
-	public int $id;
-	public int $amount;
-	public string $couponcode;
-	public string $expiry_date;
-	public string $name;
-	public string $discount_type;
-	public bool $inDate;
-
+	public $id;
+	public $amount;
+	public $couponcode;
+	public $expiry_date;
+	public $name;
+	public $discount_type;
+	public $inDate;
 
 
 	public function __construct($data)
@@ -57,14 +56,7 @@ class Coupon
 		$this->inDate = CouponFactory::isCouponInDate($this);
 
 
-
-
 	}
-
-
-
-
-
 
 
 }

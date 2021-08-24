@@ -13,17 +13,21 @@ error_reporting(0);
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Response\JsonResponse;
-use Joomla\CMS\Filesystem\Folder;
 use Joomla\CMS\Filesystem\File;
-use Joomla\CMS\Uri\Uri;
+
 
 class plgAjaxProtostore_ajaxhelper extends JPlugin
 {
 
-	private ?JDatabaseDriver $db;
-	private ?\Joomla\CMS\Application\CMSApplication $app;
-	private JInput $input;
+	private $db;
+	private $app;
+	private $input;
 
+
+	/**
+	 * @throws Exception
+	 * @since 1.6
+	 */
 	public function onAjaxProtostore_ajaxhelper()
 	{
 
@@ -65,7 +69,7 @@ class plgAjaxProtostore_ajaxhelper extends JPlugin
 	 */
 
 
-	private function _initTask()
+	private function _initTask(): JsonResponse
 	{
 
 		$taskType = $this->input->get('type');
@@ -107,14 +111,14 @@ class plgAjaxProtostore_ajaxhelper extends JPlugin
 		$filename = File::makeSafe($file['name']);
 		$src      = $file['tmp_name'];
 
-		$dest     = JPATH_SITE . '/images/' . $path . '/' . $filename;
+		$dest = JPATH_SITE . '/images/' . $path . '/' . $filename;
 		if (File::upload($src, $dest))
 		{
 
 			$response['uploaded']     = true;
 			$response['path']         = $path;
 			$response['relativepath'] = $path . '/' . $filename;
-			$response['dest'] = $dest;
+			$response['dest']         = $dest;
 
 			// now update the database for this item
 

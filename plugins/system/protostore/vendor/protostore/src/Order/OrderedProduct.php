@@ -16,20 +16,18 @@ defined('_JEXEC') or die('Restricted access');
 class OrderedProduct
 {
 
-	public int $id;
-	public int $order_id;
-	public int $j_item;
-	public int $j_item_cat;
-	public string $j_item_name;
-	public ?string $item_options;
-	public ?array $item_options_array;
-	public int $price_at_sale;
-	public string $price_at_sale_formatted;
-	public ?int $amount;
-	public ?int $subtotal;
-	public ?string $subtotal_formatted;
-
-
+	public $id;
+	public $order_id;
+	public $j_item;
+	public $j_item_cat;
+	public $j_item_name;
+	public $item_options;
+	public $item_options_array;
+	public $price_at_sale;
+	public $price_at_sale_formatted;
+	public $amount;
+	public $subtotal;
+	public $subtotal_formatted;
 
 
 	public function __construct($data)
@@ -81,7 +79,7 @@ class OrderedProduct
 		// set all the formats for the money values.
 		$this->price_at_sale_formatted = OrderFactory::intToFormat($this->price_at_sale, OrderFactory::getOrderCurrency($this->order_id));
 
-		$this->subtotal = $this->price_at_sale * $this->amount;
+		$this->subtotal           = $this->price_at_sale * $this->amount;
 		$this->subtotal_formatted = OrderFactory::intToFormat($this->subtotal);
 		$this->item_options_array = json_decode($this->item_options);
 

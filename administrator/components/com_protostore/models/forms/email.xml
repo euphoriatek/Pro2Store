@@ -6,7 +6,7 @@
                class="uk-input uk-form-width-medium uk-form-large"/>
 
         <field name="subject" type="text" default="0" label="Subject" description="" size="10"
-               class="uk-input uk-form-width-medium uk-form-large" />
+               class="uk-input uk-form-width-medium uk-form-large" required="true" />
 
         <field name="emailtype" type="list" default="" required="true" label="Email Type" description="">
             <option value="">Please Select</option>
@@ -17,7 +17,7 @@
             <option value="shipped">COM_PROTOSTORE_EMAILTYPE_SHIPPED</option>
         </field>
 
-        <field name="body" type="editor" label="Email Body" description="" filter="safehtml" />
+        <field name="body" type="editor" label="Email Body" description="" filter="safehtml" required="true" />
 
 
         <field name="published" type="pinputswitch" default="0" label="Published" description=""

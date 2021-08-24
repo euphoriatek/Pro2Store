@@ -35,42 +35,24 @@ class JFormFieldTags extends JFormField
 	protected function getInput()
 	{
 
-//		<MultiSelect v-model="selectedCars2" :options="cars" optionLabel="brand" placeholder="Select a Car">
-//	<template #value="slotProps">
-//	<div class="p-multiselect-car-token" v-for="option of slotProps.value" :key="option.brand">
-//			<img :alt="option.brand" :src="'demo/images/car/' + option.brand + '.png'" />
-//			<span>{{option.brand}}</span>
-//		</div>
-//		<template v-if="!slotProps.value || slotProps.value.length === 0">
-//	Select Brands
-//	</template>
-//	</template>
-//	<template #option="slotProps">
-//	<div class="p-multiselect-car-option">
-//			<img :alt="slotProps.option.brand" :src="'demo/images/car/' + slotProps.option.brand + '.png'" />
-//			<span>{{slotProps.option.brand}}</span>
-//		</div>
-//	</template>
-//</MultiSelect>
-
-
 
 		$html = array();
 
-		$html[] = '<p-multiselect ';
-//		$html[] = 'name="' . $this->name . '" ';
-		$html[] = 'optionLabel="title" ';
-		$html[] = 'dataKey="id" ';
-		$html[] = 'display="chip" ';
-		$html[] = 'placeholder="Tags" ';
-		$html[] = 'modelValue="Tags" ';
-		$html[] = ':options="available_tags" ';
+		$html[] = '<div class="uk-grid">';
+		$html[] = '<div class="uk-width-1-1">';
+		$html[] = '<p-chips ';
+		$html[] = 'name="' . $this->name . '" ';
+		$html[] = '@remove="addBackToAvailable($event)" ';
 		$html[] = 'v-model="form.' . $this->id . '" ';
-//		$html[] = 'id="' . $this->id . '" ';
+		$html[] = 'id="' . $this->id . '" ';
 		$html[] = 'class="" ';
 		$html[] = ' >';
-		$html[] = '<template #value="slotProps"><div class="p-multiselect-car-token" v-for="option of slotProps.id" :key="option.title"><span>{{option.title}}</span></div></template>';
-		$html[] = ' </p-multiselect>';
+		$html[] = ' </p-chips>';
+		$html[] = '</div>';
+		$html[] = '<div class="uk-width-1-1 uk-margin-top">';
+		$html[] = '<span  v-for="(tag, index) in available_tags"><p-chip @click="addTagFromChip(tag, index)"  :label="tag" style="cursor: pointer"></p-chip></span>';
+		$html[] = '</div>';
+		$html[] = '</div>';
 
 		return implode('', $html);
 

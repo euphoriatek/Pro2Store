@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+    <fieldset name="details"  addfieldpath="/administrator/components/com_protostore/models/fields">
+
+        <field name="country_name" type="text" default="title" label="COM_PROTOSTORE_COUNTRIES_TABLE_COUNTRYNAME" description="" size="10"
+               class="uk-input uk-form-width-medium uk-form-large"/>
+
+        <field name="country_isocode_2" type="text" default="0" label="COM_PROTOSTORE_COUNTRIES_TABLE_ISO2" description="" size="10"
+               class="uk-input uk-form-width-medium uk-form-large" />
+
+        <field name="country_isocode_3" type="text" default="0" label="COM_PROTOSTORE_COUNTRIES_TABLE_ISO3" description="" size="10"
+               class="uk-input uk-form-width-medium uk-form-large" filter="raw" />
+
+        <field name="taxrate" type="number" default="0" label="COM_PROTOSTORE_COUNTRIES_TAXRATE" description="" size="10"
+               class="uk-input uk-form-width-medium uk-form-large" filter="float" />
+
+        <field name="requires_vat" type="pinputswitch" default="0" label="COM_PROTOSTORE_COUNTRIES_ENABLE_VAT" description=""
+               class="btn-group btn-group-yesno">
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+
+        <field name="published" type="pinputswitch" default="0" label="COM_PROTOSTORE_COUNTRIES_TABLE_PUBLISHED" description=""
+               class="btn-group btn-group-yesno">
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+
+    </fieldset>
+
+</form>

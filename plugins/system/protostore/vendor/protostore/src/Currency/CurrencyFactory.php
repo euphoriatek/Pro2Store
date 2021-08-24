@@ -33,12 +33,12 @@ class CurrencyFactory
 	 *
 	 * @param $id
 	 *
-	 * @return false|Currency
+	 * @return Currency
 	 *
 	 * @since 1.5
 	 */
 
-	public static function get($id)
+	public static function get($id): ?Currency
 	{
 
 		$db = Factory::getDbo();
@@ -59,7 +59,7 @@ class CurrencyFactory
 			return new Currency($result);
 		}
 
-		return false;
+		return null;
 
 	}
 
@@ -93,12 +93,12 @@ class CurrencyFactory
 	 *
 	 * Gets the default currency
 	 *
-	 * @return false|Currency
+	 * @return Currency
 	 *
 	 * @since 1.5
 	 */
 
-	public static function getDefault()
+	public static function getDefault(): ?Currency
 	{
 
 		$db = Factory::getDbo();
@@ -118,7 +118,7 @@ class CurrencyFactory
 			return new Currency($result);
 		}
 
-		return false;
+		return null;
 
 	}
 
@@ -135,7 +135,7 @@ class CurrencyFactory
 	 */
 
 
-	public static function setCurrency($id)
+	public static function setCurrency($id): void
 	{
 
 		Factory::getApplication()->input->cookie->set(
@@ -159,11 +159,11 @@ class CurrencyFactory
 	 * @param   string       $orderDir
 	 *
 	 *
-	 * @return array|false
+	 * @return array
 	 * @since 1.5
 	 */
 
-	public static function getList(int $limit = 0, int $offset = 0, bool $publishedOnly = false, string $searchTerm = null, string $orderBy = 'name', string $orderDir = 'ASC')
+	public static function getList(int $limit = 0, int $offset = 0, bool $publishedOnly = false, string $searchTerm = null, string $orderBy = 'name', string $orderDir = 'ASC'): ?array
 	{
 		$currencies = array();
 
@@ -182,9 +182,7 @@ class CurrencyFactory
 
 		if ($searchTerm)
 		{
-			$query->where($db->quoteName('name') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'), 'OR');
-			$query->where($db->quoteName('iso') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'), 'OR');
-			$query->where($db->quoteName('currencysymbol') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'));
+			$query->where($db->quoteName('name') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'));
 		}
 
 		$query->order($orderBy . ' ' . $orderDir);
@@ -208,7 +206,7 @@ class CurrencyFactory
 		}
 
 
-		return false;
+		return null;
 
 
 	}
@@ -221,15 +219,15 @@ class CurrencyFactory
 
 	/**
 	 * @param         $number
-	 * @param   null  $selectedCurrency
+	 * @param   null  $currency
 	 *
 	 * @return string
 	 *
-	 * @throws Exception
+	 * @throws UnknownCurrencyException
 	 * @since 1.5
 	 */
 
-	public static function translate($number, ?Currency $currency = null): string
+	public static function translate($number, $currency = null): string
 	{
 
 		if (!$currency)
@@ -258,16 +256,19 @@ class CurrencyFactory
 	public static function translateByISO($number, $iso)
 	{
 
+		// TODO: Implement translateByISO() method.
 	}
 
 	public static function translateToInt($number, $iso)
 	{
 
+		// TODO: Implement translateToInt() method.
 	}
 
 	public static function getConversionRate($currency)
 	{
 
+		// TODO: Implement getConversionRate() method.
 	}
 
 
@@ -342,18 +343,14 @@ class CurrencyFactory
 
 			// try getting the current selected currency
 			$currency = self::getCurrent();
-			if ($currency)
-			{
-				$currencyISO = $currency->iso;
-			}
-			else
+			if (!$currency)
 			{
 
 				// else ... get the default currency
 
-				$currency    = self::getDefault();
-				$currencyISO = $currency->iso;
+				$currency = self::getDefault();
 			}
+			$currencyISO = $currency->iso;
 
 		}
 
@@ -412,12 +409,12 @@ class CurrencyFactory
 	 *
 	 * Just gets the first published currency - used for initialising a currency
 	 *
-	 * @return false|Currency
+	 * @return Currency
 	 *
 	 * @since version
 	 */
 
-	private static function getAPublishedCurrency()
+	private static function getAPublishedCurrency(): ?Currency
 	{
 
 		$db = Factory::getDbo();
@@ -442,13 +439,13 @@ class CurrencyFactory
 	 * Initialises the currency in the cookie if there is none already set.
 	 *
 	 *
-	 * @return false|Currency
+	 * @return Currency
 	 *
 	 * @throws Exception
 	 * @since 1.5
 	 */
 
-	private static function initCurrency()
+	private static function initCurrency(): ?Currency
 	{
 		$currency = self::getAPublishedCurrency();
 

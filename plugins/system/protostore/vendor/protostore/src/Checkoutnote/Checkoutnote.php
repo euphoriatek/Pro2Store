@@ -17,11 +17,11 @@ class Checkoutnote
 {
 
 
-	public int $id;
-	public string $cookie_id;
-	public int $orderid;
-	public string $note;
-	public string $added;
+	public $id;
+	public $cookie_id;
+	public $orderid;
+	public $note;
+	public $added;
 
 	public function __construct($data)
 	{
@@ -29,7 +29,7 @@ class Checkoutnote
 		if ($data)
 		{
 			$this->hydrate($data);
-			$this->init($data);
+			$this->init();
 		}
 
 	}
@@ -48,9 +48,8 @@ class Checkoutnote
 	}
 
 
-	private function init($data)
+	private function init()
 	{
-
 
 
 	}

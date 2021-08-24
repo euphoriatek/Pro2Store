@@ -17,12 +17,12 @@ class Country
 {
 
 	public $id;
-	public string $country_name;
-	public string $country_isocode_2;
-	public string $country_isocode_3;
-	public int $requires_vat;
-	public int  $taxrate;
-	public int $published;
+	public $country_name;
+	public $country_isocode_2;
+	public $country_isocode_3;
+	public $requires_vat;
+	public $taxrate;
+	public $published;
 
 
 	public function __construct($data)
@@ -31,7 +31,7 @@ class Country
 		if ($data)
 		{
 			$this->hydrate($data);
-			$this->init($data);
+			$this->init();
 		}
 
 	}
@@ -49,7 +49,7 @@ class Country
 		}
 	}
 
-	private function init($data)
+	private function init()
 	{
 
 	}

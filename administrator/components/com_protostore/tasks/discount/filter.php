@@ -23,10 +23,16 @@ class protostoreTask_filter
 		// init
 		$response = array();
 
+		$searchTerm = $data->getString('searchTerm', null);
+
+		if($searchTerm == "null") {
+			$searchTerm = null;
+		}
+
 		$discounts = DiscountFactory::getList(
 			$data->getInt('limit', 0),
 			$data->getInt('offset', 0),
-			$data->getString('searchTerm', null)
+			$searchTerm
 		);
 
 		$response['items'] = $discounts;

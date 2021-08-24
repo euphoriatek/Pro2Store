@@ -16,9 +16,9 @@ defined('_JEXEC') or die('Restricted access');
 class Option
 {
 
-	public string $id;
-	public string $name;
-	public string $option_type;
+	public $id;
+	public $name;
+	public $option_type;
 
 
 	public function __construct($data)

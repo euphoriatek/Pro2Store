@@ -38,14 +38,30 @@ use Joomla\CMS\Layout\LayoutHelper;
                             </div>
                             <div class="uk-width-auto uk-text-right">
                                 <div class="uk-grid uk-grid-small " uk-grid="">
-                                    <div class="uk-width-auto">
+                                    <div class="uk-width-auto uk-grid-item-match uk-flex-middle">
+                                        <div class="uk-grid uk-grid-small" uk-grid="">
+                                            <div class="uk-width-expand uk-grid-item-match uk-flex-middle ">  <?= Text::_('COM_PROTOSTORE_SHOW_ONLY_PUBLISHED'); ?></div>
+                                            <div class="uk-width-auto">
+                                                <p-inputswitch v-model="publishedOnly" @change="filter"></p-inputswitch>
+                                            </div>
+                                        </div>
                                     </div>
+
+
                                     <div class="uk-width-auto">
-                                        <input @input="doTextSearch($event)" type="text" placeholder="Search...">
-                                    </div>
-                                    <div class="uk-width-auto">
+                                        <select class="uk-select" v-model="selectedCountry" @change="filter">
+                                            <option value="0">
+                                                <?= Text::_('COM_PROTOSTORE_ADD_SHIPPING_RATE_MODAL_COUNTRY_SELECT_DEFAULT'); ?>
+
+                                            </option>
+                                            <option v-for="country in countries" :value="country.id">
+                                                {{country.country_name}}
+                                            </option>
+                                        </select>
+
 
                                     </div>
+
                                 </div>
                             </div>
                         </div>

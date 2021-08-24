@@ -16,7 +16,6 @@ use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\Uri\Uri;
 
 use Protostore\Currency\Currency;
-use Protostore\Setup\Setup;
 
 use YOOtheme\Application;
 use YOOtheme\Path;
@@ -37,19 +36,19 @@ class plgSystemProtostore extends CMSPlugin
 
 
         // set the Pro2Store Cookie
-        $value = Factory::getApplication()->input->cookie->get('yps-cart', null);
-        if ($value == null) {
-            $value = md5(Factory::getSession()->getId());
-            $time = 0;
-            Factory::getApplication()->input->cookie->set(
-            	'yps-cart',
-	            $value,
-	            $time,
-	            Factory::getApplication()->get('cookie_path', '/'),
-	            Factory::getApplication()->get('cookie_domain'),
-	            Factory::getApplication()->isSSLConnection()
-            );
-        }
+	//        $value = Factory::getApplication()->input->cookie->get('yps-cart', null);
+	//        if ($value == null) {
+	//            $value = md5(Factory::getSession()->getId());
+	//            $time = 0;
+	//            Factory::getApplication()->input->cookie->set(
+	//            	'yps-cart',
+	//	            $value,
+	//	            $time,
+	//	            Factory::getApplication()->get('cookie_path', '/'),
+	//	            Factory::getApplication()->get('cookie_domain'),
+	//	            Factory::getApplication()->isSSLConnection()
+	//            );
+	//        }
 
         //check if the setup is done
 //        $setup = new Setup();

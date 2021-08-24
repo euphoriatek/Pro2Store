@@ -2,7 +2,7 @@
 /**
  * @package   Pro2Store - Helper
  * @author    Ray Lawlor - pro2.store
- * @copyright Copyright (C) 2020 Ray Lawlor - pro2.store
+ * @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
  * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
  */
 
@@ -15,29 +15,18 @@ defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Factory;
 
-use Protostore\Cart\CartFactory;
-use Protostore\Coupon\Coupon;
+
 use Protostore\Coupon\CouponFactory;
 use Protostore\Productoptions\Productoptions;
 use Protostore\Productoption\Productoption;
 use Protostore\Cart\Cart;
 use Protostore\Price\Price;
-use Protostore\Shipping\Shipping;
-use Protostore\Tax\Tax;
 
-class Total
+
+class TotalFactory
 {
 
-    public $db;
-    public $app;
-    private $cookie_id;
 
-    public function __construct()
-    {
-        $this->db = Factory::getDbo();
-        $this->app = Factory::getApplication();
-        $this->cookie_id = $this->app->input->cookie->get('yps-cart', null);
-    }
 
 
 	/**
@@ -60,7 +49,7 @@ class Total
         }
 
         $total = $total - $couponDiscount;
-        $total = $total + Shipping::getTotalShippingFromPlugin($cart);
+//        $total = $total + Shipping::getTotalShippingFromPlugin($cart);
 //        $total = $total + Tax::calculateTotalTax($cart);
 
         return $total;
@@ -68,18 +57,19 @@ class Total
     }
 
 
-    /**
-     *
-     * Function - getSubTotal
-     *
-     * Returns the subtotal for any given cart as an integer
-     *
-     * @param false $integer
-     * @param false $float
-     * @return integer
-     */
+	/**
+	 *
+	 * Function - getSubTotal
+	 *
+	 * Returns the subtotal for any given cart as an integer
+	 *
+	 * @param   Cart  $cart
+	 *
+	 * @return int
+	 * @since 1.6
+	 */
 
-    public static function getSubTotal(Cart $cart)
+    public static function getSubTotal(Cart $cart) : int
     {
 
 
@@ -120,7 +110,7 @@ class Total
         $query = $db->getQuery(true);
 
         $query->select('*');
-        $query->from($db->quoteName('#__protostore_carts'));
+        $query->from($db->quoteName('#__protostore_cart_item'));
         $query->where($db->quoteName('id') . ' = ' . $db->quote($cartitemid));
 
         $db->setQuery($query);

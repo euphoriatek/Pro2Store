@@ -12,36 +12,41 @@ defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Factory;
 
+use Protostore\Bootstrap\listView;
 use Protostore\Render\Render;
 use Protostore\Customer\CustomerFactory;
 use Protostore\Utilities\Utilities;
 
 /**
  *
- * @since 2.0
+ * @since 1.6
  */
-class bootstrap
+class bootstrap implements listView
 {
+
+	public $vars;
 
 
 	public function __construct()
 	{
 		$this->init();
+		$this->setVars();
 		$this->addScripts();
+		$this->addStylesheets();
+		$this->addTranslationStrings();
 
-		$vars = $this->setVars();
 
-		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/customers/customers.php', $vars);
+		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/customers/customers.php', $this->vars);
 
 	}
 
 	/**
 	 *
 	 *
-	 * @since 2.0
+	 * @since 1.6
 	 */
 
-	private function init()
+	public function init(): void
 	{
 
 
@@ -50,21 +55,16 @@ class bootstrap
 
 	/**
 	 *
-	 * @return array
+	 * @return void
 	 *
-	 * @since 2.0
+	 * @since 1.6
 	 */
 
-	private function setVars()
+	public function setVars(): void
 	{
 
-		$vars = array();
-
-		$vars['items']      = $this->getItems();
-		$vars['list_limit'] = Factory::getConfig()->get('list_limit', '25');
-
-		return $vars;
-
+		$this->vars['items']      = $this->getItems();
+		$this->vars['list_limit'] = Factory::getConfig()->get('list_limit', '25');
 
 	}
 
@@ -72,10 +72,10 @@ class bootstrap
 	 *
 	 * @return array|false
 	 *
-	 * @since 2.0
+	 * @since 1.6
 	 */
 
-	private function getItems()
+	public function getItems(): ?array
 	{
 
 
@@ -87,10 +87,10 @@ class bootstrap
 	/**
 	 *
 	 *
-	 * @since version
+	 * @since 1.6
 	 */
 
-	private function addScripts()
+	public function addScripts(): void
 	{
 
 
@@ -102,6 +102,28 @@ class bootstrap
 		Utilities::includePrime(array('inputswitch'));
 
 
+	}
+
+	/**
+	 *
+	 *
+	 * @since 1.6
+	 */	
+	
+	public function addStylesheets(): void
+	{
+		// TODO: Implement addStylesheets() method.
+	}
+
+	/**
+	 *
+	 *
+	 * @since 1.6
+	 */
+	
+	public function addTranslationStrings(): void
+	{
+		// TODO: Implement addTranslationStrings() method.
 	}
 
 }

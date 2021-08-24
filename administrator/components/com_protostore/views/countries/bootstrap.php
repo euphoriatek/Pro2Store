@@ -12,71 +12,71 @@ defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Factory;
 
+use Protostore\Bootstrap\listView;
 use Protostore\Render\Render;
 use Protostore\Country\CountryFactory;
 use Protostore\Utilities\Utilities;
 
 /**
  *
- * @since 2.0
+ * @since 1.6
  */
-class bootstrap
+class bootstrap implements listView
 {
 
+
+	public $vars;
 
 	public function __construct()
 	{
 		$this->init();
 		$this->addScripts();
-		$vars = $this->setVars();
+		$this->setVars();
 
-		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/countries/countries.php', $vars);
+		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/countries/countries.php', $this->vars);
 
 	}
 
 	/**
 	 *
+	 * @return void
 	 *
-	 * @since 2.0
+	 * @since 1.6
 	 */
 
-	private function init()
+	public function init(): void
 	{
 
-
+		return;
 
 	}
 
+
+	/**
+	 *
+	 * @return void
+	 *
+	 * @since 1.6
+	 */
+
+	public function setVars(): void
+	{
+
+
+		$this->vars['items']      = $this->getItems();
+		$this->vars['list_limit'] = Factory::getConfig()->get('list_limit', '25');
+
+
+	}
 
 	/**
 	 *
 	 * @return array
 	 *
-	 * @since 2.0
+	 * @since 1.6
 	 */
 
-	private function setVars()
-	{
-
-		$vars = array();
-
-
-		$vars['items'] = $this->getItems();
-		$vars['list_limit'] = Factory::getConfig()->get('list_limit', '25');
-
-		return $vars;
-
-
-	}
-
-	/**
-	 *
-	 * @return array|false
-	 *
-	 * @since 2.0
-	 */
-
-	private function getItems()
+	public function getItems(): ?array
 	{
 
 		return CountryFactory::getList(0, 0, false, '', 'published', 'desc');
@@ -86,11 +86,11 @@ class bootstrap
 
 	/**
 	 *
-	 *
-	 * @since version
+	 * @return void
+	 * @since 1.6
 	 */
 
-	private function addScripts()
+	public function addScripts(): void
 	{
 
 
@@ -102,6 +102,27 @@ class bootstrap
 		Utilities::includePrime(array('inputswitch'));
 
 
+	}
+
+	/**
+	 *
+	 *
+	 * @since 1.6
+	 */
+
+	public function addStylesheets(): void
+	{
+		return;
+	}
+
+	/**
+	 *
+	 *
+	 * @since version
+	 */
+	public function addTranslationStrings(): void
+	{
+		return;
 	}
 
 }

@@ -12,7 +12,6 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 
-use Protostore\Address\Address;
 use Protostore\Cart\CartFactory;
 use Protostore\Zone\Zone;
 
@@ -26,20 +25,17 @@ return [
 		// The function is executed before the template is rendered
 		'render' => function ($node, array $params) {
 
-			$cart = CartFactory::get();
+
 
 			if (Factory::getUser()->guest)
 			{
-				$node->props['guestaddressset'] = CartFactory::isGuestAddressSet($cart);
+				$node->props['guestaddressset'] = CartFactory::isGuestAddressSet();
 
-				if ($node->props['guestaddressset'])
+				if (!$node->props['guestaddressset'])
 				{
 
-				}
-				else
-				{
 					//if the user is logged in, attempt to assign an address to the order.
-					Address::assignDefaultAddressToOrder($cart);
+//					Address::assignDefaultAddressToOrder($cart);
 				}
 
 				$node->props['shown'] = array();

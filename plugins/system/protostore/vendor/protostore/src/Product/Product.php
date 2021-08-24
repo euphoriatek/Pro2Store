@@ -18,50 +18,50 @@ class Product
 {
 
 	// base
-	public int $id;
-	public int $joomla_item_id;
-	public ?string $sku;
+	public $id;
+	public $joomla_item_id;
+	public $sku;
 
 
 	// Pricing
-	public int $base_price = 0;
-	public ?\Brick\Math\BigDecimal $basepriceFloat;
-	public string $baseprice_formatted;
-	public ?int $show_discount;
-	public ?int $discount;
-	public ?\Brick\Math\BigDecimal $discountFloat;
-	public string $discount_formatted;
-	public ?string $discount_type;
-	public int $discounted_total;
+	public $base_price = 0;
+	public $basepriceFloat;
+	public $baseprice_formatted;
+	public $show_discount;
+	public $discount;
+	public $discountFloat;
+	public $discount_formatted;
+	public $discount_type;
+	public $discounted_total;
 
 	// Old Options
 	public $options;
 
 	// Joomla Item
-	public ?string $categoryName;
-	public ?JoomlaItem $joomlaItem;
-	public ?array $images;
-	public ?string $teaserImagePath;
-	public ?string $fullImagePath;
+	public $categoryName;
+	public $joomlaItem;
+	public $images;
+	public $teaserImagePath;
+	public $fullImagePath;
 	public $tags;
-	public ?int $taxable;
-	public ?string $link;
-	public ?string $category_link;
-	public int $product_type;
-	public bool $published;
+	public $taxable;
+	public $link;
+	public $category_link;
+	public $product_type;
+	public $published;
 
 
 	// Shipping
-	public ?string $shipping_mode;
-	public ?int $flatfee;
-	public \Brick\Math\BigDecimal $flatfeeFloat;
-	public ?int $weight;
-	public ?string $weight_unit;
+	public $shipping_mode;
+	public $flatfee;
+	public $flatfeeFloat;
+	public $weight;
+	public $weight_unit;
 
 	// Stock
-	public ?int $manage_stock;
-	public ?int $stock;
-	public ?int $maxPerOrder;
+	public $manage_stock;
+	public $stock;
+	public $maxPerOrder;
 
 	// Variants
 	public $variants;
@@ -69,7 +69,7 @@ class Product
 	public $variantList;
 
 	// files
-	public ?array $files;
+	public $files;
 
 
 	public function __construct($data)
@@ -78,7 +78,7 @@ class Product
 		if ($data)
 		{
 			$this->hydrate($data);
-			$this->init($data);
+			$this->init();
 		}
 
 	}
@@ -133,7 +133,7 @@ class Product
 
 		// set the prices
 		$this->basepriceFloat      = ProductFactory::getFloat(($this->base_price ?: 0));
-		$this->baseprice_formatted = ProductFactory::getFloat(($this->base_price ?: 0));
+		$this->baseprice_formatted = ProductFactory::getFormattedPrice(($this->base_price ?: 0));
 		$this->flatfeeFloat        = ProductFactory::getFloat(($this->flatfee ?: 0));
 		$this->show_discount       = ($this->discount ? 1 : 0);
 		$this->discountFloat       = ProductFactory::getFloat(($this->discount ?: 0));

@@ -25,14 +25,19 @@ class protostoreTask_filter
 
 		$publishedOnly = $data->get('publishedOnly', false) === "true";
 
-		$countries = CountryFactory::getList(
+		$searchTerm = $data->getString('searchTerm', null);
+
+		if($searchTerm == "null") {
+			$searchTerm = null;
+		}
+
+		$response['countries'] = CountryFactory::getList(
 			$data->getInt('limit', 0),
 			$data->getInt('offset', 0),
 			$publishedOnly,
-			$data->getString('searchTerm', null)
+			$searchTerm
 		);
-
-		$response['countries'] = $countries;
+		
 
 		return $response;
 	}

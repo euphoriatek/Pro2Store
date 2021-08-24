@@ -11,14 +11,17 @@ namespace Protostore\Shippingrate;
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-use Brick\Math\BigDecimal;
-use Brick\Money\Exception\UnknownCurrencyException;
+use Exception;
 use Joomla\CMS\Factory;
 use Joomla\Input\Input;
+
 use Protostore\Country\CountryFactory;
 use Protostore\Currency\CurrencyFactory;
-use Protostore\Utilities\Utilities;
 
+use Brick\Math\BigDecimal;
+use Brick\Money\Exception\UnknownCurrencyException;
+
+use stdClass;
 
 class ShippingrateFactory
 {
@@ -28,14 +31,14 @@ class ShippingrateFactory
 	 *
 	 * Gets the Shipping Rate based on the given ID.
 	 *
-	 * @param $id
+	 * @param   int  $id
 	 *
 	 * @return Shippingrate
 	 *
 	 * @since 1.6
 	 */
 
-	public static function get($id): ?Shippingrate
+	public static function get(int $id): ?Shippingrate
 	{
 
 		$db = Factory::getDbo();
@@ -62,14 +65,14 @@ class ShippingrateFactory
 
 
 	/**
-	 * @param $id
+	 * @param   int  $id
 	 *
 	 * @return Shippingrate
 	 *
-	 * @since version
+	 * @since 1.6
 	 */
 
-	public static function getZone($id): ?Shippingrate
+	public static function getZone(int $id): ?Shippingrate
 	{
 
 		$db = Factory::getDbo();
@@ -104,11 +107,11 @@ class ShippingrateFactory
 	 * @param   string    $orderDir
 	 *
 	 *
-	 * @return array|false
+	 * @return array
 	 * @since 1.6
 	 */
 
-	public static function getList(int $limit = 0, int $offset = 0, bool $publishedOnly = false, int $country_id = null, string $orderBy = 'published', string $orderDir = 'DESC')
+	public static function getList(int $limit = 0, int $offset = 0, bool $publishedOnly = false, int $country_id = null, string $orderBy = 'published', string $orderDir = 'DESC'): ?array
 	{
 
 		// init items
@@ -129,10 +132,9 @@ class ShippingrateFactory
 		}
 
 
-		// if there is a search term, iterate over the columns looking for a match
 		if ($country_id)
 		{
-			$query->where($db->quoteName('country_id') . ' LIKE ' . $db->quote($country_id));
+			$query->where($db->quoteName('country_id') . ' = ' . $db->quote($country_id));
 		}
 
 		$query->order($orderBy . ' ' . $orderDir);
@@ -154,13 +156,83 @@ class ShippingrateFactory
 			return $items;
 		}
 
-		return false;
+		return null;
+
+	}
+
+	/**
+	 * @param   int       $limit
+	 * @param   int       $offset
+	 * @param   bool      $publishedOnly
+	 * @param   int|null  $country_id
+	 * @param   int|null  $zone_id
+	 * @param   string    $orderBy
+	 * @param   string    $orderDir
+	 *
+	 * @return array|null
+	 *
+	 * @since 1.6
+	 */
+
+
+	public static function getZoneList(int $limit = 0, int $offset = 0, bool $publishedOnly = false, int $zone_id = null, int $country_id = null, string $searchTerm = null, string $orderBy = 'published', string $orderDir = 'DESC'): ?array
+	{
+
+		// init items
+		$items = array();
+
+		// get the Database
+		$db = Factory::getDbo();
+
+		// set initial query
+		$query = $db->getQuery(true);
+		$query->select(array('a.*', 'b.country_id'));
+		$query->from($db->quoteName('#__protostore_zone_shipping_rate', 'a'));
+		$query->join('INNER', $db->quoteName('#__protostore_zone', 'b') . ' ON ' . $db->quoteName('a.zone_id') . ' = ' . $db->quoteName('b.id'));
+
+
+		// only get published items based on $publishedOnly boolean
+		if ($publishedOnly)
+		{
+			$query->where($db->quoteName('a.published') . ' = 1');
+		}
+
+
+		if ($zone_id)
+		{
+			$query->where($db->quoteName('a.zone_id') . ' = ' . $db->quote($zone_id));
+		}
+		if ($country_id)
+		{
+			$query->where($db->quoteName('b.country_id') . ' = ' . $db->quote($country_id));
+		}
+
+		$query->order($orderBy . ' ' . $orderDir);
+
+		$db->setQuery($query, $offset, $limit);
+
+		$results = $db->loadObjectList();
+
+		// only proceed if there's any rows
+		if ($results)
+		{
+			// iterate over the array of objects, initiating the Class.
+			foreach ($results as $result)
+			{
+				$items[] = new Zoneshippingrate($result);
+
+			}
+
+			return $items;
+		}
+
+		return null;
 
 	}
 
 
 	/**
-	 * @param   int          $int
+	 * @param   int          $int  $int
 	 * @param   string|null  $currency
 	 *
 	 * @return string
@@ -182,11 +254,12 @@ class ShippingrateFactory
 	 *
 	 *
 	 * @return Shippingrate
+	 * @throws Exception
 	 * @since 1.6
 	 */
 
 
-	public static function saveFromInputData(Input $data): Shippingrate
+	public static function saveFromInputData(Input $data)
 	{
 
 
@@ -195,9 +268,9 @@ class ShippingrateFactory
 
 			$current = self::get($id);
 
-			$current->country_id          = $data->getString('country_id', $current->country_id);
-			$current->weight_from        = $data->getInt('weight_from', $current->weight_from);
-			$current->weight_to    = $data->getString('weight_to', $current->weight_to);
+			$current->country_id  = $data->getString('country_id', $current->country_id);
+			$current->weight_from = $data->getInt('weight_from', $current->weight_from);
+			$current->weight_to   = $data->getString('weight_to', $current->weight_to);
 
 			// with prices... we need to run it through the Brick system first.
 			$costFloat = $data->getFloat('costFloat', $current->costFloat);
@@ -222,7 +295,7 @@ class ShippingrateFactory
 				$current->handling_cost = 0;
 			}
 
-			$current->published   = $data->getInt('published', $current->published);
+			$current->published = $data->getInt('published', $current->published);
 
 
 			if (self::commitToDatabase($current))
@@ -253,7 +326,7 @@ class ShippingrateFactory
 	 */
 
 
-	private static function createFromInputData(Input $data): Shippingrate
+	private static function createFromInputData(Input $data)
 	{
 
 //		$db = Factory::getDbo();
@@ -300,13 +373,13 @@ class ShippingrateFactory
 
 		$insert = new stdClass();
 
-		$insert->id          = $item->id;
-		$insert->country_id        = $item->country_id;
-		$insert->weight_from      = $item->weight_from;
-		$insert->weight_to  = $item->weight_to;
-		$insert->cost = $item->cost;
+		$insert->id            = $item->id;
+		$insert->country_id    = $item->country_id;
+		$insert->weight_from   = $item->weight_from;
+		$insert->weight_to     = $item->weight_to;
+		$insert->cost          = $item->cost;
 		$insert->handling_cost = $item->handling_cost;
-		$insert->published   = $item->published;
+		$insert->published     = $item->published;
 
 		$result = $db->updateObject('#__protostore_shipping_rate', $insert, 'id');
 
@@ -318,8 +391,7 @@ class ShippingrateFactory
 		return false;
 
 	}
-	
-	
+
 
 	/**
 	 * @param $price
@@ -327,7 +399,7 @@ class ShippingrateFactory
 	 * @return BigDecimal
 	 *
 	 * @throws UnknownCurrencyException
-	 * @since version
+	 * @since 1.6
 	 */
 
 	public static function getFloat($price): BigDecimal
@@ -349,6 +421,21 @@ class ShippingrateFactory
 	{
 
 		return CountryFactory::get($country_id)->country_name;
+
+	}
+
+	/**
+	 * @param   int  $country_id
+	 *
+	 * @return string
+	 *
+	 * @since 1.6
+	 */
+
+	public static function getZoneName(int $zone_id): string
+	{
+
+		return CountryFactory::getZone($zone_id)->zone_name;
 
 	}
 

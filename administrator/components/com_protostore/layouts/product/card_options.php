@@ -12,13 +12,14 @@ defined('_JEXEC') or die('Restricted access');
 
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\LayoutHelper;
 
 $data = $displayData;
 $form = $data['form'];
 
 ?>
 
-<div class="uk-card uk-card-<?= $data['cardStyle']; ?> uk-margin-bottom">
+<div class="uk-card uk-card-<?= $data['cardStyle']; ?> uk-margin-bottom uk-animation-fade">
     <div class="uk-card-header">
         <div class="uk-grid uk-grid-small">
             <div class="uk-width-expand">
@@ -39,7 +40,7 @@ $form = $data['form'];
                             </li>
                             <li class="uk-nav-divider"></li>
                             <li>
-                                <button class="uk-button uk-button-small" type="button">
+                                <button class="uk-button uk-button-small" type="button" @click="addNewOptionType">
                                   <span uk-icon="plus-circle"></span>
                                     <?= Text::_('COM_PROTOSTORE_ADD_PRODUCT_OPTIONS_ADD_PRODUCT_OPTION_TYPE'); ?>
                                 </button>
@@ -53,22 +54,10 @@ $form = $data['form'];
     </div>
 
     <div class="uk-card-body" >
-		<?php if (isset($data['field_grid_width'])): ?>
-        <div class="uk-grid uk-child-width-<?= $data['field_grid_width']; ?>" uk-grid>
-			<?php endif; ?>
-
-
-			<?php foreach ($data['fields'] as $field) : ?>
-                <div class="">
-					<?php $form->setFieldAttribute($field, 'autofocus', 'p2s_product_form.' . $field, null); ?>
-					<?php echo $form->renderField($field); ?>
-                </div>
-			<?php endforeach; ?>
-
-			<?php if (isset($data['field_grid_width'])): ?>
-        </div>
-	<?php endif; ?>
-
+	    <?= LayoutHelper::render('product/options', ''); ?>
     </div>
     <div class="uk-card-footer"></div>
 </div>
+
+
+<?= LayoutHelper::render('product/add_option_type_modal', ''); ?>

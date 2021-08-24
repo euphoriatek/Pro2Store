@@ -14,7 +14,7 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Router\Route;
 use Protostore\Product\ProductFactory;
 use Protostore\Utilities\Utilities;
-use Protostore\Config\Config;
+
 
 return [
 
@@ -46,8 +46,8 @@ return [
                 }
             }
 
-            $config = new Config();
-            $node->props['checkoutlink'] = Route::_('index.php?Itemid=' . $config->checkoutItemid);
+
+            $node->props['checkoutlink'] = Route::_('index.php?Itemid=');
             $node->props['baseUrl'] = Uri::base();
 
         },

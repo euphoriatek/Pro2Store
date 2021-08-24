@@ -17,7 +17,7 @@ $data = $displayData;
 
 ?>
 
-<table class="uk-table uk-table-striped uk-table-hover">
+<table class="uk-table uk-table-striped uk-table-hover uk-animation-fade">
     <thead>
     <tr>
         <th><?= Text::_('COM_PROTOSTORE_ADD_PRODUCT_OPTIONS_TABLE_TYPE'); ?></th>
@@ -36,7 +36,7 @@ $data = $displayData;
         <td>{{option.modifier}}</td>
         <td>{{option.modifiervalue_translated}}</td>
         <td>{{option.optionsku}}</td>
-        <td class="uk-text-right">
+        <td class="uk-text-right uk-width-small">
             <ul class="uk-iconnav uk-text-right">
                 <li>
                     <a @click="openEditoptionModal(option)"><i class="pi pi-pencil"></i></a>
@@ -56,4 +56,4 @@ $data = $displayData;
 
 
 
-<?= LayoutHelper::render('options_modal', array()); ?>
+<?= LayoutHelper::render('product/options_modal', array()); ?>

@@ -73,7 +73,7 @@ class Customfield
         if ($customField->type == 'list' || $customField->type == 'radio') {
             $this->options = $this->setOptions();
         } else {
-            $this->options = null;
+            $this->options = [];
         }
 
 

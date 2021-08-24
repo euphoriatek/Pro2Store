@@ -10,6 +10,8 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+
 /**
  * Clicks field.
  *
@@ -45,7 +47,7 @@ class JFormFieldPinputswitch extends JFormField
 
 		$html[] = '<div class="uk-grid uk-margin" uk-grid>';
 		$html[] = '<div class="uk-width-1-4 uk-grid-item-match uk-flex-middle">';
-		$html[] =  $this->element['label'];
+		$html[] =  Text::_($this->element['label']);
 		$html[] = '</div>';
 		$html[] = '<div class="uk-width-3-4">';
 		$html[] = '<p-inputswitch v-model="form.' . $this->id . '" id="' . $this->id . '" @change="logIt"></p-inputswitch>';

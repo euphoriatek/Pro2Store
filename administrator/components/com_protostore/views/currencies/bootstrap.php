@@ -12,58 +12,58 @@ defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Factory;
 
+use Protostore\Bootstrap\listView;
 use Protostore\Render\Render;
 use Protostore\Currency\CurrencyFactory;
 use Protostore\Utilities\Utilities;
 
 /**
  *
- * @since 2.0
+ * @since 1.6
  */
-class bootstrap
+class bootstrap implements listView
 {
 
+	public $vars;
 
 	public function __construct()
 	{
 		$this->init();
 		$this->addScripts();
+		$this->addStylesheets();
+		$this->addTranslationStrings();
+		$this->setVars();
 
-		$vars = $this->setVars();
-
-		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/currencies/currencies.php', $vars);
+		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/currencies/currencies.php', $this->vars);
 
 	}
 
 	/**
 	 *
 	 *
-	 * @since 2.0
+	 * @since 1.6
 	 */
 
-	private function init()
+	public function init(): void
 	{
-
+		return;
 
 	}
 
 
 	/**
 	 *
-	 * @return array
+	 * @return void
 	 *
-	 * @since 2.0
+	 * @since 1.6
 	 */
 
-	private function setVars()
+	public function setVars(): void
 	{
 
-		$vars = array();
 
-		$vars['items']      = $this->getItems();
-		$vars['list_limit'] = Factory::getConfig()->get('list_limit', '25');
-
-		return $vars;
+		$this->vars['items']      = $this->getItems();
+		$this->vars['list_limit'] = Factory::getConfig()->get('list_limit', '25');
 
 
 	}
@@ -72,14 +72,14 @@ class bootstrap
 	 *
 	 * @return array|false
 	 *
-	 * @since 2.0
+	 * @since 1.6
 	 */
 
-	private function getItems()
+	public function getItems(): ?array
 	{
 
 
-		return CurrencyFactory::getList(0, 0, false, '', 'published', 'desc');
+		return CurrencyFactory::getList(0, 0, true, '', 'published', 'desc');
 
 	}
 
@@ -87,10 +87,10 @@ class bootstrap
 	/**
 	 *
 	 *
-	 * @since version
+	 * @since 1.6
 	 */
 
-	private function addScripts()
+	public function addScripts(): void
 	{
 
 
@@ -103,6 +103,30 @@ class bootstrap
 
 
 	}
+
+	/**
+	 *
+	 *
+	 * @since 1.6
+	 */
+
+	public function addStylesheets(): void
+	{
+		return;
+	}
+
+	/**
+	 *
+	 *
+	 * @since 1.6
+	 */
+
+
+	public function addTranslationStrings(): void
+	{
+		return;
+	}
+
 
 }
 

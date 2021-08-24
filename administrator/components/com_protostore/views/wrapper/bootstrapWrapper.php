@@ -24,7 +24,7 @@ use Protostore\Render\Render;
 class bootstrapWrapper
 {
 
-	private array $vars;
+	private $vars;
 
 	public function __construct()
 	{
@@ -40,7 +40,7 @@ class bootstrapWrapper
 	 * @since 2.0
 	 */
 
-	private function init(): void
+	private function init()
 	{
 
 		$this->setVars();
@@ -58,7 +58,7 @@ class bootstrapWrapper
 	 * @since 2.0
 	 */
 
-	private function setVars(): void
+	private function setVars()
 	{
 
 
@@ -106,11 +106,13 @@ class bootstrapWrapper
 	{
 
 		$doc = Factory::getDocument();
+		$doc->addScript("https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.0/chart.min.js");
 		$doc->addScript("https://cdn.jsdelivr.net/npm/uikit@latest/dist/js/uikit.min.js");
 		$doc->addScript("https://cdn.jsdelivr.net/npm/uikit@latest/dist/js/uikit-icons.min.js");
 		$doc->addScript("https://kit.fontawesome.com/6afbbf2d93.js");
 
-		$doc->addScript('../media/com_protostore/js/vue/bundle.min.js', array('type' => 'text/javascript'));
+
+		$doc->addScript('/media/com_protostore/js/vue/bundle.min.js', array('type' => 'text/javascript'));
 
 		$doc->addCustomTag('<script id="base_url" type="application/json">' . Uri::base() . '</script>');
 		$doc->addCustomTag(' <script id="currency" type="application/json">' . json_encode($this->vars['currency']) . '</script>');
@@ -128,7 +130,7 @@ class bootstrapWrapper
 	 */
 
 
-	private function addStylesheets(): void
+	private function addStylesheets()
 	{
 
 		$doc = Factory::getDocument();

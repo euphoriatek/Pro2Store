@@ -26,11 +26,17 @@ class protostoreTask_filter
 
 		$publishedOnly = $data->get('publishedOnly', false) === "true";
 
+		$searchTerm = $data->getString('searchTerm', null);
+
+		if($searchTerm == "null") {
+			$searchTerm = null;
+		}
+
 		$currencies = CurrencyFactory::getList(
 			$data->getInt('limit', 0),
 			$data->getInt('offset', 0),
 			$publishedOnly,
-			$data->getString('searchTerm', null)
+			$searchTerm
 		);
 
 		$response['items'] = $currencies;

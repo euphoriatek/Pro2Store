@@ -9,7 +9,9 @@ const p2s_orders = {
             currentPage: 0,
             pages: [],
             pagesizes: [5, 10, 15, 20, 25, 30, 50, 100, 200, 500],
+            statuses: [],
             show: 25,
+            selectedStatus: 0,
         };
     },
     async beforeMount() {
@@ -22,6 +24,13 @@ const p2s_orders = {
         try {
             this.items = JSON.parse(items_data.innerText);
             items_data.remove();
+        } catch (err) {
+        }
+
+        const statuses_data = document.getElementById('statuses_data');
+        try {
+            this.statuses = JSON.parse(statuses_data.innerText);
+            statuses_data.remove();
         } catch (err) {
         }
 
@@ -62,7 +71,8 @@ const p2s_orders = {
             const params = {
                 'limit': this.show,
                 'offset': (this.currentPage * this.show),
-                'searchTerm': this.enteredText,
+                'searchTerm': (this.enteredText ? this.enteredText.trim() : ''),
+                'status': this.selectedStatus,
             };
 
             const URLparams = this.serialize(params);
@@ -87,26 +97,31 @@ const p2s_orders = {
         },
         changeShow() {
 
-            this.itemsChunked = this.items.reduce((resultArray, item, index) => {
-                const chunkIndex = Math.floor(index / this.show)
-                if (!resultArray[chunkIndex]) {
-                    resultArray[chunkIndex] = []
-                }
-                resultArray[chunkIndex].push(item)
-                return resultArray
-            }, []);
-            this.pages = this.itemsChunked.length;
-            this.currentPage = 0;
-            console.log(this.itemsChunked);
+            if (this.items) {
+                this.itemsChunked = this.items.reduce((resultArray, item, index) => {
+                    const chunkIndex = Math.floor(index / this.show)
+                    if (!resultArray[chunkIndex]) {
+                        resultArray[chunkIndex] = []
+                    }
+                    resultArray[chunkIndex].push(item)
+                    return resultArray
+                }, []);
+                this.pages = this.itemsChunked.length;
+                this.currentPage = 0;
+            }
+
+
         },
         changePage(i) {
             this.currentPage = i;
         },
+        cleartext(){
+            this.enteredText = null;
+            this.doTextSearch();
+        },
         async doTextSearch(event) {
-            this.enteredText = null
             clearTimeout(this.debounce)
             this.debounce = setTimeout(() => {
-                this.enteredText = event.target.value
                 this.filter();
             }, 600)
         },

@@ -10,24 +10,44 @@
 
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Factory;
+use Protostore\Bootstrap\listView;
+use Protostore\Country\CountryFactory;
 use Protostore\Render\Render;
+use Protostore\Shippingrate\ShippingrateFactory;
+use Protostore\Utilities\Utilities;
 
 
 /**
  *
- * @since       2.0
+ * @since       1.6
  */
-
-class bootstrap
+class bootstrap implements listView
 {
 
+	/**
+	 * @var array $vars
 
+
+	 * @since 1.6
+	 */
+	public $vars;
+
+	/**
+	 * @var string $view
+	 * @since 1.6
+	 */
+	public static $view = 'shippingrateszone';
 
 	public function __construct()
 	{
-		$vars = $this->init();
+		$this->init();
+		$this->setVars();
+		$this->addScripts();
+		$this->addStylesheets();
+		$this->addTranslationStrings();
 
-		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/shippingrateszone/shippingrateszone.php', $vars);
+		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/'.self::$view.'/'.self::$view.'.php', $this->vars);
 
 	}
 
@@ -35,34 +55,65 @@ class bootstrap
 	 *
 	 * @return array
 	 *
-	 * @since 2.0
+	 * @since 1.6
 	 */
 
-	private function init()
+	public function init(): void
 	{
-
-		$vars = array();
-
-
-		$vars['items'] = $this->getItems();
-
-
-		return $vars;
-
 
 	}
 
 	/**
 	 *
-	 * @return array|false
+	 * @return array
 	 *
-	 * @since 2.0
+	 * @since 1.6
 	 */
 
-	private function getItems()
+	public function getItems(): ?array
 	{
+
+		if($items = ShippingrateFactory::getZoneList()) {
+			return $items;
+		}
+		return array();
+	}
+
+	public function setVars(): void
+	{
+		$this->vars['items']      = $this->getItems();
+		$this->vars['countries']  = CountryFactory::getList(0,0,true);
+		$this->vars['zones']  = CountryFactory::getZoneList(0,0,true);
+		$this->vars['list_limit'] = Factory::getConfig()->get('list_limit', '25');
+	}
+
+	public function addScripts(): void
+	{
+		$doc = Factory::getDocument();
+
+
+		// include the vue script - defer
+		$doc->addScript('../media/com_protostore/js/vue/'.self::$view.'/'.self::$view.'.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
+
+		$doc->addCustomTag('<script id="items_data" type="application/json">' . json_encode($this->vars['items']) . '</script>');
+		$doc->addCustomTag('<script id="countries_data" type="application/json">' . json_encode($this->vars['countries']) . '</script>');
+		$doc->addCustomTag('<script id="zones_data" type="application/json">' . json_encode($this->vars['zones']) . '</script>');
+		$doc->addCustomTag('<script id="page_size" type="application/json">' . $this->vars['list_limit'] . '</script>');
+
+
+		// include prime
+		Utilities::includePrime(array('inputtext', 'inputnumber'));
 
 	}
 
+	public function addStylesheets(): void
+	{
+		// TODO: Implement addStylesheets() method.
+	}
+
+	public function addTranslationStrings(): void
+	{
+		// TODO: Implement addTranslationStrings() method.
+	}
 }
 

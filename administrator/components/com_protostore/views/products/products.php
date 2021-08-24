@@ -17,17 +17,11 @@ use Joomla\CMS\Layout\LayoutHelper;
 ?>
 
 
-<script id="base_url" type="application/json"><?= Uri::base(); ?></script>
-<script id="items_data" type="application/json"><?= json_encode($vars['items']); ?></script>
-<script id="categories_data" type="application/json"><?= json_encode($vars['categories']); ?></script>
-<script id="page_size" type="application/json"><?= $vars['list_limit']; ?></script>
-
-
 <div id="p2s_products">
     <div class="uk-margin-left">
         <div class="uk-grid" uk-grid="">
             <div class="uk-width-3-4">
-                <div class="uk-card uk-card-default">
+                <div class="uk-card uk-card-default ">
                     <div class="uk-card-header">
                         <div class="uk-grid uk-grid-small">
                             <div class="uk-width-expand">
@@ -51,7 +45,7 @@ use Joomla\CMS\Layout\LayoutHelper;
                             <div class="uk-width-auto uk-text-right">
                                 <div class="uk-grid uk-grid-small" uk-grid="">
                                     <div class="uk-width-auto">
-                                        <input  @input="doTextSearch($event)" type="text" placeholder="Search...">
+                                        <input  @input="doTextSearch($event)" type="text" placeholder="<?= Text::_('COM_PROTOSTORE_TABLE_SEARCH_PLACEHOLDER'); ?>">
                                     </div>
                                     <div class="uk-width-auto">
                                         <select class="uk-select" v-model="selectedCategory" @change="filter">
@@ -66,7 +60,7 @@ use Joomla\CMS\Layout\LayoutHelper;
                         </div>
                     </div>
 
-                    <div class="uk-card-body">
+                    <div class="uk-card-body uk-animation-fade">
 
                         <table class="uk-table uk-table-striped uk-table-divider uk-table-hover uk-table-responsive  uk-table-middle">
                             <thead>
