@@ -115,16 +115,17 @@ class OrderFactory
 		{
 			$query->where($db->quoteName('customer_id') . ' = ' . $db->quote($customerId));
 		}
+		if ($dateTo)
+		{
+			$query->where($db->quoteName('order_date') . ' <= ' . $db->quote($dateTo));
+		}
 
 		if ($dateFrom)
 		{
 			$query->where($db->quoteName('order_date') . ' >= ' . $db->quote($dateFrom));
 		}
 
-		if ($dateTo)
-		{
-			$query->where($db->quoteName('order_date') . ' <= ' . $db->quote($dateTo));
-		}
+
 
 		$db->setQuery($query, $offset, $limit);
 

@@ -18,7 +18,8 @@ class Coupon
 
 	public $id;
 	public $amount;
-	public $couponcode;
+	public $percentage;
+	public $coupon_code;
 	public $expiry_date;
 	public $name;
 	public $discount_type;

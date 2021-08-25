@@ -70,7 +70,7 @@ class bootstrap extends AdminModel
 		$this->vars['item']              = false;
 		$this->vars['available_options'] = ProductFactory::getOptionList();
 		$this->vars['available_tags']    = ProductFactory::getAvailableTags();
-		$this->vars['custom_fields']     = ProductFactory::getAvailableCustomFields($id, $this->vars['item']->joomlaItem->catid);
+//		$this->vars['custom_fields']     = ProductFactory::getAvailableCustomFields($id, $this->vars['item']->joomlaItem->catid);
 
 		if ($id)
 		{

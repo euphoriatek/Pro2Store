@@ -12,6 +12,8 @@ const p2s_orders = {
             statuses: [],
             show: 25,
             selectedStatus: 0,
+            dateFrom: '',
+            dateTo: '',
         };
     },
     async beforeMount() {
@@ -23,7 +25,7 @@ const p2s_orders = {
         const items_data = document.getElementById('items_data');
         try {
             this.items = JSON.parse(items_data.innerText);
-            items_data.remove();
+            // items_data.remove();
         } catch (err) {
         }
 
@@ -42,7 +44,15 @@ const p2s_orders = {
     mounted: function () {
         this.changeShow();
     },
-    computed: {},
+    computed: {
+        dateActive() {
+            if (this.dateFrom !== '' && this.dateTo !== '') {
+                return true;
+            } else {
+                return false;
+            }
+        },
+    },
     methods: {
 
         async updateList() {
@@ -67,12 +77,14 @@ const p2s_orders = {
         async filter() {
 
             this.loading = true;
-
+            UIkit.drop('#ordersDateDrop').hide();
             const params = {
                 'limit': this.show,
                 'offset': (this.currentPage * this.show),
                 'searchTerm': (this.enteredText ? this.enteredText.trim() : ''),
                 'status': this.selectedStatus,
+                'dateFrom': this.dateFrom,
+                'dateTo': this.dateTo
             };
 
             const URLparams = this.serialize(params);
@@ -115,7 +127,27 @@ const p2s_orders = {
         changePage(i) {
             this.currentPage = i;
         },
-        cleartext(){
+        setDateBand(days) {
+            const now = this.convertDate(new Date(Date.now()));
+            const daysAgo = this.convertDate(new Date(Date.now() - days * 24 * 60 * 60 * 1000));
+
+            this.dateFrom = daysAgo;
+            this.dateTo = now;
+
+            this.filter();
+        },
+        clearSearch() {
+            this.clearDates();
+            this.cleartext()
+            this.selectedStatus = 0;
+            this.filter();
+        },
+        clearDates() {
+            this.dateFrom = '';
+            this.dateTo = '';
+            this.filter();
+        },
+        cleartext() {
             this.enteredText = null;
             this.doTextSearch();
         },
@@ -124,6 +156,10 @@ const p2s_orders = {
             this.debounce = setTimeout(() => {
                 this.filter();
             }, 600)
+        },
+        convertDate(date){
+
+            return date.toLocaleDateString('fr-CA');
         },
         sort(s) {
             //if s == current sort, reverse

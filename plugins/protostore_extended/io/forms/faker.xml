@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+    <fieldset name="details"  addfieldpath="/administrator/components/com_protostore/models/fields">
+
+        <field name="products" type="number" default="0" label="Number of Products (Max 15)" description="" min="0" max="15" step="1" />
+        <field name="orders" type="number" default="0" label="Number of Orders (Max 15)" description="" min="0" max="15" step="1" />
+        <field name="customers" type="number" default="0" label="Number of Customers (Max 15)" description="" min="0" max="15" step="1" />
+        <field name="category" type="category" extension="com_content" label="Select a category" description="" />
+
+    </fieldset>
+
+</form>

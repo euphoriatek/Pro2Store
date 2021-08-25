@@ -2,7 +2,7 @@
 /**
  * @package     Pro2Store - Cart Items
  *
- * @copyright   Copyright (C) 2020 Ray Lawlor - Pro2Store. All rights reserved.
+ * @copyright   Copyright (C) 2021 Ray Lawlor - Pro2Store. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 

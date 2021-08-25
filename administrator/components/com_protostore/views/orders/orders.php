@@ -10,6 +10,7 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
 
@@ -49,7 +50,8 @@ use Joomla\CMS\Layout\LayoutHelper;
                                             </div>
                                             <div class="uk-width-auto uk-grid-item-match uk-flex-middle">
                                             <span style="width: 20px">
-                                            <span @click="cleartext" v-show="enteredText" style="cursor: pointer" uk-icon="icon: close"></span>
+                                            <span @click="cleartext" v-show="enteredText" style="cursor: pointer"
+                                                  uk-icon="icon: close"></span>
                                                 </span>
                                             </div>
                                         </div>
@@ -58,12 +60,85 @@ use Joomla\CMS\Layout\LayoutHelper;
                                     </div>
                                     <div class="uk-width-auto">
                                         <select class="uk-select" v-model="selectedStatus" @change="filter">
-                                            <option value="0"> -- <?= Text::_('COM_PROTOSTORE_ORDERS_SELECT_A_STATUS'); ?> --</option>
+                                            <option value="0">
+                                                -- <?= Text::_('COM_PROTOSTORE_ORDERS_SELECT_A_STATUS'); ?> --
+                                            </option>
                                             <option v-for="status in statuses" :value="status.id">
                                                 {{status.title}}
                                             </option>
                                         </select>
+                                    </div>
+                                    <div class="uk-width-auto">
 
+                                        <button class="uk-icon-button" :class="{ 'uk-button-primary': dateActive }"
+                                                uk-icon="calendar"></button>
+                                        <div id="ordersDateDrop" class="uk-width-xlarge"
+                                             uk-drop="mode: click; pos: bottom-right; boundary: .boundary">
+                                            <div class="uk-card uk-card-body uk-card-default">
+
+                                                <div class="uk-grid" uk-grid>
+
+                                                    <div class="uk-width-1-2">
+                                                        <div class="uk-margin">
+                                                            <label class="uk-form-label" for="date_from">Date
+                                                                From</label>
+                                                            <div class="uk-form-controls">
+                                                                <input type="date" id="date_from" v-model="dateFrom"
+                                                                       value="<?= HtmlHelper::date($vars['now'], 'Y-m-d'); ?>"
+                                                                       min="2020-01-01">
+                                                            </div>
+                                                        </div>
+                                                        <div class="uk-text-left">
+                                                            <?= Text::_('COM_PROTOSTORE_PREVIOUS'); ?>:<br/>
+                                                            <button type="button"
+                                                                    class="uk-button uk-button-default uk-button-small"
+                                                                    @click="setDateBand(7)"> <?= Text::_('COM_PROTOSTORE_PREVIOUS_7_DAYS'); ?>
+                                                            </button>
+                                                            <button type="button"
+                                                                    class="uk-button uk-button-default uk-button-small uk-margin-small-left"
+                                                                    @click="setDateBand(30)"> <?= Text::_('COM_PROTOSTORE_PREVIOUS_30_DAYS'); ?>
+                                                            </button>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="uk-width-1-2">
+                                                        <div class="uk-margin">
+                                                            <label class="uk-form-label" for="date_to">Date To</label>
+                                                            <div class="uk-form-controls">
+                                                                <input type="date" id="date_to" name="date_to"
+                                                                       v-model="dateTo"
+                                                                       value="<?= HtmlHelper::date($vars['now'], 'Y-m-d'); ?>"
+                                                                       min="2020-01-01">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="uk-width-1-1">
+                                                        <div class="uk-grid" uk-grid>
+                                                            <div class="uk-width-expand">
+                                                                <div class="uk-margin">
+                                                                    <button class="uk-button uk-button-small uk-button-default"
+                                                                            @click="clearDates">clear
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                            <div class="uk-width-auto">
+                                                                <div class="uk-margin">
+                                                                    <button class="uk-button uk-button-small uk-button-primary"
+                                                                            @click="filter">Search
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+
+                                                    </div>
+
+
+                                                </div>
+
+
+                                            </div>
+                                        </div>
 
                                     </div>
                                 </div>
@@ -133,7 +208,7 @@ use Joomla\CMS\Layout\LayoutHelper;
                                     </div>
                                 </td>
                                 <td>
-                                    <div>{{order.baseprice_formatted}}</div>
+                                    <div>{{order.order_date}}</div>
                                 </td>
                                 <td>
                                     <div>{{order.order_paid}}</div>
@@ -171,13 +246,41 @@ use Joomla\CMS\Layout\LayoutHelper;
             </div>
             <div class="uk-width-1-4">
                 <div>
-                    <div class="uk-card uk-card-default" uk-sticky="offset: 100">
+                    <div class="uk-card uk-card-default ">
+
                         <div class="uk-card-header">
-                            <h3>Options</h3>
+                            <h4> <?= Text::_('COM_PROTOSTORE_FILTERS'); ?></h4>
                         </div>
                         <div class="uk-card-body">
-                            <button @click="newProduct"
-                                    class="uk-button uk-button-primary"><?= Text::_('COM_PROTOSTORE_ADD_PRODUCT_TITLE'); ?></button>
+                            <ul class="uk-nav-default uk-nav-parent-icon" uk-nav>
+
+                                <li>
+                                    <a class="uk-text-emphasis" @click="setDateBand(1)">
+                                        <i class="uk-margin-small-right fal fa-calendar-day fa-2x"></i>
+                                        <?= Text::_('COM_PROTOSTORE_PREVIOUS_TODAY'); ?>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="uk-text-emphasis" @click="setDateBand(7)">
+                                        <i class="uk-margin-small-right fal fa-calendar-week fa-2x"></i>
+                                        <?= Text::_('COM_PROTOSTORE_PREVIOUS'); ?> <?= Text::_('COM_PROTOSTORE_PREVIOUS_7_DAYS'); ?>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="uk-text-emphasis" @click="setDateBand(30)">
+                                        <i class="uk-margin-small-right fal fa-calendar-alt fa-2x"></i>
+                                        <?= Text::_('COM_PROTOSTORE_PREVIOUS'); ?> <?= Text::_('COM_PROTOSTORE_PREVIOUS_30_DAYS'); ?>
+                                    </a>
+                                </li>
+                                <li class="uk-nav-divider"></li>
+                                <li>
+                                    <a class="uk-text-emphasis" @click="clearSearch">
+                                        <span class="uk-margin-small-right" uk-icon="icon: minus-circle"></span>
+			                            <?= Text::_('COM_PROTOSTORE_TABLE_CLEAR_SEARCH'); ?>
+                                    </a>
+                                </li>
+
+                            </ul>
                         </div>
                     </div>
                 </div>

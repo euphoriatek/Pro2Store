@@ -187,9 +187,29 @@ class DiscountFactory
 
 			$currentDiscount = self::get($id);
 
+			$amount     = $data->getInt('amount', $currentDiscount->amount);
+			$percentage = $data->getString('percentage', $currentDiscount->percentage);
+
+			$discountType = $data->getInt('discount_type', $currentDiscount->discount_type);
+
+
+			switch ($discountType)
+			{
+				case 1:
+					$percentage = 0;
+					break;
+				case 2:
+					$amount = 0;
+					break;
+				case 3:
+					$amount = 0;
+					$percentage = 0;
+					break;
+			}
+
 			$currentDiscount->name          = $data->getString('name', $currentDiscount->name);
-			$currentDiscount->amount        = $data->getInt('amount', $currentDiscount->amount);
-			$currentDiscount->percentage    = $data->getString('percentage', $currentDiscount->percentage);
+			$currentDiscount->amount        = $amount;
+			$currentDiscount->percentage    = $percentage;
 			$currentDiscount->discount_type = $data->getInt('discount_type', $currentDiscount->discount_type);
 			$currentDiscount->coupon_code   = $data->getString('coupon_code', $currentDiscount->coupon_code);
 			$currentDiscount->expiry_date   = $data->getString('expiry_date', $currentDiscount->expiry_date);
@@ -270,12 +290,14 @@ class DiscountFactory
 
 		$db = Factory::getDbo();
 
+		/** @var Discount $insert */
 		$insert = new stdClass();
 
 		$insert->id          = $discount->id;
 		$insert->name        = $discount->name;
 		$insert->amount      = $discount->amount;
 		$insert->percentage  = $discount->percentage;
+		$insert->discount_type  = $discount->discount_type;
 		$insert->coupon_code = $discount->coupon_code;
 		$insert->expiry_date = $discount->expiry_date;
 		$insert->published   = $discount->published;

@@ -12,6 +12,7 @@ namespace Protostore\Utilities;
 
 defined('_JEXEC') or die('Restricted access');
 
+use Exception;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\String\StringHelper;
@@ -44,8 +45,16 @@ class Utilities
 
 	}
 
+	/**
+	 *
+	 * @return int|null
+	 *
+	 * @throws Exception
+	 * @since 1.6
+	 */
 
-	public static function getCurrentItemId()
+
+	public static function getCurrentItemId(): ?int
 	{
 
 		$input = Factory::getApplication()->input;
@@ -54,13 +63,13 @@ class Utilities
 		{
 			if ($input->get('view') == 'article')
 			{
-				return $input->get('id');
+				return $input->getInt('id');
 			}
 		}
 
-		return false;
+		return null;
 
-//        return Factory::getApplication()->input->get('id');
+
 	}
 
 	public static function getUrlFromMenuItem($id)

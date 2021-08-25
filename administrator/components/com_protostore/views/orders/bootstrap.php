@@ -10,6 +10,7 @@
 
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Date\Date;
 use Joomla\CMS\Factory;
 
 use Protostore\Bootstrap\listView;
@@ -78,6 +79,7 @@ class bootstrap implements listView
 	{
 		
 		$this->vars['items'] = $this->getItems();
+		$this->vars['now'] = new Date('now');
 		$this->vars['list_limit'] = Factory::getConfig()->get('list_limit', '25');
 		$this->vars['statuses'] = OrderFactory::getStatuses();
 

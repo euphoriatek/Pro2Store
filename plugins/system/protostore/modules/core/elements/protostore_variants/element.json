@@ -1,9 +1,9 @@
 {
   "@import": "./element.php",
-  "name": "protostore_productoptions",
-  "title": "Product Options",
-  "icon": "${url:images/protostore_productoptions.svg}",
-  "iconSmall": "${url:images/protostore_productoptions_small.svg}",
+  "name": "protostore_variants",
+  "title": "Product Variants",
+  "icon": "${url:images/protostore_variants.svg}",
+  "iconSmall": "${url:images/protostore_variants_small.svg}",
   "group": "Pro2Store",
   "element": true,
   "templates": {

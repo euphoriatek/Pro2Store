@@ -111,3 +111,5 @@
 /stripepackage/
 /paypalpackage/
 /test.php
+
+**/vendor/

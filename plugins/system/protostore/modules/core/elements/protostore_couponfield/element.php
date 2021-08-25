@@ -27,8 +27,7 @@ return [
 
 			$node->props['baseUrl'] = Uri::base();
 
-			$language = Factory::getLanguage();
-			$language->load('com_protostore', JPATH_ADMINISTRATOR);
+			\Protostore\Language\LanguageFactory::load();
 
 			$node->props['buttontext']       = Text::_('COM_PROTOSTORE_ELM_COUPON_FIELD_BUTTON_TEXT_ADD');
 			$node->props['removebuttontext'] = Text::_('COM_PROTOSTORE_ELM_COUPON_FIELD_BUTTON_TEXT_REMOVE');
@@ -36,13 +35,21 @@ return [
 			$node->props['entercouponcode']  = Text::_('COM_PROTOSTORE_ELM_COUPON_FIELD_PLACEHOLDER');
 			$node->props['couponremoved']    = Text::_('COM_PROTOSTORE_ELM_COUPON_FIELD_COUPON_REMOVED');
 
-			$node->props['isCouponApplied'] = CouponFactory::isCouponApplied() ? 'true' : 'false';
+			$isCouponApplied = CouponFactory::isCouponApplied();
+
+			$node->props['isCouponApplied'] = $isCouponApplied ? 'true' : 'false';
 
 			$node->props['coupon'] = '';
 
-			if ($node->props['isCouponApplied'])
+
+			if ($isCouponApplied)
 			{
+
+
 				$node->props['coupon'] = CouponFactory::getCurrentAppliedCoupon();
+
+
+
 			}
 
 

@@ -9,56 +9,53 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
+
 use Joomla\CMS\Uri\Uri;
 
-use Protostore\Currency\CurrencyFactory;
 use Protostore\Cart\CartFactory;
-use Protostore\Shipping\Shipping;
-use Protostore\Total\Total;
-use Protostore\Coupon\Coupon;
+use Protostore\Currency\CurrencyFactory;
+use Protostore\Shipping\ShippingFactory;
+use Protostore\Total\TotalFactory;
+use Protostore\Coupon\CouponFactory;
 use Protostore\Cart\Cart;
 use Protostore\Tax\Tax;
+use Protostore\Language\LanguageFactory;
+use Protostore\Config\ConfigFactory;
 
 use Brick\Money\Money;
 
 return [
 
-    // Define transforms for the element node
-    'transforms' => [
+	// Define transforms for the element node
+	'transforms' => [
 
 
-        // The function is executed before the template is rendered
-        'render' => function ($node, array $params) {
+		// The function is executed before the template is rendered
+		'render' => function ($node, array $params) {
+
+			LanguageFactory::load();
+			$config = ConfigFactory::get();
+			$cart = CartFactory::get();
+			$node->props['baseUrl'] = Uri::base();
 
 
-            $language = Factory::getLanguage();
-            $language->load('com_protostore', JPATH_ADMINISTRATOR);
+			if ($config->get('address_show'))
+			{
+				$node->props['show_shipping'] = true;
+			}
+			else
+			{
+				$node->props['show_shipping'] = false;
+			}
 
-            $node->props['baseUrl'] = Uri::base();
+			$node->props['cart'] = $cart;
 
-            $currency = CurrencyFactory::getCurrent();
-            $cart = CartFactory::get();
-
-            $app = Factory::getApplication();
-            $config = $app->getParams('com_protostore');
-
-            if($config->get('address_show')) {
-                $node->props['show_shipping'] = true;
-            } else {
-                $node->props['show_shipping'] = false;
-            }
-
-            $node->props['cart'] = $cart;
-
-//            $shippingTotal = CurrencyFactory::translate(Shipping::getTotalShippingFromPlugin($cart), $currency);
+            $shippingTotal = CurrencyFactory::translate(ShippingFactory::getShipping($cart));
 //
-//            $node->props['subTotal'] = CurrencyFactory::translate(Total::getSubTotal($cart), $currency);
-//            $node->props['total'] = CurrencyFactory::translate(Total::getGrandTotal($cart), $currency);
+            $node->props['subTotal'] = CurrencyFactory::translate(TotalFactory::getSubTotal($cart));
+            $node->props['total'] = CurrencyFactory::translate(TotalFactory::getGrandTotal($cart));
 //
 //            $node->props['tax'] = CurrencyFactory::translate(Tax::calculateTotalTax($cart), $currency);
-
 
 
 //            if (Factory::getUser()->guest) {
@@ -73,26 +70,36 @@ return [
 //                $node->props['totalShipping'] = $shippingTotal;
 //            }
 
-//            if ($coupon = Coupon::getCurrentAppliedCoupon()) {
-//                if ($coupon->discount_type === 'freeship') {
-//                    $node->props['totalDiscount'] =  Currency::translate(Coupon::calculateDiscount(Total::getSubTotal()), $currencyHelper);
-//                } else {
-//                    $couponDiscount = Money::ofMinor(Coupon::calculateDiscount(Total::getSubTotal()), $currencyHelper->currency->iso);
-//                    if ($couponDiscount > Total::getSubTotal()) {
-//                        $node->props['totalDiscount'] = $node->props['subTotal'];
-//                    } else {
-//                        $node->props['totalDiscount'] = Currency::translate(Coupon::calculateDiscount(Total::getSubTotal()), $currencyHelper);
-//                    }
-//                }
-//            } else {
-//                $node->props['totalDiscount'] = Currency::translate(0, $currencyHelper);
-//            }
 
+			// FFS COMMENT THIS STUFF FFS!
 
-        },
+			// check if a coupon is applied
+            if ($coupon = CouponFactory::getCurrentAppliedCoupon()) {
 
-    ]
+            	// check if the discount is free shipping
+                if ($coupon->discount_type === 'freeship') {
+
+                	//if so, set the discount to the shipping total.
+                    $node->props['totalDiscount'] =  CurrencyFactory::translate(CouponFactory::calculateDiscount($cart));
+                } else {
+                	//
+                    $couponDiscount = CouponFactory::calculateDiscount($cart);
+                    if ($couponDiscount > TotalFactory::getSubTotal($cart)) {
+                        $node->props['totalDiscount'] = $node->props['subTotal'];
+                    } else {
+                        $node->props['totalDiscount'] = CurrencyFactory::translate(CouponFactory::calculateDiscount($cart));
+                    }
+                }
+            } else {
+
+            	// if no coupon applied, simply return £0.00 (or whatever currency is selected)
+                $node->props['totalDiscount'] = CurrencyFactory::translate(0);
+            }
+
+			$node->props['totalDiscount'] = CurrencyFactory::translate(CouponFactory::calculateDiscount($cart));
+
+		},
+
+	]
 
 ];
-
-?>

@@ -47,10 +47,10 @@ class ProductFactory
 	 * @param   int  $joomla_item_id
 	 *
 	 * @return Product|null
-	 * @since 1.0
+	 * @since 1.6
 	 */
 
-	public static function get($joomla_item_id): ?Product
+	public static function get(int $joomla_item_id): ?Product
 	{
 
 		$db = Factory::getDbo();
@@ -84,7 +84,7 @@ class ProductFactory
 	 * @param   string       $orderDir
 	 *
 	 * @return array
-	 * @since version
+	 * @since 1.6
 	 */
 
 	public static function getList(int $limit = 0, int $offset = 0, int $category = 0, string $searchTerm = null, string $orderBy = 'id', string $orderDir = 'DESC'): ?array
@@ -101,7 +101,7 @@ class ProductFactory
 
 		if ($searchTerm)
 		{
-			$query->where($db->quoteName('title') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'), 'OR');
+			$query->where($db->quoteName('title') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'));
 		}
 
 		if ($category)
@@ -149,11 +149,11 @@ class ProductFactory
 	 * @param   Input  $data
 	 *
 	 *
-	 * @return Product
+	 * @return null|Product
 	 * @throws Exception
 	 * @since 1.6
 	 */
-	public static function saveFromInputData(Input $data)
+	public static function saveFromInputData(Input $data): ?Product
 	{
 
 
@@ -179,7 +179,7 @@ class ProductFactory
 		$currentProduct->joomlaItem->modified    = Utilities::getDate();
 		$currentProduct->joomlaItem->images      = self::processImagesForSave(
 			$data->json->getString('teaserimage', $currentProduct->teaserImagePath),
-			$data->json->getString('fullimage', $currentProduct->fullimage)
+			$data->json->getString('fullimage', $currentProduct->fullImagePath)
 		);
 		$currentProduct->joomlaItem->featured    = $data->json->getInt('featured', $currentProduct->joomlaItem->featured);
 		$currentProduct->joomlaItem->state       = $data->json->getInt('state', $currentProduct->joomlaItem->state);
@@ -251,6 +251,7 @@ class ProductFactory
 
 			return self::get($data->json->getInt('itemid'));
 		}
+		return null;
 
 	}
 
@@ -258,13 +259,13 @@ class ProductFactory
 	/**
 	 * @param   Input  $data
 	 *
-	 * @return Product
+	 * @return null|Product
 	 *
 	 * @throws Exception
 	 * @since 1.6
 	 */
 
-	private static function createNewProduct(Input $data)
+	private static function createNewProduct(Input $data): ?Product
 	{
 
 		$db = Factory::getDbo();
@@ -299,7 +300,7 @@ class ProductFactory
 		);
 		if (!$db->insertObject('#__content', $content))
 		{
-			return false;
+			return null;
 		}
 
 
@@ -350,7 +351,7 @@ class ProductFactory
 
 		if (!$db->insertObject('#__protostore_product', $product))
 		{
-			return false;
+			return null;
 		}
 
 
@@ -376,7 +377,7 @@ class ProductFactory
 			if (!$table->store())
 			{
 
-				return false;
+				return null;
 
 			}
 		}
@@ -670,8 +671,7 @@ class ProductFactory
 
 		if ($searchTerm)
 		{
-			$query->where($db->quoteName('name') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'), 'OR');
-			$query->where($db->quoteName('option_type') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'), 'OR');
+			$query->where($db->quoteName('name') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'));
 
 		}
 
@@ -751,10 +751,11 @@ class ProductFactory
 
 		switch ($type)
 		{
-			case 'item':
-				return Route::_('index.php?option=com_content&view=article&id=' . $joomla_item_id . '&catid=' . $catid);
 			case 'category':
 				return Route::_('index.php?option=com_content&view=category&layout=blog&id=' . $catid);
+			default:
+				// item
+				return Route::_('index.php?option=com_content&view=article&id=' . $joomla_item_id . '&catid=' . $catid);
 		}
 
 
@@ -838,6 +839,8 @@ class ProductFactory
 	 *
 	 * Gets the available tags.
 	 * If the ID of the item is supplied, then the function removes the currently selected tags and returns the remaining, unselected tags.
+	 *
+	 * @param   null  $id
 	 *
 	 * @return array|null
 	 *
@@ -939,7 +942,7 @@ class ProductFactory
 			$query->from($db->quoteName('#__fields'));
 			$query->where($db->quoteName('context') . ' = ' . $db->quote('com_content.article'));
 			$query->where($db->quoteName('state') . ' = 1');
-			$query->where($db->quoteName('type') . ' IN (\'text\', \'list\', \'radio\', \'textarea\', \'media\', \'editor\')', 'AND');
+			$query->where($db->quoteName('type') . ' IN (\'text\', \'list\', \'radio\', \'textarea\', \'media\', \'editor\')');
 			$query->where($db->quoteName('id') . ' IN (' . implode(",", $results) . ')');
 			$query->order('ordering ASC');
 
@@ -977,7 +980,7 @@ class ProductFactory
 		$query->from($db->quoteName('#__fields'));
 		$query->where($db->quoteName('context') . ' = ' . $db->quote('com_content.article'));
 		$query->where($db->quoteName('state') . ' = 1', 'AND');
-		$query->where($db->quoteName('type') . ' IN (\'text\', \'list\', \'radio\', \'textarea\', \'media\', \'editor\')', 'AND');
+		$query->where($db->quoteName('type') . ' IN (\'text\', \'list\', \'radio\', \'textarea\', \'media\', \'editor\')');
 		$query->where($db->quoteName('id') . ' NOT IN (' . implode(",", $listedIds) . ')');
 		$query->order('ordering ASC');
 
@@ -1030,12 +1033,12 @@ class ProductFactory
 	/**
 	 * @param $product_id
 	 *
-	 * @return array|false
+	 * @return null|array
 	 *
 	 * @since 1.6
 	 */
 
-	public static function getOptions($product_id)
+	public static function getOptions($product_id): ?array
 	{
 
 		return ProductoptionFactory::getProductOptions($product_id);
@@ -1080,7 +1083,7 @@ class ProductFactory
 	 *
 	 * @return false|string
 	 *
-	 * @since version
+	 * @since 1.6
 	 */
 
 	public static function getImagePath($image)
@@ -1100,12 +1103,12 @@ class ProductFactory
 	/**
 	 * @param $product_id
 	 *
-	 * @return false|Variant
+	 * @return Variant
 	 *
 	 * @since 1.6
 	 */
 
-	public static function getVariantData($product_id)
+	public static function getVariantData($product_id): ?Variant
 	{
 		$db = Factory::getDbo();
 
@@ -1191,12 +1194,12 @@ class ProductFactory
 	/**
 	 * @param   int  $product_id
 	 *
-	 * @return array|mixed|null
+	 * @return array|null
 	 *
 	 * @since 1.6
 	 */
 
-	public static function getFiles(int $product_id)
+	public static function getFiles(int $product_id): ?array
 	{
 
 		$db    = Factory::getDbo();

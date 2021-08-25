@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="3.0" type="plugin" group="protostore_extended" method="upgrade">
+    <name>Pro2Store Faker</name>
+    <version>1.0.0</version>
+    <creationDate>May 2020</creationDate>
+    <author>Ray Lawlor - Pro2Store</author>
+    <authorEmail>info@pro2.store</authorEmail>
+    <authorUrl>https://pro2.store</authorUrl>
+    <license>GNU General Public License version 2 or later</license>
+    <copyright>Copyright (C) 2020 Ray Lawlor - Pro2Store. All rights reserved.</copyright>
+    <description>Plugin to Allow Testers to easily generate fake Shop data</description>
+    <files>
+        <filename plugin="p2sfaker">p2sfaker.php</filename>
+        <folder>vendor</folder>
+    </files>
+</extension>

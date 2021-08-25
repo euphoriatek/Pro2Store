@@ -49,6 +49,7 @@ class JFormFieldDiscounttype extends JFormField
 		$html[] = '<option value=""> ' . Text::_('COM_PROTOSTORE_ORDER_SHIPPING_PROVIDER_SELECT_DEFAULT') . ' </option>';
 		$html[] = '<option value="1">' . Text::_('COM_PROTOSTORE_ADD_DISCOUNTS_MODAL_DISCOUNT_TYPE_AMOUNT') . '</option>';
 		$html[] = '<option value="2">' . Text::_('COM_PROTOSTORE_ADD_DISCOUNTS_MODAL_DISCOUNT_TYPE_PERCENT') . '</option>';
+		$html[] = '<option value="3">' . Text::_('COM_PROTOSTORE_ADD_DISCOUNTS_MODAL_DISCOUNT_TYPE_FREE_SHIPPING') . '</option>';
 		$html[] = '</select>';
 
 		return implode('', $html);

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="3.0" type="plugin" group="protostore_extended" method="upgrade">
+    <name>Pro2Store - IO</name>
+    <version>1.0.0</version>
+    <creationDate>Aug 2021</creationDate>
+    <author>Ray Lawlor - Pro2Store</author>
+    <authorEmail>info@pro2.store</authorEmail>
+    <authorUrl>https://pro2.store</authorUrl>
+    <license>GNU General Public License version 2 or later</license>
+    <copyright>Copyright (C) 2021 Ray Lawlor - Pro2Store. All rights reserved.</copyright>
+    <description>Enables Pro2Store's Import/Export system</description>
+    <files>
+        <filename plugin="io">io.php</filename>
+        <folder>vendor</folder>
+    </files>
+</extension>

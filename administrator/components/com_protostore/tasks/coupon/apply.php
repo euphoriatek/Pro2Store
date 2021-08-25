@@ -17,6 +17,10 @@ use Protostore\Coupon\CouponFactory;
 class protostoreTask_apply
 {
 
+	/**
+	 * @throws Exception
+	 * @since 1.6
+	 */
 	public function getResponse($data)
 	{
 

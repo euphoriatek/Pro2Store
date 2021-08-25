@@ -29,8 +29,8 @@ const p2s_discount_form = {
     },
     computed: {},
     async beforeMount() {
-        this.setData();
-
+       await this.setData();
+        this.form.jform_amount = this.form.jform_amount / 100;
         const base_url = document.getElementById('base_url');
         this.base_url = base_url.innerText;
         // base_url.remove();
@@ -59,7 +59,7 @@ const p2s_discount_form = {
                 itemid: this.form.jform_id,
                 name: this.form.jform_name,
                 coupon_code: this.form.jform_coupon_code,
-                amount: this.form.jform_amount,
+                amount: this.form.jform_amount * 100,
                 percentage: this.form.jform_percentage,
                 discount_type: this.form.jform_discount_type,
                 expiry_date: this.form.jform_expiry_date,
@@ -110,7 +110,7 @@ const p2s_discount_form = {
 
 
         },
-        setData() {
+        async setData() {
             const keys = Object.keys(this.form);
             keys.forEach((jfrom) => {
                 let theInput = document.getElementById(jfrom + '_data');

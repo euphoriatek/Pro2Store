@@ -16,6 +16,7 @@ defined('_JEXEC') or die('Restricted access');
 use Joomla\CMS\Factory;
 use Joomla\CMS\Date\Date;
 use Protostore\Shipping\Shipping;
+use Protostore\Shipping\ShippingFactory;
 use Protostore\Utilities\Utilities;
 use Protostore\Cart\Cart;
 
@@ -75,7 +76,7 @@ class CouponFactory
 
 		$query->select('*');
 		$query->from($db->quoteName('#__protostore_discount'));
-		$query->where($db->quoteName('couponcode') . ' = ' . $db->quote($couponCode));
+		$query->where($db->quoteName('coupon_code') . ' = ' . $db->quote($couponCode));
 
 		$db->setQuery($query);
 
@@ -252,7 +253,7 @@ class CouponFactory
 
 		$query->select('id');
 		$query->from($db->quoteName('#__protostore_discount'));
-		$query->where($db->quoteName('couponcode') . ' = ' . $db->quote($couponCode));
+		$query->where($db->quoteName('coupon_code') . ' = ' . $db->quote($couponCode));
 		$query->where($db->quoteName('expiry_date') . ' > ' . $db->quote(Utilities::getDate()));
 
 		$db->setQuery($query);
@@ -346,6 +347,7 @@ class CouponFactory
 	 *
 	 * @return float|int
 	 *
+	 * @throws \Exception
 	 * @since 1.5
 	 */
 
@@ -353,6 +355,7 @@ class CouponFactory
 	{
 
 		//get the current applied coupon
+		/** @var Coupon $coupon */
 		$coupon = self::getCurrentAppliedCoupon();
 
 		//if there's a coupon applied
@@ -361,18 +364,20 @@ class CouponFactory
 			if ($coupon->inDate)
 			{
 
-				// get and set the actual amount
-				$total = $coupon->amount;
+				// init total
+				$total = 0;
 
-				if ($coupon->discount_type == 'freeship')
+				// get the total based on the discount type
+				switch ($coupon->discount_type)
 				{
-					$total = Shipping::getTotalShippingFromPlugin($cart);
-				}
-
-				// if the discount type is perc, then divide the number by 100
-				if ($coupon->discount_type == 'perc')
-				{
-					$total = $cart->subtotalInt * ($total / 100);
+					case '3':
+						$total = ShippingFactory::getShipping($cart);
+						break;
+					case '2':
+						$total = $cart->subtotalInt * ($coupon->percentage / 100);
+						break;
+					case '1':
+						$total = $coupon->amount;
 				}
 
 

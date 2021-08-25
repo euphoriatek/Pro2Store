@@ -6,26 +6,25 @@
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
+use Joomla\CMS\Language\Text;
 
-use Protostore\Price\Price;
-use Protostore\Product\Product;
+use Protostore\Product\ProductFactory;
+use Protostore\Currency\CurrencyFactory;
+use Protostore\Price\PriceFactory;
 use Protostore\Utilities\Utilities;
-use Protostore\Currency\Currency;
 
 
 return ['transforms' => ['render' => function ($node, array $params) {
 
 
-    $node->props['item_id'] = Utilities::getCurrentItemId();
+	$node->props['item_id'] = Utilities::getCurrentItemId();
 
+	$product = ProductFactory::get($node->props['item_id']);
 
-	$currencyHelper = new Currency();
-	$currency       = new Protostore\Currency\Currency;
-	$product        = new Product($node->props['item_id']);
-
-	if($product->published == 0) {
-	    return false;
-    }
+	if ($product->published == 0)
+	{
+		return false;
+	}
 
 
 	$price_type = $node->props['price_type'];
@@ -33,13 +32,14 @@ return ['transforms' => ['render' => function ($node, array $params) {
 	switch ($price_type)
 	{
 		case "base_price":
-			$node->props['price_type_data'] = Currency::translate(Price::getBasePrice(), $currencyHelper);
+			$node->props['price_type_data'] = CurrencyFactory::translate($product->base_price);
 			break;
 		case "discount_amount":
-			$node->props['price_type_data'] = Currency::translate(Price::calculateItemDiscount($node->props['item_id'], false), $currencyHelper);
+			$node->props['price_type_data'] = CurrencyFactory::translate(PriceFactory::calculateItemDiscount($product));
 			break;
 		case "discount_percentage":
-			$node->props['price_type_data'] = "no percentage applied";
+			\Protostore\Language\LanguageFactory::load();
+			$node->props['price_type_data'] = Text::_('COM_PROTOSTORE_ELM_PRICE_NO_PERCENTAGE_APPLIED');
 			if ($product->discount_type === 'perc')
 			{
 				$node->props['price_type_data'] = $product->discount;
@@ -47,7 +47,7 @@ return ['transforms' => ['render' => function ($node, array $params) {
 
 			break;
 		case "price_after_discount":
-			$node->props['price_type_data'] = Currency::translate(Price::calculatePriceAfterDiscount($node->props['item_id']), $currencyHelper);
+			$node->props['price_type_data'] = CurrencyFactory::translate(PriceFactory::calculatePriceAfterDiscount($product));
 			break;
 
 	}
