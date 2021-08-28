@@ -11,6 +11,10 @@
     "content": "./templates/content.php"
   },
   "fields": {
+    "unavailableMessage": {
+      "label": "Variant Unavailable Message",
+      "description": "Message to show the customer when a variant is unavailable or out of stock"
+    },
     "panel_style": {
       "label": "Style",
       "description": "Select one of the boxed card styles or a blank panel.",
@@ -93,6 +97,7 @@
               "type": "group",
               "divider": true,
               "fields": [
+                "unavailableMessage",
                 "panel_style",
                 "panel_content_padding",
                 "panel_size"

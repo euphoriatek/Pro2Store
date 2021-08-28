@@ -102,14 +102,14 @@ $item = $vars['item'];
 						)); ?>
 					</span>
 
-					<?= LayoutHelper::render('product/card_options', array(
-						'form'             => $vars['form'],
-						'cardTitle'        => 'COM_PROTOSTORE_ADD_PRODUCT_OPTIONS',
-						'cardStyle'        => 'default',
-						'cardId'           => 'options',
-						'fields'           => array('options'),
-						'field_grid_width' => '1-1',
-					)); ?>
+<!--					--><?php //echo LayoutHelper::render('product/card_options', array(
+//						'form'             => $vars['form'],
+//						'cardTitle'        => 'COM_PROTOSTORE_ADD_PRODUCT_OPTIONS',
+//						'cardStyle'        => 'default',
+//						'cardId'           => 'options',
+//						'fields'           => array('options'),
+//						'field_grid_width' => '1-1',
+//					)); ?>
 
 					<?= LayoutHelper::render('product/card_variant', array(
 						'form'             => $vars['form'],
@@ -274,7 +274,7 @@ $item = $vars['item'];
                     jform_publish_up_date: '',
                     jform_product_type: '',
                     jform_tags: [],
-                    jform_options: [],
+                    // jform_options: [],
                     jform_variants: [],
                     variantLabels: [],
                     variantsList: [],
@@ -285,7 +285,7 @@ $item = $vars['item'];
                 product_type: 1,
                 available_custom_fields: [],
                 available_tags: [],
-                available_options: [],
+                // available_options: [],
                 option_for_edit: [],
                 p2s_currency: [],
                 p2s_local: '',
@@ -471,19 +471,19 @@ $item = $vars['item'];
             }
 
 
-            const jform_options = document.getElementById('jform_options_data');
-            try {
-
-                if (jform_options.innerText === 'false') {
-                    this.form.jform_options = [];
-                } else {
-                    this.form.jform_options = JSON.parse(jform_options.innerText);
-                }
-
-
-            } catch (err) {
-                this.form.jform_options = [];
-            }
+            // const jform_options = document.getElementById('jform_options_data');
+            // try {
+            //
+            //     if (jform_options.innerText === 'false') {
+            //         this.form.jform_options = [];
+            //     } else {
+            //         this.form.jform_options = JSON.parse(jform_options.innerText);
+            //     }
+            //
+            //
+            // } catch (err) {
+            //     this.form.jform_options = [];
+            // }
 
             const available_custom_fields = document.getElementById('available_custom_fields_data');
             try {
@@ -491,12 +491,12 @@ $item = $vars['item'];
                 //  available_custom_fields.remove();
             } catch (err) {
             }
-            const available_options = document.getElementById('available_options_data');
-            try {
-                this.available_options = JSON.parse(available_options.innerText);
-                //  available_options.remove();
-            } catch (err) {
-            }
+            // const available_options = document.getElementById('available_options_data');
+            // try {
+            //     this.available_options = JSON.parse(available_options.innerText);
+            //     //  available_options.remove();
+            // } catch (err) {
+            // }
 
             const jform_variants = document.getElementById('jform_variants_data');
             try {
@@ -704,118 +704,118 @@ $item = $vars['item'];
             /**
              * OPTIONS
              */
-
-            addNewOptionType() {
-                UIkit.modal("#addOptionTypeModal").show();
-            },
-            async saveNewOptionType() {
-                if (this.newOptionTypeName === '') {
-                    this.showNewOptionTypeNameWarning = true;
-                    return;
-                }
-
-                const params = {
-                    'optionTypeName': this.newOptionTypeName,
-                    'optionType': this.newOptionTypeType,
-
-                };
-
-                const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=product.createoptiontype&format=raw", {
-                    method: 'POST',
-                    mode: 'cors',
-                    cache: 'no-cache',
-                    credentials: 'same-origin',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    redirect: 'follow',
-                    referrerPolicy: 'no-referrer',
-                    body: JSON.stringify(params)
-                });
-
-
-                const response = await request.json();
-
-                if (response.success) {
-
-                    UIkit.notification({
-                        message: this.successMessage,
-                        status: 'success',
-                        pos: 'top-center',
-                        timeout: 5000
-                    });
-                    UIkit.modal("#addOptionTypeModal").hide();
-                    this.updateOptionType();
-
-
-                } else {
-                    UIkit.notification({
-                        message: 'There was an error.',
-                        status: 'danger',
-                        pos: 'top-center',
-                        timeout: 5000
-                    });
-                }
-
-
-            },
-            async updateOptionType() {
-                const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=product.getoptiontypes&format=raw", {
-                    method: 'POST',
-                    mode: 'cors',
-                    cache: 'no-cache',
-                    credentials: 'same-origin',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    redirect: 'follow',
-                    referrerPolicy: 'no-referrer',
-                    body: ''
-                });
-
-                const response = await request.json();
-
-                if (response.success) {
-                    this.available_options = response.data;
-
-                } else {
-                    UIkit.notification({
-                        message: 'There was an error.',
-                        status: 'danger',
-                        pos: 'top-center',
-                        timeout: 5000
-                    });
-                }
-            },
-            addOptionOfType(i) {
-                this.form.jform_options.push({
-                    optiontype: this.available_options[i].id,
-                    optiontypename: this.available_options[i].name,
-                    modifier: '',
-                    modifiervalue_translated: '',
-                    optionsku: '',
-                })
-            },
-            openEditoptionModal(option) {
-                this.option_for_edit = option;
-                UIkit.modal('#editProductOption').show();
-            },
-            processModifierValue(option) {
-                if (option.modifiertype === "perc") {
-                    option.modifiervalue_translated = option.modifiervalueFloat + '%';
-                } else if (option.modifiertype === "amount") {
-                    const formatter = new Intl.NumberFormat('en-US', {
-                        style: 'currency',
-                        currency: this.p2s_currency.iso
-                    });
-                    option.modifiervalue_translated = formatter.format(option.modifiervalueFloat); /* $2,500.00 */
-                }
-            },
-            async removeOption(i) {
-                // todo - translate
-                await UIkit.modal.confirm('Are you sure?');
-                this.form.jform_options.splice(i, 1);
-            },
+            //
+            // addNewOptionType() {
+            //     UIkit.modal("#addOptionTypeModal").show();
+            // },
+            // async saveNewOptionType() {
+            //     if (this.newOptionTypeName === '') {
+            //         this.showNewOptionTypeNameWarning = true;
+            //         return;
+            //     }
+            //
+            //     const params = {
+            //         'optionTypeName': this.newOptionTypeName,
+            //         'optionType': this.newOptionTypeType,
+            //
+            //     };
+            //
+            //     const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=product.createoptiontype&format=raw", {
+            //         method: 'POST',
+            //         mode: 'cors',
+            //         cache: 'no-cache',
+            //         credentials: 'same-origin',
+            //         headers: {
+            //             'Content-Type': 'application/json'
+            //         },
+            //         redirect: 'follow',
+            //         referrerPolicy: 'no-referrer',
+            //         body: JSON.stringify(params)
+            //     });
+            //
+            //
+            //     const response = await request.json();
+            //
+            //     if (response.success) {
+            //
+            //         UIkit.notification({
+            //             message: this.successMessage,
+            //             status: 'success',
+            //             pos: 'top-center',
+            //             timeout: 5000
+            //         });
+            //         UIkit.modal("#addOptionTypeModal").hide();
+            //         this.updateOptionType();
+            //
+            //
+            //     } else {
+            //         UIkit.notification({
+            //             message: 'There was an error.',
+            //             status: 'danger',
+            //             pos: 'top-center',
+            //             timeout: 5000
+            //         });
+            //     }
+            //
+            //
+            // },
+            // async updateOptionType() {
+            //     const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=product.getoptiontypes&format=raw", {
+            //         method: 'POST',
+            //         mode: 'cors',
+            //         cache: 'no-cache',
+            //         credentials: 'same-origin',
+            //         headers: {
+            //             'Content-Type': 'application/json'
+            //         },
+            //         redirect: 'follow',
+            //         referrerPolicy: 'no-referrer',
+            //         body: ''
+            //     });
+            //
+            //     const response = await request.json();
+            //
+            //     if (response.success) {
+            //         this.available_options = response.data;
+            //
+            //     } else {
+            //         UIkit.notification({
+            //             message: 'There was an error.',
+            //             status: 'danger',
+            //             pos: 'top-center',
+            //             timeout: 5000
+            //         });
+            //     }
+            // },
+            // addOptionOfType(i) {
+            //     this.form.jform_options.push({
+            //         optiontype: this.available_options[i].id,
+            //         optiontypename: this.available_options[i].name,
+            //         modifier: '',
+            //         modifiervalue_translated: '',
+            //         optionsku: '',
+            //     })
+            // },
+            // openEditoptionModal(option) {
+            //     this.option_for_edit = option;
+            //     UIkit.modal('#editProductOption').show();
+            // },
+            // processModifierValue(option) {
+            //     if (option.modifiertype === "perc") {
+            //         option.modifiervalue_translated = option.modifiervalueFloat + '%';
+            //     } else if (option.modifiertype === "amount") {
+            //         const formatter = new Intl.NumberFormat('en-US', {
+            //             style: 'currency',
+            //             currency: this.p2s_currency.iso
+            //         });
+            //         option.modifiervalue_translated = formatter.format(option.modifiervalueFloat); /* $2,500.00 */
+            //     }
+            // },
+            // async removeOption(i) {
+            //     // todo - translate
+            //     await UIkit.modal.confirm('Are you sure?');
+            //     this.form.jform_options.splice(i, 1);
+            // },
 
 
             /**
@@ -939,7 +939,7 @@ $item = $vars['item'];
                     'flatfee': this.form.jform_flatfee,
                     'publish_up_date': this.form.jform_publish_up_date,
                     'product_type': this.form.jform_product_type,
-                    'options': JSON.stringify(this.form.jform_options),
+                    // 'options': JSON.stringify(this.form.jform_options),
                     'variants': JSON.stringify(this.form.jform_variants),
                     'variantLabels': JSON.stringify(this.form.variantLabels),
                     'variantList': JSON.stringify(this.form.variantsListLocal)

@@ -11,9 +11,12 @@ namespace Protostore\Price;
 defined('_JEXEC') or die('Restricted access');
 
 
+use Brick\Money\Exception\UnknownCurrencyException;
+use Joomla\Input\Input;
 use Protostore\Product\Product;
 use Protostore\Product\ProductFactory;
 use Protostore\Productoption\ProductoptionFactory;
+use Protostore\Currency\CurrencyFactory;
 use Protostore\Utilities\Utilities;
 
 
@@ -22,13 +25,48 @@ class PriceFactory
 
 
 	/**
+	 * @param   Input  $data
+	 * ** use json magic method to retrieve input data
+	 *
+	 * @return Price
+	 *
+	 * @throws UnknownCurrencyException
+	 * @since 1.6
+	 */
+
+	public static function calculatePriceFromInputData(Input $data): Price
+	{
+
+		$price = array();
+
+		$product_id = $data->json->getInt('itemid');
+		$selected   = $data->json->getString('selectedVariants');
+		$multiplier   = $data->json->getInt('multiplier');
+
+		$product = ProductFactory::get($product_id);
+
+		$variantsList = $product->variantList;
+
+		$selectedVariant = ProductFactory::getSelectedVariant($product->id, $selected);
+
+
+		$price['int'] = ($selectedVariant['priceInt'] * $multiplier);
+		$price['string'] = CurrencyFactory::translate(($selectedVariant['priceInt'] * $multiplier));
+
+		return new Price($price);
+
+
+	}
+
+
+	/**
 	 * @param   array  $ids
 	 * @param          $itemid
 	 * @param   int    $multiplier
 	 *
 	 * @return int
-	 *
-	 * @since 1.6
+	 * @deprecated 1.5
+	 * @since      1.0
 	 */
 
 
@@ -39,14 +77,14 @@ class PriceFactory
 		// first, get the product
 		$product = ProductFactory::get($itemid);
 
-        // if the base price is zero, then return zero
+		// if the base price is zero, then return zero
 		if ($product->base_price === 0)
 		{
 			return 0;
 		}
 
 		// init vars
-		$change_value = 0;
+		$change_value            = 0;
 		$amountToAddonViaOptions = 0;
 
 		// if there are option ids set, then iterate them and calculate the price difference

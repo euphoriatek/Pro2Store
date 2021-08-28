@@ -10,15 +10,37 @@
 // no direct access
 namespace Protostore\Product;
 
+use Exception;
+
 defined('_JEXEC') or die('Restricted access');
 
 
 class Variant
 {
 
+	/**
+	 * @var string $variants
+	 * @since 1.6
+	 */
 	public $variants;
+
+	/**
+	 * @var string $variantLabels
+	 * @since 1.6
+	 */
 	public $variantLabels;
+
+	/**
+	 * @var string $variantList
+	 * @since 1.6
+	 */
 	public $variantList;
+
+	/**
+	 * @var array $default
+	 * @since 1.6
+	 */
+	public $default;
 
 
 	public function __construct($data)
@@ -60,6 +82,7 @@ class Variant
 	 * Function to "hydrate" all non-database values.
 	 *
 	 *
+	 * @throws Exception
 	 * @since 1.6
 	 */
 
@@ -67,6 +90,8 @@ class Variant
 	{
 
 		$this->variantList = ProductFactory::retrieveVariantPrices($this->variantList);
+		$this->default = ProductFactory::getVariantDefault($this->variantList);
+
 
 
 	}

@@ -3,18 +3,18 @@
 /**
  * @package     Pro2Store - Quantity
  *
- * @copyright   Copyright (C) 2020 Ray Lawlor - Pro2Store. All rights reserved.
+ * @copyright   Copyright (C) 2021 Ray Lawlor - Pro2Store. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 
-use Protostore\Product\Product;
+use Protostore\Product\ProductFactory;
 use Protostore\Utilities\Utilities;
 
 return ['transforms' => ['render' => function ($node, array $params) {
 
 
-    $product = new Product(Utilities::getCurrentItemId());
+    $product =  ProductFactory::get(Utilities::getCurrentItemId());
 
     if ($product->published == 0) {
         return false;

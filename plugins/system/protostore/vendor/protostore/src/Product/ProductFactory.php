@@ -251,6 +251,7 @@ class ProductFactory
 
 			return self::get($data->json->getInt('itemid'));
 		}
+
 		return null;
 
 	}
@@ -384,10 +385,10 @@ class ProductFactory
 
 
 		// Create the Old Options (deprecated)
-		if ($data->json->getString('options'))
-		{
-			self::commitOptions($product);
-		}
+//		if ($data->json->getString('options'))
+//		{
+//			self::commitOptions($product);
+//		}
 
 		return self::get($product->joomla_item_id);
 
@@ -446,7 +447,7 @@ class ProductFactory
 
 			// now do options
 
-			self::commitOptions($product);
+//			self::commitOptions($product);
 
 
 			// now do TAGS
@@ -1150,12 +1151,101 @@ class ProductFactory
 
 		foreach ($variantList as $variant)
 		{
+			$variant->priceInt     = $variant->price;
 			$variant->price        = CurrencyFactory::toFloat($variant->price);
 			$returnedVariantList[] = $variant;
 		}
 
 		return json_encode($returnedVariantList);
 	}
+
+
+	/**
+	 *
+	 * This function takes in the product id and the users selected variants and processes this data in order to return:
+	 *
+	 * 1. the price, stock and sku for the selection
+	 * 2. the active variants list, to allow the UI to update with new dropdowns if there is no stock or if the options is inactive.
+	 *
+	 * @param   int    $product_id
+	 * @param   array  $selected
+	 *
+	 * @return array
+	 * @throws UnknownCurrencyException
+	 * @since 1.6
+	 */
+
+	public static function getSelectedVariant(int $product_id, array $selected): array
+	{
+
+		// init
+
+		$response = array();
+
+
+		// get the variant data for this product
+		$productVariants = self::getVariantData($product_id);
+
+		// get the actual variants list to allow us to grab the price, stock and sku - set it as a workable array using json_decode
+		$productVariantsList = json_decode($productVariants->variantList);
+
+
+		// iterate over the variants list and grab the price, stock and sku
+		/** @var VariantListItem $productVariant */
+		foreach ($productVariantsList as $productVariant)
+		{
+			if ($productVariant->identifier == $selected)
+			{
+				$response['identifier']     = $productVariant->identifier;
+				$response['name']     = $productVariant->name;
+				$response['priceInt'] = $productVariant->priceInt;
+				$response['price']    = CurrencyFactory::translate(18500);
+				$response['stock']    = $productVariant->stock;
+				$response['sku']      = $productVariant->sku;
+				$response['active']   = $productVariant->active;
+			}
+
+
+		}
+
+
+		return $response;
+
+	}
+
+	/**
+	 * @param   string  $variantList
+	 *
+	 *
+	 * @return array
+	 * @since 1.6
+	 */
+
+	public static function getVariantDefault(string $variantList): array
+	{
+
+		$default = array();
+
+		$productVariantsList = json_decode($variantList);
+
+		foreach ($productVariantsList as $productVariant)
+		{
+			if ($productVariant->default == "true")
+			{
+				$default = $productVariant->identifier;
+			}
+
+
+		}
+
+
+		return $default;
+
+
+	}
+
+
+
 
 	/**
 	 * @param $id

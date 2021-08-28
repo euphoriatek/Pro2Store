@@ -21,6 +21,8 @@ return [
 		// The function is executed before the template is rendered
 		'render' => function ($node, array $params) {
 
+			\Protostore\Language\LanguageFactory::load();
+
 			$product = ProductFactory::get(Utilities::getCurrentItemId());
 
 			if ($product->published == 0)
@@ -31,6 +33,12 @@ return [
 			{
 				return false;
 			}
+
+			$node->props['product_id']         = $product->id;
+			$node->props['variants']           = $product->variants;
+			$node->props['variantLabels']      = $product->variantLabels;
+			$node->props['variantDefault']     = $product->variantDefault;
+//			$node->props['unavailableMessage'] = \Joomla\CMS\Language\Text::_('COM_PROTOSTORE_VARIANT_UNAVAILABLE');
 
 		},
 

@@ -18,41 +18,46 @@ use Protostore\Utilities\Utilities;
 
 return [
 
-    // Define transforms for the element node
-    'transforms' => [
+	// Define transforms for the element node
+	'transforms' => [
 
 
-        // The function is executed before the template is rendered
-        'render' => function ($node, array $params) {
+		// The function is executed before the template is rendered
+		'render' => function ($node, array $params) {
 
-            $node->props['item_id'] = Utilities::getCurrentItemId();
-
-//            $product = new Product($node->props['item_id']);
-            $product = ProductFactory::get($node->props['item_id']);
-
-            if ($product->published == 0) {
-                return false;
-            }
-
-            // check if we are managing stock on this product
-            // set 'instock' to true even if we are not managing stock
-            $node->props['instock'] = true;
-            if ($product->manage_stock == 1) {
-                // if we have stock... fine...
-                if ($product->stock > 0) {
-
-                } else {
-                    $node->props['instock'] = false;
-                }
-            }
+			$node->props['item_id'] = Utilities::getCurrentItemId();
 
 
-            $node->props['checkoutlink'] = Route::_('index.php?Itemid=');
-            $node->props['baseUrl'] = Uri::base();
+			$product = ProductFactory::get($node->props['item_id']);
 
-        },
+			if ($product->published == 0)
+			{
+				return false;
+			}
 
-    ]
+			// check if we are managing stock on this product
+			// set 'instock' to true even if we are not managing stock
+			$node->props['instock'] = true;
+			if ($product->manage_stock == 1)
+			{
+				// if we have stock... fine...
+				if ($product->stock > 0)
+				{
+
+				}
+				else
+				{
+					$node->props['instock'] = false;
+				}
+			}
+
+
+			$node->props['checkoutlink'] = Route::_('index.php?Itemid=');
+			$node->props['baseUrl']      = Uri::base();
+
+		},
+
+	]
 
 ];
 

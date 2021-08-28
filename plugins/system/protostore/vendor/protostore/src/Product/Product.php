@@ -67,6 +67,7 @@ class Product
 	public $variants;
 	public $variantLabels;
 	public $variantList;
+	public $variantDefault;
 
 	// files
 	public $files;
@@ -156,9 +157,10 @@ class Product
 
 		if ($variantData)
 		{
-			$this->variants      = $variantData->variants;
-			$this->variantLabels = $variantData->variantLabels;
-			$this->variantList   = $variantData->variantList;
+			$this->variants          = $variantData->variants;
+			$this->variantLabels     = $variantData->variantLabels;
+			$this->variantList       = $variantData->variantList;
+			$this->variantDefault    = $variantData->default;
 		}
 
 		//get files data if digital
