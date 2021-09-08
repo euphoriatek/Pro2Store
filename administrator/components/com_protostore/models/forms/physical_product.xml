@@ -2,48 +2,48 @@
 <form>
     <fieldset name="details"  addfieldpath="/administrator/components/com_protostore/models/fields">
 
-        <field name="title" type="title" default="title" label="Title" description="" size="10"
+        <field name="title" type="title" default="title" label="COM_PROTOSTORE_ADD_PRODUCT_PRODUCT_TITLE" description="" size="10"
                class="uk-input uk-form-width-medium uk-form-large"/>
 
-        <field name="base_price" type="baseprice" default="0" label="Base Price" description=""/>
+        <field name="base_price" type="baseprice" default="0" label="COM_PROTOSTORE_ADD_PRODUCT_BASE_PRICE" description=""/>
 
-        <field name="sku" type="text" default="0" label="SKU" description="" size="10"
+        <field name="sku" type="text" default="0" label="COM_PROTOSTORE_ADD_PRODUCT_SKU_LABEL" description="" size="10"
                class="uk-input uk-form-width-medium uk-form-large" filter="int" />
 
-        <field name="manage_stock" type="pinputswitch" default="0" label="Manage Stock" description=""
+        <field name="manage_stock" type="pinputswitch" default="0" label="COM_PROTOSTORE_ADD_PRODUCT_INVENTORY_MANAGE_STOCK_LABEL" description=""
                class="btn-group btn-group-yesno">
             <option value="1">JYES</option>
             <option value="0">JNO</option>
         </field>
 
-        <field name="stock" type="stock" default="0" label="Stock" description="" size="10"
+        <field name="stock" type="stock" default="0" label="COM_PROTOSTORE_ADD_PRODUCT_INVENTORY_CURRENT_STOCK_LABEL" description="" size="10"
                class="uk-input uk-form-width-medium uk-form-large" />
 
-        <field name="short_description" type="editor" label="Short Description" description="" width="" height="100px"
+        <field name="short_description" type="editor" label="COM_PROTOSTORE_ADD_PRODUCT_SHORT_DESCRIPTION_LABEL" description="" width="" height="100px"
                filter="safehtml"/>
 
-        <field name="long_description" type="editor" label="Long Description" description="" width="" height="100px"
+        <field name="long_description" type="editor" label="COM_PROTOSTORE_ADD_PRODUCT_LONG_DESCRIPTION_LABEL" description="" width="" height="100px"
                filter="safehtml"/>
 
-        <field name="teaserimage" type="media" directory="" preview="true" class="uk-input uk-form-width-small non-uk-input"  />
+        <field name="teaserimage" type="media" directory="" preview="true" class="uk-input uk-form-width-small non-uk-input" label="COM_PROTOSTORE_ADD_PRODUCT_INTRO_IMAGE_LABEL"  />
 
-        <field name="fullimage" type="media" directory="" preview="true" class="uk-input uk-form-width-small non-uk-input"  />
+        <field name="fullimage" type="media" directory="" preview="true" class="uk-input uk-form-width-small non-uk-input" label="COM_PROTOSTORE_ADD_PRODUCT_FULL_IMAGE_LABEL" />
 
-        <field name="shipping_mode" type="list" default="" label="Shipping Mode" description="">
+        <field name="shipping_mode" type="list" default="" label="COM_PROTOSTORE_ADD_PRODUCT_SHIPPING_MODE" description="">
             <option value="">COM_PROTOSTORE_SHIPPING_NO_SHIPPING_FEE</option>
             <option value="flat">COM_PROTOSTORE_ADD_PRODUCT_SHIPPING_MODE_FLAT_RATE</option>
             <option value="weight">COM_PROTOSTORE_ADD_PRODUCT_SHIPPING_MODE_BY_WEIGHT</option>
         </field>
-        <field name="flatfee" type="flatfee" default="0" label="Flat Fee" description="" size="10"
+        <field name="flatfee" type="flatfee" default="0" label="COM_PROTOSTORE_ADD_PRODUCT_SHIPPING_FLAT_FEE" description="" size="10"
                class="uk-input uk-form-width-medium uk-form-large" />
 
-        <field name="state" type="pinputswitch" default="0" label="Published" description=""
+        <field name="state" type="pinputswitch" default="0" label="COM_PROTOSTORE_ADD_PRODUCT_PUBLISHED" description=""
                class="btn-group btn-group-yesno">
             <option value="1">JYES</option>
             <option value="0">JNO</option>
         </field>
 
-        <field name="featured" type="pinputswitch" default="0" label="Featured" description=""
+        <field name="featured" type="pinputswitch" default="0" label="COM_PROTOSTORE_ADD_PRODUCT_ORGANISATION_FEATURED_LABEL" description=""
                class="btn-group btn-group-yesno">
             <option value="1">JYES</option>
             <option value="0">JNO</option>
@@ -54,28 +54,28 @@
                description="JFIELD_ACCESS_DESC"
                class="span12 small"/>
 
-        <field name="category" type="CategoryEdit" extension="com_content" label="Select a category" description="" class="uk-select" required="true"/>
+        <field name="category" type="CategoryEdit" extension="com_content" label="COM_PROTOSTORE_ADD_PRODUCT_ORGANISATION_CATEGORY_SELECT_LABEL" description="" class="uk-select" required="true"/>
 
         <field name="tags" type="tags" label="JTAG" description="JTAG_DESC" mode="ajax" class="inputbox span12 small" multiple="true"/>
 
-        <field name="publish_up_date" type="calendar" default="now" label="Select a date" description=""
+        <field name="publish_up_date" type="calendar" default="now" label="COM_PROTOSTORE_ADD_PRODUCT_PUBLISH_DATE_AND_TIME" description=""
                class="input-medium uk-input non-uk-input" required="true" filter="user_utc" format="%Y-%m-%d %H:%M:%S"
                singleheader="true" showtime="true" timeformat="12" todaybutton="true" weeknumbers="true"
                filltable="true" minyear="-3" maxyear="5" />
 
-        <field name="taxable" type="pinputswitch" default="0" label="Apply Tax" description=""
+        <field name="taxable" type="pinputswitch" default="0" label="COM_PROTOSTORE_ADD_PRODUCT_APPLY_TAX" description=""
                class="btn-group btn-group-yesno">
             <option value="1">JYES</option>
             <option value="0">JNO</option>
         </field>
 
-        <field name="show_discount" type="pinputswitch" default="0" label="Apply Discount" description=""
+        <field name="show_discount" type="pinputswitch" default="0" label="COM_PROTOSTORE_ADD_PRODUCT_APPLY_DISCOUNT_LABEL" description=""
                class="btn-group btn-group-yesno">
             <option value="1">JYES</option>
             <option value="0">JNO</option>
         </field>
 
-        <field name="discount" type="discount" default="0" label="Discount" description="" size="10"
+        <field name="discount" type="discount" default="0" label="COM_PROTOSTORE_ADD_PRODUCT_DISCOUNT_LABEL" description="" size="10"
                class="uk-input uk-form-width-medium uk-form-large" />
 
         <field name="variants" type="variants" default="0" label="Product Variants" description="" size="10"

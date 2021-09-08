@@ -35,32 +35,30 @@ $content = $this->el('div', [
 
 ?>
 
-<script id="yps_product_id_data" type="application/json"><?= $props['product_id']; ?></script>
+<script id="yps_joomla_item_id_data" type="application/json"><?= $props['joomla_item_id']; ?></script>
 <script id="yps_variants_data" type="application/json"><?= $props['variants']; ?></script>
 <script id="yps_variantLabels_data" type="application/json"><?= $props['variantLabels']; ?></script>
 
 
-<?= $el($props, $attrs) // Output div tag                    ?>
+<?= $el($props, $attrs) // Output div tag                      ?>
 <div id="<?= $id; ?>">
-	<?= $content($props, $attrs) // Content div tag                    ?>
+	<?= $content($props, $attrs) // Content div tag                      ?>
+
+	<?php $variants = $props['variants']; ?>
+	<?php $variantLabels = $props['variantLabels']; ?>
+	<?php $variantDefault = $props['variantDefault']; ?>
 
 
-	<?php $variants = json_decode($props['variants']); ?>
-	<?php $variantLabels = json_decode($props['variantLabels']); ?>
-
-
-
-	<?php foreach ($variants as $key => $variant) : ?>
-
+	<?php foreach ($variants as $variant) : ?>
 
         <div class="uk-form-controls">
-            <label class="uk-form-label"><?= $variant; ?></label>
-            <select class="uk-select yps_variant" @change="recalc" >
+            <label class="uk-form-label"><?= $variant->name; ?></label>
+            <select class="uk-select yps_variant" @change="recalc">
 
-				<?php foreach ($variantLabels[$key] as $variantLabel) : ?>
-                    <option <?= ($props['variantDefault'][$key] == $variantLabel ? 'selected' : ''); ?>
-                            data-optionid="<?= $variant; ?>.<?= $variantLabel; ?>"><?= $variantLabel; ?>
-                    </option>
+				<?php foreach ($variantLabels as $label) : ?>
+					<?php if ($label->variant_id === $variant->id) : ?>
+                        <option <?= (in_array($label->id, $variantDefault,) ? 'selected': ''); ?> value="<?= $label->id; ?>"><?= $label->name; ?></option>
+					<?php endif; ?>
 				<?php endforeach; ?>
 
             </select>
@@ -77,7 +75,7 @@ $content = $this->el('div', [
     const <?= $id; ?> = {
         data() {
             return {
-                product_id: 0,
+                joomla_item_id: 0,
                 variants: [],
                 variantLabels: [],
                 selected: [],
@@ -88,10 +86,10 @@ $content = $this->el('div', [
 
             // set the data from the inline scripts
 
-            const product_id = document.getElementById('yps_product_id_data');
+            const joomla_item_id = document.getElementById('yps_joomla_item_id_data');
             try {
-                this.product_id = product_id.innerText;
-                // product_id.remove();
+                this.joomla_item_id = joomla_item_id.innerText;
+                // joomla_item_id.remove();
             } catch (err) {
             }
             const variants = document.getElementById('yps_variants_data');
@@ -127,12 +125,15 @@ $content = $this->el('div', [
                 this.selected = selected;
 
                 const params = {
-                    'product_id': this.product_id,
+                    'joomla_item_id': this.joomla_item_id,
                     'selected': this.selected
-
                 };
 
-                const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=product.processVariants&format=raw", {
+                /**
+                 * use this to simply see if the current selection is active... leave the price calculations to the Total Element
+                 */
+
+                const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=product.checkVariantAvailability&format=raw", {
                     method: 'POST',
                     mode: 'cors',
                     cache: 'no-cache',
@@ -153,15 +154,7 @@ $content = $this->el('div', [
                     if (response.data.active) {
                         this.unavailableMessage = false;
                     } else {
-
                         this.unavailableMessage = true;
-
-                        // UIkit.notification({
-                        //     message: 'There was an error.',
-                        //     status: 'danger',
-                        //     pos: 'top-center',
-                        //     timeout: 5000
-                        // });
                     }
                 }
 

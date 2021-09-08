@@ -984,7 +984,7 @@ class CartFactory
 	 */
 
 
-	public static function setCartAddress($address_id, $type)
+	public static function setCartAddress(int $address_id, string $type): bool
 	{
 
 
@@ -1027,6 +1027,8 @@ class CartFactory
 				return false;
 
 		}
+
+		return false;
 
 	}
 
@@ -1097,6 +1099,7 @@ class CartFactory
 	 *
 	 * Returns the grand total for any given cart as an integer
 	 * (Moved from Total in 1.6)
+	 *
 	 * @return int
 	 *
 	 * @since 1.6

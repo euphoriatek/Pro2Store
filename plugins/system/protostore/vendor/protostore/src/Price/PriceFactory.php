@@ -10,15 +10,16 @@
 namespace Protostore\Price;
 defined('_JEXEC') or die('Restricted access');
 
-
-use Brick\Money\Exception\UnknownCurrencyException;
+use Joomla\CMS\Factory;
 use Joomla\Input\Input;
+
 use Protostore\Product\Product;
 use Protostore\Product\ProductFactory;
 use Protostore\Productoption\ProductoptionFactory;
 use Protostore\Currency\CurrencyFactory;
 use Protostore\Utilities\Utilities;
 
+use Brick\Money\Exception\UnknownCurrencyException;
 
 class PriceFactory
 {
@@ -28,30 +29,78 @@ class PriceFactory
 	 * @param   Input  $data
 	 * ** use json magic method to retrieve input data
 	 *
+	 *                      Input contains:
+	 *
+	 *                      joomla_item_id
+	 *                      selectedVariants
+	 *                      multiplier
+	 *
+	 *                      todo - what about discounts?
+	 *
 	 * @return Price
 	 *
 	 * @throws UnknownCurrencyException
 	 * @since 1.6
 	 */
 
-	public static function calculatePriceFromInputData(Input $data): Price
+	public static function calculatePriceFromInputData(Input $data): ?Price
 	{
 
+		// init
 		$price = array();
 
-		$product_id = $data->json->getInt('itemid');
-		$selected   = $data->json->getString('selectedVariants');
-		$multiplier   = $data->json->getInt('multiplier');
+		// get post data (using json magic)
+		$joomla_item_id = $data->json->getInt('joomla_item_id', false);
 
-		$product = ProductFactory::get($product_id);
+		// make sure there's an actual product here.
+		if(!$joomla_item_id) {
+			return null;
+		}
 
-		$variantsList = $product->variantList;
+		$selected       = $data->json->get('selectedVariants', false);
+		$multiplier     = $data->json->getInt('multiplier', 1);
 
-		$selectedVariant = ProductFactory::getSelectedVariant($product->id, $selected);
+
+		// now check we even have variants selected
+
+		if ($selected)
+		{
 
 
-		$price['int'] = ($selectedVariant['priceInt'] * $multiplier);
-		$price['string'] = CurrencyFactory::translate(($selectedVariant['priceInt'] * $multiplier));
+			// make a comma seperated string from the selected Ids, to allow database lookup
+			$selected = implode(',', $selected);
+
+
+			// query the database and get the row for this selected variant
+			$db    = Factory::getDbo();
+			$query = $db->getQuery(true);
+
+			$query->select('*');
+			$query->from($db->quoteName('#__protostore_product_variant_data'));
+			$query->where($db->quoteName('label_ids') . ' = ' . $db->quote($selected));
+			// not totally needed, but why not...
+			$query->where($db->quoteName('product_id') . ' = ' . $db->quote($joomla_item_id));
+
+			$db->setQuery($query);
+
+			$selectedVariant = $db->loadObject();
+
+
+			// process the data and form it to the Price Object
+			$price['int']    = ($selectedVariant->price * $multiplier);
+			$price['string'] = CurrencyFactory::translate(($selectedVariant->price * $multiplier));
+
+		}
+		else
+		{
+
+			$product = ProductFactory::get($joomla_item_id);
+
+			$price['int']    = ($product->base_price * $multiplier);
+			$price['string'] = CurrencyFactory::translate(($product->base_price * $multiplier));
+
+
+		}
 
 		return new Price($price);
 

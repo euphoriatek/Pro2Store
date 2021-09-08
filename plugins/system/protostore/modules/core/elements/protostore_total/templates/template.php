@@ -35,6 +35,7 @@ $el = $this->el($props['title_element'], [
 <?= $el->end(); ?>
 
 <script>
+
     window.addEventListener('load', function () {
         const <?= $id; ?> = {
             data() {
@@ -198,7 +199,7 @@ $el = $this->el($props['title_element'], [
                     console.log(this.selected)
 
                     var params = {
-                        'itemid': this.itemid,
+                        'joomla_item_id': this.itemid,
                         'selectedVariants': this.selected,
                         'multiplier': this.multiplier
                     };

@@ -11,24 +11,28 @@
 
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\Input\Input;
 use Protostore\Cart\CartFactory;
 
 
-class protostoreTask_setbillingasshipping
+class protostoreTask_assignaddress
 {
 
 	/**
-	 * @param $data
+	 * @param   Input  $data
 	 *
 	 * @return bool
 	 *
 	 * @since 1.6
 	 */
-	public function getResponse($data)
+	public function getResponse(Input $data): bool
 	{
 
+		$address_id	= $data->json->getInt('shipping_address_id');
+		$type	= $data->json->getString('shipping_type');
 
-		return CartFactory::setBillingAsShipping();
+
+		return CartFactory::setCartAddress($address_id, $type);
 	}
 
 }

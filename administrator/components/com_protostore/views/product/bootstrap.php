@@ -21,6 +21,7 @@ use Protostore\Render\Render;
 use Protostore\Product\ProductFactory;
 use Protostore\Utilities\Utilities;
 use Protostore\Currency\CurrencyFactory;
+use Protostore\Config\ConfigFactory;
 
 /**
  *
@@ -31,8 +32,6 @@ class bootstrap extends AdminModel
 
 	/**
 	 * @var array $vars
-
-
 	 * @since 1.6
 	 */
 	public $vars;
@@ -52,7 +51,7 @@ class bootstrap extends AdminModel
 
 		$this->init($id);
 
-		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/'.self::$view.'/'.self::$view.'.php', $this->vars);
+		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/' . self::$view . '/' . self::$view . '.php', $this->vars);
 
 
 	}
@@ -61,13 +60,16 @@ class bootstrap extends AdminModel
 	 *
 	 * @return array
 	 *
-	 * @since 2.0
+	 * @since 1.6
 	 */
 
 	private function init($id)
 	{
 
+		$config = ConfigFactory::get();
+
 		$this->vars['item']              = false;
+		$this->vars['default_category']  = $config->get('defaultproductcategory');
 		$this->vars['available_options'] = ProductFactory::getOptionList();
 		$this->vars['available_tags']    = ProductFactory::getAvailableTags();
 //		$this->vars['custom_fields']     = ProductFactory::getAvailableCustomFields($id, $this->vars['item']->joomlaItem->catid);
@@ -76,7 +78,7 @@ class bootstrap extends AdminModel
 		{
 			$this->vars['item']           = $this->getTheItem($id);
 			$this->vars['available_tags'] = ProductFactory::getAvailableTags($id);
-			$this->vars['custom_fields']     = ProductFactory::getAvailableCustomFields($id, $this->vars['item']->joomlaItem->catid);
+			$this->vars['custom_fields']  = ProductFactory::getAvailableCustomFields($id, $this->vars['item']->joomlaItem->catid);
 		}
 
 
@@ -93,7 +95,7 @@ class bootstrap extends AdminModel
 	 *
 	 * @return Product|null
 	 *
-	 * @since 2.0
+	 * @since 1.6
 	 */
 
 	public function getTheItem($id)
@@ -107,7 +109,7 @@ class bootstrap extends AdminModel
 	 *
 	 * @return bool|JForm
 	 *
-	 * @since version
+	 * @since 1.6
 	 */
 
 	public function getForm($data = array(), $loadData = true)
@@ -179,7 +181,7 @@ class bootstrap extends AdminModel
 	/**
 	 *
 	 *
-	 * @since version
+	 * @since 1.6
 	 */
 
 	private function addScripts()
@@ -188,7 +190,7 @@ class bootstrap extends AdminModel
 		$doc = Factory::getDocument();
 
 		// include the vue script - defer
-		$doc->addScript('../media/com_protostore/js/vue/'.self::$view.'/'.self::$view.'.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
+		$doc->addScript('../media/com_protostore/js/vue/' . self::$view . '/' . self::$view . '.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
 
 
 		// include prime
@@ -235,9 +237,10 @@ class bootstrap extends AdminModel
 
 		}
 
-		$doc->addCustomTag(' <script id="available_custom_fields_data" type="application/json">' . json_encode($this->vars['custom_fields']) . '</script>');
+//		$doc->addCustomTag(' <script id="available_custom_fields_data" type="application/json">' . json_encode($this->vars['custom_fields']) . '</script>');
 		$doc->addCustomTag(' <script id="available_options_data" type="application/json">' . json_encode($this->vars['available_options']) . '</script>');
 		$doc->addCustomTag(' <script id="available_tags_data" type="application/json">' . json_encode($this->vars['available_tags']) . '</script>');
+		$doc->addCustomTag(' <script id="default_category_data" type="application/json">' . $this->vars['default_category'] . '</script>');
 
 
 	}
@@ -245,7 +248,7 @@ class bootstrap extends AdminModel
 	/**
 	 *
 	 *
-	 * @since version
+	 * @since 1.6
 	 */
 
 	private function addStylesheets()

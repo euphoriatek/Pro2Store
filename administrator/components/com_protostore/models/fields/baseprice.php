@@ -38,7 +38,7 @@ class JFormFieldBaseprice extends JFormField
 		$html = array();
 
 
-		$html[] = '<p-inputnumber mode="currency" :currency="p2s_currency.iso" :locale="p2s_locale" name="' . $this->name . '" v-model="form.' . $this->id . '" id="' . $this->id . '">';
+		$html[] = '<p-inputnumber @input="getSellPrice()" mode="currency" :currency="p2s_currency.iso" :locale="p2s_locale" name="' . $this->name . '" v-model="form.' . $this->id . '" id="' . $this->id . '">';
 		$html[] = '</p-inputnumber> ';
 
 		return implode('', $html);

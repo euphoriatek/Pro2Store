@@ -10,6 +10,8 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+
 /**
  * Clicks field.
  *
@@ -28,7 +30,7 @@ class JFormFieldFlatfee extends JFormField
 
 	public function getLabel()
 	{
-		return '<div  v-show="form.jform_shipping_mode == \'flat\'">' . $this->element['label'] . '</div>';
+		return '<div  v-show="form.jform_shipping_mode == \'flat\'">' . Text::_($this->element['label']) . '</div>';
 	}
 
 	/**

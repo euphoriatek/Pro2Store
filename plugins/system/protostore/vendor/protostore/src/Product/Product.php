@@ -65,7 +65,6 @@ class Product
 
 	// Variants
 	public $variants;
-	public $variantLabels;
 	public $variantList;
 	public $variantDefault;
 
@@ -153,15 +152,16 @@ class Product
 		$this->link          = ProductFactory::getRoute('item', $this->joomla_item_id, $this->joomlaItem->catid);
 		$this->category_link = ProductFactory::getRoute('category', $this->joomla_item_id, $this->joomlaItem->catid);
 
-		$variantData = ProductFactory::getVariantData($this->id);
+		$variantData = ProductFactory::getVariantData($this->joomla_item_id);
+
 
 		if ($variantData)
 		{
 			$this->variants          = $variantData->variants;
-			$this->variantLabels     = $variantData->variantLabels;
 			$this->variantList       = $variantData->variantList;
 			$this->variantDefault    = $variantData->default;
 		}
+
 
 		//get files data if digital
 		if ($this->product_type == 2)

@@ -10,6 +10,7 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
 
 class JFormFieldStock extends JFormField
 {
@@ -28,7 +29,7 @@ class JFormFieldStock extends JFormField
 		$html = array();
 
 		$html[] = '<span v-if="form.jform_manage_stock">';
-		$html[] = $this->element['label'];
+		$html[] = Text::_($this->element['label']);
 		$html[] = '</span>';
 
 

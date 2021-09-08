@@ -11,24 +11,26 @@
 
 defined('_JEXEC') or die('Restricted access');
 
-use Protostore\Cart\CartFactory;
+use Protostore\Product\ProductFactory;
+use Joomla\Input\Input;
 
-
-class protostoreTask_setbillingasshipping
+class protostoreTask_refreshVariants
 {
 
 	/**
-	 * @param $data
+	 * @param   Input  $data
 	 *
-	 * @return bool
+	 * @return array
 	 *
 	 * @since 1.6
 	 */
-	public function getResponse($data)
+	public function getResponse(Input $data): array
 	{
 
 
-		return CartFactory::setBillingAsShipping();
+		return ProductFactory::getRefreshedVariantData($data);
+
+
 	}
 
 }

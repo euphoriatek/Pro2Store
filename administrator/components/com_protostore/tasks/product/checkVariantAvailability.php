@@ -11,18 +11,21 @@
 
 defined('_JEXEC') or die('Restricted access');
 
+use Brick\Money\Exception\UnknownCurrencyException;
 use Joomla\Input\Input;
 use Protostore\Product\ProductFactory;
 
-class protostoreTask_processVariants
+class protostoreTask_checkVariantAvailability
 {
 
-	public function getResponse(Input $data)
+	/**
+	 * @since 1.6
+	 */
+	public function getResponse(Input $data): array
 	{
 
-		// init
 
-		return ProductFactory::processVariants($data->json->getInt('product_id'), $data->json->getString('selected'));
+		return ProductFactory::checkVariantAvailability($data->json->getInt('joomla_item_id'), $data->json->getString('selected'));
 	}
 
 }

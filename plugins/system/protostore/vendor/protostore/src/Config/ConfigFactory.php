@@ -13,7 +13,8 @@ namespace Protostore\Config;
 defined('_JEXEC') or die('Restricted access');
 
 
-use Joomla\CMS\Factory;
+use Joomla\CMS\Component\ComponentHelper;
+
 
 use Exception;
 
@@ -39,8 +40,9 @@ class ConfigFactory
 
 	public static function get()
 	{
-		$app = Factory::getApplication();
-		return $app->getParams('com_protostore');
+
+		return ComponentHelper::getParams('com_protostore');
+
 	}
 
 

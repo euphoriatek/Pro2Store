@@ -11,6 +11,7 @@
 namespace Protostore\Product;
 
 use Exception;
+use stdClass;
 
 defined('_JEXEC') or die('Restricted access');
 
@@ -18,28 +19,28 @@ defined('_JEXEC') or die('Restricted access');
 class Variant
 {
 
+
 	/**
-	 * @var string $variants
+	 * @var array $variants
 	 * @since 1.6
 	 */
+
 	public $variants;
 
-	/**
-	 * @var string $variantLabels
-	 * @since 1.6
-	 */
-	public $variantLabels;
 
 	/**
-	 * @var string $variantList
+	 * @var array $variantList
 	 * @since 1.6
 	 */
+
 	public $variantList;
+
 
 	/**
 	 * @var array $default
 	 * @since 1.6
 	 */
+
 	public $default;
 
 
@@ -89,9 +90,10 @@ class Variant
 	private function init()
 	{
 
-		$this->variantList = ProductFactory::retrieveVariantPrices($this->variantList);
-		$this->default = ProductFactory::getVariantDefault($this->variantList);
 
+		$this->variants    = ProductFactory::attachVariantLabels($this->variants);
+		$this->variantList = ProductFactory::processVariantData($this->variantList);
+		$this->default     = ProductFactory::getVariantDefault($this->variantList);
 
 
 	}

@@ -10,10 +10,14 @@
 
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Date\Date;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
 use Protostore\Render\Render;
+use Protostore\Order\OrderFactory;
+use Protostore\Dashboard\DashboardFactory;
+use Protostore\Currency\CurrencyFactory;
 use Protostore\Utilities\Utilities;
 
 
@@ -28,12 +32,12 @@ class bootstrap
 
 	public function __construct()
 	{
+		$this->init();
+		$this->setVars();
+		$this->addScripts();
+		$this->addStylesheets();
+		$this->addTranslationStrings();
 
-
-		$input = Factory::getApplication()->input;
-		$id    = $input->get('id');
-
-		$this->init($id);
 
 		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/dashboard/dashboard.php', $this->vars);
 
@@ -47,27 +51,49 @@ class bootstrap
 	 * @since 1.6
 	 */
 
-	private function init($id)
+	private function init()
 	{
 
-		$this->vars = array();
-		$this->addScripts();
-		$this->addStylesheets();
-		$this->addTranslationStrings();
+
+
 
 	}
 
 	/**
 	 *
-	 * @return array|false
+	 * @return void
 	 *
 	 * @since 1.6
 	 */
 
-	public function getTheItem($id)
+	public function setVars(): void
 	{
 
+		$this->vars['currencysymbol'] = CurrencyFactory::getDefault()->currencysymbol;
+		$this->vars['orders'] = OrderFactory::getList(5);
+		$this->vars['now'] = new Date('now');
+		$this->vars['list_limit'] = Factory::getConfig()->get('list_limit', '25');
+
+
+		// Bestsellers list
+		$this->vars['bestSellers'] = DashboardFactory::getBestsellers();
+
+		// order stats grid
+		$this->vars['orderStats'] = DashboardFactory::getOrderStats();
+
+
+		// Sales Chart
+		$this->vars['months'] = DashboardFactory::getMonths();
+		$this->vars['monthsSales'] = DashboardFactory::getMonthsSales();
+
+		// Donut chart
+		$donutData = DashboardFactory::getDataForCategoryDonut();
+		$this->vars['categories'] = $donutData['categories'];
+		$this->vars['categorySales'] = $donutData['categorySales'];
+		$this->vars['colours'] = $donutData['colours'];
+
 	}
+
 
 
 	/**
@@ -84,6 +110,8 @@ class bootstrap
 		// include the vue script - defer
 		$doc->addScript('/media/com_protostore/js/vue/dashboard/dashboard.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
 
+
+		$doc->addCustomTag('<script id="orders_data" type="application/json">' . json_encode($this->vars['orders']) . '</script>');
 
 		// include prime
 //		Utilities::includePrime(array('chart'));

@@ -13,6 +13,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 
 use Protostore\Cart\CartFactory;
+use Protostore\Config\ConfigFactory;
 use Protostore\Zone\Zone;
 
 
@@ -59,6 +60,11 @@ return [
 					return false;
 				}
 
+			} else {
+				$params = ConfigFactory::get();
+				if ($params->get('address_show') == '0') {
+					return false;
+				}
 			}
 
 			$node->props['baseUrl']   = Uri::base();

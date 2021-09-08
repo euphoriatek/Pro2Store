@@ -50,7 +50,7 @@ class JFormFieldPinputswitch extends JFormField
 		$html[] =  Text::_($this->element['label']);
 		$html[] = '</div>';
 		$html[] = '<div class="uk-width-3-4">';
-		$html[] = '<p-inputswitch v-model="form.' . $this->id . '" id="' . $this->id . '" @change="logIt"></p-inputswitch>';
+		$html[] = '<p-inputswitch @change="getSellPrice()" v-model="form.' . $this->id . '" id="' . $this->id . '" @change="logIt"></p-inputswitch>';
 		$html[] = '</div>';
 		$html[] = '</div>';
 

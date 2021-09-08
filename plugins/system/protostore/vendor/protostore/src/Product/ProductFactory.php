@@ -167,7 +167,6 @@ class ProductFactory
 
 		// get current product object
 		$currentProduct = self::get($data->json->getInt('itemid'));
-//		return $data->json->getString('tags', json_encode($currentProduct->tags));
 
 		// set up Joomla Item:
 
@@ -240,10 +239,9 @@ class ProductFactory
 		$currentProduct->discount_type = $data->json->getString('discount_type', $currentProduct->discount_type);
 		$currentProduct->tags          = $data->json->getString('tags');
 
-		$currentProduct->options       = $data->json->getString('options', $currentProduct->options);
-		$currentProduct->variants      = $data->json->getString('variants', $currentProduct->variants);
-		$currentProduct->variantLabels = $data->json->getString('variantLabels', $currentProduct->variantLabels);
-		$currentProduct->variantList   = $data->json->getString('variantList', $currentProduct->variantList);
+		$currentProduct->options     = $data->json->getString('options', $currentProduct->options);
+		$currentProduct->variants    = $data->json->get('variants', $currentProduct->variants, 'ARRAY');
+		$currentProduct->variantList = $data->json->get('variantList', $currentProduct->variantList, 'ARRAY');
 
 
 		if (self::commitToDatabase($currentProduct))
@@ -445,10 +443,6 @@ class ProductFactory
 
 			}
 
-			// now do options
-
-//			self::commitOptions($product);
-
 
 			// now do TAGS
 
@@ -480,119 +474,7 @@ class ProductFactory
 
 
 	/**
-	 * @param $options
-	 * @param $product
-	 *
-	 *
-	 * @throws Exception
-	 * @since 1.6
-	 */
-
-	private static function commitOptions($product)
-	{
-
-		$db = Factory::getDbo();
-
-		$product_options = json_decode($product->options);
-
-		$i = 0;
-
-		//now reinsert the new ones
-		foreach ($product_options as $option)
-		{
-
-
-			//first check if the option exists
-			$query = $db->getQuery(true);
-
-			$query->select('*');
-			$query->from($db->quoteName('#__protostore_product_option_values'));
-			$query->where($db->quoteName('id') . ' = ' . $db->quote($option->id));
-
-			$db->setQuery($query);
-
-			$option_exists = $db->loadObject();
-
-
-			if ($option_exists)
-			{
-
-				if ($option->modifiervalueFloat)
-				{
-
-					if ($option->modifiertype == 'perc')
-					{
-						$modifiervalue = $option->modifiervalueFloat;
-					}
-					else
-					{
-
-						$modifiervalue = CurrencyFactory::toInt($option->modifiervalueFloat);
-					}
-
-				}
-				else
-				{
-					$modifiervalue = 0;
-				}
-				//run update
-				$query = $db->getQuery(true);
-
-				$fields = array(
-					$db->quoteName('optionname') . ' = ' . $db->quote($option->optionname),
-					$db->quoteName('optiontype') . ' = ' . $db->quote($option->optiontype),
-					$db->quoteName('modifier') . ' = ' . $db->quote($option->modifier),
-					$db->quoteName('modifiertype') . ' = ' . $db->quote($option->modifiertype),
-					$db->quoteName('modifiervalue') . ' = ' . $db->quote($modifiervalue),
-					$db->quoteName('optionsku') . ' = ' . $db->quote($option->optionsku),
-					$db->quoteName('ordering') . ' = ' . $db->quote($i)
-				);
-
-				$conditions = array(
-					$db->quoteName('id') . ' = ' . $db->quote($option->id),
-				);
-
-				$query->update($db->quoteName('#__protostore_product_option_values'))->set($fields)->where($conditions);
-
-				$db->setQuery($query);
-
-				$db->execute();
-			}
-			else
-			{
-				//run insert
-				$object               = new stdClass();
-				$object->id           = 0;
-				$object->product_id   = $product->id;
-				$object->optiontype   = $option->optiontype;
-				$object->optionname   = $option->optionname;
-				$object->modifier     = $option->modifier;
-				$object->modifiertype = $option->modifiertype;
-				if ($option->modifiertype == 'perc')
-				{
-					$object->modifiervalue = $option->modifiervalueFloat;
-				}
-				else
-				{
-
-					$object->modifiervalue = CurrencyFactory::toInt($option->modifiervalueFloat);
-				}
-				$object->optionsku = $option->optionsku;
-				$object->ordering  = $i;
-
-				$db->insertObject('#__protostore_product_option_values', $object);
-			}
-			$i++;
-
-
-		}
-
-
-	}
-
-
-	/**
-	 * @param $product
+	 * @param   Product  $product
 	 *
 	 * @return bool
 	 *
@@ -600,49 +482,116 @@ class ProductFactory
 	 * @since 1.6
 	 */
 
-	public static function commitVariants($product): bool
+	public static function commitVariants(Product $product): bool
 	{
+
+
+		// init $variantIds - this array holds the ids for all the list variants in the current request - used for deleting removed variants.
+		$variantIds = array();
 
 		$db = Factory::getDbo();
 
-		// check if we already have variants for this product
+		foreach ($product->variants as $variant)
+		{
+			// get the id for removal function later.
+			$variantIds[] = $variant['id'];
+
+			// check if this variant exists
+
+			$query = $db->getQuery(true);
+
+			$query->select('*');
+			$query->from($db->quoteName('#__protostore_product_variant'));
+			$query->where($db->quoteName('id') . ' = ' . $db->quote($variant['id']));
+
+			$db->setQuery($query);
+
+			$result = $db->loadObject();
+
+			$object = new stdClass();
+			if ($result)
+			{
+				//exists... update
+
+				$object->id         = $variant['id'];
+				$object->product_id = $product->joomla_item_id;
+				$object->name       = $variant['name'];
+
+				$db->updateObject('#__protostore_product_variant', $object, 'id');
+
+			}
+			else
+			{
+				// does not exist... insert
+				$object->id         = 0;
+				$object->product_id = $product->joomla_item_id;
+				$object->name       = $variant['name'];
+
+				$db->insertObject('#__protostore_product_variant', $object);
+
+
+			}
+			// now labels.
+
+			self::saveLabels($variant);
+		}
+
+
+		// now delete all removed variants
+		// create an array of all the variant ids from the request ^^ (these are the ones that now exist on the product) - $variantIds
+		// get all entries for this product in an objectlist
+
 		$query = $db->getQuery(true);
 
 		$query->select('*');
 		$query->from($db->quoteName('#__protostore_product_variant'));
-		$query->where($db->quoteName('product_id') . ' = ' . $db->quote($product->id));
+		$query->where($db->quoteName('product_id') . ' = ' . $db->quote($product->joomla_item_id));
+
 		$db->setQuery($query);
 
-		$currentVariants = $db->loadObject();
+		$currentVariantList = $db->loadObjectList();
 
-		if ($currentVariants)
+		// iterate them and check if the id from the table is in the array
+
+		foreach ($currentVariantList as $currentVariant)
 		{
-			// if we have variants already,  update
 
-			$currentVariants->variants      = $product->variants;
-			$currentVariants->variantLabels = $product->variantLabels;
-			$currentVariants->variantList   = self::processVariantPrices($product);
+			if (in_array($currentVariant->id, $variantIds))
+			{
+				// if so, continue
+				continue;
+			}
+			else
+			{
 
-			$db->updateObject('#__protostore_product_variant', $currentVariants, 'product_id');
+				// if not, delete
+				$query      = $db->getQuery(true);
+				$conditions = array(
+					$db->quoteName('id') . ' = ' . $db->quote($currentVariant->id)
+				);
+				$query->delete($db->quoteName('#__protostore_product_variant'));
+				$query->where($conditions);
+				$db->setQuery($query);
+				$db->execute();
 
-			return true;
+				//now remove labels too
+				$query      = $db->getQuery(true);
+				$conditions = array(
+					$db->quoteName('variant_id') . ' = ' . $db->quote($currentVariant->id)
+				);
+				$query->delete($db->quoteName('#rdlk6_protostore_product_variant_label'));
+				$query->where($conditions);
+				$db->setQuery($query);
+				$db->execute();
+
+
+			}
 
 		}
-		else
-		{
-			// if not, then insert new ones
 
-			$object                = new stdClass();
-			$object->product_id    = $product->id;
-			$object->variants      = $product->variants;
-			$object->variantLabels = $product->variantLabels;
-			$object->variantList   = $product->variantList;
 
-			$db->insertObject('#__protostore_product_variant', $object);
+		return true;
 
-			return true;
-
-		}
 
 	}
 
@@ -1048,18 +997,18 @@ class ProductFactory
 
 
 	/**
-	 * @param $id
+	 * @param   int  $joomla_item_id
 	 *
-	 * @return mixed
+	 * @return int
 	 *
 	 * @since 1.6
 	 */
 
-	public static function togglePublished($id)
+	public static function togglePublished(int $joomla_item_id): int
 	{
 		$db = Factory::getDbo();
 
-		$query = 'UPDATE `#__content` SET `state` = IF(`state`=1, 0, 1) WHERE id = ' . $id . ';';
+		$query = 'UPDATE `#__content` SET `state` = IF(`state`=1, 0, 1) WHERE id = ' . $joomla_item_id . ';';
 		$db->setQuery($query);
 		$db->execute();
 
@@ -1100,63 +1049,561 @@ class ProductFactory
 
 	}
 
+	/**
+	 * @param   Input  $data
+	 *
+	 * @return array
+	 *
+	 * @since 1.6
+	 */
+
+	public static function getRefreshedVariantData(Input $data): array
+	{
+
+		$j_item_id = $data->json->getInt('j_item_id');
+
+		$response = array();
+
+		$product = self::get($j_item_id);
+
+		$response['variants']     = $product->variants;
+		$response['variantList'] = $product->variantList;
+
+		return $response;
+
+	}
 
 	/**
-	 * @param $product_id
+	 *
+	 * This function takes the variant data, and the Product id as POST $data variables.
+	 * It saves the variants and the corresponding labels.
+	 * It then runs the Cartesian Product over the variant labels.
+	 * Then it saves the Variant List data
+	 *
+	 *
+	 * @param   Input  $data
+	 *
+	 * @return bool
+	 *
+	 * @since 1.6
+	 */
+
+
+	public static function saveVariantsFromInputData(Input $data): bool
+	{
+		$db = Factory::getDbo();
+
+		$variants  = $data->json->get('variants', '', 'ARRAY');
+		$j_item_id = $data->json->getInt('j_item_id');
+
+
+		foreach ($variants as $variant)
+		{
+
+			// check to see if the id is in the table... if so, update. If not, insert... usual shit.
+
+			$query = $db->getQuery(true);
+
+			$query->select('*');
+			$query->from($db->quoteName('#__protostore_product_variant'));
+			$query->where($db->quoteName('id') . ' = ' . $db->quote($variant['id']));
+
+			$db->setQuery($query);
+
+			$result = $db->loadObject();
+
+			if ($result)
+			{
+				// update
+				$updateVariant             = new stdClass();
+				$updateVariant->id         = $variant['id'];
+				$updateVariant->product_id = $variant['product_id'];
+				$updateVariant->name       = $variant['name'];
+				$db->updateObject('#__protostore_product_variant', $updateVariant, 'id');
+
+			}
+
+			else
+			{
+				// insert
+				$object             = new stdClass();
+				$object->id         = 0;
+				$object->product_id = $variant['product_id'];
+				$object->name       = $variant['name'];
+
+				$db->insertObject('#__protostore_product_variant', $object);
+
+				// since this is a new variant... set the id.
+				$variant['id'] = $db->insertid();
+
+			}
+
+			// ok... now that the variants are saved... add the labels.
+			self::saveLabels($variant);
+
+
+		}
+
+		// now the fancy bit... run the Cartesian of all the variant labels
+
+		$product  = self::get($j_item_id);
+		$variants = $product->variants;
+
+
+		$labelArrays = array();
+
+		foreach ($variants as $variant)
+		{
+			$labelArrays[] = $variant->labels;
+		}
+
+		$cartesianProduct = self::cartesian($labelArrays);
+
+
+		foreach ($cartesianProduct as $node)
+		{
+
+			$dbRowLabelIds = array();
+			// so $node is an array of the cartesian product of a particular selection.
+			// iterate over $node to create the labelIds required for the db processing:
+
+			foreach ($node as $var)
+			{
+				$dbRowLabelIds[] = $var->id;
+			}
+
+			$dbRowLabelIdsString = implode(',', $dbRowLabelIds);
+
+			// now test the DB for update or insert
+
+			$query = $db->getQuery(true);
+
+			$query->select('*');
+			$query->from($db->quoteName('#__protostore_product_variant_data'));
+			$query->where($db->quoteName('label_ids') . ' = ' . $db->quote($dbRowLabelIdsString));
+
+			$db->setQuery($query);
+
+			$result = $db->loadObject();
+
+			if (!$result)
+			{
+				//insert
+
+				$object             = new stdClass();
+				$object->id         = 0;
+				$object->product_id = $j_item_id;
+				$object->label_ids  = $dbRowLabelIdsString;
+				$object->price      = $product->base_price;
+				$object->stock      = 0;
+				$object->sku        = 0;
+				$object->active     = 1;
+				$object->default    = 0;
+
+				$db->insertObject('#__protostore_product_variant_data', $object);
+
+			}
+
+
+		}
+
+		return true;
+
+	}
+
+	/**
+	 *
+	 * This function saves the labels of the given variant
+	 *
+	 * @param   array  $variant
+	 *
+	 *
+	 * @since 1.6
+	 */
+
+	private static function saveLabels(array $variant)
+	{
+
+		$db = Factory::getDbo();
+
+		$labelIds = array();
+
+		foreach ($variant['labels'] as $label)
+		{
+
+			$query = $db->getQuery(true);
+
+			$query->select('*');
+			$query->from($db->quoteName('#__protostore_product_variant_label'));
+			$query->where($db->quoteName('id') . ' = ' . $db->quote($label['id']));
+
+			$db->setQuery($query);
+
+			$result = $db->loadObject();
+
+			if ($result)
+			{
+				// update
+				$updateLabel             = new stdClass();
+				$updateLabel->id         = $label['id'];
+				$updateLabel->variant_id = $variant['id'];
+				$updateLabel->product_id = $variant['product_id'];
+				$updateLabel->name       = $label['name'];
+				$db->updateObject('#__protostore_product_variant_label', $updateLabel, 'id');
+
+			}
+			else
+			{
+				// insert
+				$object             = new stdClass();
+				$object->id         = 0;
+				$object->variant_id = $variant['id'];
+				$object->product_id = $variant['product_id'];
+				$object->name       = $label['name'];
+
+				$db->insertObject('#__protostore_product_variant_label', $object);
+
+				// get the new label id
+				$label['id'] = $db->insertid();
+
+			}
+
+			$labelIds[] = $label['id'];
+
+		}
+
+		// delete deleted labels
+
+		// create an array of all the label ids from the request ^^ (these are the ones that now exist on the product) - $labelIds
+		// get all entries for this variant_id in an objectlist
+
+		$db    = Factory::getDbo();
+		$query = $db->getQuery(true);
+
+		$query->select('*');
+		$query->from($db->quoteName('#__protostore_product_variant_label'));
+		$query->where($db->quoteName('variant_id') . ' = ' . $db->quote($variant['id']));
+
+		$db->setQuery($query);
+
+		$currentLabels = $db->loadObjectList();
+
+		// iterate them and check if the id from the table is in the array
+
+		foreach ($currentLabels as $currentLabel)
+		{
+
+			if (in_array($currentLabel->id, $labelIds))
+			{
+				// if so, continue
+				continue;
+			}
+			else
+			{
+				// if not, delete
+				$query      = $db->getQuery(true);
+				$conditions = array(
+					$db->quoteName('id') . ' = ' . $db->quote($currentLabel->id)
+				);
+				$query->delete($db->quoteName('#__protostore_product_variant_label'));
+				$query->where($conditions);
+				$db->setQuery($query);
+				$db->execute();
+			}
+
+		}
+
+
+	}
+
+	/**
+	 * @param   array  $input
+	 *
+	 * @return array|array[]
+	 *
+	 * @since 1.6
+	 */
+
+
+	private static function cartesian(array $input): array
+	{
+		$result = array();
+
+		while (list($key, $values) = each($input))
+		{
+			// If a sub-array is empty, it doesn't affect the cartesian product
+			if (empty($values))
+			{
+				continue;
+			}
+
+			// Seeding the product array with the values from the first sub-array
+			if (empty($result))
+			{
+				foreach ($values as $value)
+				{
+					$result[] = array($key => $value);
+				}
+			}
+			else
+			{
+				// Second and subsequent input sub-arrays work like this:
+				//   1. In each existing array inside $product, add an item with
+				//      key == $key and value == first item in input sub-array
+				//   2. Then, for each remaining item in current input sub-array,
+				//      add a copy of each existing array inside $product with
+				//      key == $key and value == first item of input sub-array
+
+				// Store all items to be added to $product here; adding them
+				// inside the foreach will result in an infinite loop
+				$append = array();
+
+				foreach ($result as &$product)
+				{
+					// Do step 1 above. array_shift is not the most efficient, but
+					// it allows us to iterate over the rest of the items with a
+					// simple foreach, making the code short and easy to read.
+					$product[$key] = array_shift($values);
+
+					// $product is by reference (that's why the key we added above
+					// will appear in the end result), so make a copy of it here
+					$copy = $product;
+
+					// Do step 2 above.
+					foreach ($values as $item)
+					{
+						$copy[$key] = $item;
+						$append[]   = $copy;
+					}
+
+					// Undo the side effecst of array_shift
+					array_unshift($values, $product[$key]);
+				}
+
+				// Out of the foreach, we can add to $results now
+				$result = array_merge($result, $append);
+			}
+		}
+
+		return $result;
+	}
+
+//	/**
+//	 * @param   array  $input
+//	 *
+//	 * @return array|array[]
+//	 *
+//	 * @since 1.6
+//	 */
+//
+//
+//	private static function cartesian(array $input): array
+//	{
+//		$result = array(array());
+//
+//		foreach ($input as $key => $values)
+//		{
+//			$append = array();
+//
+//			foreach ($result as $product)
+//			{
+//				foreach ($values as $item)
+//				{
+//					$product[$key] = $item;
+//					$append[]      = $product;
+//				}
+//			}
+//
+//			$result = $append;
+//		}
+//
+//		return $result;
+//	}
+
+
+	/**
+	 * @param   int  $j_item_id
 	 *
 	 * @return Variant
 	 *
 	 * @since 1.6
 	 */
 
-	public static function getVariantData($product_id): ?Variant
+	public static function getVariantData(int $j_item_id): Variant
 	{
-		$db = Factory::getDbo();
 
+		// init
+
+		/** @var Variant $variantObject */
+		$variantObject = new stdClass;
+
+
+		// get the list of variants for this product
+		$db    = Factory::getDbo();
 		$query = $db->getQuery(true);
 
 		$query->select('*');
 		$query->from($db->quoteName('#__protostore_product_variant'));
-		$query->where($db->quoteName('product_id') . ' = ' . $db->quote($product_id));
+		$query->where($db->quoteName('product_id') . ' = ' . $db->quote($j_item_id));
 
 		$db->setQuery($query);
 
-		$result = $db->loadObject();
-		if ($result && is_object($result))
-		{
+		$variants = $db->loadObjectList();
 
-			return new Variant($result);
-		}
+		$variantObject->variants = $variants;
 
-		return null;
+
+		// now get the array of product prices(etc) for each combination of variant labels.
+
+		$db    = Factory::getDbo();
+		$query = $db->getQuery(true);
+
+		$query->select('*');
+		$query->from($db->quoteName('#__protostore_product_variant_data'));
+		$query->where($db->quoteName('product_id') . ' = ' . $db->quote($j_item_id));
+
+		$db->setQuery($query);
+
+		$list = $db->loadObjectList();
+
+		$variantObject->variantList = $list;
+
+		return new Variant($variantObject);
 
 
 	}
 
 
 	/**
-	 * @param   string  $variantList
 	 *
-	 * @return string
+	 * Takes the raw db data for a variant and processes the data to make it useful for the UI:
 	 *
-	 * @throws Exception
+	 * * Processes "1" and "0" to true and false
+	 * * Gets the namedLabel... i.e. "Small / Red" etc.
+	 * * sorts out Brick numbers
+	 *
+	 * @param   array  $variantList
+	 *
+	 * @return array
+	 *
+	 * @throws UnknownCurrencyException
 	 * @since 1.6
+	 *
 	 */
 
-	public static function retrieveVariantPrices(string $variantList): string
-	{
-		$variantList = json_decode($variantList);
 
-		$returnedVariantList = array();
+	public static function processVariantData(array $variantList): array
+	{
+
 
 		foreach ($variantList as $variant)
 		{
-			$variant->priceInt     = $variant->price;
-			$variant->price        = CurrencyFactory::toFloat($variant->price);
-			$returnedVariantList[] = $variant;
+
+			// namedLabel
+			if (isset($variant->label_ids))
+			{
+				$db       = Factory::getDbo();
+				$labelIds = explode(',', $variant->label_ids);
+
+				$namedLabels = array();
+				foreach ($labelIds as $labelId)
+				{
+
+					$query = $db->getQuery(true);
+
+					$query->select('name');
+					$query->from($db->quoteName('#__protostore_product_variant_label'));
+					$query->where($db->quoteName('id') . ' = ' . $db->quote($labelId));
+
+					$db->setQuery($query);
+
+					$namedLabels[] = $db->loadResult();
+
+				}
+
+				$variant->namedLabel = implode(' / ', $namedLabels);
+
+
+			}
+
+			// prices
+			if (isset($variant->price))
+			{
+				$variant->priceInt = $variant->price;
+				$variant->price    = CurrencyFactory::toFloat($variant->price);
+			}
+
+			// booleans
+			$variant->default = $variant->default == 1;
+
 		}
 
-		return json_encode($returnedVariantList);
+		return $variantList;
+
+
+	}
+
+	/**
+	 * @param   int  $j_item_id
+	 *
+	 * @return array|mixed
+	 *
+	 * @since 1.6
+	 */
+
+	public static function getLabels(int $j_item_id)
+	{
+
+		$db    = Factory::getDbo();
+		$query = $db->getQuery(true);
+
+		$query->select('*');
+		$query->from($db->quoteName('#__protostore_product_variant_label'));
+		$query->where($db->quoteName('product_id') . ' = ' . $db->quote($j_item_id));
+
+		$db->setQuery($query);
+
+		return $db->loadObjectList();
+
+
+	}
+
+	/**
+	 *
+	 * this function adds the labels array to the variants
+	 *
+	 * @param   array  $variants
+	 *
+	 * @return array
+	 *
+	 * @since 1.6
+	 */
+
+	public static function attachVariantLabels(array $variants): array
+	{
+
+		// get the item id from the first variant
+		$j_item_id = $variants[0]->product_id;
+
+		$labels = self::getLabels($j_item_id);
+
+		foreach ($variants as $variant)
+		{
+
+			foreach ($labels as $label)
+			{
+				if ($label->variant_id == $variant->id)
+				{
+					$variant->labels[] = $label;
+				}
+
+
+			}
+
+		}
+
+		return $variants;
+
 	}
 
 
@@ -1167,7 +1614,7 @@ class ProductFactory
 	 * 1. the price, stock and sku for the selection
 	 * 2. the active variants list, to allow the UI to update with new dropdowns if there is no stock or if the options is inactive.
 	 *
-	 * @param   int    $product_id
+	 * @param   int    $joomla_item_id
 	 * @param   array  $selected
 	 *
 	 * @return array
@@ -1175,7 +1622,7 @@ class ProductFactory
 	 * @since 1.6
 	 */
 
-	public static function getSelectedVariant(int $product_id, array $selected): array
+	public static function getSelectedVariant(int $joomla_item_id, array $selected): array
 	{
 
 		// init
@@ -1184,7 +1631,7 @@ class ProductFactory
 
 
 		// get the variant data for this product
-		$productVariants = self::getVariantData($product_id);
+		$productVariants = self::getVariantData($joomla_item_id);
 
 		// get the actual variants list to allow us to grab the price, stock and sku - set it as a workable array using json_decode
 		$productVariantsList = json_decode($productVariants->variantList);
@@ -1196,13 +1643,13 @@ class ProductFactory
 		{
 			if ($productVariant->identifier == $selected)
 			{
-				$response['identifier']     = $productVariant->identifier;
-				$response['name']     = $productVariant->name;
-				$response['priceInt'] = $productVariant->priceInt;
-				$response['price']    = CurrencyFactory::translate(18500);
-				$response['stock']    = $productVariant->stock;
-				$response['sku']      = $productVariant->sku;
-				$response['active']   = $productVariant->active;
+				$response['identifier'] = $productVariant->identifier;
+				$response['name']       = $productVariant->name;
+				$response['priceInt']   = $productVariant->priceInt;
+				$response['price']      = CurrencyFactory::translate(18500);
+				$response['stock']      = $productVariant->stock;
+				$response['sku']        = $productVariant->sku;
+				$response['active']     = $productVariant->active;
 			}
 
 
@@ -1213,38 +1660,101 @@ class ProductFactory
 
 	}
 
+
 	/**
-	 * @param   string  $variantList
+	 * @param   int    $joomla_item_id
+	 * @param   array  $selected
+	 *
+	 * @return bool
+	 *
+	 * @since 1.6
+	 */
+
+
+	public static function checkVariantAvailability(int $joomla_item_id, array $selected): ?array
+	{
+
+		// init
+		$response           = array();
+		$response['active'] = true;
+
+		$selected = implode(',', $selected);
+
+		// get the product
+		$product = self::get($joomla_item_id);
+
+		// get the chosen variant selection
+		$db    = Factory::getDbo();
+		$query = $db->getQuery(true);
+
+		$query->select('*');
+		$query->from($db->quoteName('#__protostore_product_variant_data'));
+		$query->where($db->quoteName('label_ids') . ' = ' . $db->quote($selected));
+
+		$db->setQuery($query);
+
+		// get the object
+		$result = $db->loadObject();
+		if ($result && is_object($result))
+		{
+
+			$selectedVariant = new SelectedVariant($result);
+		}
+		else
+		{
+			return null;
+		}
+
+
+		// check the stock
+		if ($product->manage_stock == "1")
+		{
+			if ($selectedVariant->stock == 0)
+			{
+				$response['active'] = false;
+				$response['reason'] = "oos";
+
+			}
+		}
+
+		// check the active state
+		if ($selectedVariant->active == "0")
+		{
+			$response['active'] = false;
+			$response['reason'] = "not_active";
+		}
+
+		return $response;
+
+	}
+
+	/**
+	 * @param   array  $variantList
 	 *
 	 *
 	 * @return array
 	 * @since 1.6
 	 */
 
-	public static function getVariantDefault(string $variantList): array
+	public static function getVariantDefault(array $variantList): array
 	{
 
 		$default = array();
 
-		$productVariantsList = json_decode($variantList);
-
-		foreach ($productVariantsList as $productVariant)
+		foreach ($variantList as $variant)
 		{
-			if ($productVariant->default == "true")
+			if ($variant->default == 1)
 			{
-				$default = $productVariant->identifier;
+				$default = explode(',', $variant->label_ids);
 			}
 
 
 		}
 
-
 		return $default;
 
 
 	}
-
-
 
 
 	/**
@@ -1508,7 +2018,8 @@ class ProductFactory
 	 * @since 1.6
 	 */
 
-	private static function processImagesForSave($teaserImage, $fullImage)
+	private
+	static function processImagesForSave($teaserImage, $fullImage)
 	{
 
 		$images = array();
@@ -1530,7 +2041,8 @@ class ProductFactory
 	 * @since 1.6
 	 */
 
-	private static function processVariantPrices($product): string
+	private
+	static function processVariantPrices($product): string
 	{
 
 		$variantList = json_decode($product->variantList);

@@ -13,6 +13,8 @@ defined('_JEXEC') or die('Restricted access');
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 
+/** @var array $vars */
+
 ?>
 
 <script id="base_url" type="application/json"><?= Uri::base(); ?></script>

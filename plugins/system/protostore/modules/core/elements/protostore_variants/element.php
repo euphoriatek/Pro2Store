@@ -34,7 +34,7 @@ return [
 				return false;
 			}
 
-			$node->props['product_id']         = $product->id;
+			$node->props['joomla_item_id']         = $product->joomla_item_id;
 			$node->props['variants']           = $product->variants;
 			$node->props['variantLabels']      = $product->variantLabels;
 			$node->props['variantDefault']     = $product->variantDefault;

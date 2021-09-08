@@ -47,7 +47,7 @@ $order = $data['item'];
                     <div class="uk-panel"><?= $order->order_number; ?></div>
                 </td>
                 <td class="uk-text-nowrap uk-table-shrink">
-                            <span @click="copyToClipboard('HELLO!')" style="cursor: pointer;">
+                            <span @click="copyToClipboard('<?= $order->order_number; ?>')" style="cursor: pointer;">
                               <i class="fal fa-copy"></i>
                             </span>
                 </td>

@@ -11,20 +11,21 @@
 
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\Input\Input;
 use Protostore\Cart\CartFactory;
 
 
-class protostoreTask_setbillingasshipping
+class protostoreTask_assignBillingAsShipping
 {
 
 	/**
-	 * @param $data
+	 * @param   Input  $data
 	 *
 	 * @return bool
 	 *
 	 * @since 1.6
 	 */
-	public function getResponse($data)
+	public function getResponse(Input $data): bool
 	{
 
 

@@ -370,7 +370,7 @@ class JFormFieldCategoryEdit extends JFormFieldList
 		$attr .= $this->multiple ? ' multiple' : '';
 		$attr .= $this->required ? ' required aria-required="true"' : '';
 		$attr .= $this->autofocus ? ' autofocus' : '';
-		$attr .= ' v-model="form.jform_category"';
+		$attr .= ' v-model="form.jform_catid"';
 
 		// To avoid user's confusion, readonly="true" should imply disabled="true".
 		if ((string) $this->readonly == '1'

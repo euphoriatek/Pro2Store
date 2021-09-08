@@ -9,26 +9,23 @@
 // no direct access
 
 
+use Protostore\Checkout\CheckoutFactory;
+
 defined('_JEXEC') or die('Restricted access');
 
-use Protostore\Cart\CartFactory;
 
 
-class protostoreTask_setbillingasshipping
+class protostoreTask_status
 {
 
-	/**
-	 * @param $data
-	 *
-	 * @return bool
-	 *
-	 * @since 1.6
-	 */
 	public function getResponse($data)
 	{
 
 
-		return CartFactory::setBillingAsShipping();
+		return CheckoutFactory::validateStatus($data);
+
+
+
 	}
 
 }

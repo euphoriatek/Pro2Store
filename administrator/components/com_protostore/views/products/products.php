@@ -14,6 +14,8 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Layout\LayoutHelper;
 
+/** @var array $vars */
+
 ?>
 
 
@@ -115,7 +117,10 @@ use Joomla\CMS\Layout\LayoutHelper;
                                     <a :href="'index.php?option=com_protostore&view=product&id=' + product.joomla_item_id">{{product.joomlaItem.title}}</a>
                                 </td>
                                 <td>
-                                    <div style="min-height: 80px;"><img :src="product.teaserImagePath" width="100"/></div>
+                                    <div style="min-height: 80px;">
+                                        <img v-show="product.teaserImagePath" :src="product.teaserImagePath" width="100"/>
+                                        <img v-show="!product.teaserImagePath" src="../media/com_protostore/images/no-image.png" width="55"/>
+                                    </div>
                                 </td>
                                 <td>
                                     <div>{{product.categoryName}}</div>
@@ -178,8 +183,8 @@ use Joomla\CMS\Layout\LayoutHelper;
                             <h3>Options</h3>
                         </div>
                         <div class="uk-card-body">
-                            <button @click="newProduct"
-                                    class="uk-button uk-button-primary"><?= Text::_('COM_PROTOSTORE_ADD_PRODUCT_TITLE'); ?></button>
+                            <a href="index.php?option=com_protostore&view=product"
+                                    class="uk-button uk-button-primary"><?= Text::_('COM_PROTOSTORE_ADD_PRODUCT_TITLE'); ?></a>
                         </div>
                     </div>
                 </div>

@@ -8,6 +8,8 @@
  */
 
 // No direct access to this file
+use Joomla\CMS\Language\Text;
+
 defined('_JEXEC') or die('Restricted access');
 
 /**
@@ -28,7 +30,7 @@ class JFormFieldDiscount extends JFormField
 
 	public function getLabel()
 	{
-		return '<div v-show="form.jform_show_discount">' . $this->element['label'] . '</div>';
+		return '<div v-show="form.jform_show_discount">' . Text::_($this->element['label']) . '</div>';
 	}
 
 	/**
@@ -46,8 +48,20 @@ class JFormFieldDiscount extends JFormField
 
 
 		$html[] = '<div v-show="form.jform_show_discount">';
-		$html[] = '<p-inputnumber mode="currency" :currency="p2s_currency.iso" :locale="p2s_locale"  name="' . $this->name . '" v-model="form.' . $this->id . '" id="' . $this->id . '">';
+		$html[] = '<div class="uk-grid" uk-grid>';
+		$html[] = '<div class="uk-width-auto">';
+		$html[] = '<p-inputnumber @input="getSellPrice()" v-show="form.jform_discount_type == 1" mode="currency" :currency="p2s_currency.iso" :locale="p2s_locale"  name="' . $this->name . '" v-model="form.' . $this->id . '" id="' . $this->id . '">';
 		$html[] = '</p-inputnumber> ';
+		$html[] = '<p-inputnumber @input="getSellPrice()"  v-show="form.jform_discount_type == 2" mode="decimal" name="' . $this->name . '" v-model="form.' . $this->id . '" id="' . $this->id . '">';
+		$html[] = '</p-inputnumber> ';
+		$html[] = '</div>';
+		$html[] = '<div class="uk-width-expand">';
+		$html[] = '<select @change="getSellPrice()" class="uk-select" v-model="form.jform_discount_type">';
+		$html[] = '<option value="1">Amount</option>';
+		$html[] = '<option value="2">Percentage</option>';
+		$html[] = '</select>';
+		$html[] = '</div>';
+		$html[] = '</div>';
 		$html[] = '<br/><span>This product will sell for: {{sellPrice}}</span>';
 		$html[] = ' </div>';
 

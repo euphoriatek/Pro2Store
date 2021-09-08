@@ -14,13 +14,11 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Layout\LayoutHelper;
 
-
 HTMLHelper::_('behavior.keepalive');
 HTMLHelper::_('behavior.formvalidator');
 
-
+/** @var array $vars */
 $item = $vars['item'];
-
 
 ?>
 
