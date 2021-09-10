@@ -33,7 +33,7 @@ class plgSystemProtostore extends CMSPlugin
             Factory::getDocument()->addScript('media/com_protostore/js/vue/bundle.min.js', array('type' => 'text/javascript'));
             Factory::getDocument()->addStyleDeclaration('[v-cloak] {display: none}');
         }
-
+	    Factory::getDocument()->addStyleDeclaration('[v-cloak] {display: none}');
 
         // set the Pro2Store Cookie
 	//        $value = Factory::getApplication()->input->cookie->get('yps-cart', null);

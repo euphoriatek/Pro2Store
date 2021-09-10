@@ -23,11 +23,6 @@ use Joomla\CMS\Language\Text;
             <div class="uk-grid" uk-grid>
                 <div class="uk-width-expand"><h5>Variant Types</h5></div>
                 <div class="uk-width-auto">
-                    <button type="button"
-                            class="uk-button uk-button-small uk-button-default button-success"
-                            @click="addVariant">Add Variant Type
-                        <span uk-icon="icon: plus-circle"></span>
-                    </button>
                 </div>
             </div>
         </div>
@@ -36,7 +31,7 @@ use Joomla\CMS\Language\Text;
             <div class="uk-card uk-card-body uk-card-default uk-margin-small-bottom"
                  v-for="(variant, index) in form.jform_variants">
                 <div class="uk-position-absolute uk-position-top-right uk-margin-small-right uk-margin-small-top">
-                    <span style="cursor: pointer; color: red;" uk-icon="icon: minus-circle"
+                    <span style="cursor: pointer; color: red;"  uk-icon="icon: minus-circle"
                           @click="removeVariant(index)"></span>
                 </div>
                 <div class="uk-grid" uk-grid>
@@ -48,7 +43,7 @@ use Joomla\CMS\Language\Text;
 
                     </div>
                     <div class="uk-width-1-2">
-                        <p-chips v-model="form.jform_variants[index].labels" @add="addLabel($event, form.jform_variants[index].id)" :addOnBlur="true" :allowDuplicate="false">
+                        <p-chips v-model="form.jform_variants[index].labels" @add="onAddNewLabel($event, form.jform_variants[index].id)" @remove="removeLabel($event, index, form.jform_variants[index].id)" :addOnBlur="true" :allowDuplicate="false">
                             <template #chip="slotProps">
                                 {{slotProps.value.name}}
                             </template>
@@ -56,24 +51,57 @@ use Joomla\CMS\Language\Text;
                     </div>
                 </div>
             </div>
-        </div>
-
-
-        <div class="uk-card-footer">
             <div class="uk-grid" uk-grid>
                 <div class="uk-width-expand"></div>
                 <div class="uk-width-auto">
                     <button type="button"
-                            class="uk-button uk-button-small uk-button-primary" @click="setVariants">Set Variant Values
-                        <span uk-icon="icon: check"></span>
+                            class="uk-button uk-button-small uk-button-default button-success"
+                            @click="addVariant">Add Variant Type
+                        <span uk-icon="icon: plus-circle"></span>
                     </button>
                 </div>
             </div>
         </div>
+
+
+<!--        <div class="uk-card-footer">-->
+<!--            <div class="uk-grid" uk-grid>-->
+<!--                <div class="uk-width-expand"></div>-->
+<!--                <div class="uk-width-auto">-->
+<!--                    <button type="button"-->
+<!--                            class="uk-button uk-button-small uk-button-primary" @click="setVariants">Set Variant Values-->
+<!--                        <span uk-icon="icon: check"></span>-->
+<!--                    </button>-->
+<!--                </div>-->
+<!--                <div class="uk-width-auto">-->
+<!--                    <button type="button"-->
+<!--                            class="uk-button uk-button-small uk-button-primary" @click="refreshVariants">Refresh Values-->
+<!--                        <span uk-icon="icon: check"></span>-->
+<!--                    </button>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
     </div>
 
 
-    <div class="uk-card uk-card-default uk-card-body uk-margin-bottom">
+    <div class="uk-card uk-card-default uk-margin-bottom">
+        <div class="uk-card-header">
+            <div class="uk-grid uk-grid-small">
+                <div class="uk-width-expand">
+                    <h5>
+					  Variant Combination List
+                    </h5>
+                </div>
+                <div class="uk-width-auto">
+                    <span v-show="!variants_loading" :class="[setSavedClass ? 'uk-text-meta uk-text-success uk-animation-fade' : 'uk-animation-fade uk-hidden']">saved!</span>
+                    <span v-show="variants_loading" class="uk-text-meta  uk-text-warning"  >
+                    Saving
+                  <i class="fal fa-spinner-third fa-spin fa-sm"></i>
+              </span>
+                </div>
+            </div>
+        </div>
+        <div class="uk-card-body">
         <table class="uk-table uk-table-hover uk-table-striped uk-table-divider uk-table-middle">
             <thead>
             <tr>
@@ -109,6 +137,6 @@ use Joomla\CMS\Language\Text;
             </tr>
             </tbody>
         </table>
-
+        </div>
     </div>
 </div>

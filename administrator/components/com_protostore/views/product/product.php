@@ -27,7 +27,7 @@ $item = $vars['item'];
 
 
 <div id="p2s_product_form">
-    <form @submit.prevent="saveItem">
+    <form @submit.prevent="saveItem" v-cloak>
         <div class="uk-margin-left">
             <div class="uk-grid" uk-grid="">
                 <div class="uk-width-1-1">
@@ -38,7 +38,7 @@ $item = $vars['item'];
 
                             <div class="uk-navbar-left">
 
-                                <span class="uk-navbar-item uk-logo">
+                                <span class="uk-navbar-item uk-logo" v-cloak>
                                     <span v-show="form.itemid"> <?= Text::_('COM_PROTOSTORE_ADD_DISCOUNTS_MODAL_EDITING'); ?>  {{form.jform_title}}</span>
                                     <span v-show="!form.itemid"> <?= Text::_('COM_PROTOSTORE_ADD_PRODUCT_TITLE'); ?>:  {{form.jform_title}}</span>
 
@@ -239,6 +239,8 @@ $item = $vars['item'];
                 newOptionTypeType: 'Dropdown',
                 showNewOptionTypeNameWarning: false,
                 sellPrice: 0,
+                variants_loading: false,
+                setSavedClass: false,
             }
 
         },
@@ -246,14 +248,7 @@ $item = $vars['item'];
             emitter.on('p2s_product_file_upload', this.fileUploaded)
         },
         mounted() {
-            // console.log(this.form.variantsListLocal);
-            // if (this.form.jform_variants.length > 0) {
-            //     this.variantsSet = true;
-            // }
-            //
-            // if (this.form.variantLabels.length > 0) {
-            //     this.runCartesian();
-            // }
+
         },
         computed: {
             modifierValueInputType() {
@@ -359,23 +354,43 @@ $item = $vars['item'];
                 console.log(this.form);
             },
 
-            addLabel(e, variant_id) {
+            async addLabel(e, variant_id) {
 
 
+                // get the array of current labels
                 let loc_array = e.value;
 
+                console.log(loc_array);
+
+                // get the last entered label
                 let enteredValue = loc_array[loc_array.length - 1];
 
+                // chop off the last label, since it only contains the entered text
                 loc_array.splice(-1);
 
+                // now push a new object into the array with the id as zero etc.
                 loc_array.push({
                     id: 0,
                     name: enteredValue,
                     product_id: this.form.itemid,
                     variant_id: variant_id
-                })
+                });
 
 
+            },
+
+            async onAddNewLabel(e, variant_id) {
+                await this.addLabel(e, variant_id);
+                await this.setVariants();
+                await this.saveItem();
+            },
+            async removeLabel(event, index, variant_id) {
+
+                this.form.jform_variants[index].labels.push(event.value[0]);
+                await UIkit.modal.confirm('Are you sure? This action cannot be undone!');
+                this.form.jform_variants[index].labels.splice(-1);
+                await this.setVariants();
+                await this.saveItem();
             },
 
             /**
@@ -405,34 +420,21 @@ $item = $vars['item'];
 
                 this.form.jform_variants.push(newVariant);
             },
-            removeVariant(i) {
+            async removeVariant(i) {
+                await UIkit.modal.confirm('Are you sure? This action cannot be undone!');
+                this.form.jform_variants[i].labels = [];
                 this.form.jform_variants.splice(i, 1);
+                await this.setVariants();
+                await this.saveItem();
             },
-            async variantsStartOver() {
 
-                await UIkit.modal.confirm('Are You sure? This will reset all variant data!');
-
-                this.form.jform_variants = [];
-                this.form.variantsList = [];
-                this.form.variantsListLocal = [];
-                this.form.variantLabels = [];
-
-            },
-            async editVariantValues() {
-
-                await UIkit.modal.confirm('Are You sure? This will reset all variant data!');
-
-                this.form.variantsList = [];
-                this.form.variantsListLocal = [];
-
-            },
 
             async setVariants() {
-
-
+                this.variants_loading = true;
                 const params = {
                     'variants': this.form.jform_variants,
-                    'j_item_id': this.form.itemid
+                    'itemid': this.form.itemid,
+                    'base_price': this.form.jform_base_price,
                 };
 
 
@@ -452,8 +454,13 @@ $item = $vars['item'];
                 const response = await request.json();
 
                 if (response.success) {
-                    this.refreshVariants();
+                    this.variants_loading = false;
+                    this.setSavedClass = true;
+                    setTimeout(() => {
+                        this.setSavedClass = false;
 
+                    }, 3000)
+                    return await this.refreshVariants();
                 }
 
 
@@ -484,14 +491,14 @@ $item = $vars['item'];
                 if (response.success) {
                     this.form.jform_variantList = response.data.variantList;
                     this.form.jform_variants = response.data.variants;
-
+                    return true;
                 }
             },
 
 
             setVariantDefault(itemIndex) {
 
-                this.form.variantsListLocal.forEach((variant, index) => {
+                this.form.jform_variantList.forEach((variant, index) => {
                     variant.default = false;
                     if (itemIndex === index) {
                         variant.default = true;
@@ -503,7 +510,7 @@ $item = $vars['item'];
             },
 
             checkVariantDefault(itemIndex) {
-                this.form.variantsListLocal.forEach((variant, index) => {
+                this.form.jform_variantList.forEach((variant, index) => {
                     if (itemIndex === index) {
                         if (variant.default) {
                             variant.active = true;
@@ -628,6 +635,7 @@ $item = $vars['item'];
 
                 console.log(this.form);
 
+
                 // return;
 
                 const params = {
@@ -677,7 +685,7 @@ $item = $vars['item'];
                     UIkit.notification({
                         message: this.successMessage,
                         status: 'success',
-                        pos: 'top-center',
+                        pos: 'bottom-right',
                         timeout: 5000
                     });
 

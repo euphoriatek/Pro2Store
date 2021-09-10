@@ -536,16 +536,90 @@ class ProductFactory
 			self::saveLabels($variant);
 		}
 
-
 		// now delete all removed variants
-		// create an array of all the variant ids from the request ^^ (these are the ones that now exist on the product) - $variantIds
-		// get all entries for this product in an objectlist
+		self::removeDeletedVariants($product->joomla_item_id, $variantIds);
+
+
+		// now add/update the actual variantList data!
+
+//		//for cleanup of removed variants & labels... collect the label_ids in an array for later use:
+//		$variantListLabelIds = array();
+//
+//
+//		foreach ($product->variantList as $variantListItem)
+//		{
+//
+//
+//			//check if the item already exists in the db
+//			$query = $db->getQuery(true);
+//
+//			$query->select('*');
+//			$query->from($db->quoteName('#__protostore_product_variant_data'));
+//			$query->where($db->quoteName('id') . ' = ' . $db->quote($variantListItem['id']));
+//
+//			$db->setQuery($query);
+//
+//			$result = $db->loadObject();
+//
+//
+//			// init the object for updating or inserting
+//			$object             = new stdClass();
+//			$object->product_id = $product->joomla_item_id;
+//			$object->label_ids  = $variantListItem['label_ids'];
+//			$object->price      = CurrencyFactory::toInt($variantListItem['price']);
+//			$object->stock      = $variantListItem['stock'];
+//			$object->sku        = $variantListItem['sku'];
+//			$object->active     = ($variantListItem['active'] ? 1 : 0);
+//			$object->default    = ($variantListItem['default'] ? 1 : 0);
+//
+//			if ($result)
+//			{
+//				// if so, update
+//				$object->id = $variantListItem['id'];
+//				$db->updateObject('#__protostore_product_variant_data', $object, 'id');
+//			}
+//			else
+//			{
+//				//if not, insert
+//				$object->id = 0;
+//				$db->insertObject('#__protostore_product_variant_data', $object);
+//			}
+//
+//			//for cleanup of removed variants & labels... collect the ids in an array for later use:
+////			$variantListLabelIds[] = explode(',', $variantListItem['label_ids']);
+//			$variantListLabelIds[] = $variantListItem['label_ids'];
+//
+//
+//		}
+
+//		self::removeDeletedVariantListItems($product->joomla_item_id, $variantListLabelIds);
+
+
+		return true;
+
+
+	}
+
+
+	/**
+	 * @param   int    $product
+	 * @param   array  $variantIds
+	 *
+	 * @return void
+	 *
+	 * @since 1.6
+	 */
+
+	private static function removeDeletedVariants(int $j_item_id, array $variantIds): void
+	{
+
+		$db = Factory::getDbo();
 
 		$query = $db->getQuery(true);
 
 		$query->select('*');
 		$query->from($db->quoteName('#__protostore_product_variant'));
-		$query->where($db->quoteName('product_id') . ' = ' . $db->quote($product->joomla_item_id));
+		$query->where($db->quoteName('product_id') . ' = ' . $db->quote($j_item_id));
 
 		$db->setQuery($query);
 
@@ -579,7 +653,7 @@ class ProductFactory
 				$conditions = array(
 					$db->quoteName('variant_id') . ' = ' . $db->quote($currentVariant->id)
 				);
-				$query->delete($db->quoteName('#rdlk6_protostore_product_variant_label'));
+				$query->delete($db->quoteName('#__protostore_product_variant_label'));
 				$query->where($conditions);
 				$db->setQuery($query);
 				$db->execute();
@@ -589,9 +663,116 @@ class ProductFactory
 
 		}
 
+	}
 
-		return true;
+	/**
+	 * @param   array  $variant
+	 * @param   array  $labelIds
+	 *
+	 * @return void
+	 *
+	 * @since 1.6
+	 */
 
+	private static function removeDeletedVariantLabels(array $variant, array $labelIds): void
+	{
+
+		// create an array of all the label ids from the request ^^ (these are the ones that now exist on the product) - $labelIds
+		// get all entries for this variant_id in an objectlist
+
+		$db    = Factory::getDbo();
+		$query = $db->getQuery(true);
+
+		$query->select('*');
+		$query->from($db->quoteName('#__protostore_product_variant_label'));
+		$query->where($db->quoteName('variant_id') . ' = ' . $db->quote($variant['id']));
+
+		$db->setQuery($query);
+
+		$currentLabels = $db->loadObjectList();
+
+		// iterate them and check if the id from the table is in the array
+
+		foreach ($currentLabels as $currentLabel)
+		{
+
+			if (in_array($currentLabel->id, $labelIds))
+			{
+				// if so, continue
+				continue;
+			}
+			else
+			{
+				// if not, delete
+				$query      = $db->getQuery(true);
+				$conditions = array(
+					$db->quoteName('id') . ' = ' . $db->quote($currentLabel->id)
+				);
+				$query->delete($db->quoteName('#__protostore_product_variant_label'));
+				$query->where($conditions);
+				$db->setQuery($query);
+				$db->execute();
+			}
+
+		}
+
+	}
+
+	/**
+	 * @param   int    $joomla_item_id
+	 * @param   array  $variantListLabelIds
+	 *
+	 * @return void
+	 *
+	 * @since 1.6
+	 */
+
+	private static function removeDeletedVariantListItems(int $joomla_item_id, array $variantListLabelIds): void
+	{
+
+		// create an array of all the item ids from the request ^^ (these are the ones that now exist on the product) - $variantListIds
+		// get all entries for this product_id in an objectlist
+
+		$db    = Factory::getDbo();
+		$query = $db->getQuery(true);
+
+		$query->select('*');
+		$query->from($db->quoteName('#__protostore_product_variant_data'));
+		$query->where($db->quoteName('product_id') . ' = ' . $db->quote($joomla_item_id));
+
+		$db->setQuery($query);
+
+		$currentItems = $db->loadObjectList();
+
+		// iterate them and check if the id from the table is in the array
+
+		foreach ($currentItems as $currentItem)
+		{
+			// make an array out of the current rows label_ids - for equality comparison
+//			$currentItemLabelIdArray = explode(',', $currentItem->label_ids);
+
+
+//			if (in_array($currentItemLabelIdArray, $variantListLabelIds))
+			if (in_array($currentItem->label_ids, $variantListLabelIds))
+			{
+				// if so, continue
+				continue;
+			}
+			else
+			{
+				// if not, delete
+				$query      = $db->getQuery(true);
+				$conditions = array(
+					$db->quoteName('id') . ' = ' . $db->quote($currentItem->id)
+				);
+				$query->delete($db->quoteName('#__protostore_product_variant_data'));
+				$query->where($conditions);
+				$db->setQuery($query);
+				$db->execute();
+			}
+
+
+		}
 
 	}
 
@@ -995,7 +1176,6 @@ class ProductFactory
 
 	}
 
-
 	/**
 	 * @param   int  $joomla_item_id
 	 *
@@ -1066,12 +1246,75 @@ class ProductFactory
 
 		$product = self::get($j_item_id);
 
-		$response['variants']     = $product->variants;
+		$response['variants']    = $product->variants;
 		$response['variantList'] = $product->variantList;
 
 		return $response;
 
 	}
+
+
+	private static function variantScorchedEarth(int $j_item_id): bool
+	{
+
+		$response = true;
+
+		$db = Factory::getDbo();
+
+		$query = $db->getQuery(true);
+
+		$conditions = array(
+			$db->quoteName('product_id') . ' = ' . $db->quote($j_item_id)
+		);
+
+		$query->delete($db->quoteName('#__protostore_product_variant'));
+		$query->where($conditions);
+
+		$db->setQuery($query);
+
+		$result = $db->execute();
+
+		if(!$result) {
+			$response = false;
+		}
+
+		$query = $db->getQuery(true);
+
+		$conditions = array(
+			$db->quoteName('product_id') . ' = ' . $db->quote($j_item_id)
+		);
+
+		$query->delete($db->quoteName('#__protostore_product_variant_label'));
+		$query->where($conditions);
+
+		$db->setQuery($query);
+
+		$result = $db->execute();
+
+		if(!$result) {
+			$response = false;
+		}
+
+		$query = $db->getQuery(true);
+
+		$conditions = array(
+			$db->quoteName('product_id') . ' = ' . $db->quote($j_item_id)
+		);
+
+		$query->delete($db->quoteName('#__protostore_product_variant_data'));
+		$query->where($conditions);
+
+		$db->setQuery($query);
+
+		$result = $db->execute();
+
+		if(!$result) {
+			$response = false;
+		}
+
+		return $response;
+	}
+
 
 	/**
 	 *
@@ -1085,6 +1328,7 @@ class ProductFactory
 	 *
 	 * @return bool
 	 *
+	 * @throws Exception
 	 * @since 1.6
 	 */
 
@@ -1093,12 +1337,34 @@ class ProductFactory
 	{
 		$db = Factory::getDbo();
 
-		$variants  = $data->json->get('variants', '', 'ARRAY');
-		$j_item_id = $data->json->getInt('j_item_id');
+		$variants = $data->json->get('variants', '', 'ARRAY');
+
+
+		$j_item_id = $data->json->getInt('itemid');
+
+		//check if variants exist if not delete.
+		if (empty($variants))
+		{
+			return self::variantScorchedEarth($j_item_id);
+
+		}
+
+		$base_price = $data->json->getFloat('base_price');
+
+
+		if ($base_price)
+		{
+			$base_price = CurrencyFactory::toInt($base_price);
+		}
+		else
+		{
+			$base_price = 0;
+		}
 
 
 		foreach ($variants as $variant)
 		{
+
 
 			// check to see if the id is in the table... if so, update. If not, insert... usual shit.
 
@@ -1111,6 +1377,7 @@ class ProductFactory
 			$db->setQuery($query);
 
 			$result = $db->loadObject();
+
 
 			if ($result)
 			{
@@ -1138,27 +1405,34 @@ class ProductFactory
 
 			}
 
+			// get the id for removal function later.
+			$variantIds[] = $variant['id'];
+
+
 			// ok... now that the variants are saved... add the labels.
 			self::saveLabels($variant);
 
-
 		}
+		self::removeDeletedVariants($j_item_id, $variantIds);
 
 		// now the fancy bit... run the Cartesian of all the variant labels
 
-		$product  = self::get($j_item_id);
-		$variants = $product->variants;
-
-
 		$labelArrays = array();
 
-		foreach ($variants as $variant)
+
+		// todo - Ahhh... this iteration doesn't contain the new label ids... i was lucky to spot this bug... need to get the new labels!!
+
+
+		$variants = self::getVariantData($j_item_id);
+
+		foreach ($variants->variants as $variant)
 		{
 			$labelArrays[] = $variant->labels;
 		}
 
 		$cartesianProduct = self::cartesian($labelArrays);
 
+		$dbRowLabelIdsStringArray = array();
 
 		foreach ($cartesianProduct as $node)
 		{
@@ -1172,7 +1446,12 @@ class ProductFactory
 				$dbRowLabelIds[] = $var->id;
 			}
 
+			// get the comma separated string
 			$dbRowLabelIdsString = implode(',', $dbRowLabelIds);
+
+			// for garbage collection
+			$dbRowLabelIdsStringArray[] = $dbRowLabelIdsString;
+
 
 			// now test the DB for update or insert
 
@@ -1181,6 +1460,7 @@ class ProductFactory
 			$query->select('*');
 			$query->from($db->quoteName('#__protostore_product_variant_data'));
 			$query->where($db->quoteName('label_ids') . ' = ' . $db->quote($dbRowLabelIdsString));
+			$query->where($db->quoteName('product_id') . ' = ' . $db->quote($j_item_id));
 
 			$db->setQuery($query);
 
@@ -1194,7 +1474,7 @@ class ProductFactory
 				$object->id         = 0;
 				$object->product_id = $j_item_id;
 				$object->label_ids  = $dbRowLabelIdsString;
-				$object->price      = $product->base_price;
+				$object->price      = $base_price;
 				$object->stock      = 0;
 				$object->sku        = 0;
 				$object->active     = 1;
@@ -1206,6 +1486,10 @@ class ProductFactory
 
 
 		}
+
+		// do garbage collection:
+		self::removeDeletedVariantListItems($j_item_id, $dbRowLabelIdsStringArray);
+
 
 		return true;
 
@@ -1272,46 +1556,8 @@ class ProductFactory
 
 		}
 
-		// delete deleted labels
-
-		// create an array of all the label ids from the request ^^ (these are the ones that now exist on the product) - $labelIds
-		// get all entries for this variant_id in an objectlist
-
-		$db    = Factory::getDbo();
-		$query = $db->getQuery(true);
-
-		$query->select('*');
-		$query->from($db->quoteName('#__protostore_product_variant_label'));
-		$query->where($db->quoteName('variant_id') . ' = ' . $db->quote($variant['id']));
-
-		$db->setQuery($query);
-
-		$currentLabels = $db->loadObjectList();
-
-		// iterate them and check if the id from the table is in the array
-
-		foreach ($currentLabels as $currentLabel)
-		{
-
-			if (in_array($currentLabel->id, $labelIds))
-			{
-				// if so, continue
-				continue;
-			}
-			else
-			{
-				// if not, delete
-				$query      = $db->getQuery(true);
-				$conditions = array(
-					$db->quoteName('id') . ' = ' . $db->quote($currentLabel->id)
-				);
-				$query->delete($db->quoteName('#__protostore_product_variant_label'));
-				$query->where($conditions);
-				$db->setQuery($query);
-				$db->execute();
-			}
-
-		}
+		// remove deleted labels
+		self::removeDeletedVariantLabels($variant, $labelIds);
 
 
 	}
@@ -1387,38 +1633,6 @@ class ProductFactory
 
 		return $result;
 	}
-
-//	/**
-//	 * @param   array  $input
-//	 *
-//	 * @return array|array[]
-//	 *
-//	 * @since 1.6
-//	 */
-//
-//
-//	private static function cartesian(array $input): array
-//	{
-//		$result = array(array());
-//
-//		foreach ($input as $key => $values)
-//		{
-//			$append = array();
-//
-//			foreach ($result as $product)
-//			{
-//				foreach ($values as $item)
-//				{
-//					$product[$key] = $item;
-//					$append[]      = $product;
-//				}
-//			}
-//
-//			$result = $append;
-//		}
-//
-//		return $result;
-//	}
 
 
 	/**
@@ -1535,6 +1749,7 @@ class ProductFactory
 
 			// booleans
 			$variant->default = $variant->default == 1;
+			$variant->active  = $variant->active == 1;
 
 		}
 

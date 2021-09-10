@@ -90,10 +90,13 @@ class Variant
 	private function init()
 	{
 
+		if($this->variants) {
+			$this->variants    = ProductFactory::attachVariantLabels($this->variants);
+			$this->variantList = ProductFactory::processVariantData($this->variantList);
+			$this->default     = ProductFactory::getVariantDefault($this->variantList);
+		}
 
-		$this->variants    = ProductFactory::attachVariantLabels($this->variants);
-		$this->variantList = ProductFactory::processVariantData($this->variantList);
-		$this->default     = ProductFactory::getVariantDefault($this->variantList);
+
 
 
 	}

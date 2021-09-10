@@ -11,6 +11,7 @@
 
 defined('_JEXEC') or die('Restricted access');
 
+use Protostore\Product\Product;
 use Protostore\Product\ProductFactory;
 use Joomla\Input\Input;
 
@@ -25,7 +26,7 @@ class protostoreTask_save
 	 * @throws Exception
 	 * @since 1.6
 	 */
-	public function getResponse(Input $data)
+	public function getResponse(Input $data): ?Product
 	{
 
 

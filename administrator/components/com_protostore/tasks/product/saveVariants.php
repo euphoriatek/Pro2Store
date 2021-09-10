@@ -24,7 +24,7 @@ class protostoreTask_saveVariants
 	 *
 	 * @since 1.6
 	 */
-	public function getResponse(Input $data): bool
+	public function getResponse(Input $data)
 	{
 
 

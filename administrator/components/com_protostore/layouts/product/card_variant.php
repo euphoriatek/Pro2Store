@@ -19,7 +19,7 @@ $form = $data['form'];
 
 ?>
 
-<div  class="uk-card uk-card-<?= $data['cardStyle']; ?> uk-margin-bottom uk-animation-fade">
+<div class="uk-card uk-card-<?= $data['cardStyle']; ?> uk-margin-bottom uk-animation-fade">
     <div class="uk-card-header">
         <div class="uk-grid uk-grid-small">
             <div class="uk-width-expand">
@@ -28,13 +28,8 @@ $form = $data['form'];
                 </h3>
             </div>
             <div class="uk-width-auto">
-                <button type="button" v-show="showVariantItemsBlock"
-                        class="uk-button uk-button-small uk-button-default"
-                        @click="variantsStartOver">Start Over
-                    <span uk-icon="icon: refresh"></span>
-                </button>
-            </div>
 
+            </div>
         </div>
     </div>
 
