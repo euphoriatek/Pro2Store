@@ -15,6 +15,7 @@ use Joomla\CMS\Factory;
 use Protostore\Bootstrap\listView;
 use Protostore\Render\Render;
 use Protostore\Product\ProductFactory;
+use Protostore\Utilities\Utilities;
 
 
 /**
@@ -93,7 +94,7 @@ class bootstrap implements listView
 		$doc->addCustomTag('<script id="page_size" type="application/json">' . $this->vars['list_limit'] . '</script>');
 
 		// include prime
-//		Utilities::includePrime(array('inputswitch'));
+		Utilities::includePrime(array('inputtext', 'inputnumber'));
 
 
 	}

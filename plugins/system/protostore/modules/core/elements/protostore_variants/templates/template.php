@@ -31,33 +31,26 @@ $content = $this->el('div', [
 
 ]);
 
-//echo json_encode($props['variantViewObject']);
+/** @var array $props */
+/** @var array $attrs */
 
 ?>
 
-<script id="yps_joomla_item_id_data" type="application/json"><?= $props['joomla_item_id']; ?></script>
-<script id="yps_variants_data" type="application/json"><?= $props['variants']; ?></script>
-<script id="yps_variantLabels_data" type="application/json"><?= $props['variantLabels']; ?></script>
 
 
 <?= $el($props, $attrs) // Output div tag                      ?>
 <div id="<?= $id; ?>">
 	<?= $content($props, $attrs) // Content div tag                      ?>
 
-	<?php $variants = $props['variants']; ?>
-	<?php $variantLabels = $props['variantLabels']; ?>
-	<?php $variantDefault = $props['variantDefault']; ?>
-
-
-	<?php foreach ($variants as $variant) : ?>
+	<?php foreach ($props['variants'] as $variant) : ?>
 
         <div class="uk-form-controls">
             <label class="uk-form-label"><?= $variant->name; ?></label>
             <select class="uk-select yps_variant" @change="recalc">
 
-				<?php foreach ($variantLabels as $label) : ?>
+				<?php foreach ($variant->labels as $label) : ?>
 					<?php if ($label->variant_id === $variant->id) : ?>
-                        <option <?= (in_array($label->id, $variantDefault,) ? 'selected': ''); ?> value="<?= $label->id; ?>"><?= $label->name; ?></option>
+                        <option <?= (in_array($label->id, $props['variantDefault']) ? 'selected': ''); ?> value="<?= $label->id; ?>"><?= $label->name; ?></option>
 					<?php endif; ?>
 				<?php endforeach; ?>
 

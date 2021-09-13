@@ -25,6 +25,7 @@ use Joomla\CMS\Table\Table;
 use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\Filesystem\File as JoomlaFile;
 use Joomla\Utilities\ArrayHelper;
+use JDatabaseDriver;
 
 use Brick\Math\BigDecimal;
 use Brick\Money\Exception\UnknownCurrencyException;
@@ -187,7 +188,7 @@ class ProductFactory
 
 
 		// with prices... we need to run it through the Brick system first.
-		$base_price = $data->json->getFloat('base_price', $currentProduct->base_price);
+		$base_price = $data->json->getFloat('base_price');
 
 
 		if ($base_price)
@@ -196,17 +197,17 @@ class ProductFactory
 		}
 		else
 		{
-			$currentProduct->base_price = 0;
+			$currentProduct->base_price = $data->json->getFloat('base_price', $currentProduct->base_price);;
 		}
 
-		$discount = $data->json->getFloat('discount', $currentProduct->discount);
+		$discount = $data->json->getFloat('discount');
 		if ($discount)
 		{
 			$currentProduct->discount = CurrencyFactory::toInt($discount);
 		}
 		else
 		{
-			$currentProduct->discount = 0;
+			$currentProduct->discount = $data->json->getFloat('discount', $currentProduct->discount);
 		}
 
 		$currentProduct->shipping_mode = $data->json->getString('shipping_mode', $currentProduct->shipping_mode);
@@ -214,7 +215,7 @@ class ProductFactory
 		if ($currentProduct->shipping_mode == 'flat')
 		{
 
-			$currentProduct->flatfee = $data->json->getFloat('flatfee', $currentProduct->flatfee);
+			$currentProduct->flatfee = $data->json->getFloat('flatfee');
 
 			if ($currentProduct->flatfee)
 			{
@@ -224,7 +225,7 @@ class ProductFactory
 		}
 		else
 		{
-			$currentProduct->flatfee = 0;
+			$currentProduct->flatfee = $data->json->getFloat('flatfee', $currentProduct->flatfee);
 		}
 
 
@@ -1177,33 +1178,70 @@ class ProductFactory
 	}
 
 	/**
-	 * @param   int  $joomla_item_id
+	 * @param   Input  $data
 	 *
-	 * @return int
+	 * @return bool
 	 *
 	 * @since 1.6
 	 */
 
-	public static function togglePublished(int $joomla_item_id): int
+	public static function togglePublishedFromInputData(Input $data)
 	{
+
+		$response = false;
+
 		$db = Factory::getDbo();
 
-		$query = 'UPDATE `#__content` SET `state` = IF(`state`=1, 0, 1) WHERE id = ' . $joomla_item_id . ';';
-		$db->setQuery($query);
-		$db->execute();
+		$items = $data->json->get('items', '', 'ARRAY');
 
-		$query = $db->getQuery(true);
+		/** @var Product $item */
+		foreach ($items as $item)
+		{
 
-		$query->select('*');
-		$query->from($db->quoteName('#__content'));
-		$query->where($db->quoteName('id') . ' = ' . $db->quote($id));
+			$query = 'UPDATE ' . $db->quoteName('#__content') . ' SET ' . $db->quoteName('state') . ' = IF(' . $db->quoteName('state') . '=1, 0, 1) WHERE ' . $db->quoteName('id') . ' = ' . $db->quote($item['joomla_item_id']) . ';';
+			$db->setQuery($query);
+			$result = $db->execute();
 
-		$db->setQuery($query);
+			if ($result)
+			{
+				$response = true;
+			}
 
-		$item = $db->loadObject();
+		}
 
-		return $item->state;
+		return $response;
+	}
 
+
+	public static function batchUpdateCategory(Input $data)
+	{
+
+
+		$response = false;
+
+		$db = Factory::getDbo();
+
+		$items       = $data->json->get('items', '', 'ARRAY');
+		$category_id = $data->json->get('category_id', '', 'INT');
+
+		/** @var Product $item */
+		foreach ($items as $item)
+		{
+
+
+			$object        = new stdClass();
+			$object->id    = $item['joomla_item_id'];
+			$object->catid = $category_id;
+			$result        = $db->updateObject('#__content', $object, 'id');
+
+			if ($result)
+			{
+				$response = true;
+			}
+
+		}
+
+		return $response;
 
 	}
 
@@ -1253,6 +1291,14 @@ class ProductFactory
 
 	}
 
+	/**
+	 * @param   int  $j_item_id
+	 *
+	 * @return bool
+	 *
+	 * @since 1.6
+	 */
+
 
 	private static function variantScorchedEarth(int $j_item_id): bool
 	{
@@ -1274,7 +1320,8 @@ class ProductFactory
 
 		$result = $db->execute();
 
-		if(!$result) {
+		if (!$result)
+		{
 			$response = false;
 		}
 
@@ -1291,7 +1338,8 @@ class ProductFactory
 
 		$result = $db->execute();
 
-		if(!$result) {
+		if (!$result)
+		{
 			$response = false;
 		}
 
@@ -1308,7 +1356,8 @@ class ProductFactory
 
 		$result = $db->execute();
 
-		if(!$result) {
+		if (!$result)
+		{
 			$response = false;
 		}
 
@@ -1483,15 +1532,119 @@ class ProductFactory
 				$db->insertObject('#__protostore_product_variant_data', $object);
 
 			}
+			else
+			{
+				// todo - need to run an update!
+//
+			}
 
 
 		}
 
+		// set the valiantList data
+		self::updateVariantValuesFromInputData($data);
+
 		// do garbage collection:
 		self::removeDeletedVariantListItems($j_item_id, $dbRowLabelIdsStringArray);
 
+		// set a default if there isn't one
+		self::setDefaultVariant($j_item_id);
+
 
 		return true;
+
+	}
+
+	/**
+	 * @param   Input  $data
+	 *
+	 * @return bool
+	 *
+	 * @since 1.6
+	 */
+
+
+	public static function updateVariantValuesFromInputData(Input $data): bool
+	{
+
+		$db = Factory::getDbo();
+
+
+		$variantList = $data->json->get('variantList', '', 'ARRAY');
+
+
+		foreach ($variantList as $variant)
+		{
+
+
+			$price = CurrencyFactory::toInt($variant['price']);
+
+
+			$object          = new stdClass();
+			$object->id      = $variant['id'];
+			$object->price   = $price;
+			$object->stock   = $variant['stock'];
+			$object->sku     = $variant['sku'];
+			$object->active  = ($variant['active'] ? 1 : 0);
+			$object->default = ($variant['default'] ? 1 : 0);
+
+			$db->updateObject('#__protostore_product_variant_data', $object, 'id');
+		}
+
+		return true;
+
+	}
+
+	/**
+	 * @param   int  $j_item_id
+	 *
+	 *
+	 * @return bool
+	 * @since 1.6
+	 *
+	 */
+
+
+	public static function setDefaultVariant(int $j_item_id): bool
+	{
+
+		// check if there is already a default, if so... just return
+
+		$db    = Factory::getDbo();
+		$query = $db->getQuery(true);
+
+		$query->select('*');
+		$query->from($db->quoteName('#__protostore_product_variant_data'));
+		$query->where($db->quoteName('product_id') . ' = ' . $db->quote($j_item_id));
+		$query->where($db->quoteName('default') . ' = ' . $db->quote(1));
+
+		$db->setQuery($query);
+
+		$result = $db->loadObjectList();
+
+		if ($result)
+		{
+			return true;
+		}
+		else
+		{
+			// if not, set the first instance as default
+
+			$query = $db->getQuery(true);
+
+			$query->select('*');
+			$query->from($db->quoteName('#__protostore_product_variant_data'));
+			$query->where($db->quoteName('product_id') . ' = ' . $db->quote($j_item_id));
+			$query->setLimit('1');
+			$db->setQuery($query);
+
+			$first = $db->loadObject();
+
+			$first->default = 1;
+
+			return $db->updateObject('#__protostore_product_variant_data', $first, 'id');
+		}
+
 
 	}
 
@@ -1973,6 +2126,54 @@ class ProductFactory
 
 
 	/**
+	 * @param   Input  $data
+	 *
+	 * @return bool
+	 *
+	 * @since 1.6
+	 */
+
+	public static function trashFromInputData(Input $data): bool
+	{
+
+		$db = Factory::getDbo();
+
+		$items = json_decode($data->json->getString('items'));
+
+		/** @var Product $item */
+		foreach ($items as $item)
+		{
+			$query      = $db->getQuery(true);
+			$conditions = array(
+				$db->quoteName('id') . ' = ' . $db->quote($item->id)
+			);
+			$query->delete($db->quoteName('#__protostore_product'));
+			$query->where($conditions);
+			$db->setQuery($query);
+			$db->execute();
+
+		}
+
+		/** @var Product $item */
+		foreach ($items as $item)
+		{
+			$query      = $db->getQuery(true);
+			$conditions = array(
+				$db->quoteName('id') . ' = ' . $db->quote($item->joomla_item_id)
+			);
+			$query->delete($db->quoteName('#__content'));
+			$query->where($conditions);
+			$db->setQuery($query);
+			$db->execute();
+
+		}
+
+		return true;
+
+	}
+
+
+	/**
 	 * @param $id
 	 *
 	 * @return File|null
@@ -2225,6 +2426,79 @@ class ProductFactory
 	}
 
 	/**
+	 * @param   Input  $data
+	 *
+	 * @return bool
+	 *
+	 * @since 1.6
+	 */
+
+
+	public static function saveStockFromInputData(Input $data): bool
+	{
+
+		$db = Factory::getDbo();
+
+		$itemId = $data->json->getInt('itemid');
+		$stock  = $data->json->getInt('stock');
+
+
+		$object                 = new stdClass();
+		$object->joomla_item_id = $itemId;
+		$object->stock          = $stock;
+
+		$result = $db->updateObject('#__protostore_product', $object, 'joomla_item_id');
+
+		if ($result)
+		{
+			return true;
+		}
+
+		return false;
+
+	}
+
+	/**
+	 * @param   Input  $data
+	 *
+	 * @return bool
+	 *
+	 * @throws Exception
+	 * @since 1.6
+	 */
+
+	public static function savePriceFromInputData(Input $data): bool
+	{
+
+		$db = Factory::getDbo();
+
+		$itemId     = $data->json->getInt('itemid');
+		$priceFloat = $data->json->getFloat('base_priceFloat');
+
+
+		if ($priceFloat)
+		{
+			$base_price = CurrencyFactory::toInt($priceFloat);
+		} else {
+			$base_price = 0;
+		}
+
+		$object                 = new stdClass();
+		$object->joomla_item_id = $itemId;
+		$object->base_price     = $base_price;
+
+		$result = $db->updateObject('#__protostore_product', $object, 'joomla_item_id');
+
+		if ($result)
+		{
+			return true;
+		}
+
+		return false;
+
+	}
+
+	/**
 	 * @param   string  $teaserImage
 	 * @param   string  $fullImage
 	 *
@@ -2233,8 +2507,7 @@ class ProductFactory
 	 * @since 1.6
 	 */
 
-	private
-	static function processImagesForSave($teaserImage, $fullImage)
+	private static function processImagesForSave($teaserImage, $fullImage)
 	{
 
 		$images = array();
@@ -2256,8 +2529,7 @@ class ProductFactory
 	 * @since 1.6
 	 */
 
-	private
-	static function processVariantPrices($product): string
+	private static function processVariantPrices($product): string
 	{
 
 		$variantList = json_decode($product->variantList);

@@ -21,7 +21,7 @@ class protostoreTask_save
 	/**
 	 * @param   Input  $data
 	 *
-	 * @return bool
+	 * @return Product|null
 	 *
 	 * @throws Exception
 	 * @since 1.6

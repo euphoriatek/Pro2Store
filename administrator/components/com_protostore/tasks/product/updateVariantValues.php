@@ -13,7 +13,8 @@ defined('_JEXEC') or die('Restricted access');
 
 use Protostore\Product\ProductFactory;
 use Joomla\Input\Input;
-class protostoreTask_togglePublished
+
+class protostoreTask_updateVariantValues
 {
 
 	/**
@@ -23,12 +24,13 @@ class protostoreTask_togglePublished
 	 *
 	 * @since 1.6
 	 */
-
 	public function getResponse(Input $data)
 	{
 
 
-		return ProductFactory::togglePublishedFromInputData($data);
+		return ProductFactory::updateVariantValuesFromInputData($data);
+
+
 	}
 
 }

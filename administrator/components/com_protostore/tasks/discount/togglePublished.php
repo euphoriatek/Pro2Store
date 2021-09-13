@@ -25,7 +25,7 @@ class protostoreTask_togglePublished
 	 * @throws Exception
 	 * @since 1.6
 	 */
-	public function getResponse(Input $data)
+	public function getResponse(Input $data): bool
 	{
 
 

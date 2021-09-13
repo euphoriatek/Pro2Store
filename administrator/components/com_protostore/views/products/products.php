@@ -47,7 +47,8 @@ use Joomla\CMS\Layout\LayoutHelper;
                             <div class="uk-width-auto uk-text-right">
                                 <div class="uk-grid uk-grid-small" uk-grid="">
                                     <div class="uk-width-auto">
-                                        <input  @input="doTextSearch($event)" type="text" placeholder="<?= Text::_('COM_PROTOSTORE_TABLE_SEARCH_PLACEHOLDER'); ?>">
+                                        <input @input="doTextSearch($event)" type="text"
+                                               placeholder="<?= Text::_('COM_PROTOSTORE_TABLE_SEARCH_PLACEHOLDER'); ?>">
                                     </div>
                                     <div class="uk-width-auto">
                                         <select class="uk-select" v-model="selectedCategory" @change="filter">
@@ -69,6 +70,7 @@ use Joomla\CMS\Layout\LayoutHelper;
                             <tr>
 
                                 <th class="uk-text-left">
+                                    <input @change="selectAll($event)" type="checkbox">
                                 </th>
                                 <th class="uk-text-left">Name
                                     <a href="#" @click="sort('title')" class="uk-margin-small-right uk-icon"
@@ -103,33 +105,43 @@ use Joomla\CMS\Layout\LayoutHelper;
                                     </a>
                                 </th>
 
-                                <th class="uk-text-left@m uk-text-nowrap">
-                                </th>
                             </tr>
                             </thead>
 
                             <tbody>
                             <tr class="el-item" v-for="product in itemsChunked[currentPage]">
                                 <td>
-                                    <div><input type="checkbox"></div>
+                                    <div><input v-model="selected" :value="product" type="checkbox"></div>
                                 </td>
                                 <td>
                                     <a :href="'index.php?option=com_protostore&view=product&id=' + product.joomla_item_id">{{product.joomlaItem.title}}</a>
                                 </td>
                                 <td>
                                     <div style="min-height: 80px;">
-                                        <img v-show="product.teaserImagePath" :src="product.teaserImagePath" width="100"/>
-                                        <img v-show="!product.teaserImagePath" src="../media/com_protostore/images/no-image.png" width="55"/>
+                                        <img v-show="product.teaserImagePath" :src="product.teaserImagePath"
+                                             width="100"/>
+                                        <img v-show="!product.teaserImagePath"
+                                             src="../media/com_protostore/images/no-image.png" width="55"/>
                                     </div>
                                 </td>
                                 <td>
                                     <div>{{product.categoryName}}</div>
                                 </td>
                                 <td>
-                                    <div>{{product.baseprice_formatted}}</div>
+                                    <div v-show="!product.editPrice" @click="openEditPrice(product)">{{product.baseprice_formatted}}</div>
+                                    <div v-show="product.editPrice">
+                                        <div class="uk-margin">
+                                            <p-inputnumber @input="updateBasePriceFloat($event, product)" @blur="saveProductPrice(product)" mode="currency" :currency="p2s_currency.iso" :locale="p2s_locale"  v-model="product.basepriceFloat" id="hello" name="heelo"></p-inputnumber>
+                                        </div>
+                                    </div>
                                 </td>
                                 <td>
-                                    <div>{{product.stock}}</div>
+                                    <div v-show="!product.editStock" @click="openEditStock(product)">{{product.stock}}</div>
+                                    <div v-show="product.editStock">
+                                        <div class="uk-margin">
+                                            <input class="uk-input uk-form-width-xsmall" type="number" placeholder="Stock" @blur="saveProductStock(product)" v-model="product.stock" style="width: 60px!important;">
+                                        </div>
+                                    </div>
                                 </td>
                                 <td>
                                     <div>
@@ -139,15 +151,16 @@ use Joomla\CMS\Layout\LayoutHelper;
                                     </div>
                                 </td>
                                 <td class="uk-text-center">
-                                  <span v-if="product.published == '1'" class="yps_currency_published_icon" @click="togglePublished(product)"
+                                  <span v-if="product.published == '1'" class="yps_currency_published_icon"
+                                        @click="togglePublished(product)"
                                         style="font-size: 18px; color: green; cursor: pointer;">
                                       <i class="fal fa-check-circle"></i>
                                   </span>
                                     <span
-                                          v-if="product.published == '0'"
-                                          class="yps_currency_published_icon"
-                                          @click="togglePublished(product)"
-                                          style="font-size: 18px; color: red; cursor: pointer;">
+                                            v-if="product.published == '0'"
+                                            class="yps_currency_published_icon"
+                                            @click="togglePublished(product)"
+                                            style="font-size: 18px; color: red; cursor: pointer;">
                                         <i class="fal fa-times-circle"></i>
                                     </span>
                                 </td>
@@ -170,7 +183,7 @@ use Joomla\CMS\Layout\LayoutHelper;
                                 </p>
                             </div>
                             <div class="uk-width-auto">
-				                <?= LayoutHelper::render('pagination'); ?>
+								<?= LayoutHelper::render('pagination'); ?>
                             </div>
                         </div>
                     </div>
@@ -183,8 +196,69 @@ use Joomla\CMS\Layout\LayoutHelper;
                             <h3>Options</h3>
                         </div>
                         <div class="uk-card-body">
-                            <a href="index.php?option=com_protostore&view=product"
-                                    class="uk-button uk-button-primary"><?= Text::_('COM_PROTOSTORE_ADD_PRODUCT_TITLE'); ?></a>
+                            <!--                            <a href="index.php?option=com_protostore&view=product"-->
+                            <!--                                    class="uk-button uk-button-primary">-->
+							<? //= Text::_('COM_PROTOSTORE_ADD_PRODUCT_TITLE'); ?><!--</a>-->
+                            <ul class="uk-nav-default uk-nav-parent-icon" uk-nav>
+
+                                <li>
+                                    <a class="uk-text-emphasis" href="index.php?option=com_protostore&view=product">
+                                        <span class="uk-margin-small-right" uk-icon="icon: plus-circle"></span>
+										<?= Text::_('COM_PROTOSTORE_ADD_PRODUCT_TITLE'); ?>
+                                    </a>
+                                </li>
+
+                                <li class="uk-nav-divider"></li>
+                                <li>
+                                    <a @click="trashSelected"
+                                       :class="[selected.length == 0 ? 'uk-disabled' : ' uk-text-bold uk-text-emphasis']">
+                                        <span class="uk-margin-small-right" uk-icon="icon: trash"></span>
+										<?= Text::_('COM_PROTOSTORE_TRASH_SELECTED'); ?>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a @click="toggleSelected"
+                                       :class="[selected.length == 0 ? 'uk-disabled' : ' uk-text-bold uk-text-emphasis']">
+                                        <span class="uk-margin-small-right" uk-icon="icon: check"></span>
+										<?= Text::_('COM_PROTOSTORE_TOGGLE_PUBLISHED'); ?>
+                                    </a>
+
+                                </li>
+                                <li>
+                                    <a @click="openChangeCategory"
+                                       :class="[selected.length == 0 ? 'uk-disabled' : ' uk-text-bold uk-text-emphasis']">
+                                        <span class="uk-margin-small-right" uk-icon="icon: album"></span>
+										<?= Text::_('COM_PROTOSTORE_CHANGE_CATEGORY'); ?>
+                                    </a>
+
+                                </li>
+                                <li>
+                                    <div v-show="showChangeCat">
+                                        <div class="uk-container uk-padding-left uk-padding-right"
+                                             style="padding-left: 40px!important; padding-right:  40px!important;">
+                                            <div class="uk-grid uk-grid-small" uk-grid="">
+                                                <div class="uk-width-expand">
+                                                    <select class="uk-select" v-model="changeCategory">
+                                                        <option v-for="category in categories" :value="category.id">
+                                                            {{category.title}}
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                                <div class="uk-width-auto">
+                                                    <button type="button"
+                                                            class="uk-button uk-button-small uk-button-default"
+                                                            @click="runChangeCategory">
+														<?= Text::_('COM_PROTOSTORE_CHANGE'); ?>
+                                                        <i class="fal fa-exchange"></i>
+
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+
                         </div>
                     </div>
                 </div>

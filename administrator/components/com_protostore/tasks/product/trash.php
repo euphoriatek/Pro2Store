@@ -13,7 +13,8 @@ defined('_JEXEC') or die('Restricted access');
 
 use Protostore\Product\ProductFactory;
 use Joomla\Input\Input;
-class protostoreTask_togglePublished
+
+class protostoreTask_trash
 {
 
 	/**
@@ -21,14 +22,16 @@ class protostoreTask_togglePublished
 	 *
 	 * @return bool
 	 *
+	 * @throws Exception
 	 * @since 1.6
 	 */
-
-	public function getResponse(Input $data)
+	public function getResponse(Input $data): bool
 	{
 
 
-		return ProductFactory::togglePublishedFromInputData($data);
+		return ProductFactory::trashFromInputData($data);
+
+
 	}
 
 }

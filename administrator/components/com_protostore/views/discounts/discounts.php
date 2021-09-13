@@ -178,27 +178,24 @@ use Joomla\CMS\Layout\LayoutHelper;
                         </div>
                         <div class="uk-card-body">
                             <ul class="uk-nav-default uk-nav-parent-icon" uk-nav>
-
                                 <li>
                                     <a class="uk-text-emphasis" href="index.php?option=com_protostore&view=discount">
                                         <span class="uk-margin-small-right" uk-icon="icon: plus-circle"></span>
                                         Add Discount
                                     </a>
                                 </li>
-
                                 <li class="uk-nav-divider"></li>
                                 <li>
                                     <a  @click="trashSelected"  :class="[selected.length == 0 ? 'uk-disabled' : ' uk-text-bold uk-text-emphasis']">
                                         <span class="uk-margin-small-right" uk-icon="icon: trash"></span>
-                                        Trash Selected
+	                                    <?= Text::_('COM_PROTOSTORE_TRASH_SELECTED'); ?>
                                     </a>
                                 </li>
                                 <li>
                                     <a  @click="toggleSelected"  :class="[selected.length == 0 ? 'uk-disabled' : ' uk-text-bold uk-text-emphasis']">
                                         <span class="uk-margin-small-right" uk-icon="icon: check"></span>
-                                        Toggle Published
+	                                    <?= Text::_('COM_PROTOSTORE_TOGGLE_PUBLISHED'); ?>
                                     </a>
-
                                 </li>
                             </ul>
                         </div>

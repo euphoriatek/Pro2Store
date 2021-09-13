@@ -202,7 +202,7 @@ class DiscountFactory
 					$amount = 0;
 					break;
 				case 3:
-					$amount = 0;
+					$amount     = 0;
 					$percentage = 0;
 					break;
 			}
@@ -293,16 +293,16 @@ class DiscountFactory
 		/** @var Discount $insert */
 		$insert = new stdClass();
 
-		$insert->id          = $discount->id;
-		$insert->name        = $discount->name;
-		$insert->amount      = $discount->amount;
-		$insert->percentage  = $discount->percentage;
-		$insert->discount_type  = $discount->discount_type;
-		$insert->coupon_code = $discount->coupon_code;
-		$insert->expiry_date = $discount->expiry_date;
-		$insert->published   = $discount->published;
-		$insert->modified    = $discount->modified;
-		$insert->modified_by = $discount->modified_by;
+		$insert->id            = $discount->id;
+		$insert->name          = $discount->name;
+		$insert->amount        = $discount->amount;
+		$insert->percentage    = $discount->percentage;
+		$insert->discount_type = $discount->discount_type;
+		$insert->coupon_code   = $discount->coupon_code;
+		$insert->expiry_date   = $discount->expiry_date;
+		$insert->published     = $discount->published;
+		$insert->modified      = $discount->modified;
+		$insert->modified_by   = $discount->modified_by;
 
 		$result = $db->updateObject('#__protostore_discount', $insert, 'id');
 
@@ -348,11 +348,15 @@ class DiscountFactory
 	 * @param   Input  $data
 	 *
 	 *
+	 * @return bool
 	 * @since 1.6
 	 */
 
-	public static function togglePublishedFromInputData(Input $data)
+	public static function togglePublishedFromInputData(Input $data): bool
 	{
+
+
+		$response = true;
 
 		$db = Factory::getDbo();
 
@@ -364,10 +368,16 @@ class DiscountFactory
 
 			$query = 'UPDATE ' . $db->quoteName('#__protostore_discount') . ' SET ' . $db->quoteName('published') . ' = IF(' . $db->quoteName('published') . '=1, 0, 1) WHERE ' . $db->quoteName('id') . ' = ' . $db->quote($item->id) . ';';
 			$db->setQuery($query);
-			$db->execute();
+			$result = $db->execute();
+
+			if (!$result)
+			{
+				$response = false;
+			}
 
 		}
 
+		return $response;
 	}
 
 
