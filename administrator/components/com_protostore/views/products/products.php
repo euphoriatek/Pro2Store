@@ -128,18 +128,27 @@ use Joomla\CMS\Layout\LayoutHelper;
                                     <div>{{product.categoryName}}</div>
                                 </td>
                                 <td>
-                                    <div v-show="!product.editPrice" @click="openEditPrice(product)">{{product.baseprice_formatted}}</div>
+                                    <div v-show="!product.editPrice" @click="openEditPrice(product)">
+                                        {{product.baseprice_formatted}}
+                                    </div>
                                     <div v-show="product.editPrice">
                                         <div class="uk-margin">
-                                            <p-inputnumber @input="updateBasePriceFloat($event, product)" @blur="saveProductPrice(product)" mode="currency" :currency="p2s_currency.iso" :locale="p2s_locale"  v-model="product.basepriceFloat" id="hello" name="heelo"></p-inputnumber>
+                                            <p-inputnumber @input="updateBasePriceFloat($event, product)"
+                                                           @blur="saveProductPrice(product)" mode="currency"
+                                                           :currency="p2s_currency.iso" :locale="p2s_locale"
+                                                           v-model="product.basepriceFloat" id="hello"
+                                                           name="heelo"></p-inputnumber>
                                         </div>
                                     </div>
                                 </td>
                                 <td>
-                                    <div v-show="!product.editStock" @click="openEditStock(product)">{{product.stock}}</div>
+                                    <div v-show="!product.editStock" @click="openEditStock(product)">{{product.stock}}
+                                    </div>
                                     <div v-show="product.editStock">
                                         <div class="uk-margin">
-                                            <input class="uk-input uk-form-width-xsmall" type="number" placeholder="Stock" @blur="saveProductStock(product)" v-model="product.stock" style="width: 60px!important;">
+                                            <input class="uk-input uk-form-width-xsmall" type="number"
+                                                   placeholder="Stock" @blur="saveProductStock(product)"
+                                                   v-model="product.stock" style="width: 60px!important;">
                                         </div>
                                     </div>
                                 </td>
@@ -193,12 +202,10 @@ use Joomla\CMS\Layout\LayoutHelper;
                 <div>
                     <div class="uk-card uk-card-default" uk-sticky="offset: 100">
                         <div class="uk-card-header">
-                            <h3>Options</h3>
+                            <h3><?= Text::_('COM_PROTOSTORE_OPTIONS'); ?></h3>
                         </div>
                         <div class="uk-card-body">
-                            <!--                            <a href="index.php?option=com_protostore&view=product"-->
-                            <!--                                    class="uk-button uk-button-primary">-->
-							<? //= Text::_('COM_PROTOSTORE_ADD_PRODUCT_TITLE'); ?><!--</a>-->
+
                             <ul class="uk-nav-default uk-nav-parent-icon" uk-nav>
 
                                 <li>
@@ -208,6 +215,7 @@ use Joomla\CMS\Layout\LayoutHelper;
                                     </a>
                                 </li>
 
+                                <li class="uk-nav-header"><?= Text::_('COM_PROTOSTORE_BATCH_ACTIONS'); ?></li>
                                 <li class="uk-nav-divider"></li>
                                 <li>
                                     <a @click="trashSelected"
@@ -248,6 +256,37 @@ use Joomla\CMS\Layout\LayoutHelper;
                                                     <button type="button"
                                                             class="uk-button uk-button-small uk-button-default"
                                                             @click="runChangeCategory">
+														<?= Text::_('COM_PROTOSTORE_CHANGE'); ?>
+                                                        <i class="fal fa-exchange"></i>
+
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <a @click="openChangeStock"
+                                       :class="[selected.length == 0 ? 'uk-disabled' : ' uk-text-bold uk-text-emphasis']">
+                                        <span class="uk-margin-small-right" uk-icon="icon: bag"></span>
+										<?= Text::_('COM_PROTOSTORE_CHANGE_STOCK'); ?>
+                                    </a>
+
+                                </li>
+                                <li>
+                                    <div v-show="showChangeStock">
+                                        <div class="uk-container uk-padding-left uk-padding-right"
+                                             style="padding-left: 40px!important; padding-right:  40px!important;">
+                                            <div class="uk-grid uk-grid-small" uk-grid="">
+                                                <div class="uk-width-expand">
+
+                                                    <input class="uk-input" type="number" v-model="changeStock">
+
+                                                </div>
+                                                <div class="uk-width-auto">
+                                                    <button type="button"
+                                                            class="uk-button uk-button-small uk-button-default"
+                                                            @click="runChangeStock">
 														<?= Text::_('COM_PROTOSTORE_CHANGE'); ?>
                                                         <i class="fal fa-exchange"></i>
 

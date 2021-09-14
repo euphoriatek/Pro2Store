@@ -1212,6 +1212,14 @@ class ProductFactory
 		return $response;
 	}
 
+	/**
+	 * @param   Input  $data
+	 *
+	 * @return bool
+	 *
+	 * @since 1.6
+	 */
+
 
 	public static function batchUpdateCategory(Input $data)
 	{
@@ -1242,6 +1250,44 @@ class ProductFactory
 		}
 
 		return $response;
+
+	}
+
+	/**
+	 * @param   Input  $data
+	 *
+	 * @return bool
+	 *
+	 * @since 1.6
+	 */
+
+	public static function batchUpdateStock(Input $data): bool
+	{
+		$response = false;
+
+		$db = Factory::getDbo();
+
+		$items = $data->json->get('items', '', 'ARRAY');
+		$stock = $data->json->get('stock', '', 'INT');
+
+		/** @var Product $item */
+		foreach ($items as $item)
+		{
+
+			$object                 = new stdClass();
+			$object->joomla_item_id = $item['joomla_item_id'];
+			$object->stock          = $stock;
+			$result                 = $db->updateObject('#__protostore_product', $object, 'joomla_item_id');
+
+			if ($result)
+			{
+				$response = true;
+			}
+
+		}
+
+		return $response;
+
 
 	}
 
@@ -2479,7 +2525,9 @@ class ProductFactory
 		if ($priceFloat)
 		{
 			$base_price = CurrencyFactory::toInt($priceFloat);
-		} else {
+		}
+		else
+		{
 			$base_price = 0;
 		}
 

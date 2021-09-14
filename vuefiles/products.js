@@ -18,6 +18,8 @@ const p2s_products = {
             confirm_LangString: '',
             changeCategory: 0,
             showChangeCat: false,
+            showChangeStock: false,
+            changeStock: 0,
             editStock: false
         };
     },
@@ -189,6 +191,7 @@ const p2s_products = {
             const response = await request.json();
 
             if (response.success) {
+                this.selected = [];
                 await this.filter();
 
             } else {
@@ -232,6 +235,7 @@ const p2s_products = {
             const response = await request.json();
 
             if (response.success) {
+                this.selected = [];
                 await this.filter();
             } else {
                 UIkit.notification({
@@ -247,46 +251,98 @@ const p2s_products = {
         openChangeCategory() {
             this.showChangeCat = true;
         },
+        openChangeStock() {
+            this.showChangeStock = true;
+        },
         async runChangeCategory() {
 
-            const params = {
-                'items': this.selected,
-                'category_id': this.changeCategory
-            };
+            if (this.selected.length > 0) {
+                const params = {
+                    'items': this.selected,
+                    'category_id': this.changeCategory
+                };
 
-            const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=product.changeCategory&format=raw", {
-                method: 'POST',
-                mode: 'cors',
-                cache: 'no-cache',
-                credentials: 'same-origin',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                redirect: 'follow',
-                referrerPolicy: 'no-referrer',
-                body: JSON.stringify(params)
-            });
-
-            const response = await request.json();
-
-            if (response.success) {
-                this.showChangeCat = false;
-                UIkit.notification({
-                    message: 'Done',
-                    status: 'success',
-                    pos: 'top-right',
-                    timeout: 5000
+                const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=product.changeCategory&format=raw", {
+                    method: 'POST',
+                    mode: 'cors',
+                    cache: 'no-cache',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    redirect: 'follow',
+                    referrerPolicy: 'no-referrer',
+                    body: JSON.stringify(params)
                 });
-                await this.filter();
-            } else {
-                UIkit.notification({
-                    message: 'There was an error.',
-                    status: 'danger',
-                    pos: 'top-center',
-                    timeout: 5000
-                });
+
+                const response = await request.json();
+
+                if (response.success) {
+                    this.showChangeCat = false;
+                    UIkit.notification({
+                        message: 'Done',
+                        status: 'success',
+                        pos: 'top-right',
+                        timeout: 5000
+                    });
+                    this.selected = [];
+                    await this.filter();
+                } else {
+                    UIkit.notification({
+                        message: 'There was an error.',
+                        status: 'danger',
+                        pos: 'top-center',
+                        timeout: 5000
+                    });
+                }
             }
 
+        },
+        async runChangeStock() {
+
+            if (this.selected.length > 0) {
+
+
+                const params = {
+                    'items': this.selected,
+                    'stock': this.changeStock
+                };
+
+                const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=product.changeStock&format=raw", {
+                    method: 'POST',
+                    mode: 'cors',
+                    cache: 'no-cache',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    redirect: 'follow',
+                    referrerPolicy: 'no-referrer',
+                    body: JSON.stringify(params)
+                });
+
+                const response = await request.json();
+
+                if (response.success) {
+                    this.showChangeStock = false;
+                    UIkit.notification({
+                        message: 'Done',
+                        status: 'success',
+                        pos: 'top-right',
+                        timeout: 5000
+                    });
+                    this.selected = [];
+                    await this.filter();
+                } else {
+                    UIkit.notification({
+                        message: 'There was an error.',
+                        status: 'danger',
+                        pos: 'top-center',
+                        timeout: 5000
+                    });
+                }
+
+            }
         },
         openEditStock(product) {
             product.editStock = true;
@@ -298,7 +354,7 @@ const p2s_products = {
 
             delete product.editStock;
 
-              const params = {
+            const params = {
                 'itemid': product.joomla_item_id,
                 'stock': product.stock,
             };
@@ -338,7 +394,7 @@ const p2s_products = {
             }
 
         },
-        updateBasePriceFloat(event, product){
+        updateBasePriceFloat(event, product) {
             product.basepriceFloat = event.value;
         },
         async saveProductPrice(product) {

@@ -25,7 +25,7 @@ class JFormFieldUserselect extends JFormField
 
 	public function getLabel()
 	{
-		return '';
+		return \Joomla\CMS\Language\Text::_('COM_PROTOSTORE_CUSTOMER_JUSER');
 	}
 
 	/**

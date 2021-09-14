@@ -17,7 +17,8 @@ const p2s_customer_form = {
                 jform_addresses: [],
             },
             countries: [],
-            andClose: false
+            andClose: false,
+            deleteConfirmMessage: ''
 
         }
 
@@ -52,6 +53,12 @@ const p2s_customer_form = {
             locale.remove();
         } catch (err) {
         }
+        const deleteConfirmMessage = document.getElementById('deleteConfirmMessage');
+        try {
+            this.deleteConfirmMessage = deleteConfirmMessage.innerText;
+            deleteConfirmMessage.remove();
+        } catch (err) {
+        }
 
 
     },
@@ -67,7 +74,7 @@ const p2s_customer_form = {
             customerSave.name = this.form.jform_name;
             customerSave.email = this.form.jform_email;
             customerSave.j_user_id = this.form.jform_j_user_id;
-            customerSave.published = (this.form.jform_published ? 1 :0);
+            customerSave.published = (this.form.jform_published ? 1 : 0);
 
             const params = {
                 customer: JSON.stringify(customerSave)
@@ -184,6 +191,45 @@ const p2s_customer_form = {
                 }
 
             });
+        },
+        async launchDeleteDialog() {
+            await UIkit.modal.confirm('<h3>' + this.deleteConfirmMessage + '</h3>');
+
+
+            const params = {
+                'user_id': this.form.jform_j_user_id,
+                'customer_id': this.form.jform_id
+            };
+
+            const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=customer.delete&format=raw", {
+                method: 'POST',
+                mode: 'cors',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                redirect: 'follow',
+                referrerPolicy: 'no-referrer',
+                body: JSON.stringify(params)
+            });
+
+
+            const response = await request.json();
+
+            if (response.success) {
+
+                UIkit.notification({
+                    message: 'done',
+                    status: 'success',
+                    pos: 'top-right',
+                    timeout: 5000
+                });
+
+                window.location.href = this.base_url + 'index.php?option=com_protostore&view=customers';
+
+            }
+
         },
         hasJsonStructure(str) {
             if (typeof str !== 'string') return false;

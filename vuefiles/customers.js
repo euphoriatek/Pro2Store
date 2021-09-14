@@ -4,6 +4,7 @@ const p2s_customers = {
             base_url: '',
             items: [],
             itemsChunked: [],
+            selected: [],
             currentSort: 'name',
             currentSortDir: 'asc',
             currentPage: 0,
@@ -137,21 +138,51 @@ const p2s_customers = {
                 return 0;
             });
         },
-        async togglePublished(item) {
+        async trashSelected() {
+
+            await UIkit.modal.confirm(this.confirm_LangString);
 
             const params = {
-                'item_id': item.id
+                'items': this.selected
             };
 
-            const URLparams = this.serialize(params);
 
-            const request = await fetch(this.base_url + 'index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=customers.togglePublished&format=raw&' + URLparams, {method: 'post'});
+            const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=product.trash&format=raw", {
+                method: 'POST',
+                mode: 'cors',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                redirect: 'follow',
+                referrerPolicy: 'no-referrer',
+                body: JSON.stringify(params)
+            });
 
             const response = await request.json();
 
             if (response.success) {
-                item.published = response.data
+                this.selected = [];
+                await this.filter();
+            } else {
+                UIkit.notification({
+                    message: 'There was an error.',
+                    status: 'danger',
+                    pos: 'top-center',
+                    timeout: 5000
+                });
             }
+
+
+        },
+        selectAll(e) {
+            if (e.target.checked) {
+                this.selected = this.itemsChunked[this.currentPage];
+            } else {
+                this.selected = [];
+            }
+
         },
         serialize(obj) {
             var str = [];

@@ -48,14 +48,26 @@ $item = $vars['item'];
 
                                 <button type="submit"
                                         class="uk-button uk-button-default button-success uk-button-small uk-margin-right">
-                                    Save
+                                    <?= Text::_('COM_PROTOSTORE_ADD_PRODUCT_SAVE'); ?>
                                 </button>
                                 <button type="submit" @click="andClose = true"
                                         class="uk-button uk-button-default button-success uk-button-small uk-margin-right">
-                                    Save & Close
+                                    <?= Text::_('COM_PROTOSTORE_SAVE_CLOSE'); ?>
                                 </button>
                                 <a class="uk-button uk-button-default uk-button-small "
                                    href="index.php?option=com_protostore&view=customers">Cancel</a>
+
+                                <div class="uk-inline">
+                                    <button class="uk-icon-button" uk-icon="more-vertical" type="button"></button>
+                                    <div uk-dropdown="mode: click">
+                                        <ul class="uk-nav uk-dropdown-nav">
+
+                                            <li><button @click="launchDeleteDialog" class="uk-button uk-button-text" type="button">Delete This User</button></li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+
 
                             </div>
 

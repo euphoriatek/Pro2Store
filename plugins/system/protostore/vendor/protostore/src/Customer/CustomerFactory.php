@@ -57,15 +57,15 @@ class CustomerFactory
 			$id = Factory::getUser()->id;
 			// if the id is not set, try to retrieve using the current logged in user
 
-				if ($id !== 0)
-				{
-					$query->where($db->quoteName('j_user_id') . ' = ' . $db->quote($id));
-				}
+			if ($id !== 0)
+			{
+				$query->where($db->quoteName('j_user_id') . ' = ' . $db->quote($id));
+			}
 
-				else
-				{
-					return null;
-				}
+			else
+			{
+				return null;
+			}
 		}
 
 		$db->setQuery($query);
@@ -95,8 +95,7 @@ class CustomerFactory
 	 * @since 1.5
 	 */
 
-	public
-	static function getList(int $limit = 0, int $offset = 0, string $searchTerm = null, string $orderBy = 'name', string $orderDir = 'DESC'): ?array
+	public static function getList(int $limit = 0, int $offset = 0, string $searchTerm = null, string $orderBy = 'name', string $orderDir = 'DESC'): ?array
 	{
 
 		// init items
@@ -149,8 +148,7 @@ class CustomerFactory
 	 */
 
 
-	public
-	static function saveFromInputData(Input $data): bool
+	public static function saveFromInputData(Input $data): bool
 	{
 
 		$customer = json_decode($data->getString('customer'));
@@ -177,8 +175,7 @@ class CustomerFactory
 	 * @since version
 	 */
 
-	public
-	static function getUser($joomla_user_id): User
+	public static function getUser($joomla_user_id): User
 	{
 
 		return User::getInstance($joomla_user_id);
@@ -194,8 +191,7 @@ class CustomerFactory
 	 */
 
 
-	public
-	static function getCustomersOrders($cusomter_id): ?array
+	public static function getCustomersOrders($cusomter_id): ?array
 	{
 
 
@@ -216,8 +212,7 @@ class CustomerFactory
 	 *
 	 */
 
-	public
-	static function getOrderTotal($orders, bool $integer = false)
+	public static function getOrderTotal($orders, bool $integer = false)
 	{
 
 
@@ -256,13 +251,99 @@ class CustomerFactory
 	 * @since 1.6
 	 */
 
-	public
-	static function getCustomerAddresses($cusomter_id): ?array
+	public static function getCustomerAddresses($cusomter_id): ?array
 	{
 
 		return AddressFactory::getList(0, 0, null, 'name', 'desc', $cusomter_id);
 
 	}
 
+
+	/**
+	 * @param   Input  $data
+	 *
+	 * @return bool
+	 *
+	 * @since 1.6
+	 */
+
+	public static function delete(Input $data)
+	{
+		$user_id     = $data->json->getInt('user_id');
+		$customer_id = $data->json->getInt('customer_id');
+
+		$db = Factory::getDbo();
+
+		$query = $db->getQuery(true);
+
+		$conditions = array(
+			$db->quoteName('user_id') . ' = ' . $db->quote($user_id)
+		);
+
+		$query->delete($db->quoteName('#__user_profiles'));
+		$query->where($conditions);
+
+		$db->setQuery($query);
+
+		$db->execute();
+
+
+
+		$query = $db->getQuery(true);
+
+		$conditions = array(
+			$db->quoteName('id') . ' = ' . $db->quote($user_id)
+		);
+
+		$query->delete($db->quoteName('#__users'));
+		$query->where($conditions);
+
+		$db->setQuery($query);
+
+		$db->execute();
+
+
+		$query = $db->getQuery(true);
+
+		$conditions = array(
+			$db->quoteName('customer_id') . ' = ' . $db->quote($customer_id)
+		);
+
+		$query->delete($db->quoteName('#__protostore_customer_address'));
+		$query->where($conditions);
+
+		$db->setQuery($query);
+
+		$db->execute();
+
+		$query = $db->getQuery(true);
+
+		$conditions = array(
+			$db->quoteName('customer_id') . ' = ' . $db->quote($customer_id)
+		);
+
+		$query->delete($db->quoteName('#__protostore_order'));
+		$query->where($conditions);
+
+		$db->setQuery($query);
+
+		$db->execute();
+
+		$query = $db->getQuery(true);
+
+		$conditions = array(
+			$db->quoteName('id') . ' = ' . $db->quote($customer_id)
+		);
+
+		$query->delete($db->quoteName('#__protostore_customer'));
+		$query->where($conditions);
+
+		$db->setQuery($query);
+
+		$db->execute();
+
+
+		return true;
+	}
 
 }

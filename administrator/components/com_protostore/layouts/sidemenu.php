@@ -55,9 +55,9 @@ $extensions = Factory::getApplication()->triggerEvent('onGetSidebarLink');
                 <li>
                     <a href="index.php?option=com_protostore&view=products"><?= Text::_('COM_PROTOSTORE_SIDEMENU_PRODUCT_LIST'); ?></a>
                 </li>
-                <li>
-                    <a href="index.php?option=com_protostore&view=productoptions"><?= Text::_('COM_PROTOSTORE_SIDEMENU_PRODUCT_OPTIONS'); ?></a>
-                </li>
+<!--                <li>-->
+<!--                    <a href="index.php?option=com_protostore&view=productoptions">--><?//= Text::_('COM_PROTOSTORE_SIDEMENU_PRODUCT_OPTIONS'); ?><!--</a>-->
+<!--                </li>-->
                 <!-- <li><a href="/optionpresets">Option Presets</a></li>
 			  <li><a href="/brands">Brands</a></li> -->
             </ul>

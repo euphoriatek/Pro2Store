@@ -11,6 +11,7 @@ defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\AdminModel;
+use Joomla\CMS\Language\Text;
 
 use Protostore\Country\CountryFactory;
 use Protostore\Customer\Customer;
@@ -56,7 +57,7 @@ class bootstrap extends AdminModel
 	{
 
 
-		$this->vars['item']     = false;
+		$this->vars['item'] = false;
 
 		if ($id)
 		{
@@ -65,11 +66,13 @@ class bootstrap extends AdminModel
 
 		$this->vars['countries'] = CountryFactory::getList(0, 0, true);
 
-		$this->addScripts();
-		$this->addStylesheets();
-
 
 		$this->vars['form'] = $this->getForm(array('item' => $this->vars['item']), true);
+		$this->vars['deleteConfirmMessage'] = Text::_('COM_PROTOSTORE_CUSTOMER_DELETE_CONFIRM');
+
+
+		$this->addScripts();
+		$this->addStylesheets();
 
 
 	}
@@ -148,7 +151,8 @@ class bootstrap extends AdminModel
 
 			foreach ($this->vars['item'] as $key => $value)
 			{
-				if(is_string($value)){
+				if (is_string($value))
+				{
 					$doc->addCustomTag('<script id="jform_' . $key . '_data" type="application/json">' . $value . '</script>');
 				}
 
@@ -157,21 +161,19 @@ class bootstrap extends AdminModel
 					$doc->addCustomTag('<script id="jform_' . $key . '_data" type="application/json">' . $value . '</script>');
 				}
 
-				if(is_array($value))
+				if (is_array($value))
 				{
 					$doc->addCustomTag('<script id="jform_' . $key . '_data" type="application/json">' . json_encode($value) . '</script>');
 				}
-				if(is_object($value))
+				if (is_object($value))
 				{
 					$doc->addCustomTag('<script id="jform_' . $key . '_data" type="application/json">' . json_encode($value) . '</script>');
 				}
 			}
 
 		}
-//		$doc->addCustomTag(' <script id="base_url" type="application/json">' . Uri::base() . '</script>');
-//		$doc->addCustomTag(' <script id="p2s_currency" type="application/json">' . json_encode($this->vars['currency']) . '</script>');
-//		$doc->addCustomTag(' <script id="p2s_locale" type="application/json">' . json_encode($this->vars['locale']) . '</script>');
 
+		$doc->addCustomTag(' <script id="deleteConfirmMessage" type="application/json">' . $this->vars['deleteConfirmMessage'] . '</script>');
 
 
 		// include whatever PrimeVue component scripts we need
