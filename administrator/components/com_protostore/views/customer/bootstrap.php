@@ -13,6 +13,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\AdminModel;
 use Joomla\CMS\Language\Text;
 
+
 use Protostore\Country\CountryFactory;
 use Protostore\Customer\Customer;
 use Protostore\Render\Render;
@@ -27,7 +28,17 @@ use Protostore\Utilities\Utilities;
 class bootstrap extends AdminModel
 {
 
-	private $vars;
+	/**
+	 * @var array $vars
+	 * @since 1.6
+	 */
+	public $vars;
+
+	/**
+	 * @var string $view
+	 * @since 1.6
+	 */
+	public static $view = 'customer';
 
 
 	public function __construct()
@@ -39,7 +50,7 @@ class bootstrap extends AdminModel
 
 		$this->init($id);
 
-		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/customer/customer.php', $this->vars);
+		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/' . self::$view . '/' . self::$view . '.php', $this->vars);
 
 
 	}
@@ -67,7 +78,7 @@ class bootstrap extends AdminModel
 		$this->vars['countries'] = CountryFactory::getList(0, 0, true);
 
 
-		$this->vars['form'] = $this->getForm(array('item' => $this->vars['item']), true);
+		$this->vars['form']                 = $this->getForm(array('item' => $this->vars['item']), true);
 		$this->vars['deleteConfirmMessage'] = Text::_('COM_PROTOSTORE_CUSTOMER_DELETE_CONFIRM');
 
 
@@ -111,7 +122,7 @@ class bootstrap extends AdminModel
 		$item = $data['item'];
 
 
-		$form = $this->loadForm('com_protostore.customer', 'customer', array('control' => 'jform', 'load_data' => $loadData));
+		$form = $this->loadForm('com_protostore.' . self::$view, self::$view, array('control' => 'jform', 'load_data' => $loadData));
 
 		if ($item)
 		{
@@ -142,7 +153,7 @@ class bootstrap extends AdminModel
 
 
 		// include the vue script - defer
-		$doc->addScript('../media/com_protostore/js/vue/customer/customer.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
+		$doc->addScript('../media/com_protostore/js/vue/' . self::$view . '/' . self::$view . '.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
 
 
 		//set up data for vue:

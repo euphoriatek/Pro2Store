@@ -18,7 +18,7 @@ use Protostore\Render\Render;
 use Protostore\Order\OrderFactory;
 use Protostore\Dashboard\DashboardFactory;
 use Protostore\Currency\CurrencyFactory;
-use Protostore\Utilities\Utilities;
+use Protostore\Product\ProductFactory;
 
 
 /**
@@ -71,6 +71,7 @@ class bootstrap
 
 		$this->vars['currencysymbol'] = CurrencyFactory::getDefault()->currencysymbol;
 		$this->vars['orders'] = OrderFactory::getList(5);
+		$this->vars['products'] = ProductFactory::getList();
 		$this->vars['now'] = new Date('now');
 		$this->vars['list_limit'] = Factory::getConfig()->get('list_limit', '25');
 

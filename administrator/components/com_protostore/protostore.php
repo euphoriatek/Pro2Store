@@ -24,8 +24,15 @@ if (!Factory::getUser()->authorise('core.manage', 'com_protostore'))
 	throw new NotAllowed(Text::_('JERROR_ALERTNOAUTHOR'), 403);
 }
 
-include ( JPATH_ADMINISTRATOR . '/components/com_protostore/views/wrapper/bootstrapWrapper.php');
-new bootstrapWrapper();
+if(\Protostore\Setup\SetupFactory::isSetup()) {
+	include ( JPATH_ADMINISTRATOR . '/components/com_protostore/views/wrapper/bootstrapWrapper.php');
+	new bootstrapWrapper();
+} else {
+	include ( JPATH_ADMINISTRATOR . '/components/com_protostore/views/wrapper/bootstrapWrapper.php');
+	new bootstrapWrapper();
+}
+
+
 
 ?>
 

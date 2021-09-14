@@ -4,6 +4,7 @@
   "private": true,
   "description": "An Ecommerce Extension for YOOtheme Pro",
   "scripts": {
+    "build": "node build/build.js",
     "bundlevue": "node bundlevue.js",
     "vuedev": "onchange 'vuefiles/*.js' -- node bundlevue.js"
   },
