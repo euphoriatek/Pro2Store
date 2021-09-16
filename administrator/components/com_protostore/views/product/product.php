@@ -54,14 +54,14 @@ $item = $vars['item'];
                                 </button>
                                 <button type="submit" @click="andClose = false"
                                         class="uk-button uk-button-default button-success uk-button-small uk-margin-right">
-                                    Save
+                                    <?= Text::_('JTOOLBAR_APPLY'); ?>
                                 </button>
                                 <button type="submit" @click="andClose = true"
                                         class="uk-button uk-button-default button-success uk-button-small uk-margin-right">
-                                    Save & Close
+                                   <?= Text::_('JTOOLBAR_SAVE'); ?>
                                 </button>
                                 <a class="uk-button uk-button-default uk-button-small uk-margin-right"
-                                   href="index.php?option=com_protostore&view=products">Cancel</a>
+                                   href="index.php?option=com_protostore&view=products"><?= Text::_('JTOOLBAR_CANCEL'); ?></a>
                                 <button type="button" uk-toggle="target: #advancedOptions"
                                         class="uk-button uk-button-primary uk-button-small uk-margin-right">
                                     Advanced Options

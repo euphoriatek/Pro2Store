@@ -11,6 +11,7 @@
 defined('_JEXEC') or die('Restricted access');
 require_once(__DIR__ . '/vendor/autoload.php');
 
+use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\Uri\Uri;
@@ -26,6 +27,10 @@ class plgSystemProtostore extends CMSPlugin
 
     public function onAfterInitialise()
     {
+
+		if(!ComponentHelper::getComponent('com_protostore', true)->enabled) {
+			return;
+		}
 
         //import VUE on the frontend
         $app = Factory::getApplication();

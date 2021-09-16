@@ -7,6 +7,7 @@ const p2s_email_form = {
                 jform_subject: '',
                 jform_emailtype: '',
                 jform_body: '',
+                jform_language: '*',
                 jform_published: true
             },
             andClose: false,
@@ -24,15 +25,20 @@ const p2s_email_form = {
     async beforeMount() {
 
         const jform = document.getElementById('p2s_email');
-        const form = JSON.parse(jform.innerText);
 
-        this.form.jform_id = form.id;
-        this.form.jform_to = form.to;
-        this.form.jform_subject = form.subject;
-        this.form.jform_emailtype = form.emailtype;
-        this.form.jform_body = form.body;
-        this.form.jform_published = form.published;
-        // jform.remove();
+        try {
+            const form = JSON.parse(jform.innerText);
+            this.form.jform_id = form.id;
+            this.form.jform_to = form.to;
+            this.form.jform_subject = form.subject;
+            this.form.jform_emailtype = form.emailtype;
+            this.form.jform_body = form.body;
+            this.form.jform_language = form.language;
+            this.form.jform_published = form.published;
+            // jform.remove();
+        } catch (err) {
+        }
+
 
 
         const base_url = document.getElementById('base_url');
@@ -80,6 +86,7 @@ const p2s_email_form = {
                 'subject': this.form.jform_subject,
                 'emailtype': this.form.jform_emailtype,
                 'body': this.form.jform_body,
+                'language': this.form.jform_language,
                 'published': (this.form.jform_published ? 1 : 0),
 
             };

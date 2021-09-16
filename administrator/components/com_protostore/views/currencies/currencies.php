@@ -121,9 +121,6 @@ use Joomla\CMS\Layout\LayoutHelper;
 									   uk-icon="triangle-down">
 									</a>
 								</th>
-
-								<th class="uk-text-left@m uk-text-nowrap">
-								</th>
 							</tr>
 							</thead>
 
@@ -145,8 +142,10 @@ use Joomla\CMS\Layout\LayoutHelper;
                                     {{item.rate}}
 								</td>
 								<td class="uk-text-center">
-                                  <span v-if="item.published == '1'" class="yps_currency_published_icon" @click="togglePublished(item)"
-                                        style="font-size: 18px; color: green; cursor: pointer;">
+                                  <span v-if="item.published == '1'"  @click="togglePublished(item)"
+                                        :style="[item.default == '1' ? 'font-size: 18px; color: green;' : 'font-size: 18px; color: green; cursor: pointer;']"
+                                        :uk-tooltip="[item.default == '1' ? 'title: <?= addslashes(Text::_('COM_PROTOSTORE_ADD_CURRENCY_DEFAULT_CLICK_TOOLTIP')); ?>' : 'title:']"
+                                  >
                                       <i class="fal fa-check-circle"></i>
                                   </span>
 									<span
@@ -157,9 +156,19 @@ use Joomla\CMS\Layout\LayoutHelper;
                                         <i class="fal fa-times-circle"></i>
                                     </span>
 								</td>
-                                <td>
-                                    {{item.default}}
-                                </td>
+								<td class="uk-text-center">
+                                  <span v-if="item.default == '1'"
+                                        style="font-size: 18px; color: green">
+                                      <i class="fal fa-check-circle"></i>
+                                  </span>
+									<span
+										v-if="item.default == '0'"
+										@click="toggleDefault(item)"
+										style="font-size: 18px; color: red; cursor: pointer;">
+                                        <i class="fal fa-times-circle"></i>
+                                    </span>
+								</td>
+
 
 							</tr>
 

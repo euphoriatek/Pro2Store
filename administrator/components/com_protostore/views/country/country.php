@@ -48,14 +48,14 @@ $item = $vars['item'];
 
                                 <button type="submit" @click="andClose = false"
                                         class="uk-button uk-button-default button-success uk-button-small uk-margin-right">
-                                    Save
+                                    <?= Text::_('JTOOLBAR_APPLY'); ?>
                                 </button>
                                 <button type="submit" @click="andClose = true"
                                         class="uk-button uk-button-default button-success uk-button-small uk-margin-right">
-                                    Save & Close
+	                                <?= Text::_('JTOOLBAR_SAVE'); ?>
                                 </button>
                                 <a class="uk-button uk-button-default uk-button-small "
-                                   href="index.php?option=com_protostore&view=currencies">Cancel</a>
+                                   href="index.php?option=com_protostore&view=countries"><?= Text::_('JTOOLBAR_CANCEL'); ?></a>
 
                             </div>
 

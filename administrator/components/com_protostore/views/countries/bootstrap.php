@@ -12,6 +12,7 @@ defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Factory;
 
+use Joomla\CMS\Language\Text;
 use Protostore\Bootstrap\listView;
 use Protostore\Render\Render;
 use Protostore\Country\CountryFactory;
@@ -30,8 +31,10 @@ class bootstrap implements listView
 	public function __construct()
 	{
 		$this->init();
-		$this->addScripts();
 		$this->setVars();
+		$this->addScripts();
+		$this->addTranslationStrings();
+
 
 		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/countries/countries.php', $this->vars);
 
@@ -63,8 +66,9 @@ class bootstrap implements listView
 	{
 
 
-		$this->vars['items']      = $this->getItems();
-		$this->vars['list_limit'] = Factory::getConfig()->get('list_limit', '25');
+		$this->vars['items']          = $this->getItems();
+		$this->vars['list_limit']     = Factory::getConfig()->get('list_limit', '25');
+		$this->vars['updatedMessage'] = Text::_('COM_PROTOSTORE_COUNTRIES_UPDATED');
 
 
 	}
@@ -93,10 +97,11 @@ class bootstrap implements listView
 	public function addScripts(): void
 	{
 
+		$doc = Factory::getDocument();
 
 		// include the vue script - defer
-		Factory::getDocument()->addScript('../media/com_protostore/js/vue/countries/countries.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
-
+		$doc->addScript('../media/com_protostore/js/vue/countries/countries.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
+		$doc->addCustomTag('<script id="updatedMessage" type="application/json">' . $this->vars['updatedMessage'] . '</script>');
 
 		// include prime
 		Utilities::includePrime(array('inputswitch'));
@@ -118,11 +123,16 @@ class bootstrap implements listView
 	/**
 	 *
 	 *
-	 * @since version
+	 * @since 1.6
 	 */
 	public function addTranslationStrings(): void
 	{
-		return;
+
+		$doc = Factory::getDocument();
+
+
+		$doc->addCustomTag('<script id="confirmLangString" type="application/json">' . Text::_('COM_PROTOSTORE_COUNTRIES_DELETE_CONFIRM') . '</script>');
+
 	}
 
 }

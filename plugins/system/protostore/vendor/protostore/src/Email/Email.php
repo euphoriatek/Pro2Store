@@ -23,6 +23,8 @@ class Email
 	public $emailtype_string;
 	public $subject;
 	public $published;
+	public $language;
+	public $language_image;
 	public $created_by;
 	public $modified_by;
 	public $created;
@@ -74,7 +76,7 @@ class Email
 	{
 
 		$this->emailtype_string = EmailFactory::emailTypeToString($this->emailtype);
-
+		$this->language_image = EmailFactory::getLanguageImageString($this->language);
 
 	}
 

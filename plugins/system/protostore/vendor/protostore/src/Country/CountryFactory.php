@@ -238,7 +238,7 @@ class CountryFactory
 	 */
 
 
-	public static function saveFromInputData(Input $data)
+	public static function saveFromInputData(Input $data): ?Country
 	{
 
 
@@ -257,6 +257,9 @@ class CountryFactory
 
 			if (self::commitToDatabase($current))
 			{
+				// now process the associated zones
+				self::updateZoneList($current);
+
 				return $current;
 			}
 
@@ -266,6 +269,8 @@ class CountryFactory
 
 			if ($item = self::createFromInputData($data))
 			{
+				// now process the associated zones
+				self::updateZoneList($item);
 				return $item;
 			}
 
@@ -340,6 +345,104 @@ class CountryFactory
 		}
 
 		return false;
+
+	}
+
+	/**
+	 * @param   Input  $data
+	 *
+	 *
+	 * @return bool
+	 * @since 1.6
+	 */
+
+	public static function togglePublishedFromInputData(Input $data): bool
+	{
+
+
+		$response = false;
+
+		$db = Factory::getDbo();
+
+		$items = $data->json->get('items', '', 'ARRAY');
+
+
+		foreach ($items as $item)
+		{
+
+			$object            = new stdClass();
+			$object->id        = $item['id'];
+			$object->published = $item['published'];
+
+			$db->updateObject('#__protostore_country', $object, 'id');
+
+			self::updateZoneList($item);
+			$response = true;
+		}
+
+
+		return $response;
+	}
+
+
+	/**
+	 * @param   Input  $data
+	 *
+	 *
+	 * @return bool
+	 * @since 1.6
+	 */
+
+	public static function trashFromInputData(Input $data): bool
+	{
+
+		$db = Factory::getDbo();
+
+		$items = $data->json->get('items', '', 'ARRAY');
+
+
+		foreach ($items as $item)
+		{
+			$query      = $db->getQuery(true);
+			$conditions = array(
+				$db->quoteName('id') . ' = ' . $db->quote($item['id'])
+			);
+			$query->delete($db->quoteName('#__protostore_country'));
+			$query->where($conditions);
+			$db->setQuery($query);
+			$db->execute();
+
+		}
+
+		return true;
+
+	}
+
+	/**
+	 * @param   array|object  $item
+	 *
+	 * @since 1.6
+	 */
+
+	private static function updateZoneList($item)
+	{
+
+		if (!$item)
+		{
+			return;
+		}
+
+		$item = (array) $item;
+
+		$db = Factory::getDbo();
+
+
+		$object             = new stdClass();
+		$object->country_id = $item['id'];
+		$object->published  = $item['published'];
+
+		$db->updateObject('#__protostore_zone', $object, 'country_id');
+
 
 	}
 

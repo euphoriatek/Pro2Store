@@ -13,14 +13,17 @@ defined('_JEXEC') or die('Restricted access');
 
 
 use Joomla\CMS\Factory;
+use Joomla\Input\Input;
 
 use Brick\Math\BigDecimal;
 use Brick\Money\Context\CashContext;
 use Brick\Math\RoundingMode;
 use Brick\Money\Exception\UnknownCurrencyException;
 use Brick\Money\Money;
-use Exception;
 
+
+use Exception;
+use stdClass;
 
 
 class CurrencyFactory
@@ -362,7 +365,7 @@ class CurrencyFactory
 	}
 
 	/**
-	 * @param   float          $number
+	 * @param   float        $number
 	 * @param   string|null  $currencyISO
 	 *
 	 * @return int
@@ -396,12 +399,95 @@ class CurrencyFactory
 
 		}
 
-		$int = Money::of( $number, $currencyISO, new CashContext(1), RoundingMode::DOWN);
+		$int = Money::of($number, $currencyISO, new CashContext(1), RoundingMode::DOWN);
 
 		return $int->getMinorAmount()->toInt();
 
 
+	}
 
+	/**
+	 * @param   Input  $data
+	 *
+	 *
+	 * @return bool
+	 * @since 1.6
+	 */
+
+	public static function togglePublishedFromInputData(Input $data): bool
+	{
+
+
+		$response = true;
+
+		$db = Factory::getDbo();
+
+		$items = $data->json->get('items', '', 'ARRAY');
+
+
+		foreach ($items as $item)
+		{
+
+			$query = 'UPDATE ' . $db->quoteName('#__protostore_currency') . ' SET ' . $db->quoteName('published') . ' = IF(' . $db->quoteName('published') . '=1, 0, 1) WHERE ' . $db->quoteName('id') . ' = ' . $db->quote($item['id']) . ';';
+			$db->setQuery($query);
+			$result = $db->execute();
+
+			if (!$result)
+			{
+				$response = false;
+			}
+
+		}
+
+		return $response;
+	}
+
+	/**
+	 * @param   Input  $data
+	 *
+	 *
+	 * @return bool
+	 * @since 1.6
+	 */
+
+	public static function toggleDefaultFromInputData(Input $data): bool
+	{
+
+		$response = true;
+
+		$db = Factory::getDbo();
+
+		$item = $data->json->get('item', '', 'ARRAY');
+
+		if (!$item)
+		{
+			return false;
+		}
+
+
+		//first set all items to 0
+		$query = $db->getQuery(true);
+		$fields = array($db->quoteName('default') . ' = 0');
+		$conditions = array($db->quoteName('default') . ' = 1');
+		$query->update($db->quoteName('#__protostore_currency'))->set($fields)->where($conditions);
+		$db->setQuery($query);
+		$db->execute();
+
+
+		$object = new stdClass();
+		$object->id = $item['id'];
+		$object->default = 1;
+		$object->published = 1;
+
+		$result = $db->updateObject('#__protostore_currency', $object, 'id');
+
+		if (!$result)
+		{
+			$response = false;
+		}
+
+
+		return $response;
 	}
 
 

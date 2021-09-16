@@ -59,13 +59,23 @@ const p2s_discounts = {
             await UIkit.modal.confirm(this.confirm_LangString);
 
             const params = {
-                'items': JSON.stringify(this.selected)
+                'items': this.selected
             };
 
-            const URLparams = this.serialize(params);
-            const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=discount.trash&format=raw&" + URLparams, {
-                method: 'post'
+
+            const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=discount.trash&format=raw", {
+                method: 'POST',
+                mode: 'cors',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                redirect: 'follow',
+                referrerPolicy: 'no-referrer',
+                body: JSON.stringify(params)
             });
+
 
             const response = await request.json();
 
@@ -86,12 +96,21 @@ const p2s_discounts = {
         async toggleSelected() {
 
             const params = {
-                'items': JSON.stringify(this.selected)
+                'items': this.selected
             };
 
-            const URLparams = this.serialize(params);
-            const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=discount.togglePublished&format=raw&" + URLparams, {
-                method: 'post'
+
+            const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=discount.togglePublished&format=raw", {
+                method: 'POST',
+                mode: 'cors',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                redirect: 'follow',
+                referrerPolicy: 'no-referrer',
+                body: JSON.stringify(params)
             });
 
             const response = await request.json();

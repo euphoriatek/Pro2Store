@@ -12,6 +12,9 @@ const p2s_countries = {
             show: 25,
             enteredText: '',
             publishedOnly: false,
+            selected: [],
+            updatedMessage: '',
+            confirm_LangString: '',
         };
     },
     async beforeMount() {
@@ -27,10 +30,30 @@ const p2s_countries = {
         } catch (err) {
         }
 
-
         const show = document.getElementById('page_size');
-        this.show = show.innerText;
-        show.remove();
+        try {
+            this.show = show.innerText;
+            show.remove();
+        } catch (err) {
+        }
+
+        const updatedMessage = document.getElementById('updatedMessage');
+        try {
+            this.updatedMessage = updatedMessage.innerText;
+            updatedMessage.remove();
+        } catch (err) {
+        }
+
+        const confirmLangString = document.getElementById('confirmLangString');
+        try {
+            this.confirm_LangString = confirmLangString.innerText;
+            confirmLangString.remove();
+        } catch (err) {
+        }
+
+
+
+
 
 
     },
@@ -61,12 +84,12 @@ const p2s_countries = {
         },
         async filter() {
 
-                      this.loading = true;
+            this.loading = true;
 
             const params = {
                 'limit': this.show,
                 'offset': (this.currentPage * this.show),
-               'searchTerm': (this.enteredText ? this.enteredText.trim() : ''),
+                'searchTerm': (this.enteredText ? this.enteredText.trim() : ''),
 
                 'publishedOnly': this.publishedOnly,
             };
@@ -108,7 +131,7 @@ const p2s_countries = {
         changePage(i) {
             this.currentPage = i;
         },
-        cleartext(){
+        cleartext() {
             this.enteredText = null;
             this.doTextSearch();
         },
@@ -134,19 +157,104 @@ const p2s_countries = {
         },
         async togglePublished(item) {
 
+            this.selected = [];
+
+            this.selected.push(item);
+
+            this.toggleSelected();
+
+        },
+        async toggleSelected() {
+
+            this.selected.forEach((country) => {
+                country.published ^= 1;
+            })
+
             const params = {
-                'item_id': item.id
+                'items': this.selected
             };
 
-            const URLparams = this.serialize(params);
-
-            const request = await fetch(this.base_url + 'index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=country.togglePublished&format=raw&' + URLparams, {method: 'post'});
+            const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=countries.togglePublished&format=raw", {
+                method: 'POST',
+                mode: 'cors',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                redirect: 'follow',
+                referrerPolicy: 'no-referrer',
+                body: JSON.stringify(params)
+            });
 
             const response = await request.json();
 
             if (response.success) {
-                item.published = response.data
+                UIkit.notification({
+                    message: this.updatedMessage,
+                    status: 'success',
+                    pos: 'top-center',
+                    timeout: 5000
+                });
+                this.selected = [];
+                await this.filter();
+
+            } else {
+                UIkit.notification({
+                    message: 'There was an error.',
+                    status: 'danger',
+                    pos: 'top-center',
+                    timeout: 5000
+                });
             }
+
+        },
+        async trashSelected() {
+
+            await UIkit.modal.confirm('<h5>' + this.confirm_LangString + '</h5>');
+
+            const params = {
+                'items': this.selected
+            };
+
+
+            const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=countries.trash&format=raw", {
+                method: 'POST',
+                mode: 'cors',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                redirect: 'follow',
+                referrerPolicy: 'no-referrer',
+                body: JSON.stringify(params)
+            });
+
+
+            const response = await request.json();
+
+            if (response.success) {
+                await this.filter();
+
+            } else {
+                UIkit.notification({
+                    message: 'There was an error.',
+                    status: 'danger',
+                    pos: 'top-center',
+                    timeout: 5000
+                });
+            }
+
+
+        },
+        selectAll(e) {
+            if (e.target.checked) {
+                this.selected = this.itemsChunked[this.currentPage];
+            } else {
+                this.selected = [];
+            }
+
         },
         serialize(obj) {
             var str = [];

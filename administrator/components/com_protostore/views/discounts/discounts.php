@@ -181,7 +181,7 @@ use Joomla\CMS\Layout\LayoutHelper;
                                 <li>
                                     <a class="uk-text-emphasis" href="index.php?option=com_protostore&view=discount">
                                         <span class="uk-margin-small-right" uk-icon="icon: plus-circle"></span>
-                                        Add Discount
+                                        <?= Text::_('COM_PROTOSTORE_DISCOUNTS_ADD'); ?>
                                     </a>
                                 </li>
                                 <li class="uk-nav-divider"></li>

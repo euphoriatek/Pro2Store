@@ -14,8 +14,16 @@ defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\Input\Input;
+
+use Protostore\Config\ConfigFactory;
+use Protostore\Customer\Customer;
+use Protostore\Customer\CustomerFactory;
+use Protostore\Emaillog\EmaillogFactory;
 use Protostore\Language\LanguageFactory;
+use Protostore\Order\Order;
+use Protostore\Order\OrderFactory;
 use Protostore\Utilities\Utilities;
 
 use stdClass;
@@ -29,14 +37,14 @@ class EmailFactory
 	 *
 	 * Gets the discount based on the given ID.
 	 *
-	 * @param $id
+	 * @param   int  $id
 	 *
 	 * @return Email
 	 *
 	 * @since 1.6
 	 */
 
-	public static function get($id): ?Email
+	public static function get(int $id): ?Email
 	{
 
 		$db = Factory::getDbo();
@@ -45,7 +53,10 @@ class EmailFactory
 
 		$query->select('*');
 		$query->from($db->quoteName('#__protostore_email'));
+
+
 		$query->where($db->quoteName('id') . ' = ' . $db->quote($id));
+
 
 		$db->setQuery($query);
 
@@ -67,6 +78,7 @@ class EmailFactory
 	 * @param   int          $offset
 	 * @param   string|null  $searchTerm
 	 * @param   string|null  $type
+	 * @param   string       $language
 	 * @param   string       $orderBy
 	 * @param   string       $orderDir
 	 *
@@ -75,7 +87,7 @@ class EmailFactory
 	 * @since 1.6
 	 */
 
-	public static function getList(int $limit = 0, int $offset = 0, string $searchTerm = null, string $type = null, string $orderBy = 'id', string $orderDir = 'DESC'): ?array
+	public static function getList(int $limit = 0, int $offset = 0, string $searchTerm = null, string $type = null, string $language = '*', string $orderBy = 'id', string $orderDir = 'DESC'): ?array
 	{
 
 		// init items
@@ -98,7 +110,13 @@ class EmailFactory
 
 		if ($type)
 		{
-			$query->where($db->quoteName('type') . ' = ' . $db->quote($type));
+			$query->where($db->quoteName('emailtype') . ' = ' . $db->quote($type));
+
+		}
+
+		if ($language)
+		{
+			$query->where('(' . $db->quoteName('language') . ' = ' . $db->quote($language) . 'OR ' . $db->quoteName('language') . ' = ' . $db->quote('*') . ')');
 
 		}
 
@@ -157,6 +175,21 @@ class EmailFactory
 
 	}
 
+	/**
+	 * @param   string  $language
+	 *
+	 * @return string
+	 *
+	 * @since 1.6
+	 */
+
+	public static function getLanguageImageString(string $language): string
+	{
+
+		return strtolower(str_replace('-', "_", $language));
+
+	}
+
 
 	/**
 	 * @param   Input  $data
@@ -208,6 +241,7 @@ class EmailFactory
 			$current->subject     = $data->json->getString('subject', $current->subject);
 			$current->body        = $data->json->get('body', $current->body, 'RAW');
 			$current->emailtype   = $data->json->getString('emailtype', $current->emailtype);
+			$current->language    = $data->json->getString('language', $current->language);
 			$current->published   = $data->json->getInt('published', $current->published);
 			$current->modified    = Utilities::getDate();
 			$current->modified_by = Factory::getUser()->id;
@@ -253,6 +287,7 @@ class EmailFactory
 		$insert->subject     = $item->subject;
 		$insert->emailtype   = $item->emailtype;
 		$insert->body        = $item->body;
+		$insert->language    = $item->language;
 		$insert->published   = $item->published;
 		$insert->modified    = $item->modified;
 		$insert->modified_by = $item->modified_by;
@@ -288,6 +323,7 @@ class EmailFactory
 		$item->subject     = $data->json->getString('subject');
 		$item->emailtype   = $data->json->getString('emailtype');
 		$item->body        = $data->json->get('body', '', 'RAW');
+		$item->language    = $data->json->getString('language');
 		$item->published   = $data->json->getInt('published');
 		$item->created     = Utilities::getDate();
 		$item->created_by  = Factory::getUser()->id;
@@ -304,6 +340,193 @@ class EmailFactory
 
 		return false;
 
+	}
+
+	/**
+	 * @param   string  $type
+	 * @param   int     $order_id
+	 *
+	 * @param   string  $layout
+	 * @param   string  $plugin
+	 *
+	 * @return void
+	 *
+	 * @throws \Exception
+	 * @since 1.6
+	 */
+
+
+	public static function send(string $type, int $order_id, string $layout, string $plugin)
+	{
+
+		// init the stuff we need.
+
+		// init the mailer
+		$mailer = Factory::getMailer();
+		$config = Factory::getConfig();
+
+		// get the current language
+		$language = Factory::getLanguage();
+		$language->load('com_protostore', JPATH_ADMINISTRATOR);
+
+		$languageTag = $language->get('tag');
+
+		// grab the order and the customer
+		$order    = OrderFactory::get($order_id);
+		$customer = CustomerFactory::get($order->customer_id);
+
+
+		// get the emails that needs to be sent
+		$emails = self::getList(0, 0, null, $type, $languageTag);
+
+
+		foreach ($emails as $email)
+		{
+
+			$sender = array(
+				$config->get('mailfrom'),
+				$config->get('fromname')
+			);
+
+			$mailer->setSender($sender);
+
+			if ($email->to)
+			{
+				$emailto = explode(',', $email->to);
+				$mailer->addRecipient($emailto);
+			}
+			else
+			{
+				$emailto = $order->billing_address->email;
+				$emailto = array($emailto);
+
+				$mailer->addRecipient($emailto);
+			}
+
+
+			$text = self::processReplacements($email->body, $order, $customer);
+
+			$params = ConfigFactory::get();
+
+			$displayData = array('order' => $order, 'body' => $text, 'config' => $params);
+
+			$body = LayoutHelper::render($layout, $displayData, JPATH_PLUGINS . '/protostoresystem/'.$plugin.'/tmpl');
+
+			$mailer->setSubject(self::processReplacements($email->subject, $order, $customer));
+			$mailer->isHtml(true);
+			$mailer->setBody($body);
+
+			$send = $mailer->Send();
+
+			if ($send)
+			{
+				// Log everything
+				EmaillogFactory::log(implode(',', $emailto), $type, $order->customer_id, $order->id);
+
+				OrderFactory::log(
+					$order->id,
+					Text::sprintf('COM_PROTOSTORE_ORDER_EMAIL_SENT_LOG', ucfirst($type), implode(',', $emailto), (Factory::getUser()->name ? Factory::getUser()->name : 'Joomla'))
+				);
+
+			}
+		}
+
+
+
 
 	}
+
+	/**
+	 * @param   string    $text
+	 * @param   Order     $order
+	 * @param   Customer  $customer
+	 *
+	 * @return string
+	 *
+	 * @since 1.6
+	 */
+
+
+	private static function processReplacements(string $text, Order $order, Customer $customer): string
+	{
+
+		$config = Factory::getConfig();
+
+		// global
+		$text = str_replace('{site_name}', $config->get('fromname'), $text);
+
+		// order
+		$text = str_replace('{order_number}', $order->number, $text);
+		$text = str_replace('{order_grand_total}', $order->order_total_formatted, $text);
+		$text = str_replace('{order_subtotal}', $order->order_subtotal_formatted, $text);
+		if ($order->shipping_total)
+		{
+			$text = str_replace('{order_shipping_total}', $order->shipping_total_formatted, $text);
+		}
+		$text = str_replace('{order_payment_method}', $order->payment_method, $text);
+
+
+		// tracking
+		$text = str_replace('{tracking_code}', $order->trackingcode, $text);
+		$text = str_replace('{tracking_url}', $order->trackingcodeurl, $text);
+
+
+		// customer
+		if ($customer->name)
+		{
+			$text = str_replace('{customer_name}', $customer->name, $text);
+		}
+		else
+		{
+			$text = str_replace('{customer_name}', $order->shipping_address->name, $text);
+		}
+		if ($customer->email)
+		{
+			$text = str_replace('{customer_email}', $customer->email, $text);
+		}
+		else
+		{
+			$text = str_replace('{customer_email}', $order->shipping_address->email, $text);
+		}
+
+		if ($customer->total_orders)
+		{
+			$text = str_replace('{customer_order_count}', $customer->total_orders, $text);
+		}
+
+
+		// shipping
+		$text = str_replace('{shipping_name}', $order->shipping_address->name, $text);
+		$text = str_replace('{shipping_address1}', $order->shipping_address->address1, $text);
+		$text = str_replace('{shipping_address2}', $order->shipping_address->address2, $text);
+		$text = str_replace('{shipping_address3}', $order->shipping_address->address3, $text);
+		$text = str_replace('{shipping_town}', $order->shipping_address->town, $text);
+		$text = str_replace('{shipping_state}', $order->shipping_address->zone_name, $text);
+		$text = str_replace('{shipping_country}', $order->shipping_address->country_name, $text);
+		$text = str_replace('{shipping_postcode}', $order->shipping_address->postcode, $text);
+		$text = str_replace('{shipping_email}', $order->shipping_address->email, $text);
+		$text = str_replace('{shipping_postcode}', $order->shipping_address->postcode, $text);
+		$text = str_replace('{shipping_mobile}', $order->shipping_address->mobile_phone, $text);
+		$text = str_replace('{shipping_phone}', $order->shipping_address->phone, $text);
+
+		// billing
+		$text = str_replace('{billing_name}', $order->billing_address->name, $text);
+		$text = str_replace('{billing_address1}', $order->billing_address->address1, $text);
+		$text = str_replace('{billing_address2}', $order->billing_address->address2, $text);
+		$text = str_replace('{billing_address3}', $order->billing_address->address3, $text);
+		$text = str_replace('{billing_town}', $order->billing_address->town, $text);
+		$text = str_replace('{billing_state}', $order->billing_address->zone_name, $text);
+		$text = str_replace('{billing_country}', $order->billing_address->country_name, $text);
+		$text = str_replace('{billing_postcode}', $order->billing_address->postcode, $text);
+		$text = str_replace('{billing_email}', $order->billing_address->email, $text);
+		$text = str_replace('{billing_postcode}', $order->billing_address->postcode, $text);
+		$text = str_replace('{billing_mobile}', $order->billing_address->mobile_phone, $text);
+		$text = str_replace('{billing_phone}', $order->billing_address->phone, $text);
+
+
+		return $text;
+
+	}
+
+
 }

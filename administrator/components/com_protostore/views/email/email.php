@@ -45,16 +45,15 @@ $item = $vars['item'];
 
 							<div class="uk-navbar-right">
 
-
 								<button type="submit"
 								        class="uk-button uk-button-default button-success uk-button-small uk-margin-right">
-									Save
+									<?= Text::_('JTOOLBAR_APPLY'); ?>
 								</button>
 								<button type="submit" @click="andClose = true"  class="uk-button uk-button-default button-success uk-button-small uk-margin-right">
-									Save & Close
+									<?= Text::_('JTOOLBAR_SAVE'); ?>
 								</button>
 								<a class="uk-button uk-button-default uk-button-small "
-								   href="index.php?option=com_protostore&view=emailmanager">Cancel</a>
+								   href="index.php?option=com_protostore&view=emailmanager"><?= Text::_('JTOOLBAR_CANCEL'); ?></a>
 
 							</div>
 
@@ -69,7 +68,7 @@ $item = $vars['item'];
 						'cardStyle' => 'default',
 						'cardTitle' => 'COM_PROTOSTORE_ADDEMAIL_TITLE',
 						'cardId'    => 'details',
-						'fields'    => array('to', 'subject', 'emailtype', 'body', 'published')
+						'fields'    => array('to', 'subject', 'emailtype', 'body', 'language', 'published')
 					)); ?>
 
 
@@ -77,8 +76,9 @@ $item = $vars['item'];
 
 
 				<div class="uk-width-1-3">
-                    <div class="uk-card uk-card-body uk-card-default">
-                        <h3><?= Text::_('COM_PROTOSTORE_ADDEMAIL_AVAILABLE_SHORTCODES'); ?></h3>
+                    <div class="uk-card uk-card-default uk-margin-bottom">
+                        <div class="uk-card-header"><h5><?= Text::_('COM_PROTOSTORE_ADDEMAIL_AVAILABLE_SHORTCODES'); ?></h5></div>
+                        <div class="uk-card-body">
                         <ul uk-accordion>
                             <li>
                                 <a class="uk-accordion-title"
@@ -249,9 +249,18 @@ $item = $vars['item'];
                                 </div>
                             </li>
                         </ul>
+                        </div>
+                    </div>
+                    <div class="uk-card uk-card-default">
+                        <div class="uk-card-header"><h5><?= Text::_('COM_PROTOSTORE_ADDEMAIL_HELP'); ?></h5></div>
+                        <div class="uk-card-body">
+                            <?= Text::_('COM_PROTOSTORE_ADDEMAIL_TO_MODAL_MESSAGE'); ?>
+                            <?= Text::_('COM_PROTOSTORE_ADDEMAIL_EMAIL_TYPES_MODAL_MESSAGE'); ?>
+                        </div>
+                        <div class="uk-card-footer"></div>
                     </div>
 
-				</div>
+                </div>
 			</div>
 
 		</div>

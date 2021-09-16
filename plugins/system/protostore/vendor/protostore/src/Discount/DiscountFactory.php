@@ -319,21 +319,23 @@ class DiscountFactory
 	 * @param   Input  $data
 	 *
 	 *
+	 * @return bool
 	 * @since 1.6
 	 */
 
-	public static function trashFromInputData(Input $data)
+	public static function trashFromInputData(Input $data): bool
 	{
 
 		$db = Factory::getDbo();
 
-		$items = json_decode($data->getString('items'));
+		$items = $data->json->get('items', '', 'ARRAY');
+
 
 		foreach ($items as $item)
 		{
 			$query      = $db->getQuery(true);
 			$conditions = array(
-				$db->quoteName('id') . ' = ' . $db->quote($item->id)
+				$db->quoteName('id') . ' = ' . $db->quote($item['id'])
 			);
 			$query->delete($db->quoteName('#__protostore_discount'));
 			$query->where($conditions);
@@ -341,6 +343,8 @@ class DiscountFactory
 			$db->execute();
 
 		}
+
+		return true;
 
 	}
 
@@ -360,13 +364,13 @@ class DiscountFactory
 
 		$db = Factory::getDbo();
 
-		$items = json_decode($data->getString('items'));
+		$items = $data->json->get('items', '', 'ARRAY');
 
 
 		foreach ($items as $item)
 		{
 
-			$query = 'UPDATE ' . $db->quoteName('#__protostore_discount') . ' SET ' . $db->quoteName('published') . ' = IF(' . $db->quoteName('published') . '=1, 0, 1) WHERE ' . $db->quoteName('id') . ' = ' . $db->quote($item->id) . ';';
+			$query = 'UPDATE ' . $db->quoteName('#__protostore_discount') . ' SET ' . $db->quoteName('published') . ' = IF(' . $db->quoteName('published') . '=1, 0, 1) WHERE ' . $db->quoteName('id') . ' = ' . $db->quote($item['']) . ';';
 			$db->setQuery($query);
 			$result = $db->execute();
 

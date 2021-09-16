@@ -37,8 +37,8 @@ use Joomla\CMS\Language\Text;
         <div class="uk-margin">
             <div class="uk-grid uk-child-width-1-3@m" uk-grid>
                 <div>
-                    <div :class="[selectedCurrency == 14 ? 'uk-card uk-card-primary uk-card-small uk-card-hover' : 'uk-card uk-card-default uk-card-small uk-card-hover']"
-                         style="cursor: pointer" @click="selectedCurrency = 14">
+                    <div :class="[selectedCurrency == 13 ? 'uk-card uk-card-primary uk-card-small uk-card-hover' : 'uk-card uk-card-default uk-card-small uk-card-hover']"
+                         style="cursor: pointer" @click="selectedCurrency = 13">
                         <div class="uk-card-body">
                             <h1 class="uk-heading-large">€</h1>
                             <p>Euro</p>
@@ -46,8 +46,8 @@ use Joomla\CMS\Language\Text;
                     </div>
                 </div>
                 <div>
-                    <div :class="[selectedCurrency == 117 ? 'uk-card uk-card-primary uk-card-small uk-card-hover' : 'uk-card uk-card-default uk-card-small uk-card-hover']"
-                         style="cursor: pointer" @click="selectedCurrency = 117">
+                    <div :class="[selectedCurrency == 21 ? 'uk-card uk-card-primary uk-card-small uk-card-hover' : 'uk-card uk-card-default uk-card-small uk-card-hover']"
+                         style="cursor: pointer" @click="selectedCurrency = 21">
                         <div class="uk-card-body">
                             <h1 class="uk-heading-large">£</h1>
                             <p>Pound Sterling</p>
@@ -55,8 +55,8 @@ use Joomla\CMS\Language\Text;
                     </div>
                 </div>
                 <div>
-                    <div :class="[selectedCurrency == 5 ? 'uk-card uk-card-primary uk-card-small uk-card-hover' : 'uk-card uk-card-default uk-card-small uk-card-hover']"
-                         style="cursor: pointer" @click="selectedCurrency = 5">
+                    <div :class="[selectedCurrency == 4 ? 'uk-card uk-card-primary uk-card-small uk-card-hover' : 'uk-card uk-card-default uk-card-small uk-card-hover']"
+                         style="cursor: pointer" @click="selectedCurrency = 4">
                         <div class="uk-card-body">
                             <h1 class="uk-heading-large">$</h1>
                             <p>US Dollar</p>

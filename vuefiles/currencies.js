@@ -65,7 +65,7 @@ const p2s_currencies = {
             const params = {
                 'limit': this.show,
                 'offset': (this.currentPage * this.show),
-               'searchTerm': (this.enteredText ? this.enteredText.trim() : ''),
+                'searchTerm': (this.enteredText ? this.enteredText.trim() : ''),
 
                 'publishedOnly': this.publishedOnly,
             };
@@ -106,7 +106,7 @@ const p2s_currencies = {
         changePage(i) {
             this.currentPage = i;
         },
-        cleartext(){
+        cleartext() {
             this.enteredText = null;
             this.doTextSearch();
         },
@@ -130,21 +130,87 @@ const p2s_currencies = {
                 return 0;
             });
         },
-        async togglePublished(currency) {
+
+        async togglePublished(item) {
+
+
+            if (item.default == 1) {
+                return;
+            }
+
+            this.selected = [];
+            this.selected.push(item);
+            await this.toggleSelected();
+        },
+        async toggleSelected() {
 
             const params = {
-                'currency_id': currency.id
+                'items': this.selected
             };
 
-            const URLparams = this.serialize(params);
 
-            const request = await fetch(this.base_url + 'index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=currency.togglePublished&format=raw&' + URLparams, {method: 'post'});
+            const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=currencies.togglePublished&format=raw", {
+                method: 'POST',
+                mode: 'cors',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                redirect: 'follow',
+                referrerPolicy: 'no-referrer',
+                body: JSON.stringify(params)
+            });
 
             const response = await request.json();
 
             if (response.success) {
-                currency.published = response.data
+                await this.filter();
+
+            } else {
+                UIkit.notification({
+                    message: 'There was an error.',
+                    status: 'danger',
+                    pos: 'top-center',
+                    timeout: 5000
+                });
             }
+
+        },
+        async toggleDefault(item) {
+
+            const params = {
+                'item': item
+            };
+
+
+            const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=currencies.toggleDefault&format=raw", {
+                method: 'POST',
+                mode: 'cors',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                redirect: 'follow',
+                referrerPolicy: 'no-referrer',
+                body: JSON.stringify(params)
+            });
+
+            const response = await request.json();
+
+            if (response.success) {
+                await this.filter();
+
+            } else {
+                UIkit.notification({
+                    message: 'There was an error.',
+                    status: 'danger',
+                    pos: 'top-center',
+                    timeout: 5000
+                });
+            }
+
         },
         serialize(obj) {
             var str = [];

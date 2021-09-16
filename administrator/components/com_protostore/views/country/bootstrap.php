@@ -12,6 +12,7 @@ defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\AdminModel;
+use Joomla\CMS\Language\Text;
 
 use Protostore\Render\Render;
 use Protostore\Country\CountryFactory;
@@ -55,6 +56,7 @@ class bootstrap extends AdminModel
 
 
 		$this->vars['item'] = false;
+		$this->vars['successMessage'] = Text::_('COM_PROTOSTORE_COUNTRIES_SAVED');
 
 		if($id) {
 			$this->vars['item'] = $this->getTheItem($id);
@@ -111,7 +113,7 @@ class bootstrap extends AdminModel
 
 		// include the vue script - defer
 		$doc->addScript('../media/com_protostore/js/vue/country/country.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
-
+		$doc->addCustomTag('<script id="successMessage" type="application/json">' . $this->vars['successMessage'] . '</script>');
 
 		// include prime
 		Utilities::includePrime(array('inputswitch'));

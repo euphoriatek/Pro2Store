@@ -19,6 +19,12 @@
 
         <field name="body" type="editor" label="Email Body" description="" filter="safehtml" required="true" />
 
+        <field name="language" type="languageselect"
+               label="JFIELD_LANGUAGE_LABEL"
+               default="*"
+               description="COM_CATEGORIES_FIELD_LANGUAGE_DESC"
+               class="span12 small" >
+        </field>
 
         <field name="published" type="pinputswitch" default="0" label="Published" description=""
                class="btn-group btn-group-yesno">

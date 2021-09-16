@@ -52,6 +52,13 @@ const p2s_country_form = {
         } catch (err) {
         }
 
+        const successMessage = document.getElementById('successMessage');
+        try {
+            this.successMessage = successMessage.innerText;
+            successMessage.remove();
+        } catch (err) {
+        }
+
 
     },
     methods: {
@@ -95,7 +102,7 @@ const p2s_country_form = {
                     }
 
                     // we also need to make sure that the next save action doesn't trigger a create... we do this by adding the id to the form array
-                    this.form.id = response.data.id;
+                    this.form.jform_id = response.data.id;
 
                 }
 
