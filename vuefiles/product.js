@@ -1,3 +1,10 @@
+////////////////////////////////////////////////////////////////////////////////
+// @package   Pro2Store
+// @author    Ray Lawlor - pro2.store
+// @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
+// @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
+//
+
 const p2s_product_form = {
     data() {
         return {
@@ -11,7 +18,6 @@ const p2s_product_form = {
                 jform_access: '',
                 jform_base_price: 0,
                 jform_sku: '',
-                jform_category: '',
                 jform_manage_stock: true,
                 jform_stock: '',
                 jform_featured: false,
@@ -27,13 +33,14 @@ const p2s_product_form = {
                 jform_publish_up_date: '',
                 jform_product_type: '',
                 jform_tags: [],
+                jform_options: [],
                 jform_variants: [],
                 jform_variantList: [],
                 files: []
             },
             product_id: 0,
             product_type: 1,
-            available_custom_fields: [],
+            custom_fields: [],
             available_tags: [],
             // available_options: [],
             option_for_edit: [],
@@ -105,6 +112,14 @@ const p2s_product_form = {
             } catch (err) {
             }
         }
+        const custom_fields = document.getElementById('custom_fields_data');
+        if (custom_fields != null) {
+            try {
+                this.custom_fields = JSON.parse(custom_fields.innerText);
+                custom_fields.remove();
+            } catch (err) {
+            }
+        }
 
         const itemid = document.getElementById('jform_joomla_item_id_data');
         if (itemid != null) {
@@ -132,6 +147,15 @@ const p2s_product_form = {
                 this.available_tags = JSON.parse(available_tags.innerText);
                 // available_tags.remove();
             } catch (err) {
+            }
+        }
+        const options = document.getElementById('options');
+        if (options != null) {
+            try {
+                this.form.jform_options = JSON.parse(options.innerText);
+                // options.remove();
+            } catch (err) {
+                this.form.jform_options = [];
             }
         }
     },
@@ -394,6 +418,29 @@ const p2s_product_form = {
 
 
         /**
+         * CHECKBOX OPTIONS
+         */
+
+
+        addOption() {
+
+            console.log(this.form.jform_options);
+
+            this.form.jform_options.push({
+                id: 0,
+                option_name: '',
+                modifier_type: 'amount',
+                modifier_value: 0,
+                delete: false
+            })
+        },
+
+        removeOption(option) {
+            option.delete = true;
+        },
+
+
+        /**
          * FILE EDIT
          */
 
@@ -497,7 +544,7 @@ const p2s_product_form = {
                 'title': this.form.jform_title,
                 'introtext': this.form.jform_short_description,
                 'fulltext': this.form.jform_long_description,
-                'category': this.form.jform_category,
+                'category': this.form.jform_catid,
                 'access': this.form.jform_access,
                 'base_price': this.form.jform_base_price,
                 'discount': this.form.jform_discount,
@@ -514,6 +561,7 @@ const p2s_product_form = {
                 'flatfee': this.form.jform_flatfee,
                 'publish_up_date': this.form.jform_publish_up_date,
                 'product_type': this.form.jform_product_type,
+                'options': this.form.jform_options,
                 'variants': this.form.jform_variants,
                 'variantList': this.form.jform_variantList
             };
@@ -534,7 +582,10 @@ const p2s_product_form = {
 
             const response = await request.json();
 
+
             if (response.success) {
+
+                this.form.jform_options = response.data.options;
 
                 UIkit.notification({
                     message: this.successMessage,
@@ -599,6 +650,9 @@ const p2s_product_form = {
                         }
                         if (theInput.innerText == 0) {
                             this.form[jfrom] = false;
+                        }
+                        if (theInput.innerText == 'null') {
+                            this.form[jfrom] = [];
                         }
                         if (theInput.id === 'jform_base_price_data' || theInput.id === 'jform_discount_data' || theInput.id === 'jform_flatfee_data') {
                             this.form[jfrom] = (Number(theInput.innerText) / 100);

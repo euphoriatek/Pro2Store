@@ -1,10 +1,10 @@
 <?php
 /**
- * @package     Pro2Store
- * @subpackage  com_protostore
+ * @package   Pro2Store
+ * @author    Ray Lawlor - pro2.store
+ * @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
+ * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
  *
- * @copyright   Copyright (C) 2021 Ray Lawlor - Pro2Store - https://pro2.store. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access to this file
@@ -17,43 +17,40 @@ $data = $displayData;
 
 ?>
 
-<table class="uk-table uk-table-striped uk-table-hover uk-animation-fade">
-    <thead>
-    <tr>
-        <th><?= Text::_('COM_PROTOSTORE_ADD_PRODUCT_OPTIONS_TABLE_TYPE'); ?></th>
-        <th><?= Text::_('COM_PROTOSTORE_ADD_PRODUCT_OPTIONS_TABLE_NAME'); ?></th>
-        <th><?= Text::_('COM_PROTOSTORE_ADD_PRODUCT_OPTIONS_TABLE_MODIFIER'); ?></th>
-        <th><?= Text::_('COM_PROTOSTORE_ADD_PRODUCT_OPTIONS_TABLE_VALUE'); ?></th>
-        <th><?= Text::_('COM_PROTOSTORE_ADD_PRODUCT_OPTIONS_TABLE_SKU'); ?></th>
-        <th></th>
-    </tr>
-    </thead>
-    <tbody uk-sortable="handle: .uk-sortable-handle; cls-custom: uk-box-shadow-small uk-flex uk-flex-middle uk-background">
+<div v-for="(option, index) in form.jform_options">
+    <div class="uk-grid uk-grid-small uk-margin-small-bottom" uk-grid="" v-if="!option.delete">
+        <div class="uk-width-1-3" >
+            <input class="uk-input" type="text" v-model="option.option_name"
+                   placeholder="<?= Text::_('COM_PROTOSTORE_ADD_PRODUCT_PRODUCT_OPTION_NAME_PLACEHOLDER'); ?>">
+        </div>
+        <div class="uk-width-1-3">
+            <select class="uk-select" v-model="option.modifier_type">
+                <option value="amount"><?= Text::_('COM_PROTOSTORE_ADD_PRODUCT_PRODUCT_OPTION_MODIFIER_TYPE_AMOUNT'); ?></option>
+                <option value="perc"><?= Text::_('COM_PROTOSTORE_ADD_PRODUCT_PRODUCT_OPTION_MODIFIER_TYPE_PERCENT'); ?></option>
+            </select>
+        </div>
+        <div class="uk-width-1-3">
 
-    <tr v-for="(option, index) in form.jform_options" >
-        <td>{{option.optiontypename}}</td>
-        <td>{{option.optionname}}</td>
-        <td>{{option.modifier}}</td>
-        <td>{{option.modifiervalue_translated}}</td>
-        <td>{{option.optionsku}}</td>
-        <td class="uk-text-right uk-width-small">
-            <ul class="uk-iconnav uk-text-right">
-                <li>
-                    <a @click="openEditoptionModal(option)"><i class="pi pi-pencil"></i></a>
-                </li>
-                <li>
-                    <a><i @click="removeOption(index)" class="pi pi-trash"></i></a>
-                </li>
-                <li class="uk-text-right">
-                    <span class="uk-sortable-handle uk-margin-small-right" uk-icon="icon: table"></span>
-                </li>
-            </ul>
-        </td>
-    </tr>
+            <div class="uk-grid" uk-grid="">
+                <div class="uk-width-expand">
+                    <p-inputnumber v-if="option.modifier_type == 'amount'" mode="currency" :currency="p2s_currency.iso" :step="0.01"
+                                   :locale="p2s_locale" v-model="option.modifier_valueFloat"></p-inputnumber>
+                    <p-inputnumber v-if="option.modifier_type == 'perc'"
+                                   v-model="option.modifier_valueFloat" locale="en-US" suffix="%" :step="0.05" :min="0.00" :max="100.00" format="false" buttonLayout="stacked"></p-inputnumber>
+                </div>
+                <div class="uk-width-auto">
+                    <ul class="uk-iconnav">
+                        <li>
+                            <button uk-icon="icon: trash" type="button" @click="removeOption(option)"></button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
 
-    </tbody>
-</table>
+
+        </div>
+    </div>
+</div>
 
 
 
-<?= LayoutHelper::render('product/options_modal', array()); ?>

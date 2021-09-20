@@ -1,10 +1,10 @@
 <?php
 /**
- * @package     Pro2Store
- * @subpackage  com_protostore
+ * @package   Pro2Store
+ * @author    Ray Lawlor - pro2.store
+ * @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
+ * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
  *
- * @copyright   Copyright (C) 2021 Ray Lawlor - Pro2Store - https://pro2.store. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access to this file
@@ -88,9 +88,11 @@ use Joomla\CMS\Layout\LayoutHelper;
 							<thead>
 							<tr>
 
-								<th class="uk-text-left">
-								</th>
-								<th class="uk-text-left">Name
+                                <th class="uk-text-left">
+                                    <input @change="selectAll($event)" type="checkbox">
+                                </th>
+
+                                <th class="uk-text-left">Name
 									<a href="#" @click="sort('name')" class="uk-margin-small-right uk-icon"
 									   uk-icon="triangle-down">
 									</a>
@@ -126,9 +128,9 @@ use Joomla\CMS\Layout\LayoutHelper;
 
 							<tbody>
 							<tr class="el-item" v-for="item in itemsChunked[currentPage]">
-								<td>
-									<div><input type="checkbox"></div>
-								</td>
+                                <td>
+                                    <div><input v-model="selected" :value="item" type="checkbox"></div>
+                                </td>
 								<td>
 									<a :href="'index.php?option=com_protostore&view=currency&id=' + item.id">{{item.name}}</a>
 								</td>
@@ -194,17 +196,37 @@ use Joomla\CMS\Layout\LayoutHelper;
 				</div>
 			</div>
 			<div class="uk-width-1-4">
-				<div>
-					<div class="uk-card uk-card-default" uk-sticky="offset: 100">
-						<div class="uk-card-header">
-							<h3>Options</h3>
-						</div>
-						<div class="uk-card-body">
-							<button @click="newCurrency"
-							        class="uk-button uk-button-primary"><?= Text::_('COM_PROTOSTORE_ADD_CURRENCY_CURRENCY_ADD'); ?></button>
-						</div>
-					</div>
-				</div>
+                <div>
+                    <div class="uk-card uk-card-default ">
+
+                        <div class="uk-card-header">
+                            <h4> <?= Text::_('COM_PROTOSTORE_CONTROLS'); ?></h4>
+                        </div>
+                        <div class="uk-card-body">
+                            <ul class="uk-nav-default uk-nav-parent-icon" uk-nav>
+                                <li>
+                                    <a class="uk-text-emphasis" href="index.php?option=com_protostore&view=currency">
+                                        <span class="uk-margin-small-right" uk-icon="icon: plus-circle"></span>
+										<?= Text::_('COM_PROTOSTORE_CURRENCIES_ADD'); ?>
+                                    </a>
+                                </li>
+                                <li class="uk-nav-divider"></li>
+                                <li>
+                                    <a  @click="trashSelected"  :class="[selected.length == 0 ? 'uk-disabled' : ' uk-text-bold uk-text-emphasis']">
+                                        <span class="uk-margin-small-right" uk-icon="icon: trash"></span>
+										<?= Text::_('COM_PROTOSTORE_TRASH_SELECTED'); ?>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a  @click="toggleSelected"  :class="[selected.length == 0 ? 'uk-disabled' : ' uk-text-bold uk-text-emphasis']">
+                                        <span class="uk-margin-small-right" uk-icon="icon: check"></span>
+										<?= Text::_('COM_PROTOSTORE_TOGGLE_PUBLISHED'); ?>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
 			</div>
 		</div>
 

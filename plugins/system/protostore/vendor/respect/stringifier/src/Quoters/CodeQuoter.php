@@ -1,12 +1,11 @@
 <?php
 
-/*
- * This file is part of Respect/Stringifier.
+/**
+ * @package   Pro2Store
+ * @author    Ray Lawlor - pro2.store
+ * @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
+ * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
  *
- * (c) Henrique Moody <henriquemoody@gmail.com>
- *
- * For the full copyright and license information, please view the "LICENSE.md"
- * file that was distributed with this source code.
  */
 
 declare(strict_types=1);

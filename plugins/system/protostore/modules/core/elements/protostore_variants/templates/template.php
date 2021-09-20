@@ -1,10 +1,11 @@
 <?php
 
 /**
- * @package     Pro2Store - Variants
+ * @package   Pro2Store
+ * @author    Ray Lawlor - pro2.store
+ * @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
+ * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
  *
- * @copyright   Copyright (C) 2021 Ray Lawlor - Pro2Store. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 $id = uniqid('yps_productvariants');
@@ -38,27 +39,24 @@ $content = $this->el('div', [
 
 
 
-<?= $el($props, $attrs) // Output div tag                      ?>
+<?= $el($props, $attrs) // Output div tag                       ?>
 <div id="<?= $id; ?>">
-	<?= $content($props, $attrs) // Content div tag                      ?>
-
-	<?php foreach ($props['variants'] as $variant) : ?>
-
-        <div class="uk-form-controls">
-            <label class="uk-form-label"><?= $variant->name; ?></label>
-            <select class="uk-select yps_variant" @change="recalc">
-
-				<?php foreach ($variant->labels as $label) : ?>
-					<?php if ($label->variant_id === $variant->id) : ?>
-                        <option <?= (in_array($label->id, $props['variantDefault']) ? 'selected': ''); ?> value="<?= $label->id; ?>"><?= $label->name; ?></option>
-					<?php endif; ?>
-				<?php endforeach; ?>
-
-            </select>
-        </div>
+	<?= $content($props, $attrs) // Content div tag                       ?>
 
 
-	<?php endforeach; ?>
+    <div class="uk-form-controls" v-for="variant in variants">
+        <label class="uk-form-label">{{variant.name}}</label>
+        <select class="uk-select yps_variant" @change="recalc">
+            <template v-for="label in variant.labels">
+
+                <option v-if="label.variant_id == variant.id" :value="label.id"
+                        :selected="variantDefault.includes(label.id)">{{label.name}}
+                </option>
+            </template>
+        </select>
+    </div>
+
+
     <span v-show="unavailableMessage"><?= $props['unavailableMessage']; ?></span>
 </div><!--Vue div tag-->
 </div><!--Content div tag-->
@@ -68,9 +66,10 @@ $content = $this->el('div', [
     const <?= $id; ?> = {
         data() {
             return {
+                base_url: '0',
                 joomla_item_id: 0,
                 variants: [],
-                variantLabels: [],
+                variantDefault: [],
                 selected: [],
                 unavailableMessage: false,
             }
@@ -79,22 +78,34 @@ $content = $this->el('div', [
 
             // set the data from the inline scripts
 
+            const base_url = document.getElementById('base_url_data');
+            try {
+                this.base_url = base_url.innerText;
+                base_url.remove();
+            } catch (err) {
+            }
             const joomla_item_id = document.getElementById('yps_joomla_item_id_data');
             try {
                 this.joomla_item_id = joomla_item_id.innerText;
-                // joomla_item_id.remove();
+                joomla_item_id.remove();
             } catch (err) {
             }
             const variants = document.getElementById('yps_variants_data');
             try {
                 this.variants = JSON.parse(variants.innerText);
-                // variants.remove();
+                variants.remove();
+            } catch (err) {
+            }
+            const variantDefault = document.getElementById('yps_variantDefault_data');
+            try {
+                this.variantDefault = JSON.parse(variantDefault.innerText);
+                variantDefault.remove();
             } catch (err) {
             }
             const variantLabels = document.getElementById('yps_variantLabels_data');
             try {
                 this.variantLabels = JSON.parse(variantLabels.innerText);
-                // variantLabels.remove();
+                variantLabels.remove();
             } catch (err) {
             }
 
@@ -104,6 +115,10 @@ $content = $this->el('div', [
 
         },
         created() {
+            document.addEventListener("DOMContentLoaded", () => {
+                this.selected = this.variantDefault;
+                emitter.emit('yps_variantsChange', this.selected);
+            });
 
         },
         methods: {
@@ -152,7 +167,7 @@ $content = $this->el('div', [
                 }
 
 
-                emitter.emit('yps_optionsChange');
+                emitter.emit('yps_variantsChange', this.selected);
             },
             checkIfAvailable(variant) {
                 console.log(variant);

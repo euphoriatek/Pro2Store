@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<!-- @package   Pro2Store -->
+<!-- @author    Ray Lawlor - pro2.store -->
+<!-- @copyright Copyright (C) 2021 Ray Lawlor - pro2.store -->
+<!-- @license   http://www.gnu.org/licenses/gpl.html GNU/GPL -->
+<!-- -->
+
 <extension type="module" version="3.5" client="site" method="upgrade">
     <name>Pro2Store - Cart</name>
     <author>Ray Lawlor - Pro2Store</author>

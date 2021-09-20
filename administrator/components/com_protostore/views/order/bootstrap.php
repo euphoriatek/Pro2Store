@@ -4,6 +4,7 @@
  * @author    Ray Lawlor - pro2.store
  * @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
  * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
+ *
  */
 
 // no direct access
@@ -98,25 +99,7 @@ class bootstrap extends AdminModel
 	{
 		// Get the form.
 
-		$item = $data['item'];
-
-
-		$form = $this->loadForm('com_protostore.order', 'order', array('control' => 'jform', 'load_data' => $loadData));
-
-		if ($item)
-		{
-//
-//			$form->setValue('name', null, $item->name);
-//			$form->setValue('coupon_code', null, $item->coupon_code);
-//			$form->setValue('amount', null, $item->amount);
-//			$form->setValue('percentage', null, $item->percentage);
-//			$form->setValue('expiry_date', null, $item->expiry_date);
-//			$form->setValue('published', null, $item->published);
-
-
-		}
-
-		return $form;
+		return $this->loadForm('com_protostore.' . self::$view, self::$view, array('control' => 'jform', 'load_data' => $loadData));
 	}
 
 	/**

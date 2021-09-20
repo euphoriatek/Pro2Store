@@ -1,10 +1,10 @@
 <?php
 /**
- * @package     Pro2Store
- * @subpackage  com_protostore
+ * @package   Pro2Store
+ * @author    Ray Lawlor - pro2.store
+ * @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
+ * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
  *
- * @copyright   Copyright (C) 2021 Ray Lawlor - Pro2Store - https://pro2.store. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access to this file
@@ -21,18 +21,6 @@ HTMLHelper::_('behavior.formvalidator');
 /** @var array $vars */
 $item = $vars['item'];
 ?>
-
-<?php if ($item) : ?>
-
-    <script id="jform_name_data" type="application/json"><?= $item->name; ?></script>
-    <script id="jform_iso_data" type="application/json"><?= $item->iso; ?></script>
-    <script id="jform_currencysymbol_data" type="application/json"><?= $item->currencysymbol; ?></script>
-    <script id="jform_rate_data" type="application/json"><?= $item->rate; ?></script>
-    <script id="jform_default_data" type="application/json"><?= ($item->default == 1 ? 'true' : 'false'); ?></script>
-    <script id="jform_published_data"
-            type="application/json"><?= ($item->published == 1 ? 'true' : 'false'); ?></script>
-
-<?php endif; ?>
 
 
 <div id="p2s_currency_form">
@@ -80,7 +68,7 @@ $item = $vars['item'];
 					<?= LayoutHelper::render('card', array(
 						'form'      => $vars['form'],
 						'cardStyle' => 'default',
-						'cardTitle' => 'COM_PROTOSTORE_ADD_PRODUCT_PRODUCT_DETAILS',
+						'cardTitle' => 'COM_PROTOSTORE_CURRENCIES_MODAL_EDIT_TITLE',
 						'cardId'    => 'details',
 						'fields'    => array('name', 'iso', 'currencysymbol', 'rate', 'default', 'published')
 					)); ?>

@@ -1,10 +1,10 @@
 <?php
 /**
- * @package     Pro2Store - System Helper
- * @subpackage  com_protostore
+ * @package   Pro2Store
+ * @author    Ray Lawlor - pro2.store
+ * @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
+ * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
  *
- * @copyright   Copyright (C) 2020 Ray Lawlor - pro2store - https://pro2.store. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // no direct access
@@ -16,7 +16,9 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\Uri\Uri;
 
-use Protostore\Currency\Currency;
+
+use Protostore\Setup\SetupFactory;
+use Protostore\Currency\CurrencyFactory;
 
 use YOOtheme\Application;
 use YOOtheme\Path;
@@ -25,77 +27,72 @@ use YOOtheme\Path;
 class plgSystemProtostore extends CMSPlugin
 {
 
-    public function onAfterInitialise()
-    {
+	public function onAfterInitialise()
+	{
 
-		if(!ComponentHelper::getComponent('com_protostore', true)->enabled) {
+		if (!ComponentHelper::getComponent('com_protostore', true)->enabled)
+		{
 			return;
 		}
 
-        //import VUE on the frontend
-        $app = Factory::getApplication();
-        if ($app->isClient('site')) {
-            Factory::getDocument()->addScript('media/com_protostore/js/vue/bundle.min.js', array('type' => 'text/javascript'));
-            Factory::getDocument()->addStyleDeclaration('[v-cloak] {display: none}');
-        }
-	    Factory::getDocument()->addStyleDeclaration('[v-cloak] {display: none}');
+		//import VUE on the frontend
+		$app = Factory::getApplication();
+		$doc = Factory::getDocument();
+		if ($app->isClient('site'))
+		{
+			$doc->addScript('media/com_protostore/js/vue/bundle.min.js', array('type' => 'text/javascript'));
+			$doc->addStyleDeclaration('[v-cloak] {display: none}');
+		}
+		$doc->addStyleDeclaration('[v-cloak] {display: none}');
 
-        // set the Pro2Store Cookie
-	//        $value = Factory::getApplication()->input->cookie->get('yps-cart', null);
-	//        if ($value == null) {
-	//            $value = md5(Factory::getSession()->getId());
-	//            $time = 0;
-	//            Factory::getApplication()->input->cookie->set(
-	//            	'yps-cart',
-	//	            $value,
-	//	            $time,
-	//	            Factory::getApplication()->get('cookie_path', '/'),
-	//	            Factory::getApplication()->get('cookie_domain'),
-	//	            Factory::getApplication()->isSSLConnection()
-	//            );
-	//        }
+		// set the Pro2Store Cookie
+		        $value = $app->input->cookie->get('yps-cart', null);
+		        if ($value == null) {
+		            $value = md5(Factory::getSession()->getId());
+		            $time = 0;
+			        $app->input->cookie->set(
+		            	'yps-cart',
+			            $value,
+			            $time,
+			            $app->get('cookie_path', '/'),
+			            $app->get('cookie_domain'),
+			            $app->isSSLConnection()
+		            );
+		        }
 
-        //check if the setup is done
-//        $setup = new Setup();
-//        if ($setup->issetup === 'true') {
-//            // set the Pro2Store Currency Cookie
-//            $value = Factory::getApplication()->input->cookie->get('yps-currency', null);
-//            if ($value == null) {
-//
-//
-//                $currencyHelper = new Currency();
-//
-//                //check... in case user hasn't set a default currency
-//                if ($id = $currencyHelper->_getDefaultCurrencyFromDB()->id) {
-//                } else {
-//                    //if no default currency... get the first published currency.
-//                    $id = $currencyHelper->_getAPublishedCurrency()->id;
-//                }
-//
-//                Factory::getApplication()->input->cookie->set('yps-currency', $id, 0, Factory::getApplication()->get('cookie_path', '/'), Factory::getApplication()->get('cookie_domain'), Factory::getApplication()->isSSLConnection());
-//            }
-//        }
+		//check if the setup is done
+
+		if (SetupFactory::isSetup())
+		{
+			$value = $app->input->cookie->get('yps-currency', null);
+			if ($value == null)
+			{
+				$currency = CurrencyFactory::getDefault();
+				$app->input->cookie->set('yps-currency', $currency->id, 0, $app->get('cookie_path', '/'), $app->get('cookie_domain'), $app->isSSLConnection());
+			}
+		}
 
 
-        if (class_exists(Application::class, false)) {
+		if (class_exists(Application::class, false))
+		{
 
-            $app = Application::getInstance();
+			$app = Application::getInstance();
 
-            $root = __DIR__;
-            $rootUrl = Uri::root(true);
+			$root    = __DIR__;
+			$rootUrl = Uri::root(true);
 
-            $themeroot = Path::get('~theme');
-            $loader = require "{$themeroot}/vendor/autoload.php";
-            $loader->setPsr4("YpsApp\\", __DIR__ . "/modules/core");
+			$themeroot = Path::get('~theme');
+			$loader    = require "{$themeroot}/vendor/autoload.php";
+			$loader->setPsr4("YpsApp\\", __DIR__ . "/modules/core");
 
-            // set alias
-            Path::setAlias('~protostore', $root);
-            Path::setAlias('~protostore:rel', $rootUrl . '/plugins/system/protostore');
+			// set alias
+			Path::setAlias('~protostore', $root);
+			Path::setAlias('~protostore:rel', $rootUrl . '/plugins/system/protostore');
 
-            // bootstrap modules
-            $app->load('~protostore/modules/core/bootstrap.php');
+			// bootstrap modules
+			$app->load('~protostore/modules/core/bootstrap.php');
 
-        }
+		}
 
-    }
+	}
 }

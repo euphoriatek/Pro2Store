@@ -1,9 +1,10 @@
 <?php
 /**
- * @package   Pro2Store - Helper
+ * @package   Pro2Store
  * @author    Ray Lawlor - pro2.store
- * @copyright Copyright (C) 2020 Ray Lawlor - pro2.store
+ * @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
  * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
+ *
  */
 
 
@@ -12,12 +13,16 @@ namespace Protostore\Cart;
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Brick\Money\Exception\UnknownCurrencyException;
 use Joomla\CMS\Factory;
 
+use Joomla\CMS\Language\Text;
 use Protostore\Address\AddressFactory;
 use Protostore\Coupon\CouponFactory;
 use Protostore\Price\PriceFactory;
+use Protostore\Product\Product;
 use Protostore\Product\ProductFactory;
+use Protostore\Productoption\Productoption;
 use Protostore\Productoption\ProductoptionFactory;
 use Protostore\Shipping\Shipping;
 use Protostore\Utilities\Utilities;
@@ -197,13 +202,13 @@ class CartFactory
 	 *
 	 * @param $carId
 	 *
-	 * @return array
+	 * @return null|array
 	 *
-	 * @since 1.5
+	 * @since 1.6
 	 */
 
 
-	public static function getCartItems($carId): array
+	public static function getCartItems($carId): ?array
 	{
 
 		$db = Factory::getDbo();
@@ -220,63 +225,152 @@ class CartFactory
 
 		$items = $db->loadObjectList();
 
-		$cartItems = array();
-
-		foreach ($items as $item)
+		if ($items)
 		{
-			$cartItems[] = new Cartitem($item);
+			$cartItems = array();
+
+			foreach ($items as $item)
+			{
+				$cartItems[] = new Cartitem($item);
+			}
+
+			return $cartItems;
 		}
 
-		return $cartItems;
+
+		return null;
+
 
 	}
 
 	/**
-	 * @param $cartItems
+	 * @param   array|null  $cartItems
 	 *
 	 * @return int
 	 *
 	 * @since 1.5
 	 */
 
-	public static function getCount($cartItems): int
+	public static function getCount(?array $cartItems): int
 	{
 
 		$count = 0;
-
-		foreach ($cartItems as $item)
+		if ($cartItems)
 		{
-			$count += $item->amount;
+			foreach ($cartItems as $item)
+			{
+				$count += $item->amount;
+			}
 		}
+
 
 		return $count;
 
 	}
 
 	/**
-	 * @param $item_options
+	 * @param   string  $options
 	 *
-	 * @return array
+	 * @return null|array
 	 *
-	 * @since 1.5
+	 * @throws UnknownCurrencyException
+	 * @since 1.6
 	 */
 
 
-	public static function getSelectedOptions($item_options): array
+	public static function getSelectedOptions(string $options): ?array
 	{
 		$selectedOptions = array();
-		$itemOptions     = json_decode($item_options);
+		$option_ids      = explode(',', $options);
 
-		foreach ($itemOptions as $option)
+		foreach ($option_ids as $option_id)
 		{
-			foreach ($option as $selectedOption)
+			$selectedOption = ProductoptionFactory::get($option_id);
+
+			if ($selectedOption)
 			{
-				$selectedOptions[] = ProductoptionFactory::get($selectedOption->optionid);
+				$selectedOptions[] = $selectedOption;
 			}
+
+
 		}
 
+		if (!empty($selectedOptions))
+		{
+			return $selectedOptions;
+		}
 
-		return $selectedOptions;
+		return null;
+
+	}
+
+	/**
+	 * @param   int|null  $variant_id
+	 *
+	 * @return SelectedVariant|null
+	 *
+	 * @since 1.6
+	 */
+
+
+	public static function getSelectedVariant(int $variant_id = null): ?SelectedVariant
+	{
+
+
+		if (!$variant_id)
+		{
+			return null;
+		}
+
+		$db = Factory::getDbo();
+
+
+		// now check if there is already a cart for this cookie
+		$query = $db->getQuery(true);
+
+		$query->select('*');
+		$query->from($db->quoteName('#__protostore_product_variant_data'));
+
+
+		$query->where($db->quoteName('id') . ' = ' . $db->quote($variant_id));
+
+
+		$db->setQuery($query);
+
+		$result = $db->loadObject();
+
+		if ($result)
+		{
+			return new SelectedVariant($result);
+		}
+
+		return null;
+
+
+	}
+
+
+	public static function getVariantLabels(string $labels): ?array
+	{
+		$db    = Factory::getDbo();
+		$query = $db->getQuery(true);
+
+		$query->select('name');
+		$query->from($db->quoteName('#__protostore_product_variant_label'));
+		$query->where($db->quoteName('id') . ' IN (' . $labels . ')');
+
+		$db->setQuery($query);
+
+		$results = $db->loadAssocList();
+
+		if ($results)
+		{
+			return $results;
+		}
+
+		return null;
+
+
 	}
 
 
@@ -404,230 +498,523 @@ class CartFactory
 	}
 
 	/**
-	 * @param $itemid
-	 * @param $amount
-	 * @param $itemOptions
+	 * @param   int         $itemid
+	 * @param   int         $amount
+	 * @param   array|null  $options
+	 * @param   array|null  $variant_ids
 	 *
-	 * @return array|false|void
+	 * @return null|array
 	 *
+	 * @throws UnknownCurrencyException
 	 * @since 1.6
 	 */
 
-	public static function addToCart($itemid, $amount, $itemOptions)
+	public static function addToCart(int $itemid, int $amount, array $options = null, array $variant_ids = null): ?array
 	{
 
-		// init
+		// init response
 		$response = array();
 
-		// check if product has tracking enabled
-		// if not, carry on as normal
-		// if so, check if in stock
-		// return false if not
-		// if so, check the current cart to see if the items are accounted for
-		// return false if the remaining stock is in the cart already
-		// count the items
-		// compare with the amount in the request
-		// add only up top the max stock
-		// return
-
-		// check that there is an item id...
-		if ($itemid == null || $itemid == '' || $itemid == 0)
-		{
-			return false;
-		}
-
-		if (!$amount)
-		{
-			return false;
-		}
-
-
-		// get the options to calculate the price
-		$data                = array();
-		$data['options']     = array();
-		$i                   = 0;
-		$selected_option_ids = array();
-		if (!empty($itemOptions))
-		{
-			foreach ($itemOptions as $option)
-			{
-				$data['options'][$i]['optionid'] = $option['optionid'];
-				$selected_option_ids[]           = $option['optionid'];
-				$i++;
-			}
-		}
-
-		$item_options = json_encode($data);
-
-		$cartId = self::getCurrentCartId();
-
-
-		// check if this item is already in the cart
-		$cart_item = self::getCurrentCartItem($cartId, $itemid, $item_options);
-
-
-		// first, get the product
+		// get the product
 		$product = ProductFactory::get($itemid);
+		$cart_id = self::getCurrentCartId();
 
-		// check if product has tracking enabled
+		// check stock right away... sorts out a lot of checking later.
 		if ($product->manage_stock == 1)
 		{
-
-			// if so, check if in stock
-			if ($product->stock >= 1)
+			if ($product->stock = 0)
 			{
-				// if there is stock available, check the current cart to see if the items are accounted for
-
-				//first, does current cart exist?
-				if ($cart_item)
-				{
-					// now, check the current cart to see if the items are accounted for
-					// doStockCompare returns the available stock as an int - or false if all stock is used up.
-					$amountThatCanBeAdded = self::doStockCompare($product, $cart_item->id);
-
-
-					if ($amountThatCanBeAdded)
-					{
-						// check if the amount requested is lower than the amount possible
-						if ($amount <= $amountThatCanBeAdded)
-						{
-							//add this amount
-							self::addAmountToExistingCart($cart_item, $cart_item->amount, $amount);
-							$response['status'] = 'ok';
-
-							return $response;
-						}
-						else
-						{
-							//  only add up to the the max amount that can be added
-							self::addAmountToExistingCart($cart_item, $cart_item->amount, $amountThatCanBeAdded);
-							$response['status'] = 'ok';
-
-							return $response;
-						}
-
-
-					}
-					else
-					{
-						//all stock is added to cart already
-						$response['status'] = 'ko';
-						$response['error']  = 'There was an error adding to cart, ALL STOCK ALREADY ADDED'; // TODO - TRANSLATE
-
-						return $response;
-					}
-
-				}
-				else
-				{
-					// this product is not already in the cart, so simply add to cart up to the available stock
-
-					if ($amount <= $product->stock)
-					{
-						//
-						$insert = self::addToCart_afresh($cartId, $data, $itemid, $amount, $selected_option_ids);
-						if ($insert)
-						{
-							$response['status'] = 'ok';
-
-							return $response;
-						}
-						else
-						{
-							$response['status'] = 'ko';
-							$response['error']  = 'There was an error adding to cart, AMOUNT LESS THAN STOCK'; // TODO - TRANSLATE
-
-							return $response;
-						}
-
-
-					}
-					else
-					{
-						//  only add up to the the max amount that can be added
-						$insert = self::addToCart_afresh($cartId, $data, $itemid, $product->stock, $selected_option_ids);
-						if ($insert)
-						{
-							$response['status'] = 'ok';
-
-							return $response;
-						}
-						else
-						{
-							$response['status'] = 'ko';
-							$response['error']  = 'There was an error adding to cart, ADDING STOCK'; // TODO - TRANSLATE
-
-							return $response;
-						}
-					}
-
-				}
-
-
-			}
-			else
-			{
-
 				//out of stock
 				$response['status']  = 'ko';
 				$response['message'] = Text::_('COM_PROTOSTORE_OUT_OF_STOCK');
 
 				return $response;
 			}
+		}
+
+
+		// check if there's a variant
+		if ($variant_ids)
+		{
+			$response = self::addVariantToCart($product, $cart_id, $amount, $variant_ids, $options);
+		}
+		else
+		{
+			$response = self::addNonVariantToCart($product, $cart_id, $amount, $options);
+		}
+//
+//		// init
+//		$response = array();
+//		$cartId = self::getCurrentCartId();
+//
+//		// check if product has tracking enabled
+//		// if not, carry on as normal
+//		// if so, check if in stock
+//		// return false if not
+//		// if so, check the current cart to see if the items are accounted for
+//		// return false if the remaining stock is in the cart already
+//		// count the items
+//		// compare with the amount in the request
+//		// add only up top the max stock
+//		// return
+//
+//		// check that there is an item id...
+//		if ($itemid == null || $itemid == '' || $itemid == 0)
+//		{
+//			return false;
+//		}
+//
+//		if (!$amount)
+//		{
+//			return false;
+//		}
+//
+//
+//		// get the options to calculate the price
+//		$data                = array();
+//		$data['options']     = array();
+//		$i                   = 0;
+//		$selected_option_ids = array();
+//		if (!empty($itemOptions))
+//		{
+//			foreach ($itemOptions as $option)
+//			{
+//				$data['options'][$i]['optionid'] = $option['optionid'];
+//				$selected_option_ids[]           = $option['optionid'];
+//				$i++;
+//			}
+//		}
+//
+//		$item_options = json_encode($data);
+//
+//		$cartId = self::getCurrentCartId();
+//
+//
+//		// check if this item is already in the cart
+//		$cart_item = self::getCurrentCartItem($cartId, $itemid, $item_options);
+//
+//
+//		// first, get the product
+//		$product = ProductFactory::get($itemid);
+//
+//		// check if product has tracking enabled
+//		if ($product->manage_stock == 1)
+//		{
+//
+//			// if so, check if in stock
+//			if ($product->stock >= 1)
+//			{
+//				// if there is stock available, check the current cart to see if the items are accounted for
+//
+//				//first, does current cart exist?
+//				if ($cart_item)
+//				{
+//					// now, check the current cart to see if the items are accounted for
+//					// doStockCompare returns the available stock as an int - or false if all stock is used up.
+//					$amountThatCanBeAdded = self::doStockCompare($product, $cart_item->id);
+//
+//
+//					if ($amountThatCanBeAdded)
+//					{
+//						// check if the amount requested is lower than the amount possible
+//						if ($amount <= $amountThatCanBeAdded)
+//						{
+//							//add this amount
+//							self::addAmountToExistingCart($cart_item, $cart_item->amount, $amount);
+//							$response['status'] = 'ok';
+//
+//							return $response;
+//						}
+//						else
+//						{
+//							//  only add up to the the max amount that can be added
+//							self::addAmountToExistingCart($cart_item, $cart_item->amount, $amountThatCanBeAdded);
+//							$response['status'] = 'ok';
+//
+//							return $response;
+//						}
+//
+//
+//					}
+//					else
+//					{
+//						//all stock is added to cart already
+//						$response['status'] = 'ko';
+//						$response['error']  = 'There was an error adding to cart, ALL STOCK ALREADY ADDED'; // TODO - TRANSLATE
+//
+//						return $response;
+//					}
+//
+//				}
+//				else
+//				{
+//					// this product is not already in the cart, so simply add to cart up to the available stock
+//
+//					if ($amount <= $product->stock)
+//					{
+//						//
+//						$insert = self::addToCart_afresh($cartId, $data, $itemid, $amount, $selected_option_ids, $variant->id);
+//						if ($insert)
+//						{
+//							$response['status'] = 'ok';
+//
+//							return $response;
+//						}
+//						else
+//						{
+//							$response['status'] = 'ko';
+//							$response['error']  = 'There was an error adding to cart, AMOUNT LESS THAN STOCK'; // TODO - TRANSLATE
+//
+//							return $response;
+//						}
+//
+//
+//					}
+//					else
+//					{
+//						//  only add up to the the max amount that can be added
+//						$insert = self::addToCart_afresh($cartId, $data, $itemid, $product->stock, $selected_option_ids, $variant->id);
+//						if ($insert)
+//						{
+//							$response['status'] = 'ok';
+//
+//							return $response;
+//						}
+//						else
+//						{
+//							$response['status'] = 'ko';
+//							$response['error']  = 'There was an error adding to cart, ADDING STOCK'; // TODO - TRANSLATE
+//
+//							return $response;
+//						}
+//					}
+//
+//				}
+//
+//
+//			}
+//			else
+//			{
+//
+//				//out of stock
+//				$response['status']  = 'ko';
+//				$response['message'] = Text::_('COM_PROTOSTORE_OUT_OF_STOCK');
+//
+//				return $response;
+//			}
+//
+//		}
+//		else
+//		{
+//			// FUCK ME!! WE STILL NEED TO ADD IT IF WE'RE NOT TRACKING STOCK!
+//
+//
+//			// check if the item is already in cart
+//			//if so, increment
+//			//if not, add afresh
+//
+//			if ($cartitem = self::getCurrentCartItem($cartId, $itemid, $item_options))
+//			{
+//
+//
+//				$newAmount = $cartitem->amount + $amount;
+//
+//				self::updateExistingCartAmount($cartitem->id, $newAmount);
+//				$response['status'] = 'ok';
+//
+//				return $response;
+//
+//			}
+//			else
+//			{
+//				$insert = self::addToCart_afresh($cartId, $data, $itemid, $amount, $selected_option_ids, $variant->id);
+//				if ($insert)
+//				{
+//					$response['status'] = 'ok';
+//
+//					return $response;
+//				}
+//			}
+//
+//
+//		}
+
+		return $response;
+	}
+
+
+	/**
+	 *
+	 * this function adds a variant selection to the cart.
+	 *
+	 * @param   Product     $product
+	 * @param   int         $cart_id
+	 * @param   int         $amount
+	 * @param   array|null  $options
+	 * @param   array       $variant_ids
+	 *
+	 * @return array
+	 *
+	 * @since 1.6
+	 *
+	 *        todo - stock management
+	 */
+
+	public static function addVariantToCart(Product $product, int $cart_id, int $amount, array $variant_ids, array $options = null): array
+	{
+
+		// init response
+		$response = array();
+
+		// get the variant row containing the price, sku, and stock etc.
+		$variantRow = self::getVariantRow($variant_ids);
+
+		if (!$variantRow)
+		{
+			$response['status'] = 'ko';
+			$response['error']  = "CANNOT FIND VARIANT";
+
+			return $response;
+		}
+
+		//We need to check if an item with the same variant is already in the cart, so go get the cart item
+		$cart_item = self::getCurrentCartItem($cart_id, $product->joomla_item_id, $variantRow->id, $options);
+
+		//first, does current cart exist?
+		if ($cart_item)
+		{
+			// now, check the current cart to see if the items are accounted for
+			// doVariantStockCompare returns the available stock as an int - or NULL if all stock is used up.
+			$amountThatCanBeAdded = self::doVariantStockCompare($variantRow->stock, $cart_item->id);
+
+
+			// $amountThatCanBeAdded will be NULL if nothing can be added, so we can do a boolean check here.
+			if (!$amountThatCanBeAdded)
+			{
+				//all stock is added to cart already
+				$response['status'] = 'ko';
+				$response['error']  = Text::_('COM_PROTOSTORE_ADD_PRODUCT_INVENTORY_ALL_STOCK_ADDED_TO_CART');
+
+				return $response;
+			}
+
+			// check if the amount requested is lower than the amount possible
+			if ($amount <= $amountThatCanBeAdded)
+			{
+				//add this amount
+				self::addAmountToExistingCart($cart_item, $amount);
+				$response['status'] = 'added';
+			}
+			else
+			{
+				//  only add up to the max amount that can be added
+				self::addAmountToExistingCart($cart_item, $amountThatCanBeAdded);
+				$response['status'] = 'added2';
+			}
 
 		}
 		else
 		{
-			// FUCK ME!! WE STILL NEED TO ADD IT IF WE'RE NOT TRACKING STOCK!
 
+			$price          = $variantRow->price;
+			$priceToBeAdded = 0;
+			if ($options)
+			{
+				$priceToBeAdded = self::getOptionsPriceToBeAdded($price, $options);
+			}
 
-			// check if the item is already in cart
-			//if so, increment
-			//if not, add afresh
+			$price += $priceToBeAdded;
 
-			if ($cartitem = self::getCurrentCartItem($cartId, $itemid, $item_options))
+			// this product is not already in the cart, so simply add to cart up to the available stock
+			if ($amount <= $variantRow->stock)
 			{
 
+				$insert = self::addToCart_afresh($cart_id, $product->joomla_item_id, $variantRow->id, $options, $price, $amount);
+				if (!$insert)
+				{
+					$response['status'] = 'ko';
+					$response['error']  = 'There was an error adding to cart, AMOUNT LESS THAN STOCK'; // TODO - TRANSLATE
 
-				$newAmount = $cartitem->amount + $amount;
+					return $response;
+				}
 
-				self::updateExistingCartAmount($cartitem->id, $newAmount);
-				$response['status'] = 'ok';
-
-				return $response;
 
 			}
 			else
 			{
-				$insert = self::addToCart_afresh($cartId, $data, $itemid, $amount, $selected_option_ids);
-				if ($insert)
+				//  only add up to the max amount that can be added
+				$insert = self::addToCart_afresh($cart_id, $product->joomla_item_id, $variantRow->id, $options, $price, $amount);
+				if (!$insert)
 				{
-					$response['status'] = 'ok';
+					$response['status'] = 'ko';
+					$response['error']  = 'There was an error adding to cart, ADDING STOCK'; // TODO - TRANSLATE
 
 					return $response;
 				}
+
 			}
 
+		}
+
+
+		return $response;
+
+	}
+
+	/**
+	 * @param   array  $variant_ids
+	 *
+	 *
+	 * @return mixed|null
+	 * @since 1.6
+	 */
+
+	private static function getVariantRow(array $variant_ids)
+	{
+		$variant_ids = implode(',', $variant_ids);
+
+		$db    = Factory::getDbo();
+		$query = $db->getQuery(true);
+
+		$query->select('*');
+		$query->from($db->quoteName('#__protostore_product_variant_data'));
+		$query->where($db->quoteName('label_ids') . ' = ' . $db->quote($variant_ids));
+
+		$db->setQuery($query);
+
+		return $db->loadObject();
+	}
+
+
+	/**
+	 * @param   Product     $product
+	 * @param   int         $cart_id
+	 * @param   int         $amount
+	 * @param   array|null  $options
+	 *
+	 * @return array
+	 *
+	 * @throws UnknownCurrencyException
+	 * @since 1.6
+	 */
+
+	public static function addNonVariantToCart(Product $product, int $cart_id, int $amount, array $options = null): array
+	{
+
+		// init response
+		$response = array();
+
+
+		//We need to check if an item with the same variant is already in the cart, so go get the cart item
+		$cart_item = self::getCurrentCartItem($cart_id, $product->joomla_item_id, null, $options);
+
+		//first, does current cart exist?
+		if ($cart_item)
+		{
+			// now, check the current cart to see if the items are accounted for
+			// doStockCompare returns the available stock as an int - or NULL if all stock is used up.
+			$amountThatCanBeAdded = self::doStockCompare($product, $cart_item->id);
+
+
+			// $amountThatCanBeAdded will be NULL if nothing can be added, so we can do a boolean check here.
+			if (!$amountThatCanBeAdded)
+			{
+				//all stock is added to cart already
+				$response['status'] = 'ko';
+				$response['error']  = Text::_('COM_PROTOSTORE_ADD_PRODUCT_INVENTORY_ALL_STOCK_ADDED_TO_CART');
+
+				return $response;
+			}
+
+			// check if the amount requested is lower than the amount possible
+			if ($amount <= $amountThatCanBeAdded)
+			{
+				//add this amount
+				self::addAmountToExistingCart($cart_item, $amount);
+				$response['status'] = 'added';
+			}
+			else
+			{
+				//  only add up to the max amount that can be added
+				self::addAmountToExistingCart($cart_item, $amountThatCanBeAdded);
+				$response['status'] = 'added2';
+			}
 
 		}
+		else
+		{
+
+			//get price with options
+			$price          = $product->base_price;
+			$priceToBeAdded = 0;
+			if ($options)
+			{
+				$priceToBeAdded = self::getOptionsPriceToBeAdded($price, $options);
+			}
+
+			$price += $priceToBeAdded;
+			// this product is not already in the cart, so simply add to cart up to the available stock
+			if ($amount <= $product->stock)
+			{
+
+				$insert = self::addToCart_afresh($cart_id, $product->joomla_item_id, 0, $options, $price, $amount);
+				if (!$insert)
+				{
+					$response['status'] = 'ko';
+					$response['error']  = 'There was an error adding to cart, AMOUNT LESS THAN STOCK'; // TODO - TRANSLATE
+
+					return $response;
+				}
+
+
+			}
+			else
+			{
+				//  only add up to the max amount that can be added
+				$insert = self::addToCart_afresh($cart_id, $product->joomla_item_id, 0, $options, $price, $amount);
+				if (!$insert)
+				{
+					$response['status'] = 'ko';
+					$response['error']  = 'There was an error adding to cart, ADDING STOCK'; // TODO - TRANSLATE
+
+					return $response;
+				}
+
+			}
+
+		}
+
+
+		return $response;
 
 
 	}
 
 
 	/**
-	 * @param $cartId
-	 * @param $itemid
-	 * @param $item_options
+	 * @param   int         $cart_id
+	 * @param   int         $itemid
+	 * @param   int|null    $variant_id
+	 * @param   array|null  $options
 	 *
-	 * @return mixed|null
+	 * @return CartItem|null
 	 *
-	 * @since 1.5
+	 * @since 1.6
 	 */
 
 
-	private static function getCurrentCartItem($cartId, $itemid, $item_options)
+	private static function getCurrentCartItem(int $cart_id, int $itemid, int $variant_id = null, array $options = null): ?CartItem
 	{
+
+		$option_ids = array();
+		if ($options)
+		{
+			foreach ($options as $option)
+			{
+				$option_ids[] = $option['id'];
+			}
+		}
+
 
 		$db = Factory::getDbo();
 
@@ -635,26 +1022,72 @@ class CartFactory
 
 		$query->select('*');
 		$query->from($db->quoteName('#__protostore_cart_item'));
-		$query->where($db->quoteName('cart_id') . ' = ' . $db->quote($cartId), 'AND');
-		$query->where($db->quoteName('joomla_item_id') . ' = ' . $db->quote($itemid), 'AND');
-		$query->where($db->quoteName('item_options') . ' = ' . $db->quote($item_options));
+		$query->where($db->quoteName('cart_id') . ' = ' . $db->quote($cart_id));
+		$query->where($db->quoteName('joomla_item_id') . ' = ' . $db->quote($itemid));
+
+		$query->where($db->quoteName('variant_id') . ' = ' . $db->quote($variant_id));
+
+
+		$query->where($db->quoteName('item_options') . ' = ' . $db->quote(implode(',', $option_ids)));
+
 
 		$db->setQuery($query);
 
-		return $db->loadObject();
+		$result = $db->loadObject();
+
+		if ($result)
+		{
+			return new CartItem($result);
+		}
+
+		return null;
+	}
+
+
+	/**
+	 * @param   int    $basePrice
+	 * @param   array  $options
+	 *
+	 * @return int
+	 *
+	 * @since 1.6
+	 */
+
+
+	public static function getOptionsPriceToBeAdded(int $basePrice, array $options): int
+	{
+
+		$toBeAdded = 0;
+
+		foreach ($options as $option)
+		{
+			if ($option['modifier_type'] == 'perc')
+			{
+				$toBeAdded += (Utilities::getPercentOfNumber($basePrice, $option['modifier_value']) / 100);
+
+			}
+			if ($option['modifier_type'] == 'amount')
+			{
+				$toBeAdded += $option['modifier_value'];
+			}
+
+		}
+
+		return $toBeAdded;
+
 	}
 
 	/**
-	 * @param            $product
-	 * @param            $cart_itemid
+	 * @param   Product  $product
+	 * @param   int      $cart_itemid
 	 *
-	 * @return false|mixed|null
+	 * @return int|null
 	 *
 	 * @since 1.5
 	 */
 
 
-	public static function doStockCompare($product, $cart_itemid)
+	public static function doStockCompare(Product $product, int $cart_itemid): ?int
 	{
 
 		$db = Factory::getDbo();
@@ -671,7 +1104,7 @@ class CartFactory
 
 		if ($currentAmount >= $product->stock)
 		{
-			return false;
+			return null;
 		}
 		else
 		{
@@ -681,22 +1114,60 @@ class CartFactory
 	}
 
 	/**
-	 * @param $cart_item
-	 * @param $currentAmount
-	 * @param $amountToBeAdded
+	 * @param   int  $variantStock
+	 * @param   int  $cart_itemid
+	 *
+	 * @return int|null
+	 *
+	 * @since 1.6
+	 */
+
+
+	public static function doVariantStockCompare(int $variantStock, int $cart_itemid): ?int
+	{
+
+		$db = Factory::getDbo();
+
+		//get the current cart amount
+		$query = $db->getQuery(true);
+
+		$query->select('amount');
+		$query->from($db->quoteName('#__protostore_cart_item'));
+		$query->where($db->quoteName('id') . ' = ' . $db->quote($cart_itemid));
+
+		$db->setQuery($query);
+
+		$currentAmount = $db->loadResult();
+
+
+		if ($currentAmount >= $variantStock)
+		{
+			return null;
+		}
+		else
+		{
+			return $variantStock - $currentAmount;
+		}
+
+	}
+
+	/**
+	 * @param   CartItem  $cart_item
+	 * @param   int       $amountToBeAdded
 	 *
 	 *
 	 * @since 1.5
 	 */
 
-	private static function addAmountToExistingCart($cart_item, $currentAmount, $amountToBeAdded)
+	private static function addAmountToExistingCart(CartItem $cart_item, int $amountToBeAdded)
 	{
 
 
 		$object = new stdClass();
 
-		$cart_item->amount = ((int) $currentAmount + (int) $amountToBeAdded);
-		$object->id        = $cart_item->id;
+		$object->id     = $cart_item->id;
+		$object->amount = ($cart_item->amount + $amountToBeAdded);
+
 
 		Factory::getDbo()->updateObject('#__protostore_cart_item', $object, 'id');
 
@@ -704,13 +1175,12 @@ class CartFactory
 
 	/**
 	 * @param   int  $cartItemId
-	 * @param   int  $amountToBeAdded
-	 *
+	 * @param   int  $newAmount
 	 *
 	 * @since 1.6
 	 */
 
-	private static function updateExistingCartAmount($cartItemId, $newAmount)
+	private static function updateExistingCartAmount(int $cartItemId, int $newAmount)
 	{
 
 
@@ -724,11 +1194,12 @@ class CartFactory
 	}
 
 	/**
-	 * @param $cartId
-	 * @param $data
-	 * @param $itemid
-	 * @param $amount
-	 * @param $selected_option_ids
+	 * @param   int         $cart_id
+	 * @param   int         $j_item_id
+	 * @param   int|null    $variant_id
+	 * @param   array|null  $options
+	 * @param   int         $price
+	 * @param   int         $amount
 	 *
 	 * @return bool
 	 *
@@ -736,29 +1207,35 @@ class CartFactory
 	 */
 
 
-	private static function addToCart_afresh($cartId, $data, $itemid, $amount, $selected_option_ids): bool
+	private static function addToCart_afresh(int $cart_id, int $j_item_id, ?int $variant_id, ?array $options, int $price, int $amount): bool
 	{
+
+		$option_ids = array();
+
+		foreach ($options as $option)
+		{
+			$option_ids[] = $option['id'];
+		}
 
 		$object = new stdClass();
 
 		$object->id              = 0;
-		$object->cart_id         = $cartId;
-		$object->item_options    = json_encode($data);
+		$object->cart_id         = $cart_id;
+		$object->joomla_item_id  = $j_item_id;
+		$object->variant_id      = $variant_id;
+		$object->item_options    = implode(',', $option_ids);
 		$object->added           = Utilities::getDate();
-		$object->joomla_item_id  = $itemid;
 		$object->amount          = $amount;
-		$object->bought_at_price = PriceFactory::calculatePrice($selected_option_ids, $itemid);
+		$object->bought_at_price = $price;
 
 		$insert = Factory::getDbo()->insertObject('#__protostore_cart_item', $object);
 
-		if ($insert)
-		{
-			return true;
-		}
-		else
+		if (!$insert)
 		{
 			return false;
 		}
+
+		return true;
 
 	}
 
@@ -1125,6 +1602,70 @@ class CartFactory
 
 		// now return the value (in int) of the total minus the discount total
 		return $total - $couponDiscount;
+
+	}
+
+	/**
+	 * @param   Cart  $cart
+	 *
+	 * @return bool
+	 *
+	 * @since 1.6
+	 */
+
+
+	public static function clearItems(Cart $cart): bool
+	{
+
+		$db = Factory::getDbo();
+
+		$query      = $db->getQuery(true);
+		$conditions = array(
+			$db->quoteName('cart_id') . ' = ' . $db->quote($cart->id),
+		);
+		$query->delete($db->quoteName('#__protostore_cart_item'));
+		$query->where($conditions);
+		$db->setQuery($query);
+		$result = $db->execute();
+
+		if ($result)
+		{
+			return true;
+		}
+
+		return false;
+
+	}
+
+	/**
+	 * @param   Cart  $cart
+	 *
+	 * @return bool
+	 *
+	 * @since 1.6
+	 */
+
+
+	public static function clearCoupons(Cart $cart): bool
+	{
+
+		$db = Factory::getDbo();
+
+		$query      = $db->getQuery(true);
+		$conditions = array(
+			$db->quoteName('cookie_id') . ' = ' . $db->quote($cart->cookie_id),
+		);
+		$query->delete($db->quoteName('#__protostore_coupon_cart'));
+		$query->where($conditions);
+		$db->setQuery($query);
+		$result = $db->execute();
+
+		if ($result)
+		{
+			return true;
+		}
+
+		return false;
 
 	}
 

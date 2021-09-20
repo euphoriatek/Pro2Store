@@ -1,3 +1,10 @@
+////////////////////////////////////////////////////////////////////////////////
+// @package   Pro2Store
+// @author    Ray Lawlor - pro2.store
+// @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
+// @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
+//
+
 const p2s_currencies = {
     data() {
         return {
@@ -12,6 +19,7 @@ const p2s_currencies = {
             show: 25,
             enteredText: '',
             publishedOnly: true,
+            selected: [],
         };
     },
     async beforeMount() {
@@ -87,6 +95,15 @@ const p2s_currencies = {
                     this.pages = 1;
                     this.currentPage = 0;
                 }
+            }
+
+        },
+
+        selectAll(e) {
+            if (e.target.checked) {
+                this.selected = this.itemsChunked[this.currentPage];
+            } else {
+                this.selected = [];
             }
 
         },

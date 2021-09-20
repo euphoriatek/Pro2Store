@@ -1,9 +1,10 @@
 <?php
 /**
- * @package     Pro2Store Cart
+ * @package   Pro2Store
+ * @author    Ray Lawlor - pro2.store
+ * @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
+ * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
  *
- * @copyright   Copyright (C) 2020 Ray Lawlor - Elm House Creative. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 defined('_JEXEC') or die;
@@ -93,7 +94,7 @@ $id = uniqid('yps_cart');
 
                 this.loading = true;
 
-                const request = await fetch(this.baseUrl + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type==cart.update&format=raw", {
+                const request = await fetch(this.baseUrl + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=cart.update&format=raw", {
                     method: 'post',
                 });
 

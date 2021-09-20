@@ -4,6 +4,7 @@
  * @author    Ray Lawlor - pro2.store
  * @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
  * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
+ *
  */
 
 namespace Protostore\Email;
@@ -379,59 +380,63 @@ class EmailFactory
 		// get the emails that needs to be sent
 		$emails = self::getList(0, 0, null, $type, $languageTag);
 
-
-		foreach ($emails as $email)
+		if ($emails)
 		{
 
-			$sender = array(
-				$config->get('mailfrom'),
-				$config->get('fromname')
-			);
 
-			$mailer->setSender($sender);
-
-			if ($email->to)
+			foreach ($emails as $email)
 			{
-				$emailto = explode(',', $email->to);
-				$mailer->addRecipient($emailto);
-			}
-			else
-			{
-				$emailto = $order->billing_address->email;
-				$emailto = array($emailto);
 
-				$mailer->addRecipient($emailto);
-			}
-
-
-			$text = self::processReplacements($email->body, $order, $customer);
-
-			$params = ConfigFactory::get();
-
-			$displayData = array('order' => $order, 'body' => $text, 'config' => $params);
-
-			$body = LayoutHelper::render($layout, $displayData, JPATH_PLUGINS . '/protostoresystem/'.$plugin.'/tmpl');
-
-			$mailer->setSubject(self::processReplacements($email->subject, $order, $customer));
-			$mailer->isHtml(true);
-			$mailer->setBody($body);
-
-			$send = $mailer->Send();
-
-			if ($send)
-			{
-				// Log everything
-				EmaillogFactory::log(implode(',', $emailto), $type, $order->customer_id, $order->id);
-
-				OrderFactory::log(
-					$order->id,
-					Text::sprintf('COM_PROTOSTORE_ORDER_EMAIL_SENT_LOG', ucfirst($type), implode(',', $emailto), (Factory::getUser()->name ? Factory::getUser()->name : 'Joomla'))
+				$sender = array(
+					$config->get('mailfrom'),
+					$config->get('fromname')
 				);
 
+				$mailer->setSender($sender);
+
+				if ($email->to)
+				{
+					$emailto = explode(',', $email->to);
+					$mailer->addRecipient($emailto);
+				}
+				else
+				{
+					$emailto = $order->billing_address->email;
+					$emailto = array($emailto);
+
+					$mailer->addRecipient($emailto);
+				}
+
+
+				$text = self::processReplacements($email->body, $order, $customer);
+
+				$params = ConfigFactory::get();
+
+				$displayData = array('order' => $order, 'body' => $text, 'config' => $params);
+
+				$body = LayoutHelper::render($layout, $displayData, JPATH_PLUGINS . '/protostoresystem/' . $plugin . '/tmpl');
+
+				$mailer->setSubject(self::processReplacements($email->subject, $order, $customer));
+				$mailer->isHtml(true);
+				$mailer->setBody($body);
+
+				$send = $mailer->Send();
+
+				if ($send)
+				{
+					// Log everything
+					EmaillogFactory::log(implode(',', $emailto), $type, $order->customer_id, $order->id);
+
+					OrderFactory::log(
+						$order->id,
+						Text::sprintf('COM_PROTOSTORE_ORDER_EMAIL_SENT_LOG', ucfirst($type), implode(',', $emailto), (Factory::getUser()->name ? Factory::getUser()->name : 'Joomla'))
+					);
+
+				}
 			}
+
+
 		}
-
-
 
 
 	}
@@ -456,7 +461,7 @@ class EmailFactory
 		$text = str_replace('{site_name}', $config->get('fromname'), $text);
 
 		// order
-		$text = str_replace('{order_number}', $order->number, $text);
+		$text = str_replace('{order_number}', $order->order_number, $text);
 		$text = str_replace('{order_grand_total}', $order->order_total_formatted, $text);
 		$text = str_replace('{order_subtotal}', $order->order_subtotal_formatted, $text);
 		if ($order->shipping_total)
@@ -467,8 +472,8 @@ class EmailFactory
 
 
 		// tracking
-		$text = str_replace('{tracking_code}', $order->trackingcode, $text);
-		$text = str_replace('{tracking_url}', $order->trackingcodeurl, $text);
+		$text = str_replace('{tracking_code}', $order->tracking_code, $text);
+		$text = str_replace('{tracking_url}', $order->tracking_link, $text);
 
 
 		// customer
@@ -494,34 +499,40 @@ class EmailFactory
 			$text = str_replace('{customer_order_count}', $customer->total_orders, $text);
 		}
 
+		if ($order->shipping_address)
+		{
+			// shipping
+			$text = str_replace('{shipping_name}', $order->shipping_address->name, $text);
+			$text = str_replace('{shipping_address1}', $order->shipping_address->address1, $text);
+			$text = str_replace('{shipping_address2}', $order->shipping_address->address2, $text);
+			$text = str_replace('{shipping_address3}', $order->shipping_address->address3, $text);
+			$text = str_replace('{shipping_town}', $order->shipping_address->town, $text);
+			$text = str_replace('{shipping_state}', $order->shipping_address->zone_name, $text);
+			$text = str_replace('{shipping_country}', $order->shipping_address->country_name, $text);
+			$text = str_replace('{shipping_postcode}', $order->shipping_address->postcode, $text);
+			$text = str_replace('{shipping_email}', $order->shipping_address->email, $text);
+			$text = str_replace('{shipping_postcode}', $order->shipping_address->postcode, $text);
+			$text = str_replace('{shipping_mobile}', $order->shipping_address->mobile_phone, $text);
+			$text = str_replace('{shipping_phone}', $order->shipping_address->phone, $text);
+		}
 
-		// shipping
-		$text = str_replace('{shipping_name}', $order->shipping_address->name, $text);
-		$text = str_replace('{shipping_address1}', $order->shipping_address->address1, $text);
-		$text = str_replace('{shipping_address2}', $order->shipping_address->address2, $text);
-		$text = str_replace('{shipping_address3}', $order->shipping_address->address3, $text);
-		$text = str_replace('{shipping_town}', $order->shipping_address->town, $text);
-		$text = str_replace('{shipping_state}', $order->shipping_address->zone_name, $text);
-		$text = str_replace('{shipping_country}', $order->shipping_address->country_name, $text);
-		$text = str_replace('{shipping_postcode}', $order->shipping_address->postcode, $text);
-		$text = str_replace('{shipping_email}', $order->shipping_address->email, $text);
-		$text = str_replace('{shipping_postcode}', $order->shipping_address->postcode, $text);
-		$text = str_replace('{shipping_mobile}', $order->shipping_address->mobile_phone, $text);
-		$text = str_replace('{shipping_phone}', $order->shipping_address->phone, $text);
 
-		// billing
-		$text = str_replace('{billing_name}', $order->billing_address->name, $text);
-		$text = str_replace('{billing_address1}', $order->billing_address->address1, $text);
-		$text = str_replace('{billing_address2}', $order->billing_address->address2, $text);
-		$text = str_replace('{billing_address3}', $order->billing_address->address3, $text);
-		$text = str_replace('{billing_town}', $order->billing_address->town, $text);
-		$text = str_replace('{billing_state}', $order->billing_address->zone_name, $text);
-		$text = str_replace('{billing_country}', $order->billing_address->country_name, $text);
-		$text = str_replace('{billing_postcode}', $order->billing_address->postcode, $text);
-		$text = str_replace('{billing_email}', $order->billing_address->email, $text);
-		$text = str_replace('{billing_postcode}', $order->billing_address->postcode, $text);
-		$text = str_replace('{billing_mobile}', $order->billing_address->mobile_phone, $text);
-		$text = str_replace('{billing_phone}', $order->billing_address->phone, $text);
+		if ($order->billing_address)
+		{
+			// billing
+			$text = str_replace('{billing_name}', $order->billing_address->name, $text);
+			$text = str_replace('{billing_address1}', $order->billing_address->address1, $text);
+			$text = str_replace('{billing_address2}', $order->billing_address->address2, $text);
+			$text = str_replace('{billing_address3}', $order->billing_address->address3, $text);
+			$text = str_replace('{billing_town}', $order->billing_address->town, $text);
+			$text = str_replace('{billing_state}', $order->billing_address->zone_name, $text);
+			$text = str_replace('{billing_country}', $order->billing_address->country_name, $text);
+			$text = str_replace('{billing_postcode}', $order->billing_address->postcode, $text);
+			$text = str_replace('{billing_email}', $order->billing_address->email, $text);
+			$text = str_replace('{billing_postcode}', $order->billing_address->postcode, $text);
+			$text = str_replace('{billing_mobile}', $order->billing_address->mobile_phone, $text);
+			$text = str_replace('{billing_phone}', $order->billing_address->phone, $text);
+		}
 
 
 		return $text;

@@ -1,3 +1,10 @@
+--
+--  @package   Pro2Store
+--  @author    Ray Lawlor - pro2.store
+--  @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
+--  @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
+--
+
 CREATE TABLE IF NOT EXISTS `#__protostore_product_variant`
 (
     `id`         int(11) NOT NULL AUTO_INCREMENT,

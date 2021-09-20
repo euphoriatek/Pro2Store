@@ -1,9 +1,10 @@
 <?php
 /**
- * @package   Pro2Store - Helper
+ * @package   Pro2Store
  * @author    Ray Lawlor - pro2.store
- * @copyright Copyright (C) 2020 Ray Lawlor - pro2.store
+ * @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
  * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
+ *
  */
 
 
@@ -37,6 +38,8 @@ class CartItem
 	public $product;
 	public $totalCost;
 	public $selected_options;
+	public $variant_id;
+	public $selected_variant;
 
 	public function __construct($data)
 	{
@@ -84,6 +87,7 @@ class CartItem
 		$this->manage_stock_enabled      = $this->product->manage_stock;
 		$this->totalCost                 = $this->amount * $this->bought_at_price;
 		$this->selected_options          = CartFactory::getSelectedOptions($this->item_options);
+		$this->selected_variant          = CartFactory::getSelectedVariant($this->variant_id);
 
 	}
 

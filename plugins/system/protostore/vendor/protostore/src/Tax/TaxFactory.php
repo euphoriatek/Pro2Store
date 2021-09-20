@@ -1,9 +1,10 @@
 <?php
 /**
- * @package   Pro2Store - Helper
+ * @package   Pro2Store
  * @author    Ray Lawlor - pro2.store
  * @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
  * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
+ *
  */
 
 namespace Protostore\Tax;
@@ -59,12 +60,16 @@ class TaxFactory
 
 		$totalTaxableValue = 0;
 
-		/* @var CartItem $item */
-		foreach ($cartitems as $item)
-		{
-			$totalTaxableValue += self::getItemTaxableValue($item);
+		if($cartitems) {
+			/* @var CartItem $item */
+			foreach ($cartitems as $item)
+			{
+				$totalTaxableValue += self::getItemTaxableValue($item);
+
+			}
 
 		}
+
 
 
 		if ($config->get('add_tax_to_shipping'))

@@ -1,10 +1,11 @@
 <?php
 
 /**
- * @package   Pro2Store - Helper
+ * @package   Pro2Store
  * @author    Ray Lawlor - pro2.store
- * @copyright Copyright (C) 2020 Ray Lawlor - pro2.store
+ * @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
  * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
+ *
  */
 
 // no direct access
@@ -31,6 +32,7 @@ use Brick\Math\BigDecimal;
 use Brick\Money\Exception\UnknownCurrencyException;
 
 use Protostore\Currency\CurrencyFactory;
+use Protostore\Productoption\Productoption;
 use Protostore\Productoption\ProductoptionFactory;
 use Protostore\Utilities\Utilities;
 
@@ -240,7 +242,7 @@ class ProductFactory
 		$currentProduct->discount_type = $data->json->getString('discount_type', $currentProduct->discount_type);
 		$currentProduct->tags          = $data->json->getString('tags');
 
-		$currentProduct->options     = $data->json->getString('options', $currentProduct->options);
+		$currentProduct->options     = $data->json->get('options', $currentProduct->options, 'ARRAY');
 		$currentProduct->variants    = $data->json->get('variants', $currentProduct->variants, 'ARRAY');
 		$currentProduct->variantList = $data->json->get('variantList', $currentProduct->variantList, 'ARRAY');
 
@@ -437,9 +439,10 @@ class ProductFactory
 
 			if ($jresult)
 			{
-				// now do variants
+				// now do variants & checkbox options
 
 				self::commitVariants($product);
+				self::commitOptions($product);
 
 
 			}
@@ -470,6 +473,124 @@ class ProductFactory
 
 
 		return true;
+
+	}
+
+	/**
+	 * @param   Product  $product
+	 *
+	 *
+	 * @since 1..6
+	 */
+
+
+	public static function commitOptions(Product $product): void
+	{
+
+
+		$db = Factory::getDbo();
+
+		// check that there are options set
+		if ($product->options)
+		{
+			// ok we have options - iterate them and either insert or update
+
+			/** @var Productoption $option */
+			foreach ($product->options as $option)
+			{
+
+				// convert to object to satisfy Joomla's DB system
+				$option = (object) $option;
+
+
+				//process value
+				if (property_exists($option, 'modifier_valueFloat'))
+				{
+					$option->modifier_value = CurrencyFactory::toInt($option->modifier_valueFloat);
+					unset($option->modifier_valueFloat);
+				}
+				// set the "product_id"
+				$option->product_id = $product->joomla_item_id;
+
+				// check if we have a new option by checking if the id is "0"
+				if ($option->id == 0)
+				{
+
+					// sometimes the oprion is created and then set to "delete" by the user, so check that:
+					if (!$option->delete)
+					{
+
+						// unset delete value, since Joomla's DB system doesn't know what to do when there's no coloumn for this node.
+						unset($option->delete);
+
+						// the option id is 0 and the "delete" value is false, that means this is a new option, run insert
+						$db->insertObject('#__protostore_product_option', $option);
+
+					}
+
+				}
+				else
+				{
+
+					if (property_exists($option, 'delete'))
+					{
+						// the option id is already set, check if this option is set to "delete"
+						if (!$option->delete)
+						{
+
+							// unset delete value, since Joomla's DB system doesn't know what to do when there's no coloumn for this node.
+							unset($option->delete);
+
+							// the option id is already set and the "delete" value is false, so run update
+							$db->updateObject('#__protostore_product_option', $option, 'id');
+
+						}
+						else
+						{
+							// the "delete" value is true, so remove:
+							$query      = $db->getQuery(true);
+							$conditions = array(
+								$db->quoteName('id') . ' = ' . $db->quote($option->id)
+							);
+
+							$query->delete($db->quoteName('#__protostore_product_option'));
+							$query->where($conditions);
+
+							$db->setQuery($query);
+
+							$db->execute();
+						}
+
+					}
+					else
+					{
+						// update
+						unset($option->modifier_value_translated);
+						$db->updateObject('#__protostore_product_option', $option, 'id');
+					}
+				}
+
+
+			}
+		}
+		else
+		{
+			// remove all current options
+
+			$query      = $db->getQuery(true);
+			$conditions = array(
+				$db->quoteName('product_id') . ' = ' . $db->quote($product->joomla_item_id)
+			);
+
+			$query->delete($db->quoteName('#__protostore_product_option'));
+			$query->where($conditions);
+
+			$db->setQuery($query);
+
+			$db->execute();
+
+		}
+
 
 	}
 
@@ -833,6 +954,30 @@ class ProductFactory
 
 	}
 
+	/**
+	 * @param   int  $j_item_id
+	 *
+	 *
+	 * @return int
+	 * @since 1.6
+	 */
+
+	public static function getCurrentStock(int $j_item_id): int
+	{
+
+		$db    = Factory::getDbo();
+		$query = $db->getQuery(true);
+
+		$query->select('stock');
+		$query->from($db->quoteName('#__protostore_product'));
+		$query->where($db->quoteName('joomla_item_id') . ' = ' . $db->quote($j_item_id));
+
+		$db->setQuery($query);
+
+		return $db->loadResult();
+
+	}
+
 
 	/**
 	 * @param $joomla_item_id
@@ -1163,17 +1308,18 @@ class ProductFactory
 
 
 	/**
-	 * @param $product_id
+	 * @param   int  $j_item_id
 	 *
 	 * @return null|array
 	 *
+	 * @throws UnknownCurrencyException
 	 * @since 1.6
 	 */
 
-	public static function getOptions($product_id): ?array
+	public static function getOptions(int $j_item_id): ?array
 	{
 
-		return ProductoptionFactory::getProductOptions($product_id);
+		return ProductoptionFactory::getProductOptions($j_item_id);
 
 	}
 
@@ -1772,65 +1918,26 @@ class ProductFactory
 
 	private static function cartesian(array $input): array
 	{
-		$result = array();
+		$result = array(array());
 
-		while (list($key, $values) = each($input))
+		foreach ($input as $key => $values)
 		{
-			// If a sub-array is empty, it doesn't affect the cartesian product
-			if (empty($values))
-			{
-				continue;
-			}
+			$append = array();
 
-			// Seeding the product array with the values from the first sub-array
-			if (empty($result))
+			foreach ($result as $product)
 			{
-				foreach ($values as $value)
+				foreach ($values as $item)
 				{
-					$result[] = array($key => $value);
+					$product[$key] = $item;
+					$append[]      = $product;
 				}
 			}
-			else
-			{
-				// Second and subsequent input sub-arrays work like this:
-				//   1. In each existing array inside $product, add an item with
-				//      key == $key and value == first item in input sub-array
-				//   2. Then, for each remaining item in current input sub-array,
-				//      add a copy of each existing array inside $product with
-				//      key == $key and value == first item of input sub-array
 
-				// Store all items to be added to $product here; adding them
-				// inside the foreach will result in an infinite loop
-				$append = array();
-
-				foreach ($result as &$product)
-				{
-					// Do step 1 above. array_shift is not the most efficient, but
-					// it allows us to iterate over the rest of the items with a
-					// simple foreach, making the code short and easy to read.
-					$product[$key] = array_shift($values);
-
-					// $product is by reference (that's why the key we added above
-					// will appear in the end result), so make a copy of it here
-					$copy = $product;
-
-					// Do step 2 above.
-					foreach ($values as $item)
-					{
-						$copy[$key] = $item;
-						$append[]   = $copy;
-					}
-
-					// Undo the side effecst of array_shift
-					array_unshift($values, $product[$key]);
-				}
-
-				// Out of the foreach, we can add to $results now
-				$result = array_merge($result, $append);
-			}
+			$result = $append;
 		}
 
 		return $result;
+
 	}
 
 

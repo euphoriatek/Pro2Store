@@ -1,9 +1,10 @@
 <?php
 /**
- * @package   Pro2Store - Helper
+ * @package   Pro2Store
  * @author    Ray Lawlor - pro2.store
- * @copyright Copyright (C) 2020 Ray Lawlor - pro2.store
+ * @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
  * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
+ *
  */
 
 // no direct access
@@ -19,19 +20,18 @@ class Productoption
 
 	public $id;
 	public $product_id;
-	public $optiontype;
-	public $optionname;
-	public $modifier;
-	public $modifiertype;
-	public $modifiervalue;
-	public $modifiervalueFloat;
-	public $modifiervalue_translated;
-	public $optionsku;
-	public $ordering;
+	public $option_name;
+	public $modifier_type;
+	public $modifier_value;
+	public $modifier_valueFloat;
+	public $modifier_value_translated;
 
 
-	public $optiontypename;
 
+	/**
+	 * @throws \Brick\Money\Exception\UnknownCurrencyException
+	 * @since 1.6
+	 */
 	public function __construct($data)
 	{
 
@@ -76,16 +76,11 @@ class Productoption
 
 	private function init()
 	{
-		$this->optiontypename = ProductoptionFactory::getOptionTypeName($this->optiontype);
-		if($this->modifiertype === 'amount'){
-			$this->modifiervalueFloat = ProductoptionFactory::getFloat($this->modifiervalue);
-		} else {
-			$this->modifiervalueFloat = $this->modifiervalue;
-		}
 
 
 
-		$this->modifiervalue_translated = ProductoptionFactory::translateModifierValue($this->modifiervalue, $this->modifiertype);
+		$this->modifier_valueFloat = ProductoptionFactory::processModifierValue($this->modifier_value);
+		$this->modifier_value_translated = ProductoptionFactory::translateModifierValue($this->modifier_value, $this->modifier_type);
 
 
 	}

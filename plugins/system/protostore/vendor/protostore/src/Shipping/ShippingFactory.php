@@ -1,9 +1,10 @@
 <?php
 /**
- * @package   Pro2Store - Helper
+ * @package   Pro2Store
  * @author    Ray Lawlor - pro2.store
  * @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
  * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
+ *
  */
 
 // no direct access
@@ -120,28 +121,35 @@ class ShippingFactory
 
 		$total = 0;
 
-		/* @var CartItem $item */
-		foreach ($cartitems as $item)
+		if ($cartitems)
 		{
 
-			$itemShipping = self::getItemFlatShipping($item);
-			// multiply the item shipping by the count
-			$total += $itemShipping * $item->amount;
 
+			/* @var CartItem $item */
+			foreach ($cartitems as $item)
+			{
+
+				$itemShipping = self::getItemFlatShipping($item);
+				// multiply the item shipping by the count
+				$total += $itemShipping * $item->amount;
+
+			}
 		}
-
 
 		// get the total weight of the "weight" activated items.
 		// then get the shipping total for that combined weight
 		// then add it to the $total from above.
 		$weight = 0;
-		foreach ($cartitems as $item)
+		if ($cartitems)
 		{
-			$itemWeight = self::getItemWeight($item);
+			foreach ($cartitems as $item)
+			{
+				$itemWeight = self::getItemWeight($item);
 
-			// multiply the item weight by the count
-			$weight += $itemWeight * $item->amount;
+				// multiply the item weight by the count
+				$weight += $itemWeight * $item->amount;
 
+			}
 		}
 
 		// $weight now has the total of the cart weight for items that calculate shipping based on their weight.
@@ -201,13 +209,14 @@ class ShippingFactory
 	public static function getItemWeight(CartItem $cartitem): int
 	{
 
-		$product =  ProductFactory::get($cartitem->joomla_item_id);
+		$product = ProductFactory::get($cartitem->joomla_item_id);
 
 		if ($product->shipping_mode == 'weight')
 		{
 			// return the weight for the item
 			return $product->weight;
 		}
+
 		return 0;
 
 	}
@@ -224,7 +233,6 @@ class ShippingFactory
 	 *
 	 * @since 1.6
 	 */
-
 
 
 	public static function getWeightShippingTotal($weight): int
@@ -268,6 +276,7 @@ class ShippingFactory
 
 
 		}
+
 		// just return zero if nothing happens.
 		return 0;
 

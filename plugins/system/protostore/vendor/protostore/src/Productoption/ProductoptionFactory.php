@@ -1,9 +1,10 @@
 <?php
 /**
- * @package   Pro2Store - Helper
+ * @package   Pro2Store
  * @author    Ray Lawlor - pro2.store
- * @copyright Copyright (C) 2020 Ray Lawlor - pro2.store
+ * @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
  * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
+ *
  */
 
 // no direct access
@@ -13,13 +14,14 @@ namespace Protostore\Productoption;
 defined('_JEXEC') or die('Restricted access');
 
 
-use Brick\Math\BigDecimal;
+
 use Joomla\CMS\Factory;
-
-use Brick\Money\Exception\UnknownCurrencyException;
-
 use Joomla\Input\Input;
+
 use Protostore\Currency\CurrencyFactory;
+
+use Brick\Math\BigDecimal;
+use Brick\Money\Exception\UnknownCurrencyException;
 
 use stdClass;
 
@@ -32,6 +34,7 @@ class ProductoptionFactory
 	 *
 	 * @return Productoption
 	 *
+	 * @throws UnknownCurrencyException
 	 * @since 1.6
 	 */
 
@@ -42,7 +45,7 @@ class ProductoptionFactory
 		$query = $db->getQuery(true);
 
 		$query->select('*');
-		$query->from($db->quoteName('#__protostore_product_option_values'));
+		$query->from($db->quoteName('#__protostore_product_option'));
 		$query->where($db->quoteName('id') . ' = ' . $db->quote($id));
 
 		$db->setQuery($query);
@@ -62,10 +65,11 @@ class ProductoptionFactory
 	 *
 	 * @return array|null
 	 *
+	 * @throws UnknownCurrencyException
 	 * @since 1.6
 	 */
 
-	public static function getListFromGivenIds($ids = array()): ?array
+	public static function getListFromGivenIds(array $ids = array()): ?array
 	{
 
 		if(empty($ids)) {
@@ -88,7 +92,7 @@ class ProductoptionFactory
 			$query = $db->getQuery(true);
 
 			$query->select('*');
-			$query->from($db->quoteName('#__protostore_product_option_values'));
+			$query->from($db->quoteName('#__protostore_product_option'));
 			$query->where($db->quoteName('id') . ' = ' . $db->quote($id));
 
 			$db->setQuery($query);
@@ -107,14 +111,15 @@ class ProductoptionFactory
 	}
 
 	/**
-	 * @param $product_id
+	 * @param   int  $j_item_id
 	 *
 	 * @return array
 	 *
+	 * @throws UnknownCurrencyException
 	 * @since 1.6
 	 */
 
-	public static function getProductOptions($product_id): ?array
+	public static function getProductOptions(int $j_item_id): ?array
 	{
 
 		$options = array();
@@ -124,8 +129,8 @@ class ProductoptionFactory
 		$query = $db->getQuery(true);
 
 		$query->select('*');
-		$query->from($db->quoteName('#__protostore_product_option_values'));
-		$query->where($db->quoteName('product_id') . ' = ' . $db->quote($product_id));
+		$query->from($db->quoteName('#__protostore_product_option'));
+		$query->where($db->quoteName('product_id') . ' = ' . $db->quote($j_item_id));
 
 		$db->setQuery($query);
 
@@ -149,30 +154,19 @@ class ProductoptionFactory
 
 
 	/**
-	 * @param   int  $optiontype
+	 * @param   int  $value
 	 *
-	 * @return mixed|null
-	 *
+	 * @return BigDecimal
+	 * @throws UnknownCurrencyException
 	 * @since 1.6
 	 */
 
-
-	public static function getOptionTypeName(int $optiontype)
+	public static function processModifierValue(int $value): BigDecimal
 	{
 
-		$db = Factory::getDbo();
+		return CurrencyFactory::toFloat($value);
 
-		$query = $db->getQuery(true);
-
-		$query->select('name');
-		$query->from($db->quoteName('#__protostore_product_option'));
-		$query->where($db->quoteName('id') . ' = ' . $db->quote($optiontype));
-
-		$db->setQuery($query);
-
-		return $db->loadResult();
 	}
-
 	/**
 	 * @param   int     $value
 	 *
@@ -189,7 +183,7 @@ class ProductoptionFactory
 		switch ($type)
 		{
 			case 'perc':
-				return $value . '%';
+				return ($value / 100). '%';
 			case 'amount':
 				return CurrencyFactory::formatNumberWithCurrency($value);
 		}
@@ -215,44 +209,6 @@ class ProductoptionFactory
 	}
 
 
-	public static function getOptionTypes()
-	{
-
-		$db    = Factory::getDbo();
-		$query = $db->getQuery(true);
-
-		$query->select('*');
-		$query->from($db->quoteName('#__protostore_product_option'));
-
-		$db->setQuery($query);
-
-		$result = $db->loadObjectList();
-
-	}
-
-	/**
-	 * @param   Input  $data
-	 *
-	 * @return bool
-	 *
-	 * @since 1.6
-	 */
 
 
-	public static function createOptionTypeFromInputData(Input $data): bool
-	{
-
-		$db = Factory::getDbo();
-
-
-		$object              = new stdClass();
-		$object->id          = 0;
-		$object->name        = $data->json->get('optionTypeName');
-		$object->option_type = $data->json->get('optionType');
-
-		$result = $db->insertObject('#__protostore_product_option', $object);
-
-		return $result;
-
-	}
 }

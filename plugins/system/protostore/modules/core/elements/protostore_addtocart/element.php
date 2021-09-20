@@ -1,10 +1,11 @@
 <?php
 
 /**
- * @package     Pro2Store - Add To Cart
+ * @package   Pro2Store
+ * @author    Ray Lawlor - pro2.store
+ * @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
+ * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
  *
- * @copyright   Copyright (C) 2020 Ray Lawlor - Pro2Store. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 defined('_JEXEC') or die;
@@ -27,10 +28,9 @@ return [
 
 			$node->props['item_id'] = Utilities::getCurrentItemId();
 
-
 			$product = ProductFactory::get($node->props['item_id']);
 
-			if ($product->published == 0)
+			if (!$product || $product->published == 0)
 			{
 				return false;
 			}
@@ -51,7 +51,7 @@ return [
 				}
 			}
 
-
+//TODO - GET CHECKOUT LINK
 			$node->props['checkoutlink'] = Route::_('index.php?Itemid=');
 			$node->props['baseUrl']      = Uri::base();
 

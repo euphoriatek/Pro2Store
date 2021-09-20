@@ -1,10 +1,11 @@
 <?php
 
 /**
- * @package     Pro2Store - Total
+ * @package   Pro2Store
+ * @author    Ray Lawlor - pro2.store
+ * @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
+ * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
  *
- * @copyright   Copyright (C) 2021 Ray Lawlor - Pro2Store. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 
@@ -44,18 +45,27 @@ $el = $this->el($props['title_element'], [
                     total: 0,
                     loading: false,
                     itemid: 0,
-                    ioptions: [],
                     multiplier: 1,
                     selected: [],
+                    options: [],
                 }
             },
             created() {
                 emitter.on("yps_amountChange", this.setMultiplier)
                 emitter.on("yps_product_update", this.recalculateTotal)
                 emitter.on("yps_optionsChange", this.recalculateTotal)
+                emitter.on("yps_variantsChange", this.recalculateTotal)
             },
             async beforeMount() {
                 // set the itemid from the inline scripts
+
+                const base_url = document.getElementById('yps-total-baseUrl');
+                try {
+                    this.base_url = base_url.innerText;
+                    base_url.remove();
+                } catch (err) {
+                }
+
                 const itemId = document.getElementById('yps_total_item_id_data');
                 try {
                     this.itemid = itemId.innerText;
@@ -77,130 +87,40 @@ $el = $this->el($props['title_element'], [
             },
             async mounted() {
 
-                // var selectElements = document.getElementsByClassName('yps_option');
-                // for (let item of selectElements) {
-                //     var selected = item.options[item.selectedIndex];
-                //     var thisoption = {
-                //         optionid: selected.getAttribute('data-optionid'),
-                //     };
-                //     this.ioptions.push(thisoption);
-                // }
-                //
-                // var checkboxElements = document.getElementsByClassName('yps_option_checkbox');
-                // for (let item of checkboxElements) {
-                //     if (item.checked) {
-                //
-                //         var thisoption = {
-                //             optionid: item.getAttribute('data-optionid'),
-                //         };
-                //         this.ioptions.push(thisoption);
-                //
-                //     }
-                //
-                // }
-                // var radioElements = document.getElementsByClassName('yps_option_radio');
-                // for (let item of radioElements) {
-                //     if (item.checked) {
-                //
-                //         var thisoption = {
-                //             optionid: item.getAttribute('data-optionid'),
-                //         };
-                //         this.ioptions.push(thisoption);
-                //
-                //     }
-                //
-                // }
-                //
-                //
-                // var params = {
-                //     'contentitemid': this.itemid,
-                //     'itemoptions': JSON.stringify(this.ioptions),
-                //     'amount': this.amount
-                // };
-                //
-                // const URLparams = new URLSearchParams(Object.entries(params));
-                // URLparams.toString();
-                //
-                //
-                // this.loading = true;
-                // const requestTotal = await fetch(this.baseUrl + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=product.calculatePrice&format=raw&" + URLparams, {
-                //     method: 'get',
-                // });
-                //
-                // const responseTotal = await requestTotal.json();
-                //
-                // if (responseTotal.success) {
-                //     this.total = responseTotal.data;
-                //     this.loading = false;
-                // } else {
-                //     UIkit.notification({
-                //         message: 'There was an error.',
-                //         status: 'danger',
-                //         pos: 'top-center',
-                //         timeout: 5000
-                //     });
-                // }
-
                 await this.recalculateTotal();
             },
             methods: {
 
-               async recalculateTotal() {
+                async recalculateTotal(options) {
 
-                    console.log(this.selected);
+
                     this.loading = true;
-
-                    // var ioptions = [];
-                    //
-                    // var selectElements = document.getElementsByClassName('yps_option');
-                    // for (let item of selectElements) {
-                    //     var selected = item.options[item.selectedIndex];
-                    //     var thisoption = {
-                    //         optionid: selected.getAttribute('data-optionid'),
-                    //     };
-                    //     ioptions.push(thisoption);
-                    // }
-                    //
-                    // var checkboxElements = document.getElementsByClassName('yps_option_checkbox');
-                    // for (let item of checkboxElements) {
-                    //     if (item.checked) {
-                    //
-                    //         var thisoption = {
-                    //             optionid: item.getAttribute('data-optionid'),
-                    //         };
-                    //         ioptions.push(thisoption);
-                    //
-                    //     }
-                    //
-                    // }
-                    // var radioElements = document.getElementsByClassName('yps_option_radio');
-                    // for (let item of radioElements) {
-                    //     if (item.checked) {
-                    //
-                    //         var thisoption = {
-                    //             optionid: item.getAttribute('data-optionid'),
-                    //         };
-                    //         ioptions.push(thisoption);
-                    //
-                    //     }
-                    //
-                    // }
-
 
                     let selected = [];
                     const selectedVariants = document.getElementsByClassName('yps_variant');
                     Array.prototype.forEach.call(selectedVariants, function (el) {
                         selected.push(el.value);
-                        console.log(el.value)
                     });
 
                     this.selected = selected;
 
-                    console.log(this.selected)
+                    if(options) {
+                        selected = [];
+                        Array.prototype.forEach.call(options, function (option) {
+                            if(option.selected) {
+                                selected.push(option);
+                            }
+                        });
+
+                        this.options = selected;
+                    }
+
+
 
                     var params = {
                         'joomla_item_id': this.itemid,
                         'selectedVariants': this.selected,
+                        'selectedOptions': this.options,
                         'multiplier': this.multiplier
                     };
 
@@ -219,7 +139,7 @@ $el = $this->el($props['title_element'], [
                     });
 
 
-                   const response = await request.json();
+                    const response = await request.json();
 
                     if (response.success) {
                         this.total = response.data.string;

@@ -4,6 +4,7 @@
  * @author    Ray Lawlor - pro2.store
  * @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
  * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
+ *
  */
 
 // no direct access
@@ -68,12 +69,10 @@ class bootstrap extends AdminModel
 
 		$config = ConfigFactory::get();
 
-		$this->vars['item']              = false;
-		$this->vars['default_category']  = $config->get('defaultproductcategory');
-		$this->vars['available_options'] = ProductFactory::getOptionList();
-		$this->vars['available_tags']    = ProductFactory::getAvailableTags();
-//		$this->vars['custom_fields']     = ProductFactory::getAvailableCustomFields($id, $this->vars['item']->joomlaItem->catid);
-
+		$this->vars['item']             = false;
+		$this->vars['default_category'] = $config->get('defaultproductcategory');
+		$this->vars['available_tags']   = ProductFactory::getAvailableTags();
+		$this->vars['custom_fields']    = [];
 		if ($id)
 		{
 			$this->vars['item']           = $this->getTheItem($id);
@@ -194,7 +193,7 @@ class bootstrap extends AdminModel
 
 
 		// include prime
-		Utilities::includePrime(array('inputswitch', 'chips', 'chip', 'inputtext', 'inputnumber'));
+		Utilities::includePrime(array('inputswitch', 'button', 'chips', 'chip', 'inputtext', 'inputnumber'));
 
 		if ($this->vars['item'])
 		{
@@ -237,8 +236,7 @@ class bootstrap extends AdminModel
 
 		}
 
-//		$doc->addCustomTag(' <script id="available_custom_fields_data" type="application/json">' . json_encode($this->vars['custom_fields']) . '</script>');
-		$doc->addCustomTag(' <script id="available_options_data" type="application/json">' . json_encode($this->vars['available_options']) . '</script>');
+		$doc->addCustomTag(' <script id="custom_fields_data" type="application/json">' . json_encode($this->vars['custom_fields']) . '</script>');
 		$doc->addCustomTag(' <script id="available_tags_data" type="application/json">' . json_encode($this->vars['available_tags']) . '</script>');
 		$doc->addCustomTag(' <script id="default_category_data" type="application/json">' . $this->vars['default_category'] . '</script>');
 

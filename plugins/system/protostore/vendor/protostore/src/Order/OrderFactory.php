@@ -1,10 +1,11 @@
 <?php
 
 /**
- * @package   Pro2Store - Helper
+ * @package   Pro2Store
  * @author    Ray Lawlor - pro2.store
- * @copyright Copyright (C) 2020 Ray Lawlor - pro2.store
+ * @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
  * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
+ *
  */
 
 // no direct access
@@ -22,10 +23,17 @@ use Joomla\Input\Input;
 
 use Protostore\Address\Address;
 use Protostore\Address\AddressFactory;
+use Protostore\Cart\CartFactory;
+use Protostore\Cart\CartItem;
+use Protostore\Checkoutnote\CheckoutnoteFactory;
+use Protostore\Coupon\CouponFactory;
 use Protostore\Currency\CurrencyFactory;
 use Protostore\Customer\CustomerFactory;
 use Protostore\Emaillog\EmaillogFactory;
-use Protostore\Total\Total;
+use Protostore\Product\ProductFactory;
+use Protostore\Shipping\ShippingFactory;
+use Protostore\Tax\TaxFactory;
+use Protostore\Total\TotalFactory;
 use Protostore\Utilities\Utilities;
 
 use Brick\Money\Exception\UnknownCurrencyException;
@@ -124,7 +132,6 @@ class OrderFactory
 		{
 			$query->where($db->quoteName('order_date') . ' >= ' . $db->quote($dateFrom));
 		}
-
 
 
 		$db->setQuery($query, $offset, $limit);
@@ -254,6 +261,8 @@ class OrderFactory
 
 
 	/**
+	 * Function to save a new Order Log
+	 *
 	 * @param   int     $order_id
 	 * @param   string  $note
 	 *
@@ -629,7 +638,7 @@ class OrderFactory
 	 */
 
 
-	public static function updateStatus($status, $order_id, $sendEmail = false): bool
+	public static function updateStatus(string $status, int $order_id, bool $sendEmail = false): bool
 	{
 
 		$order = self::get($order_id);
@@ -798,17 +807,20 @@ class OrderFactory
 
 	/**
 	 * @param   string  $paymentMethod
-	 * @param   string  $shippingMethod
 	 * @param   string  $vendorToken
 	 * @param   false   $sendEmail
 	 *
 	 * @return Order
 	 *
+	 * @throws UnknownCurrencyException
+	 * @throws Exception
 	 * @since 1.6
+	 *
+	 *        todo!! GET VARIANTS IN!
 	 */
 
 
-	public static function createOrderFromCart(string $paymentMethod, string $shippingMethod = 'default', string $vendorToken = '', bool $sendEmail = false): Order
+	public static function createOrderFromCart(string $paymentMethod, string $vendorToken = '', bool $sendEmail = false): ?Order
 	{
 
 		// init vars
@@ -816,6 +828,8 @@ class OrderFactory
 		$date      = Utilities::getDate();
 		$cookie_id = Utilities::getCookieID();
 		$customer  = CustomerFactory::get();
+		$cart      = CartFactory::get();
+		$currency  = CurrencyFactory::getCurrent();
 
 		// Build Order Object
 		$object     = new stdClass();
@@ -831,11 +845,120 @@ class OrderFactory
 		$object->order_number   = self::_generateOrderId(rand(10000, 99999));
 		$object->order_paid     = 0;
 		$object->order_status   = 'P';
-		$object->order_total    = Total::getGrandTotal(true);
-		$object->order_subtotal = Total::getSubTotal(true);
+		$object->order_total    = TotalFactory::getGrandTotal($cart);
+		$object->order_subtotal = TotalFactory::getSubTotal($cart);
+
+		$object->shipping_total      = ShippingFactory::getShipping($cart);
+		$object->tax_total           = TaxFactory::getTotalTax($cart);
+		$object->currency            = $currency->iso;
+		$object->payment_method      = $paymentMethod;
+		$object->vendor_token        = $vendorToken;
+		$object->billing_address_id  = $cart->billing_address_id;
+		$object->shipping_address_id = $cart->shipping_address_id;
+		$object->published           = 1;
+
+		if (CouponFactory::isCouponApplied())
+		{
+			$coupon                = CouponFactory::getCurrentAppliedCoupon();
+			$object->discount_code = $coupon->coupon_code;
+		}
+
+		$object->discount_total = CouponFactory::calculateDiscount($cart);
+
+		if ($currentNote = CheckoutnoteFactory::getCurrentNote())
+		{
+			$object->customer_notes = $currentNote->note;
+		}
+		else
+		{
+			$object->customer_notes = '';
+		}
 
 
-		return self::get();
+		// insert the new Order object and retrieve the Order ID via insertid method
+		$result = $db->insertObject('#__protostore_order', $object);
+
+		if (!$result)
+		{
+			return null;
+		}
+
+		$order_id = $db->insertid();
+
+
+		// now insert the products
+
+		/** @var CartItem $cartItem */
+		foreach ($cart->cartItems as $cartItem)
+		{
+
+			$object                = new stdClass();
+			$object->id            = 0;
+			$object->order_id      = $order_id;
+			$object->j_item        = $cartItem->joomla_item_id;
+			$object->j_item_cat    = $cartItem->product->joomlaItem->catid;
+			$object->j_item_name   = $cartItem->product->joomlaItem->title;
+			$object->item_options  = json_encode($cartItem->selected_options);
+			$object->variant_id    = $cartItem->variant_id;
+			$object->price_at_sale = $cartItem->bought_at_price;
+			$object->amount        = $cartItem->amount;
+
+			$db->insertObject('#__protostore_order_products', $object);
+
+			if ($cartItem->manage_stock_enabled == 1)
+			{
+
+				$currentStock  = ProductFactory::getCurrentStock($cartItem->product->joomla_item_id);
+				$newStockLevel = ($currentStock - $cartItem->amount);
+
+				if ($newStockLevel <= 0)
+				{
+					$newStockLevel = 0;
+				}
+
+				$stockUpdate        = new stdClass();
+				$stockUpdate->id    = $cartItem->product->id;
+				$stockUpdate->stock = $newStockLevel;
+
+				$db->updateObject('#__protostore_product', $stockUpdate, 'id');
+			}
+
+		}
+
+
+		// clear the items from the cart
+		CartFactory::clearItems($cart);
+
+		// clear the coupons
+		CartFactory::clearCoupons($cart);
+
+
+		if ($sendEmail)
+		{
+			// get the plugin functions
+			PluginHelper::importPlugin('protostoresystem');
+			Factory::getApplication()->triggerEvent('onSendProtoStoreEmail', array('pending', $order_id));
+
+		}
+
+		// insert a log of this order
+		self::log($order_id, Text::_('COM_PROTOSTORE_ORDER_IS_CREATED_LOG'));
+
+
+		// fire the event
+		PluginHelper::importPlugin('protostoresystem');
+
+		try
+		{
+			Factory::getApplication()->triggerEvent('onOrderCreated', array($order_id));
+		}
+		catch (Exception $e)
+		{
+
+		}
+
+
+		return self::get($order_id);
 
 	}
 

@@ -1,10 +1,10 @@
 <?php
 /**
- * @package     Pro2Store
- * @subpackage  com_protostore
+ * @package   Pro2Store
+ * @author    Ray Lawlor - pro2.store
+ * @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
+ * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
  *
- * @copyright   Copyright (C) 2021 Ray Lawlor - Pro2Store - https://pro2.store. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access to this file
@@ -54,11 +54,11 @@ $item = $vars['item'];
                                 </button>
                                 <button type="submit" @click="andClose = false"
                                         class="uk-button uk-button-default button-success uk-button-small uk-margin-right">
-                                    <?= Text::_('JTOOLBAR_APPLY'); ?>
+									<?= Text::_('JTOOLBAR_APPLY'); ?>
                                 </button>
                                 <button type="submit" @click="andClose = true"
                                         class="uk-button uk-button-default button-success uk-button-small uk-margin-right">
-                                   <?= Text::_('JTOOLBAR_SAVE'); ?>
+									<?= Text::_('JTOOLBAR_SAVE'); ?>
                                 </button>
                                 <a class="uk-button uk-button-default uk-button-small uk-margin-right"
                                    href="index.php?option=com_protostore&view=products"><?= Text::_('JTOOLBAR_CANCEL'); ?></a>
@@ -101,24 +101,24 @@ $item = $vars['item'];
 							'cardId'    => 'digital',
 						)); ?>
 					</span>
+	                <?= LayoutHelper::render('product/card_variant', array(
+		                'form'             => $vars['form'],
+		                'cardTitle'        => 'COM_PROTOSTORE_ADD_PRODUCT_VARIANTS',
+		                'cardStyle'        => 'default',
+		                'cardId'           => 'variants',
+		                'fields'           => array('variants'),
+		                'field_grid_width' => '1-1',
+	                )); ?>
 
-                    <!--					--><?php //echo LayoutHelper::render('product/card_options', array(
-					//						'form'             => $vars['form'],
-					//						'cardTitle'        => 'COM_PROTOSTORE_ADD_PRODUCT_OPTIONS',
-					//						'cardStyle'        => 'default',
-					//						'cardId'           => 'options',
-					//						'fields'           => array('options'),
-					//						'field_grid_width' => '1-1',
-					//					)); ?>
-
-					<?= LayoutHelper::render('product/card_variant', array(
+					<?php echo LayoutHelper::render('product/card_options', array(
 						'form'             => $vars['form'],
-						'cardTitle'        => 'COM_PROTOSTORE_ADD_PRODUCT_VARIANTS',
+						'cardTitle'        => 'COM_PROTOSTORE_ADD_PRODUCT_OPTIONS',
 						'cardStyle'        => 'default',
-						'cardId'           => 'variants',
-						'fields'           => array('variants'),
+						'cardId'           => 'options',
+						'fields'           => array('options'),
 						'field_grid_width' => '1-1',
 					)); ?>
+
 
 					<?= LayoutHelper::render('product/card_custom_fields', array(
 						'form'             => $vars['form'],

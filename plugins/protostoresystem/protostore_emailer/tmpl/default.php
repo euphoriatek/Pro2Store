@@ -1,10 +1,10 @@
 <?php
 /**
- * @package     Pro2Store - Emailer
- * @subpackage  com_protostore
+ * @package   Pro2Store
+ * @author    Ray Lawlor - pro2.store
+ * @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
+ * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
  *
- * @copyright   Copyright (C) 2020 Ray Lawlor - pro2store - https://pro2.store. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 
@@ -126,28 +126,27 @@ $body  = $displayData['body'];
             .sm-w-full {
                 width: 100% !important;
             }
+
             .dots {
                 flex: 0 1 auto;
                 /*Allows too long content to be hidden.*/
                 overflow: hidden;
             }
+
             .dots::before {
                 display: block;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: clip;
-                content:
-                        ". . . . . . . . . . . . . . . . . . . . "
-                        ". . . . . . . . . . . . . . . . . . . . "
-                        ". . . . . . . . . . . . . . . . . . . . "
-                        ". . . . . . . . . . . . . . . . . . . . "
+                content: ". . . . . . . . . . . . . . . . . . . . " ". . . . . . . . . . . . . . . . . . . . " ". . . . . . . . . . . . . . . . . . . . " ". . . . . . . . . . . . . . . . . . . . "
             }
         }
     </style>
 </head>
 <body lang="en" style="margin: 0; padding: 0; width: 100%; word-break: break-word; -webkit-font-smoothing: antialiased"
       bgcolor="#ffffff">
-<div style="display: none; font-size: 0; line-height: 0"><?= Text::_('COM_PROTOSTORE_DEFAULT_EMAIL_THANK_YOU_FOR_YOUR_PURCHASE'); ?>&#847; &#847; &#847; &#847; &#847;
+<div style="display: none; font-size: 0; line-height: 0"><?= Text::_('COM_PROTOSTORE_DEFAULT_EMAIL_THANK_YOU_FOR_YOUR_PURCHASE'); ?>
+    &#847; &#847; &#847; &#847; &#847;
     &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847;
     &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847;
     &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847;
@@ -187,19 +186,20 @@ $body  = $displayData['body'];
                                             align="left" valign="top">
                                             <p style="margin-top: 0;">
                                                 <a href="<?= Route::_(Uri::root() . 'index.php?option=com_content&view=article&id=' . $product->j_item); ?>"
-                                                   style="text-decoration: none; font-weight: 700; color: #4a5566"><?= $product->j_item_name; ?> x <?= $product->amount; ?></a>
+                                                   style="text-decoration: none; font-weight: 700; color: #4a5566"><?= $product->j_item_name; ?>
+                                                    x <?= $product->amount; ?></a>
                                             </p>
                                             <table cellpadding="0" cellspacing="0" role="presentation">
                                                 <tr>
                                                     <td class="sm-inline-block"
                                                         style="font-size: 16px; line-height: 12px; padding-left: 8px; color: #8492a6">
-                                                        <?php if ($product->the_item_options) : ?>
-                                                            <?php foreach ($product->the_item_options as $optionname => $optionvalue) : ?>
-                                                                <?php if ($optionvalue) : ?>
-                                                                    <?= $optionname; ?> : <?= $optionvalue; ?>
-                                                                <?php endif; ?>
-                                                            <?php endforeach; ?>
-                                                        <?php endif; ?>
+														<?php if ($product->the_item_options) : ?>
+															<?php foreach ($product->the_item_options as $optionname => $optionvalue) : ?>
+																<?php if ($optionvalue) : ?>
+																	<?= $optionname; ?> : <?= $optionvalue; ?>
+																<?php endif; ?>
+															<?php endforeach; ?>
+														<?php endif; ?>
                                                     </td>
                                                 </tr>
                                             </table>
@@ -228,7 +228,7 @@ $body  = $displayData['body'];
                                         style="padding-top: 14px; text-align: left; vertical-align: top;"
                                         align="left" valign="top">
                                         <p style="margin-top: 0; margin-bottom: 12px">
-                                            <?= Text::_('COM_PROTOSTORE_DEFAULT_EMAIL_SUBTOTAL'); ?>
+											<?= Text::_('COM_PROTOSTORE_DEFAULT_EMAIL_SUBTOTAL'); ?>
                                         </p>
                                     </td>
                                     <td style="font-weight: 700; padding-top: 14px; text-align: right; color: #4a5566; vertical-align: top;"
@@ -242,7 +242,7 @@ $body  = $displayData['body'];
                                         style="padding-top: 14px; text-align: left; vertical-align: top;"
                                         align="left" valign="top">
                                         <p style="margin-top: 0; margin-bottom: 12px">
-                                            <?= Text::_('COM_PROTOSTORE_DEFAULT_EMAIL_SHIPPING'); ?>
+											<?= Text::_('COM_PROTOSTORE_DEFAULT_EMAIL_SHIPPING'); ?>
                                             <span class="dots" style="overflow: hidden;max-width: 400px"></span>
                                         </p>
 
@@ -258,7 +258,7 @@ $body  = $displayData['body'];
                                         style="padding-top: 14px; text-align: left; vertical-align: top; "
                                         align="left" valign="top">
                                         <p style="margin-top: 0; margin-bottom: 12px">
-                                            <?= Text::_('COM_PROTOSTORE_DEFAULT_EMAIL_TAXES'); ?>
+											<?= Text::_('COM_PROTOSTORE_DEFAULT_EMAIL_TAXES'); ?>
                                         </p>
                                     </td>
                                     <td style="font-weight: 700; padding-top: 14px; text-align: right; color: #4a5566; vertical-align: top; min-width:185px"
@@ -271,7 +271,7 @@ $body  = $displayData['body'];
                                         style="padding-top: 14px; text-align: left; vertical-align: top; "
                                         align="left" valign="top">
                                         <p style="margin-top: 0; margin-bottom: 12px">
-                                            <?= Text::_('COM_PROTOSTORE_DEFAULT_EMAIL_DISCOUNTS'); ?> <?= ($order->discount_code ? '('. Text::_('COM_PROTOSTORE_DEFAULT_EMAIL_DISCOUNTS_CODE') . ' ' .$order->discount_code.')' : ''); ?>
+											<?= Text::_('COM_PROTOSTORE_DEFAULT_EMAIL_DISCOUNTS'); ?> <?= ($order->discount_code ? '(' . Text::_('COM_PROTOSTORE_DEFAULT_EMAIL_DISCOUNTS_CODE') . ' ' . $order->discount_code . ')' : ''); ?>
                                         </p>
                                     </td>
                                     <td style="font-weight: 700; padding-top: 14px; text-align: right; color: #4a5566; vertical-align: top; min-width:185px"
@@ -285,12 +285,13 @@ $body  = $displayData['body'];
                                         style="padding-top: 14px; text-align: left; vertical-align: top;"
                                         align="left" valign="top">
                                         <p style="margin-top: 0; margin-bottom: 12px">
-                                            <?= Text::_('COM_PROTOSTORE_DEFAULT_EMAIL_TOTAL'); ?>
+											<?= Text::_('COM_PROTOSTORE_DEFAULT_EMAIL_TOTAL'); ?>
                                         </p>
                                     </td>
-                                    <td style="font-weight: 700; font-size: 21px; line-height: 28px; margin: 0; color: #4a5566""
-                                        align="right"
-                                        valign="top"><?= $order->order_total_formatted; ?>
+                                    <td style="font-weight: 700; font-size: 21px; line-height: 28px; margin: 0; color: #4a5566"
+                                    "
+                                    align="right"
+                                    valign="top"><?= $order->order_total_formatted; ?>
                                     </td>
                                 </tr>
 
@@ -303,19 +304,22 @@ $body  = $displayData['body'];
                                 <tr>
                                     <td>
                                         <h2 style="font-weight: 400; font-size: 28px; line-height: 30px; margin: 0 0 32px; color: #4a5566"><?= Text::_('COM_PROTOSTORE_DEFAULT_EMAIL_CUSTOMER_INFORMATION'); ?></h2>
-                                        <table style="width: 100%" cellpadding="0" cellspacing="0" role="presentation">
-                                            <tr>
-                                                <td class="sm-inline-block sm-w-full sm-px-0"
-                                                    style="padding-right: 8px; padding-bottom: 32px; vertical-align: top; width: 50%"
-                                                    valign="top">
-                                                    <h4 style="font-size: 16px; line-height: 22px; margin: 0 0 8px; color: #8492a6"><?= Text::_('COM_PROTOSTORE_DEFAULT_EMAIL_SHIPPING_ADDRESS'); ?></h4>
-                                                    <p style="font-size: 16px; line-height: 22px; margin: 0; color: #8492a6">
-	                                                    <?= $order->shipping_address->address_as_csv; ?>
-                                                    </p>
-                                                </td>
-                                            </tr>
-                                        </table>
-
+										<?php if ($order->shipping_address): ?>
+                                            <table style="width: 100%" cellpadding="0" cellspacing="0"
+                                                   role="presentation">
+                                                <tr>
+                                                    <td class="sm-inline-block sm-w-full sm-px-0"
+                                                        style="padding-right: 8px; padding-bottom: 32px; vertical-align: top; width: 50%"
+                                                        valign="top">
+                                                        <h4 style="font-size: 16px; line-height: 22px; margin: 0 0 8px; color: #8492a6"><?= Text::_('COM_PROTOSTORE_DEFAULT_EMAIL_SHIPPING_ADDRESS'); ?></h4>
+                                                        <p style="font-size: 16px; line-height: 22px; margin: 0; color: #8492a6">
+															<?= $order->shipping_address->address_as_csv; ?>
+                                                        </p>
+                                                    </td>
+                                                </tr>
+                                            </table>
+										<?php endif; ?>
+	                                    <?php if ($order->billing_address): ?>
                                         <table style="width: 100%" cellpadding="0" cellspacing="0" role="presentation">
                                             <tr>
                                                 <td class="sm-inline-block sm-w-full sm-px-0"
@@ -323,11 +327,12 @@ $body  = $displayData['body'];
                                                     valign="top">
                                                     <h4 style="font-size: 16px; line-height: 22px; margin: 0 0 8px; color: #8492a6"><?= Text::_('COM_PROTOSTORE_DEFAULT_EMAIL_BILLING_ADDRESS'); ?></h4>
                                                     <p style="font-size: 16px; line-height: 22px; margin: 0; color: #8492a6">
-                                                        <?= $order->billing_address->address_as_csv; ?>
+														<?= $order->billing_address->address_as_csv; ?>
                                                     </p>
                                                 </td>
                                             </tr>
                                         </table>
+	                                    <?php endif; ?>
                                         <table style="width: 100%" cellpadding="0" cellspacing="0" role="presentation">
                                             <tr>
                                                 <td class="sm-inline-block sm-w-full sm-px-0"
@@ -364,7 +369,8 @@ $body  = $displayData['body'];
 									<?= Text::sprintf('COM_PROTOSTORE_TRANSACTION_EMAIL_FOOTER1', Uri::base(), $shop_brandcolour, Uri::base()); ?>
                                 </p>
                                 <p style="font-size: 12px; line-height: 16px; margin: 0; color: #8492a6">
-                                    &copy; <?= date('Y'); ?> <?= $shop_name; ?>. <?= Text::_('COM_PROTOSTORE_TRANSACTION_EMAIL_FOOTER_ALLRIGHTS_RESERVED'); ?></p>
+                                    &copy; <?= date('Y'); ?> <?= $shop_name; ?>
+                                    . <?= Text::_('COM_PROTOSTORE_TRANSACTION_EMAIL_FOOTER_ALLRIGHTS_RESERVED'); ?></p>
                             </div>
                         </td>
                     </tr>

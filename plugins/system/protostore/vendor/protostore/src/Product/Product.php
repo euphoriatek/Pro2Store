@@ -1,10 +1,11 @@
 <?php
 
 /**
- * @package   Pro2Store - Helper
+ * @package   Pro2Store
  * @author    Ray Lawlor - pro2.store
- * @copyright Copyright (C) 2020 Ray Lawlor - pro2.store
+ * @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
  * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
+ *
  */
 
 // no direct access
@@ -34,7 +35,7 @@ class Product
 	public $discount_type;
 	public $discounted_total;
 
-	// Old Options
+	// Checkbox Options
 	public $options;
 
 	// Joomla Item
@@ -142,7 +143,7 @@ class Product
 		//		$this->discounted_total           = $this->getDiscountedTotal(); // todo
 		//		$this->discounted_total_formatted = $this->getFormattedDiscountPrice(); // todo
 
-		$this->options = ProductFactory::getOptions($this->id);
+		$this->options = ProductFactory::getOptions($this->joomla_item_id);
 
 		$this->categoryName = ProductFactory::getCategoryName($this->joomlaItem->catid);
 

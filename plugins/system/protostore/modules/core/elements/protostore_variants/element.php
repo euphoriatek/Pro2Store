@@ -1,10 +1,11 @@
 <?php
 
 /**
- * @package     Pro2Store - Product Variants
+ * @package   Pro2Store
+ * @author    Ray Lawlor - pro2.store
+ * @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
+ * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
  *
- * @copyright   Copyright (C) 2021 Ray Lawlor - Pro2Store. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 
@@ -41,14 +42,13 @@ return [
 			$node->props['joomla_item_id'] = $product->joomla_item_id;
 			$node->props['variants']       = $product->variants;
 			$node->props['variantDefault'] = $product->variantDefault;
-//			$node->props['unavailableMessage'] = \Joomla\CMS\Language\Text::_('COM_PROTOSTORE_VARIANT_UNAVAILABLE');
-
 
 			$doc = Factory::getDocument();
 
+			$doc->addCustomTag('<script id="base_url_data" type="application/json">' . \Joomla\CMS\Uri\Uri::base() . '</script>');
 			$doc->addCustomTag('<script id="yps_joomla_item_id_data" type="application/json">' . $product->joomla_item_id . '</script>');
 			$doc->addCustomTag('<script id="yps_variants_data" type="application/json">' . json_encode($product->variants) . '</script>');
-			$doc->addCustomTag('<script id="yps_variantLabels_data" type="application/json">' . json_encode($product->variantDefault) . '</script>');
+			$doc->addCustomTag('<script id="yps_variantDefault_data" type="application/json">' . json_encode($product->variantDefault) . '</script>');
 
 
 		},

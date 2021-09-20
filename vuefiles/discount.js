@@ -1,3 +1,10 @@
+////////////////////////////////////////////////////////////////////////////////
+// @package   Pro2Store
+// @author    Ray Lawlor - pro2.store
+// @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
+// @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
+//
+
 const p2s_discount_form = {
     data() {
         return {
@@ -29,23 +36,23 @@ const p2s_discount_form = {
     },
     computed: {},
     async beforeMount() {
-       await this.setData();
+        await this.setData();
         this.form.jform_amount = this.form.jform_amount / 100;
         const base_url = document.getElementById('base_url');
         this.base_url = base_url.innerText;
-        // base_url.remove();
+        base_url.remove();
 
         const currency = document.getElementById('currency');
         if (currency) {
             this.p2s_currency = JSON.parse(currency.innerText);
         }
-        // currency.remove();
+        currency.remove();
 
         const locale = document.getElementById('locale');
         if (locale) {
             this.p2s_locale = locale.innerText;
         }
-        // locale.remove();
+        locale.remove();
 
 
     },
@@ -110,16 +117,42 @@ const p2s_discount_form = {
 
 
         },
-        async setData() {
+        setData() {
             const keys = Object.keys(this.form);
             keys.forEach((jfrom) => {
                 let theInput = document.getElementById(jfrom + '_data');
                 if (theInput) {
-                    this.form[jfrom] = theInput.innerText;
+
+                    if (this.hasJsonStructure(theInput.innerText)) {
+                        this.form[jfrom] = JSON.parse(theInput.innerText);
+                    } else {
+
+                        this.form[jfrom] = theInput.innerText;
+
+                        if (theInput.innerText == 1) {
+                            this.form[jfrom] = true;
+                        }
+                        if (theInput.innerText == 0) {
+                            this.form[jfrom] = false;
+                        }
+
+
+                    }
                     theInput.remove();
                 }
 
             });
+        },
+        hasJsonStructure(str) {
+            if (typeof str !== 'string') return false;
+            try {
+                const result = JSON.parse(str);
+                const type = Object.prototype.toString.call(result);
+                return type === '[object Object]'
+                    || type === '[object Array]';
+            } catch (err) {
+                return false;
+            }
         },
         serialize(obj) {
             var str = [];

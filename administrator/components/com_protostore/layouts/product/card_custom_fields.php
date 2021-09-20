@@ -1,10 +1,10 @@
 <?php
 /**
- * @package     Pro2Store
- * @subpackage  com_protostore
+ * @package   Pro2Store
+ * @author    Ray Lawlor - pro2.store
+ * @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
+ * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
  *
- * @copyright   Copyright (C) 2021 Ray Lawlor - Pro2Store - https://pro2.store. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 // No direct access to this file
@@ -17,7 +17,7 @@ $data = $displayData;
 $form = $data['form'];
 ?>
 
-<div class="uk-card uk-card-<?= $data['cardStyle']; ?> uk-margin-bottom uk-animation-fade">
+<div class="uk-card uk-card-<?= $data['cardStyle']; ?> uk-margin-bottom uk-animation-fade" v-show="custom_fields.length > 0">
     <div class="uk-card-header">
         <div class="uk-grid uk-grid-small">
             <div class="uk-width-expand">
@@ -41,7 +41,7 @@ $form = $data['form'];
 
             <div class="uk-margin-bottom">
 
-                <div class="uk-margin uk-card uk-card-body uk-card-default" v-for="field in available_custom_fields">
+                <div class="uk-margin uk-card uk-card-body uk-card-default" v-for="field in custom_fields">
                     <label class="uk-form-label">{{field.label}}</label>
                     <!-- editor -->
                     <span v-if="field.type === 'editor'">

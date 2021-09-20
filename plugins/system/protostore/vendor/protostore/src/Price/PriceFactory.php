@@ -1,9 +1,10 @@
 <?php
 /**
- * @package   Pro2Store - Helper
+ * @package   Pro2Store
  * @author    Ray Lawlor - pro2.store
- * @copyright Copyright (C) 2020 Ray Lawlor - pro2.store
+ * @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
  * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
+ *
  */
 
 // no direct access
@@ -13,6 +14,7 @@ defined('_JEXEC') or die('Restricted access');
 use Joomla\CMS\Factory;
 use Joomla\Input\Input;
 
+use Protostore\Cart\CartFactory;
 use Protostore\Product\Product;
 use Protostore\Product\ProductFactory;
 use Protostore\Productoption\ProductoptionFactory;
@@ -46,29 +48,28 @@ class PriceFactory
 	public static function calculatePriceFromInputData(Input $data): ?Price
 	{
 
-		// init
-		$price = array();
 
 		// get post data (using json magic)
 		$joomla_item_id = $data->json->getInt('joomla_item_id', false);
 
 		// make sure there's an actual product here.
-		if(!$joomla_item_id) {
+		if (!$joomla_item_id)
+		{
 			return null;
 		}
 
-		$selected       = $data->json->get('selectedVariants', false);
-		$multiplier     = $data->json->getInt('multiplier', 1);
+		$selectedVariant = $data->json->get('selectedVariants', null, 'ARRAY');
+		$options         = $data->json->get('selectedOptions', null, 'ARRAY');
+		$multiplier      = $data->json->getInt('multiplier', 1);
 
 
 		// now check we even have variants selected
 
-		if ($selected)
+		if ($selectedVariant)
 		{
 
-
 			// make a comma seperated string from the selected Ids, to allow database lookup
-			$selected = implode(',', $selected);
+			$selected = implode(',', $selectedVariant);
 
 
 			// query the database and get the row for this selected variant
@@ -87,22 +88,35 @@ class PriceFactory
 
 
 			// process the data and form it to the Price Object
-			$price['int']    = ($selectedVariant->price * $multiplier);
-			$price['string'] = CurrencyFactory::translate(($selectedVariant->price * $multiplier));
+			$price = $selectedVariant->price;
+
 
 		}
 		else
 		{
-
 			$product = ProductFactory::get($joomla_item_id);
+			$price   = $product->base_price;
+		}
 
-			$price['int']    = ($product->base_price * $multiplier);
-			$price['string'] = CurrencyFactory::translate(($product->base_price * $multiplier));
 
+		$priceToBeAdded = 0;
+		if (!empty($options))
+		{
+
+			$priceToBeAdded = CartFactory::getOptionsPriceToBeAdded($price, $options);
 
 		}
 
-		return new Price($price);
+		$price += $priceToBeAdded;
+
+
+		$priceArray = array();
+
+		$priceArray['int']    = ($price * $multiplier);
+		$priceArray['string'] = CurrencyFactory::translate(($price * $multiplier));
+
+
+		return new Price($priceArray);
 
 
 	}

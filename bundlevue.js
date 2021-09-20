@@ -1,3 +1,10 @@
+////////////////////////////////////////////////////////////////////////////////
+// @package   Pro2Store
+// @author    Ray Lawlor - pro2.store
+// @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
+// @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
+//
+
 const {remove, mkdir, emptyDir} = require('fs-extra');
 const fs = require('fs');
 const minify = require('@node-minify/core');
