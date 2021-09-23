@@ -28,18 +28,18 @@ $form = $data['form'];
             </div>
 
             <div class="uk-width-auto">
-                <div class="uk-margin">
-                    <div uk-form-custom="target: > * > span:first-child">
-                        <select v-model="form.jform_product_type">
-                            <option value="1">Physical Product</option>
-                            <option value="2">Digital Product</option>
-                        </select>
-                        <button class="uk-button uk-button-default" type="button" tabindex="-1">
-                            <span></span>
-                            <span uk-icon="icon: chevron-down"></span>
-                        </button>
-                    </div>
-                </div>
+<!--                <div class="uk-margin">-->
+<!--                    <div uk-form-custom="target: > * > span:first-child">-->
+<!--                        <select v-model="form.jform_product_type">-->
+<!--                            <option value="1">Physical Product</option>-->
+<!--                            <option value="2">Digital Product</option>-->
+<!--                        </select>-->
+<!--                        <button class="uk-button uk-button-default" type="button" tabindex="-1">-->
+<!--                            <span></span>-->
+<!--                            <span uk-icon="icon: chevron-down"></span>-->
+<!--                        </button>-->
+<!--                    </div>-->
+<!--                </div>-->
 
             </div>
 

@@ -78,6 +78,9 @@ class Order
 	public $emailLogs;
 	public $internal_notes;
 
+	// hash
+	public $hash;
+
 	public function __construct($data)
 	{
 

@@ -139,9 +139,27 @@ class bootstrap extends AdminModel
 		if ($this->vars['item'])
 		{
 
+
 			foreach ($this->vars['item'] as $key => $value)
 			{
-				$doc->addCustomTag('<script id="jform_' . $key . '_data" type="application/json">' . $value . '</script>');
+				if (is_string($value))
+				{
+					$doc->addCustomTag('<script id="jform_' . $key . '_data" type="application/json">' . $value . '</script>');
+				}
+
+				if (is_integer($value))
+				{
+					$doc->addCustomTag('<script id="jform_' . $key . '_data" type="application/json">' . $value . '</script>');
+				}
+
+				if (is_array($value))
+				{
+					$doc->addCustomTag('<script id="jform_' . $key . '_data" type="application/json">' . json_encode($value) . '</script>');
+				}
+				if (is_object($value))
+				{
+					$doc->addCustomTag('<script id="jform_' . $key . '_data" type="application/json">' . json_encode($value) . '</script>');
+				}
 			}
 
 		}

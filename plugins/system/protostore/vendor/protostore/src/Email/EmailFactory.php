@@ -343,6 +343,41 @@ class EmailFactory
 
 	}
 
+
+
+	/**
+	 * @param   Input  $data
+	 *
+	 *
+	 * @return bool
+	 * @since 1.6
+	 */
+
+	public static function trashFromInputData(Input $data): bool
+	{
+
+		$db = Factory::getDbo();
+
+		$items = $data->json->get('items', '', 'ARRAY');
+
+
+		foreach ($items as $item)
+		{
+			$query      = $db->getQuery(true);
+			$conditions = array(
+				$db->quoteName('id') . ' = ' . $db->quote($item['id'])
+			);
+			$query->delete($db->quoteName('#__protostore_email'));
+			$query->where($conditions);
+			$db->setQuery($query);
+			$db->execute();
+
+		}
+
+		return true;
+
+	}
+
 	/**
 	 * @param   string  $type
 	 * @param   int     $order_id

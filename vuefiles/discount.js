@@ -26,7 +26,7 @@ const p2s_discount_form = {
             },
             andClose: false,
             p2s_currency: [],
-            p2s_locale: false
+            p2s_local: false
 
         }
 
@@ -36,23 +36,37 @@ const p2s_discount_form = {
     },
     computed: {},
     async beforeMount() {
+
         await this.setData();
+
         this.form.jform_amount = this.form.jform_amount / 100;
+        if (this.form.jform_discount_type) {
+            this.form.jform_discount_type = 1;
+        }
+
         const base_url = document.getElementById('base_url');
         this.base_url = base_url.innerText;
         base_url.remove();
 
-        const currency = document.getElementById('currency');
-        if (currency) {
-            this.p2s_currency = JSON.parse(currency.innerText);
-        }
-        currency.remove();
 
-        const locale = document.getElementById('locale');
-        if (locale) {
-            this.p2s_locale = locale.innerText;
+        const p2s_currency = document.getElementById('currency');
+        if (p2s_currency != null) {
+            try {
+                this.p2s_currency = JSON.parse(p2s_currency.innerText);
+                p2s_currency.remove();
+            } catch (err) {
+            }
         }
-        locale.remove();
+
+
+        const p2s_locale = document.getElementById('locale');
+        if (p2s_locale != null) {
+            try {
+                this.p2s_local = p2s_locale.innerText;
+                p2s_locale.remove();
+            } catch (err) {
+            }
+        }
 
 
     },
@@ -61,6 +75,7 @@ const p2s_discount_form = {
         async saveItem() {
 
             this.form.jform_expiry_date = document.getElementById("jform_expiry_date").getAttribute('data-alt-value');
+
 
             const params = {
                 itemid: this.form.jform_id,
@@ -73,11 +88,24 @@ const p2s_discount_form = {
                 published: (this.form.jform_published ? 1 : 0)
             };
 
-            const URLparams = this.serialize(params);
 
-            const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=discount.save&format=raw&" + URLparams);
+
+            const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=discount.save&format=raw", {
+                method: 'POST',
+                mode: 'cors',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                redirect: 'follow',
+                referrerPolicy: 'no-referrer',
+                body: JSON.stringify(params)
+            });
 
             const response = await request.json();
+
+
 
 
             if (response.success) {
@@ -129,16 +157,16 @@ const p2s_discount_form = {
 
                         this.form[jfrom] = theInput.innerText;
 
-                        if (theInput.innerText == 1) {
+                        if (theInput.innerText === "1") {
                             this.form[jfrom] = true;
                         }
-                        if (theInput.innerText == 0) {
+                        if (theInput.innerText === "0") {
                             this.form[jfrom] = false;
                         }
 
 
                     }
-                    theInput.remove();
+                    // theInput.remove();
                 }
 
             });

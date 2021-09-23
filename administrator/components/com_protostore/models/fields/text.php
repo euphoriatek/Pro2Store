@@ -42,6 +42,10 @@ class JFormFieldText extends JFormField
 		$html[] = 'name="' . $this->name . '" ';
 		$html[] = 'v-model="form.' . $this->id . '" ';
 		$html[] = 'id="' . $this->id . '" ';
+		if($this->required) {
+			$html[] = 'required="true" ';
+		}
+
 		$html[] = ' />';
 
 		return implode('', $html);

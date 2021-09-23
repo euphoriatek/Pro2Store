@@ -15,10 +15,12 @@ use Joomla\CMS\Factory;
 use Joomla\Input\Input;
 
 use Protostore\Cart\CartFactory;
+use Protostore\Config\ConfigFactory;
 use Protostore\Product\Product;
 use Protostore\Product\ProductFactory;
 use Protostore\Productoption\ProductoptionFactory;
 use Protostore\Currency\CurrencyFactory;
+use Protostore\Tax\TaxFactory;
 use Protostore\Utilities\Utilities;
 
 use Brick\Money\Exception\UnknownCurrencyException;
@@ -58,6 +60,7 @@ class PriceFactory
 			return null;
 		}
 
+		// get the input data
 		$selectedVariant = $data->json->get('selectedVariants', null, 'ARRAY');
 		$options         = $data->json->get('selectedOptions', null, 'ARRAY');
 		$multiplier      = $data->json->getInt('multiplier', 1);
@@ -112,8 +115,20 @@ class PriceFactory
 
 		$priceArray = array();
 
-		$priceArray['int']    = ($price * $multiplier);
-		$priceArray['string'] = CurrencyFactory::translate(($price * $multiplier));
+		$params = ConfigFactory::get();
+
+		if ($params->get('add_default_country_tax_to_price', '1') == "1")
+		{
+			$totalTax = TaxFactory::getTotalDefaultTax(($price * $multiplier));
+			$totalPriceWithTax = (($price * $multiplier) + $totalTax);
+			$priceArray['int']    = $totalPriceWithTax;
+			$priceArray['string'] = CurrencyFactory::translate($totalPriceWithTax);
+		}
+		else
+		{
+			$priceArray['int']    = ($price * $multiplier);
+			$priceArray['string'] = CurrencyFactory::translate(($price * $multiplier));
+		}
 
 
 		return new Price($priceArray);

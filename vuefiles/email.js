@@ -134,7 +134,7 @@ const p2s_email_form = {
                     // this line makes sure that a new item gets the ID appended to the URL
                     const url = window.location.href;
                     if (url.indexOf('&id=') == -1) {
-                        history.replaceState('', '', url + '&id=' + response.data.joomlaItem.id);
+                        history.replaceState('', '', url + '&id=' + response.data.id);
                     }
 
                     // we also need to make sure that the next save action doesn't trigger a create... we do this by adding the id to the form array

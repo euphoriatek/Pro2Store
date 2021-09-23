@@ -48,7 +48,7 @@ $el = $this->el('div', [
 
 	$params = ConfigFactory::get();
 
-	if ($params->get('address_show') == '1') :
+	if ($params->get('address_show', '1') == '1') :
 		?>
 
 

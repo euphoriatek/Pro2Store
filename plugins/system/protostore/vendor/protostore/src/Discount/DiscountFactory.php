@@ -183,15 +183,15 @@ class DiscountFactory
 	{
 
 
-		if ($id = $data->getInt('itemid', null))
+		if ($id = $data->json->get('itemid', null, 'INT'))
 		{
 
 			$currentDiscount = self::get($id);
 
-			$amount     = $data->getInt('amount', $currentDiscount->amount);
-			$percentage = $data->getString('percentage', $currentDiscount->percentage);
+			$amount     = $data->json->getInt('amount', $currentDiscount->amount);
+			$percentage = $data->json->getString('percentage', $currentDiscount->percentage);
 
-			$discountType = $data->getInt('discount_type', $currentDiscount->discount_type);
+			$discountType = $data->json->getInt('discount_type', $currentDiscount->discount_type);
 
 
 			switch ($discountType)
@@ -208,13 +208,13 @@ class DiscountFactory
 					break;
 			}
 
-			$currentDiscount->name          = $data->getString('name', $currentDiscount->name);
+			$currentDiscount->name          = $data->json->getString('name', $currentDiscount->name);
 			$currentDiscount->amount        = $amount;
 			$currentDiscount->percentage    = $percentage;
-			$currentDiscount->discount_type = $data->getInt('discount_type', $currentDiscount->discount_type);
-			$currentDiscount->coupon_code   = $data->getString('coupon_code', $currentDiscount->coupon_code);
-			$currentDiscount->expiry_date   = $data->getString('expiry_date', $currentDiscount->expiry_date);
-			$currentDiscount->published     = $data->getInt('published', $currentDiscount->published);
+			$currentDiscount->discount_type = $data->json->getInt('discount_type', $currentDiscount->discount_type);
+			$currentDiscount->coupon_code   = $data->json->getString('coupon_code', $currentDiscount->coupon_code);
+			$currentDiscount->expiry_date   = $data->json->getString('expiry_date', $currentDiscount->expiry_date);
+			$currentDiscount->published     = $data->json->getInt('published', $currentDiscount->published);
 			$currentDiscount->modified      = Utilities::getDate();
 			$currentDiscount->modified_by   = Factory::getUser()->id;
 
@@ -384,6 +384,9 @@ class DiscountFactory
 
 		return $response;
 	}
+
+
+
 
 
 }

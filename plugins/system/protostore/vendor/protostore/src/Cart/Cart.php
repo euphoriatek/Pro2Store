@@ -40,8 +40,12 @@ class Cart
 
 	public $total;
 	public $totalInt;
+	public $totalWithTaxInt;
+	public $totalWithTax;
 	public $subtotal;
 	public $subtotalInt;
+	public $subtotalWithTaxInt;
+	public $subtotalWithTax;
 	public $tax;
 	public $taxInt;
 	public $totalShipping;
@@ -92,19 +96,25 @@ class Cart
 	private function init()
 	{
 
+		$currency = CurrencyFactory::getCurrent();
 
 		$this->cartItems = CartFactory::getCartItems($this->id);
 		$this->count     = CartFactory::getCount($this->cartItems);
 
 		$this->subtotalInt = CartFactory::getSubTotal($this);
-		$this->subtotal    = CurrencyFactory::translate($this->subtotalInt);
+		$this->subtotal    = CurrencyFactory::translate($this->subtotalInt, $currency);
 
 		$this->totalInt = CartFactory::getGrandTotal($this);
-		$this->total    = CurrencyFactory::translate($this->totalInt);
+		$this->total    = CurrencyFactory::translate($this->totalInt, $currency);
 
 		$this->taxInt = TaxFactory::getTotalTax($this);
-		$this->tax    = CurrencyFactory::translate($this->taxInt);
+		$this->tax    = CurrencyFactory::translate($this->taxInt, $currency);
 
+		$this->totalWithTaxInt = $this->totalInt + $this->taxInt;
+		$this->totalWithTax = CurrencyFactory::translate($this->totalWithTaxInt, $currency);
+
+		$this->subtotalWithTaxInt = $this->subtotalInt + $this->taxInt;
+		$this->subtotalWithTax = CurrencyFactory::translate($this->subtotalWithTaxInt, $currency);
 
 		$this->totalShipping = ShippingFactory::getShipping($this);
 		$this->totalShippingFormatted = ShippingFactory::getShippingFormatted($this);

@@ -22,35 +22,42 @@ return ['transforms' => ['render' => function ($node, array $params) {
 
 	$product = ProductFactory::get($node->props['item_id']);
 
-	if ($product->published == 0)
+	if (!is_null($product))
+	{
+		if ($product->published == 0)
+		{
+			return false;
+		}
+
+		$price_type = $node->props['price_type'];
+
+		switch ($price_type)
+		{
+			case "base_price":
+				$node->props['price_type_data'] = CurrencyFactory::translate($product->base_price);
+				break;
+			case "discount_amount":
+				$node->props['price_type_data'] = CurrencyFactory::translate(PriceFactory::calculateItemDiscount($product));
+				break;
+			case "discount_percentage":
+				\Protostore\Language\LanguageFactory::load();
+				$node->props['price_type_data'] = Text::_('COM_PROTOSTORE_ELM_PRICE_NO_PERCENTAGE_APPLIED');
+				if ($product->discount_type === 'perc')
+				{
+					$node->props['price_type_data'] = $product->discount;
+				}
+
+				break;
+			case "price_after_discount":
+				$node->props['price_type_data'] = CurrencyFactory::translate(PriceFactory::calculatePriceAfterDiscount($product));
+				break;
+
+		}
+
+	}
+	else
 	{
 		return false;
-	}
-
-
-	$price_type = $node->props['price_type'];
-
-	switch ($price_type)
-	{
-		case "base_price":
-			$node->props['price_type_data'] = CurrencyFactory::translate($product->base_price);
-			break;
-		case "discount_amount":
-			$node->props['price_type_data'] = CurrencyFactory::translate(PriceFactory::calculateItemDiscount($product));
-			break;
-		case "discount_percentage":
-			\Protostore\Language\LanguageFactory::load();
-			$node->props['price_type_data'] = Text::_('COM_PROTOSTORE_ELM_PRICE_NO_PERCENTAGE_APPLIED');
-			if ($product->discount_type === 'perc')
-			{
-				$node->props['price_type_data'] = $product->discount;
-			}
-
-			break;
-		case "price_after_discount":
-			$node->props['price_type_data'] = CurrencyFactory::translate(PriceFactory::calculatePriceAfterDiscount($product));
-			break;
-
 	}
 
 

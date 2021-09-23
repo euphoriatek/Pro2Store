@@ -27,14 +27,14 @@ class protostoreTask_filter
 		$response = array();
 
 		// pull out the values since VUE has them untyped.
-		$searchTerm = $data->getString('searchTerm');
+		$searchTerm = $data->getString('searchTerm', null);
 
 		if ($searchTerm == "null")
 		{
 			$searchTerm = null;
 		}
 
-		$dateFrom = $data->getString('dateFrom');
+		$dateFrom = $data->getString('dateFrom', null);
 
 		if ($dateFrom == "null")
 		{

@@ -62,18 +62,14 @@ class plgSystemProtostore_offlinepay extends CMSPlugin
 	}
 
 	/**
-	 * @param   Input  $data
-	 *
 	 * @return Order
 	 *
-	 * @since 1.1
+	 * @throws Exception
+	 * @since 1.6
 	 */
 
-	public function onInitP2SPaymentOfflinepay(Input $data): Order
+	public function onInitP2SPaymentOfflinepay()
 	{
-
-		//first create the order in the Pro2StoreDB
-//		$orderid = Cart::convertToOrder('Offline Pay', '', '', true);
 
 		return OrderFactory::createOrderFromCart('Offline Pay', '', true);
 

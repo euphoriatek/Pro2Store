@@ -125,17 +125,6 @@ class bootstrap extends AdminModel
 
 		$form = $this->loadForm('com_protostore.' . self::$view, self::$view, array('control' => 'jform', 'load_data' => $loadData));
 
-		if ($item)
-		{
-
-			$form->setValue('name', null, $item->name);
-			$form->setValue('email', null, $item->email);
-			$form->setValue('j_user_id', null, $item->j_user_id);
-			$form->setValue('published', null, $item->published);
-
-
-		}
-
 		return $form;
 	}
 

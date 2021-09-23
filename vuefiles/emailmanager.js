@@ -65,15 +65,25 @@ const p2s_emailmanager = {
             await UIkit.modal.confirm(this.confirm_LangString);
 
             const params = {
-                'items': JSON.stringify(this.selected)
+                'items': this.selected
             };
 
-            const URLparams = this.serialize(params);
-            const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=email.trash&format=raw&" + URLparams, {
-                method: 'post'
+
+            const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=email.trash&format=raw", {
+                method: 'POST',
+                mode: 'cors',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                redirect: 'follow',
+                referrerPolicy: 'no-referrer',
+                body: JSON.stringify(params)
             });
 
             const response = await request.json();
+
 
             if (response.success) {
                 await this.filter();
@@ -90,8 +100,6 @@ const p2s_emailmanager = {
 
         },
         async toggleSelected() {
-
-            console.table(this.selected);
 
             const params = {
                 'items': JSON.stringify(this.selected)

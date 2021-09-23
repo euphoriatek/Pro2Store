@@ -57,7 +57,7 @@ $item = $vars['item'];
 		                            <?= Text::_('JTOOLBAR_SAVE'); ?>
                                 </button>
                                 <a class="uk-button uk-button-default uk-button-small "
-                                   href="index.php?option=com_protostore&view=countries"><?= Text::_('JTOOLBAR_CANCEL'); ?></a>
+                                   href="index.php?option=com_protostore&view=customers"><?= Text::_('JTOOLBAR_CANCEL'); ?></a>
 
                                 <div class="uk-inline">
                                     <button class="uk-icon-button" uk-icon="more-vertical" type="button"></button>

@@ -12,7 +12,6 @@ namespace Protostore\Tax;
 defined('_JEXEC') or die('Restricted access');
 
 
-
 use Protostore\Address\AddressFactory;
 use Protostore\Cart\Cart;
 
@@ -60,7 +59,8 @@ class TaxFactory
 
 		$totalTaxableValue = 0;
 
-		if($cartitems) {
+		if ($cartitems)
+		{
 			/* @var CartItem $item */
 			foreach ($cartitems as $item)
 			{
@@ -69,7 +69,6 @@ class TaxFactory
 			}
 
 		}
-
 
 
 		if ($config->get('add_tax_to_shipping'))
@@ -177,7 +176,7 @@ class TaxFactory
 	 *
 	 * Takes an int value and returns an int value after tax has been added based on shipping address
 	 *
-	 * @param   int   $totalTaxableValue
+	 * @param   int  $totalTaxableValue
 	 *
 	 *
 	 * @return int
@@ -222,6 +221,89 @@ class TaxFactory
 
 
 		}
+
+		return 0;
+	}
+
+
+	/**
+	 * @param   int  $totalTaxableValue
+	 *
+	 * @return int
+	 *
+	 * @since 1.6
+	 */
+
+	public static function getTotalDefaultTax(int $totalTaxableValue): int
+	{
+
+
+		if ($address = AddressFactory::getCurrentShippingAddress())
+		{
+
+
+			$zoneTaxrate = CountryFactory::getZone($address->zone)->taxrate;
+
+			if ($zoneTaxrate)
+			{
+				// if we have a zone tax rate... return the added tax
+				return Utilities::getPercentOfNumber($totalTaxableValue, $zoneTaxrate);
+			}
+			else
+			{
+
+				// there is no zone tax rate... perhaps there is a country level tax rate.
+				// get country tax rate
+				$countryTaxrate = CountryFactory::get($address->country)->taxrate;
+
+				if ($countryTaxrate)
+				{
+
+					// if there is a country tax rate, return the added tax
+					return Utilities::getPercentOfNumber($totalTaxableValue, $countryTaxrate);
+				}
+
+			}
+
+			// or you know... whatever....
+			return 0;
+
+
+		}
+		else
+		{
+			//get default country and get that tax!
+			$countryTaxrate = CountryFactory::getDefault()->taxrate;
+
+			if ($countryTaxrate)
+			{
+
+				// if there is a country tax rate, return the added tax
+				return Utilities::getPercentOfNumber($totalTaxableValue, $countryTaxrate);
+			}
+
+
+		}
+
+		return 0;
+	}
+
+	/**
+	 * @param   int  $totalTaxableValue
+	 *
+	 * @return int
+	 *
+	 * @since 1.6
+	 */
+
+	public static function getTotalDefaultTaxRate(): int
+	{
+
+
+		//get default country and get that tax!
+		$countryTaxrate = CountryFactory::getDefault()->taxrate;
+
+
 
 		return 0;
 	}
@@ -271,6 +353,13 @@ class TaxFactory
 			return 0;
 
 
+		}
+
+		$params = ConfigFactory::get();
+
+		if ($params->get('add_default_country_tax_to_price', '1') == "1")
+		{
+			return CountryFactory::getDefault()->taxrate;
 		}
 
 		return 0;

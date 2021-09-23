@@ -20,12 +20,14 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\User\User;
 use Joomla\Input\Input;
+use Joomla\CMS\Date\Date;
 
 use Protostore\Address\Address;
 use Protostore\Address\AddressFactory;
 use Protostore\Cart\CartFactory;
 use Protostore\Cart\CartItem;
 use Protostore\Checkoutnote\CheckoutnoteFactory;
+use Protostore\Config\ConfigFactory;
 use Protostore\Coupon\CouponFactory;
 use Protostore\Currency\CurrencyFactory;
 use Protostore\Customer\CustomerFactory;
@@ -91,7 +93,7 @@ class OrderFactory
 	 * @since 1.6
 	 */
 
-	public static function getList(int $limit = 0, int $offset = 0, string $searchTerm = null, int $customerId = null, string $status = null, string $currency = null, string $dateFrom = null, string $dateTo = null)
+	public static function getList(int $limit = 0, int $offset = 0, string $searchTerm = null, int $customerId = null, string $status = null, string $currency = null, string $dateFrom = null, string $dateTo = null): ?array
 	{
 
 
@@ -116,7 +118,10 @@ class OrderFactory
 
 		if ($status)
 		{
+
 			$query->where($db->quoteName('order_status') . ' = ' . $db->quote($status));
+
+
 		}
 
 		if ($customerId)
@@ -125,12 +130,12 @@ class OrderFactory
 		}
 		if ($dateTo)
 		{
-			$query->where($db->quoteName('order_date') . ' <= ' . $db->quote($dateTo));
+			$query->where($db->quoteName('order_date') . ' <= ' . $db->quote($dateTo . ' 23:59:59'));
 		}
 
 		if ($dateFrom)
 		{
-			$query->where($db->quoteName('order_date') . ' >= ' . $db->quote($dateFrom));
+			$query->where($db->quoteName('order_date') . ' >= ' . $db->quote($dateFrom . ' 00:00:00'));
 		}
 
 
@@ -196,6 +201,70 @@ class OrderFactory
 
 	}
 
+	/**
+	 *
+	 * careful now....
+	 *
+	 * Ok... we need to grab the order then compare the order date with the expiry date set in the component config.
+	 *
+	 *
+	 * @param   string  $hash
+	 *
+	 * @return Order|null
+	 *
+	 * @throws Exception
+	 * @since 1.6
+	 */
+
+
+	public static function getOrderByHash(string $hash): ?Order
+	{
+
+		// get the component config
+		$params = ConfigFactory::get();
+
+		// grab the expiry time in minutes (int)
+		$expiry = $params->get('hash_expiry', 1);
+
+
+		// get the order id via the hash string
+		$db = Factory::getDbo();
+
+		$query = $db->getQuery(true);
+
+		$query->select('id');
+		$query->from($db->quoteName('#__protostore_order'));
+		$query->where($db->quoteName('hash') . ' = ' . $db->quote($hash));
+
+		$db->setQuery($query);
+
+		$id = $db->loadResult();
+
+		// if there is an id...
+		if ($id)
+		{
+
+			// go get the full order
+			$order = self::get($id);
+
+			// get a Date() object of the order date
+			$orderDate  = new Date($order->order_date);
+
+			// get a Date() object of the expiry... so now minus however amount of minutes.
+			$expiryDate = new Date('now +1 hour -' . $expiry . ' minutes');
+
+			$expiryDate =  $expiryDate->toSQL();
+			// if the order date is more than the expiry date... then we're good to go.
+			if ($orderDate > $expiryDate)
+			{
+				return $order;
+			}
+
+		}
+
+		return null;
+
+	}
 
 	/**
 	 * @param   int     $order_id
@@ -808,19 +877,17 @@ class OrderFactory
 	/**
 	 * @param   string  $paymentMethod
 	 * @param   string  $vendorToken
-	 * @param   false   $sendEmail
 	 *
 	 * @return Order
 	 *
-	 * @throws UnknownCurrencyException
 	 * @throws Exception
 	 * @since 1.6
 	 *
-	 *        todo!! GET VARIANTS IN!
+	 *
 	 */
 
 
-	public static function createOrderFromCart(string $paymentMethod, string $vendorToken = '', bool $sendEmail = false): ?Order
+	public static function createOrderFromCart(string $paymentMethod, string $vendorToken = ''): ?Order
 	{
 
 		// init vars
@@ -841,15 +908,18 @@ class OrderFactory
 			$object->guest_pin = uniqid();
 		}
 
-		$object->order_date     = $date;
+		$object->hash        = bin2hex(random_bytes(18));
+		$object->customer_id = $customer->id;
+		$object->order_date  = $date;
+		// todo - look into a better way of generating order numbers. Give admins a choice on how they are styled
 		$object->order_number   = self::_generateOrderId(rand(10000, 99999));
 		$object->order_paid     = 0;
 		$object->order_status   = 'P';
-		$object->order_total    = TotalFactory::getGrandTotal($cart);
-		$object->order_subtotal = TotalFactory::getSubTotal($cart);
+		$object->order_total    = $cart->totalInt;
+		$object->order_subtotal = $cart->subtotalInt;
 
-		$object->shipping_total      = ShippingFactory::getShipping($cart);
-		$object->tax_total           = TaxFactory::getTotalTax($cart);
+		$object->shipping_total      = $cart->totalShipping;
+		$object->tax_total           = $cart->taxInt;
 		$object->currency            = $currency->iso;
 		$object->payment_method      = $paymentMethod;
 		$object->vendor_token        = $vendorToken;
@@ -863,7 +933,7 @@ class OrderFactory
 			$object->discount_code = $coupon->coupon_code;
 		}
 
-		$object->discount_total = CouponFactory::calculateDiscount($cart);
+		$object->discount_total = $cart->totalDiscountInt;
 
 		if ($currentNote = CheckoutnoteFactory::getCurrentNote())
 		{
@@ -932,12 +1002,15 @@ class OrderFactory
 		// clear the coupons
 		CartFactory::clearCoupons($cart);
 
+		// get the plugin functions
+		PluginHelper::importPlugin('protostoresystem');
 
-		if ($sendEmail)
+		try
 		{
-			// get the plugin functions
-			PluginHelper::importPlugin('protostoresystem');
 			Factory::getApplication()->triggerEvent('onSendProtoStoreEmail', array('pending', $order_id));
+		}
+		catch (Exception $e)
+		{
 
 		}
 

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form>
+    <fields name="attribs">
+        <fieldset name="protostore" label="Pro2Store Activation" addfieldpath="/plugins/content/protostore_fields/fields">
+            <field name="ispro2storeproduct" type="radio" default="0" label="Set as Pro2Store Product" description="" class="btn-group btn-group-yesno">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field type="protostore"></field>
+        </fieldset>
+    </fields>
+</form>

@@ -15,6 +15,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 
 use Protostore\Coupon\CouponFactory;
+use Protostore\Utilities\Utilities;
 
 
 return [
@@ -26,7 +27,6 @@ return [
 		// The function is executed before the template is rendered
 		'render' => function ($node, array $params) {
 
-			$node->props['baseUrl'] = Uri::base();
 
 			\Protostore\Language\LanguageFactory::load();
 
@@ -42,16 +42,20 @@ return [
 
 			$node->props['coupon'] = '';
 
-
+			$doc = Factory::getDocument();
 			if ($isCouponApplied)
 			{
-
-
 				$node->props['coupon'] = CouponFactory::getCurrentAppliedCoupon();
-
-
-
+				$doc->addCustomTag('<script id="yps-coupon-field-appliedcouponcode" type="application/json">' . $node->props['coupon']->coupon_code . '</script>');
 			}
+
+			$doc->addCustomTag('<script id="yps-coupon-field-baseUrl" type="application/json">' . Uri::base() . '</script>');
+			$doc->addCustomTag('<script id="yps-coupon-field-isCouponApplied" type="application/json">' . $node->props['isCouponApplied'] . '</script>');
+			$doc->addCustomTag('<script id="yps-coupon-field-buttontext" type="application/json">' . $node->props['buttontext'] . '</script>');
+			$doc->addCustomTag('<script id="yps-coupon-field-removebuttontext" type="application/json">' . $node->props['removebuttontext'] . '</script>');
+			$doc->addCustomTag('<script id="yps-coupon-field-couponapplied" type="application/json">' . $node->props['couponapplied'] . '</script>');
+			$doc->addCustomTag('<script id="yps-coupon-field-entercouponcode" type="application/json">' . $node->props['entercouponcode'] . '</script>');
+			$doc->addCustomTag('<script id="yps-coupon-field-couponremoved" type="application/json">' . $node->props['couponremoved'] . '</script>');
 
 
 		},
@@ -60,4 +64,4 @@ return [
 
 ];
 
-?>
+

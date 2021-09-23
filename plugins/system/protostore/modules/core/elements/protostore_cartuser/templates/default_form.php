@@ -150,39 +150,39 @@ $config = $app->getParams('com_protostore');
 <script>
 
 
-    function updateZones(selectObject) {
-        let sel = document.getElementById('yps_cart_<?= $props['formType']; ?>_zone');
-        let country_id = selectObject.value;
-
-        var length = sel.options.length;
-        for (i = length-1; i >= 0; i--) {
-            sel.options[i] = null;
-        }
-
-        fetch("<?php echo Uri::root(); ?>index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=getzonesbycountryid&format=raw&country_id=" + country_id, {
-            method: 'post'
-        }).then(function (res) {
-            return res.json();
-        }).then(function (response) {
-            ;
-            if (response.success) {
-                // TODO - TRANSLATE
-
-                let zones = response.data;
-
-                zones.forEach(function (zone) {
-
-                    var opt = document.createElement('option');
-
-                    opt.appendChild( document.createTextNode(zone.zone_name) );
-
-                    opt.value = zone.id;
-
-                    sel.appendChild(opt);
-
-                });
-
-            }
-        });
-    }
+    //function updateZones(selectObject) {
+    //    let sel = document.getElementById('yps_cart_<?//= $props['formType']; ?>//_zone');
+    //    let country_id = selectObject.value;
+    //
+    //    var length = sel.options.length;
+    //    for (i = length-1; i >= 0; i--) {
+    //        sel.options[i] = null;
+    //    }
+    //
+    //    fetch("<?php //echo Uri::root(); ?>//index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=getzonesbycountryid&format=raw&country_id=" + country_id, {
+    //        method: 'post'
+    //    }).then(function (res) {
+    //        return res.json();
+    //    }).then(function (response) {
+    //        ;
+    //        if (response.success) {
+    //            // TODO - TRANSLATE
+    //
+    //            let zones = response.data;
+    //
+    //            zones.forEach(function (zone) {
+    //
+    //                var opt = document.createElement('option');
+    //
+    //                opt.appendChild( document.createTextNode(zone.zone_name) );
+    //
+    //                opt.value = zone.id;
+    //
+    //                sel.appendChild(opt);
+    //
+    //            });
+    //
+    //        }
+    //    });
+    //}
 </script>

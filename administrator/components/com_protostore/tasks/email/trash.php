@@ -11,24 +11,26 @@
 
 defined('_JEXEC') or die('Restricted access');
 
-use Protostore\Coupon\CouponFactory;
+use Protostore\Email\EmailFactory;
+use Joomla\Input\Input;
 
-
-class protostoreTask_remove
+class protostoreTask_trash
 {
 
 	/**
-	 * @param $data
+	 * @param   Input  $data
 	 *
 	 * @return bool
 	 *
+	 * @throws Exception
 	 * @since 1.6
 	 */
-
-	public function getResponse($data): bool
+	public function getResponse(Input $data): bool
 	{
 
-		return CouponFactory::remove();
+
+		return EmailFactory::trashFromInputData($data);
+
 
 	}
 

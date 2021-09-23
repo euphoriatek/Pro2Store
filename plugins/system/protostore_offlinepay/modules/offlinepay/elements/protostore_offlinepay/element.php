@@ -11,6 +11,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Router\Route;
 use Protostore\Config\ConfigFactory;
 use Joomla\CMS\Uri\Uri;
 
@@ -32,15 +33,18 @@ return [
 
             $params = ConfigFactory::get();
 
+            $confirmation = Utilities::getUrlFromMenuItem($params->get('confirmation_page_url', '45'));
+
             $node->props['baseUrl'] = Uri::base();
             $node->props['buttonEnabled'] = true;
             $node->props['message'] = "";
+            $node->props['completionurl'] = Route::_(Uri::base() . $confirmation);
 
 
             if($params->get('requiretandcs')) {
                 if(!Tandcs::isChecked()) {
                     $node->props['buttonEnabled'] = false;
-                    $node->props['message'] = "Please Accept Terms and Conditions";
+                    $node->props['message'] = "Please Accept Terms and Conditions"; // todo - translate
                 }
             }
 

@@ -110,22 +110,22 @@ class CouponFactory
 
 		$query = $db->getQuery(true);
 
-		$query->select('*');
+		$query->select('coupon_id');
 		$query->from($db->quoteName('#__protostore_coupon_cart'));
 		$query->where($db->quoteName('cookie_id') . ' = ' . $db->quote($cookieId));
 
 		$db->setQuery($query);
 
-		$appliedCoupon = $db->loadObject();
+		$appliedCoupon_id = $db->loadResult();
 
-		if ($appliedCoupon)
+		if ($appliedCoupon_id)
 		{
 
 			$query = $db->getQuery(true);
 
 			$query->select('*');
 			$query->from($db->quoteName('#__protostore_discount'));
-			$query->where($db->quoteName('id') . ' = ' . $db->quote($appliedCoupon->coupon_id));
+			$query->where($db->quoteName('id') . ' = ' . $db->quote($appliedCoupon_id));
 			$query->where($db->quoteName('expiry_date') . ' > ' . $db->quote(Utilities::getDate()));
 
 			$db->setQuery($query);

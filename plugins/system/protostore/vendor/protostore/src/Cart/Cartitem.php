@@ -17,6 +17,7 @@ use Exception;
 
 use Protostore\Currency\CurrencyFactory;
 use Protostore\Product\ProductFactory;
+use Protostore\Tax\TaxFactory;
 
 
 class CartItem
@@ -34,6 +35,8 @@ class CartItem
 	public $amount;
 
 	public $bought_at_price_formatted;
+	public $total_bought_at_price_formatted;
+	public $total_bought_at_price_with_tax_formatted;
 	public $manage_stock_enabled;
 	public $product;
 	public $totalCost;
@@ -82,12 +85,16 @@ class CartItem
 	private function init()
 	{
 
-		$this->bought_at_price_formatted = CurrencyFactory::translate($this->bought_at_price);
-		$this->product                   = ProductFactory::get($this->joomla_item_id);
-		$this->manage_stock_enabled      = $this->product->manage_stock;
-		$this->totalCost                 = $this->amount * $this->bought_at_price;
-		$this->selected_options          = CartFactory::getSelectedOptions($this->item_options);
-		$this->selected_variant          = CartFactory::getSelectedVariant($this->variant_id);
+		$this->bought_at_price_formatted       = CurrencyFactory::translate($this->bought_at_price);
+		$this->total_bought_at_price_formatted = CurrencyFactory::translate(($this->bought_at_price * $this->amount));
+
+		$this->total_bought_at_price_with_tax           = (($this->bought_at_price * $this->amount) + TaxFactory::getTotalDefaultTax(($this->bought_at_price * $this->amount)));
+		$this->total_bought_at_price_with_tax_formatted = CurrencyFactory::translate($this->total_bought_at_price_with_tax);
+		$this->product                                  = ProductFactory::get($this->joomla_item_id);
+		$this->manage_stock_enabled                     = $this->product->manage_stock;
+		$this->totalCost                                = $this->amount * $this->bought_at_price;
+		$this->selected_options                         = CartFactory::getSelectedOptions($this->item_options);
+		$this->selected_variant                         = CartFactory::getSelectedVariant($this->variant_id);
 
 	}
 

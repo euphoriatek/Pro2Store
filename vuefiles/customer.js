@@ -16,9 +16,7 @@ const p2s_customer_form = {
                 jform_j_user_id: '',
                 jform_published: '',
                 jform_j_user: [],
-                jform_published: '',
                 jform_orders: [],
-                jform_total_orders: 0,
                 jform_total_orders: '',
                 jform_order_total_integer: 0,
                 jform_addresses: [],
@@ -38,6 +36,12 @@ const p2s_customer_form = {
 
         this.setData();
 
+        const jform = document.getElementById('jform_data');
+        try {
+            this.jform = JSON.parse(jform.innerText);
+            jform.remove();
+        } catch (err) {
+        }
         const base_url = document.getElementById('base_url');
         try {
             this.base_url = base_url.innerText;
@@ -183,22 +187,7 @@ const p2s_customer_form = {
                 address.zones = response.data;
             }
         },
-        setData() {
-            const keys = Object.keys(this.form);
-            keys.forEach((jfrom) => {
-                let theInput = document.getElementById(jfrom + '_data');
-                if (theInput) {
 
-                    if (this.hasJsonStructure(theInput.innerText)) {
-                        this.form[jfrom] = JSON.parse(theInput.innerText);
-                    } else {
-                        this.form[jfrom] = theInput.innerText;
-                    }
-                    // theInput.remove();
-                }
-
-            });
-        },
         async launchDeleteDialog() {
             await UIkit.modal.confirm('<h3>' + this.deleteConfirmMessage + '</h3>');
 
@@ -237,6 +226,32 @@ const p2s_customer_form = {
 
             }
 
+        },
+        setData() {
+            const keys = Object.keys(this.form);
+            keys.forEach((jfrom) => {
+                let theInput = document.getElementById(jfrom + '_data');
+                if (theInput) {
+
+                    if (this.hasJsonStructure(theInput.innerText)) {
+                        this.form[jfrom] = JSON.parse(theInput.innerText);
+                    } else {
+
+                        this.form[jfrom] = theInput.innerText;
+
+                        if (theInput.innerText == 1) {
+                            this.form[jfrom] = true;
+                        }
+                        if (theInput.innerText == 0) {
+                            this.form[jfrom] = false;
+                        }
+
+
+                    }
+                    theInput.remove();
+                }
+
+            });
         },
         hasJsonStructure(str) {
             if (typeof str !== 'string') return false;

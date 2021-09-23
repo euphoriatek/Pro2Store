@@ -48,10 +48,10 @@ $item = $vars['item'];
 
                             <div class="uk-navbar-right">
 
-                                <button type="button"
-                                        class="uk-button uk-button-primary uk-button-small uk-margin-right"
-                                        @click="logIt">LogIt
-                                </button>
+<!--                                <button type="button"-->
+<!--                                        class="uk-button uk-button-primary uk-button-small uk-margin-right"-->
+<!--                                        @click="logIt">LogIt-->
+<!--                                </button>-->
                                 <button type="submit" @click="andClose = false"
                                         class="uk-button uk-button-default button-success uk-button-small uk-margin-right">
 									<?= Text::_('JTOOLBAR_APPLY'); ?>

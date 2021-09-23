@@ -103,7 +103,7 @@ $el = $this->el('div', [
                             class="uk-leader-fill"><?= Text::_('COM_PROTOSTORE_ELM_CARTSUMMARY_TOTAL'); ?></span></span>
                 </div>
                 <div>
-                    <div v-cloak class=" uk-h5 uk-margin-remove yps-cartsummary-grandtotal">{{cart.total}}</div>
+                    <div v-cloak class=" uk-h5 uk-margin-remove yps-cartsummary-grandtotal">{{cart.totalWithTax}}</div>
                 </div>
             </div>
 

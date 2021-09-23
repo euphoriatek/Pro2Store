@@ -7,56 +7,49 @@
  *
  */
 
+use Joomla\CMS\Uri\Uri;
+
 defined('_JEXEC') or die;
 
 $id = uniqid('yps_couponfield');
 
 $el = $this->el('div', [
 
-    'class' => [
-        'uk-panel {@!style}',
-        'uk-card uk-card-body uk-{style}'
-    ]
+	'class' => [
+		'uk-panel {@!style}',
+		'uk-card uk-card-body uk-{style}'
+	]
 
 ]);
 
-json_encode($props['coupon']);
 
 ?>
-<script id="yps-coupon-field-baseUrl" type="application/json"><?= $props['baseUrl']; ?></script>
-<script id="yps-coupon-field-isCouponApplied" type="application/json"><?= $props['isCouponApplied']; ?></script>
-<script id="yps-coupon-field-appliedcouponcode" type="application/json"><?= $props['coupon']->coupon_code; ?></script>
-<script id="yps-coupon-field-buttontext" type="application/json"><?= $props['buttontext']; ?></script>
-<script id="yps-coupon-field-removebuttontext" type="application/json"><?= $props['removebuttontext']; ?></script>
-<script id="yps-coupon-field-couponapplied" type="application/json"><?= $props['couponapplied']; ?></script>
-<script id="yps-coupon-field-entercouponcode" type="application/json"><?= $props['entercouponcode']; ?></script>
-<script id="yps-coupon-field-couponremoved" type="application/json"><?= $props['couponremoved']; ?></script>
+
 
 <?= $el($props) ?>
 <div id="<?= $id; ?>">
-<span v-show="removebuttontext" style="display: none">
-<div v-if="isCouponApplied">
-    <div class="uk-margin yps-coupon-applied">
-        <h5>{{couponapplied}}: {{appliedcouponcode}}</h5>
-        <button class="uk-button uk-button-small" v-on:click="removeCoupon">{{removebuttontext}}</button>
-    </div>
-</div>
 
-<div v-else>
-    <div class="uk-margin" uk-margin>
-        <div class="uk-grid uk-grid-small" uk-grid>
-            <div class="uk-width-expand">
-                <input v-bind:placeholder="entercouponcode" class="uk-input uk-width-1-1" type="text"
-                       v-model="couponCode">
-            </div>
-            <div>
-                <button v-on:click="applyCoupon" class="uk-button uk-button-default">{{buttontext}}</button>
+    <div v-if="isCouponApplied">
+        <div class="uk-margin yps-coupon-applied">
+            <h5>{{couponapplied}}: {{appliedcouponcode}}</h5>
+            <button class="uk-button uk-button-small" @click="removeCoupon">{{removebuttontext}}</button>
+        </div>
+    </div>
+
+    <div v-if="!isCouponApplied">
+        <div class="uk-margin" uk-margin>
+            <div class="uk-grid uk-grid-small" uk-grid>
+                <div class="uk-width-expand">
+                    <input :placeholder="entercouponcode" class="uk-input uk-width-1-1" type="text"
+                           v-model="couponCode">
+                </div>
+                <div>
+                    <button @click="applyCoupon" class="uk-button uk-button-default">{{buttontext}}</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-</span>
 
 </div>
 
@@ -80,7 +73,7 @@ json_encode($props['coupon']);
         beforeMount() {
 
             // set the data from the inline script
-                    const isCouponApplied = document.getElementById('yps-coupon-field-isCouponApplied');
+            const isCouponApplied = document.getElementById('yps-coupon-field-isCouponApplied');
             this.isCouponApplied = (isCouponApplied.innerText == 'true' ? true : false);
             isCouponApplied.remove();
 
@@ -113,17 +106,26 @@ json_encode($props['coupon']);
         methods: {
             async removeCoupon() {
 
-                const params = {
-                };
+                const params = {};
 
-                const URLparams = this.serialize(params);
-
-                const request = await fetch('<?= $props['baseUrl']; ?>index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=coupon.remove&format=raw&' + URLparams, {method: 'post'});
+                const request = await fetch("<?= Uri::base(); ?>index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=coupon.remove&format=raw", {
+                    method: 'POST',
+                    mode: 'cors',
+                    cache: 'no-cache',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    redirect: 'follow',
+                    referrerPolicy: 'no-referrer',
+                    body: JSON.stringify(params)
+                });
 
                 const response = await request.json();
 
+
                 if (response.success) {
-                    if (response.data.removed) {
+                    if (response.data) {
                         UIkit.notification({
                             message: '<span uk-icon=\'icon: check\'></span>' + this.couponremoved,
                             status: 'success',
@@ -151,7 +153,7 @@ json_encode($props['coupon']);
 
                 const URLparams = this.serialize(params);
 
-                const request = await fetch('<?= $props['baseUrl']; ?>index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=coupon.apply&format=raw&' + URLparams, {method: 'post'});
+                const request = await fetch('<?= Uri::base(); ?>index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=coupon.apply&format=raw&' + URLparams, {method: 'post'});
 
 
                 const response = await request.json();

@@ -8,7 +8,7 @@
  *
  */
 
-
+use Protostore\Config\ConfigFactory;
 
 $id = uniqid('yps_cartitems_table');
 
@@ -23,6 +23,7 @@ $el = $this->el('div', [
 
 ]);
 
+$params = ConfigFactory::get();
 
 ?>
 
@@ -35,7 +36,7 @@ $el = $this->el('div', [
 
 
 <div class="uk-overflow-auto" id="<?= $id; ?>">
-    <table v-cloak class="uk-table uk-table-hover uk-table-middle uk-table-divider uk-table-responsive">
+    <table v-cloak class="uk-table uk-table-middle">
         <tbody>
 
         <tr v-for="item in cartItems">
@@ -43,8 +44,8 @@ $el = $this->el('div', [
                 <img class="uk-preserve-width" alt="" :width="'80'" style="width: 80px" :src="item.product.images.image_intro">
             </td>
             <td class="uk-table-expand">
-                <h6>{{item.product.joomlaItem.title}}</h6>
-                <ul>
+                <h4>{{item.product.joomlaItem.title}}</h4>
+                <ul class="uk-list">
                     <li v-if="item.selected_variant">{{item.selected_variant.labels_csv}}</li>
                     <li v-for="selected_option in item.selected_options">{{selected_option.option_name}}: {{selected_option.modifier_value_translated}}</li>
                 </ul>
@@ -54,7 +55,13 @@ $el = $this->el('div', [
                 <input @input="changeCountDelay(item)" v-model="item.amount" class="uk-input" style="width: 70px;" min="0"
                        v-bind:max="(parseInt(item.product.manage_stock) === 1 ? item.product.stock : '')" type="number">
             </td>
-            <td class="uk-width-small uk-text-nowrap uk-text-right"></td>
+            <?php if($params->get('add_default_country_tax_to_price', '1') == "1") :?>
+                <td class="uk-width-small uk-text-nowrap uk-text-right">{{item.total_bought_at_price_with_tax_formatted}}</td>
+            <?php else : ?>
+                <td class="uk-width-small uk-text-nowrap uk-text-right">{{item.total_bought_at_price_formatted}}</td>
+            <?php endif; ?>
+
+
             <td class="uk-table-shrink uk-text-nowrap uk-text-right"><span
                         @click="remove(item.id)" uk-icon="icon: trash"
                         style="width: 20px; cursor: pointer"></span>

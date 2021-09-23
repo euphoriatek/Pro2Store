@@ -9,15 +9,11 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 
 use Protostore\Config\ConfigFactory;
 use Protostore\Customer\CustomerFactory;
 use Protostore\Language\LanguageFactory;
-
-
-HTMLHelper::_('behavior.keepalive');
 
 $id = uniqid('yps_loggedin');
 
@@ -49,7 +45,7 @@ echo "{emailcloak=off}";
     </div>
 
     <!--ADDRESS FORM HERE-->
-    <button @click="updateCustomerAddresses" class="uk-button uk-button-primary">Update Addresses</button>
+<!--    <button @click="updateCustomerAddresses" class="uk-button uk-button-primary">Update Addresses</button>-->
     <div v-show="openAddAddressForm">
 
 		<?= $this->render("{$__dir}/forms/logged_in_address", compact('props')) ?>

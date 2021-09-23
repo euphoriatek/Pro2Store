@@ -67,7 +67,7 @@ class ProductFactory
 		$db->setQuery($query);
 
 		$result = $db->loadObject();
-		if ($result && is_object($result))
+		if ($result)
 		{
 
 			return new Product($result);

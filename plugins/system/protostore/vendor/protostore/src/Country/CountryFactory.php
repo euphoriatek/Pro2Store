@@ -229,6 +229,39 @@ class CountryFactory
 
 	/**
 	 *
+	 * @return Country|null
+	 *
+	 * @since 1.6
+	 */
+
+	public static function getDefault(): ?Country
+	{
+
+		$db = Factory::getDbo();
+
+		$query = $db->getQuery(true);
+
+		$query->select('id');
+		$query->from($db->quoteName('#__protostore_country'));
+		$query->where($db->quoteName('default') . ' = 1');
+
+		$db->setQuery($query);
+
+		$id = $db->loadResult();
+
+		if ($id)
+		{
+
+			return self::get($id);
+		}
+
+		return null;
+
+	}
+
+
+	/**
+	 *
 	 * This method is called first and runs the check before calling other functions to commit the data.
 	 *
 	 * @param   Input  $data
@@ -272,6 +305,7 @@ class CountryFactory
 			{
 				// now process the associated zones
 				self::updateZoneList($item);
+
 				return $item;
 			}
 

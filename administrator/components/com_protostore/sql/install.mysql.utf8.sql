@@ -156,6 +156,7 @@ CREATE TABLE IF NOT EXISTS `#__protostore_order`
     `discount_code`       varchar(255)          DEFAULT NULL,
     `donation_total`      int(11)               DEFAULT '0',
     `discount_total`      int(11)               DEFAULT '0',
+    `hash`                varchar(255)          DEFAULT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
