@@ -5,58 +5,7 @@
 --  @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
 --
 
-CREATE TABLE IF NOT EXISTS `#__protostore_product_variant`
-(
-    `id`         int(11) NOT NULL AUTO_INCREMENT,
-    `product_id` int(11)      DEFAULT NULL,
-    `name`       varchar(255) DEFAULT NULL,
-    PRIMARY KEY (`id`)
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8mb4
-  ROW_FORMAT = DYNAMIC;
-
-CREATE TABLE IF NOT EXISTS `#__protostore_product_variant_data`
-(
-    `id`         int(11) NOT NULL AUTO_INCREMENT,
-    `product_id` int(11)      DEFAULT NULL,
-    `label_ids`  varchar(255) DEFAULT NULL,
-    `price`      int(11)      DEFAULT NULL,
-    `stock`      int(11)      DEFAULT NULL,
-    `sku`        varchar(255) DEFAULT NULL,
-    `active`     tinyint(4)   DEFAULT NULL,
-    `default`    tinyint(4)   DEFAULT NULL,
-    PRIMARY KEY (`id`)
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8mb4
-  ROW_FORMAT = DYNAMIC;
-
-CREATE TABLE IF NOT EXISTS `#__protostore_product_variant_label`
-(
-    `id`         int(11) NOT NULL AUTO_INCREMENT,
-    `variant_id` int(11)      DEFAULT NULL,
-    `product_id` int(11)      DEFAULT NULL,
-    `name`       varchar(255) DEFAULT NULL,
-    PRIMARY KEY (`id`)
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8mb4
-  ROW_FORMAT = DYNAMIC;
-
-CREATE TABLE IF NOT EXISTS `#__protostore_zone`
-(
-    `id`           int(11)      NOT NULL AUTO_INCREMENT,
-    `country_id`   int(11)      DEFAULT NULL,
-    `zone_name`    varchar(255) NOT NULL,
-    `zone_isocode` varchar(5)   NOT NULL,
-    `taxrate`      varchar(255) DEFAULT NULL,
-    `published`    int(11)      NOT NULL,
-    PRIMARY KEY (`id`)
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8;
-
-CREATE TABLE IF NOT EXISTS `#__protostore_cart`
+CREATE TABLE `#__protostore_cart`
 (
     `id`                  int(11) unsigned NOT NULL AUTO_INCREMENT,
     `user_id`             int(11)        DEFAULT NULL,
@@ -69,48 +18,21 @@ CREATE TABLE IF NOT EXISTS `#__protostore_cart`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
-CREATE TABLE IF NOT EXISTS `#__protostore_order_tracking`
+
+CREATE TABLE `#__protostore_zone`
 (
-    `id`                int(11) NOT NULL AUTO_INCREMENT,
-    `order_id`          int(11) NOT NULL DEFAULT '0',
-    `tracking_code`     text,
-    `tracking_provider` varchar(255)     DEFAULT NULL,
-    `tracking_link`     text,
-    `created`           datetime         DEFAULT NULL,
+    `id`           int(11)      NOT NULL AUTO_INCREMENT,
+    `country_id`   int(11)      DEFAULT NULL,
+    `zone_name`    varchar(255) NOT NULL,
+    `zone_isocode` varchar(5)   NOT NULL,
+    `taxrate`      varchar(255) DEFAULT NULL,
+    `published`    int(11)      NOT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4
-  ROW_FORMAT = DYNAMIC;
-
-CREATE TABLE IF NOT EXISTS `#__protostore_tandcs_checked`
-(
-    `id`        int(11) unsigned NOT NULL AUTO_INCREMENT,
-    `cookie_id` varbinary(192) DEFAULT NULL,
-    PRIMARY KEY (`id`)
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4
-  ROW_FORMAT = DYNAMIC;
+  DEFAULT CHARSET = utf8;
 
 
-CREATE TABLE IF NOT EXISTS `#__protostore_cart_item`
-(
-    `id`              int(11) unsigned NOT NULL AUTO_INCREMENT,
-    `cart_id`         int(11)          NOT NULL,
-    `joomla_item_id`  int(11)  DEFAULT NULL,
-    `item_options`    text,
-    `bought_at_price` int(11)  DEFAULT NULL,
-    `added`           datetime DEFAULT NULL,
-    `order_id`        int(11)  DEFAULT NULL,
-    `cookie_id`       int(11)  DEFAULT NULL,
-    `user_id`         int(11)  DEFAULT NULL,
-    `amount`          int(11)  DEFAULT NULL,
-    PRIMARY KEY (`id`)
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4
-  ROW_FORMAT = DYNAMIC;
-
-
-CREATE TABLE IF NOT EXISTS `#__protostore_email`
+CREATE TABLE `#__protostore_email`
 (
     `id`          int(11)          NOT NULL AUTO_INCREMENT,
     `to`          varchar(255)              DEFAULT NULL,
@@ -118,22 +40,18 @@ CREATE TABLE IF NOT EXISTS `#__protostore_email`
     `emailtype`   varchar(255)     NOT NULL DEFAULT '',
     `subject`     varchar(255)     NOT NULL DEFAULT '',
     `published`   tinyint(3)       NOT NULL DEFAULT '1',
-    `language`    char(7)                   DEFAULT NULL,
+    `language`    char(7)                   DEFAULT '*',
     `created_by`  int(10) unsigned NOT NULL DEFAULT '0',
     `modified_by` int(10) unsigned NOT NULL DEFAULT '0',
-    `created`     datetime                  DEFAULT NULL,
-    `modified`    datetime                  DEFAULT NULL,
-    PRIMARY KEY (`id`),
-    KEY `idx_emailtype` (`emailtype`),
-    KEY `idx_createdby` (`created_by`),
-    KEY `idx_modifiedby` (`modified_by`),
-    KEY `idx_state` (`published`)
+    `created`     datetime                  NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `modified`    datetime                  NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   ROW_FORMAT = DYNAMIC;
 
-
-CREATE TABLE IF NOT EXISTS `#__protostore_order`
+CREATE TABLE `#__protostore_order`
 (
     `id`                  int(11)      NOT NULL AUTO_INCREMENT,
     `customer_id`         int(11)      NOT NULL DEFAULT '0',
@@ -163,7 +81,8 @@ CREATE TABLE IF NOT EXISTS `#__protostore_order`
   ROW_FORMAT = DYNAMIC;
 
 
-CREATE TABLE IF NOT EXISTS `#__protostore_setup`
+
+CREATE TABLE `#__protostore_setup`
 (
     `id`    int(11) unsigned NOT NULL AUTO_INCREMENT,
     `value` varchar(255) DEFAULT NULL,
@@ -171,10 +90,7 @@ CREATE TABLE IF NOT EXISTS `#__protostore_setup`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
-INSERT INTO `#__protostore_setup` (`id`, `value`)
-VALUES ('1', '0');
-
-CREATE TABLE IF NOT EXISTS `#__protostore_country`
+CREATE TABLE `#__protostore_country`
 (
     `id`                int(11)      NOT NULL AUTO_INCREMENT,
     `country_name`      varchar(255) NOT NULL,
@@ -189,7 +105,7 @@ CREATE TABLE IF NOT EXISTS `#__protostore_country`
   DEFAULT CHARSET = utf8;
 
 
-CREATE TABLE IF NOT EXISTS `#__protostore_product`
+CREATE TABLE `#__protostore_product`
 (
     `id`             int(11) NOT NULL AUTO_INCREMENT,
     `joomla_item_id` int(11)      DEFAULT NULL,
@@ -211,28 +127,27 @@ CREATE TABLE IF NOT EXISTS `#__protostore_product`
   DEFAULT CHARSET = utf8mb4
   ROW_FORMAT = DYNAMIC;
 
-CREATE TABLE `#__protostore_product_file`
+
+
+CREATE TABLE `#__protostore_cart_item`
 (
-    `id`                int(11) NOT NULL AUTO_INCREMENT,
-    `product_id`        int(11)      DEFAULT NULL,
-    `filename`          varchar(255) DEFAULT NULL,
-    `filename_obscured` text,
-    `isjoomla`          tinyint(4)   DEFAULT NULL,
-    `version`           varchar(255) DEFAULT NULL,
-    `type`              varchar(255) DEFAULT NULL,
-    `stability_level`   tinyint(4)   DEFAULT NULL,
-    `php_min`           varchar(15)  DEFAULT NULL,
-    `download_access`   int(11)      DEFAULT NULL,
-    `published`         tinyint(4)   DEFAULT NULL,
-    `downloads`         int(11)      DEFAULT NULL,
-    `created`           datetime     DEFAULT NULL,
-    `modified`          datetime     DEFAULT NULL,
+    `id`              int(11) unsigned NOT NULL AUTO_INCREMENT,
+    `cart_id`         int(11)          NOT NULL,
+    `joomla_item_id`  int(11)  DEFAULT NULL,
+    `variant_id`      int(11)  DEFAULT NULL,
+    `item_options`    text,
+    `bought_at_price` int(11)  DEFAULT NULL,
+    `added`           datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `order_id`        int(11)  DEFAULT NULL,
+    `cookie_id`       int(11)  DEFAULT NULL,
+    `user_id`         int(11)  DEFAULT NULL,
+    `amount`          int(11)  DEFAULT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   ROW_FORMAT = DYNAMIC;
 
-CREATE TABLE IF NOT EXISTS `#__protostore_currency`
+CREATE TABLE `#__protostore_currency`
 (
     `id`             int(11)      NOT NULL AUTO_INCREMENT,
     `name`           varchar(255) NOT NULL DEFAULT '',
@@ -246,13 +161,14 @@ CREATE TABLE IF NOT EXISTS `#__protostore_currency`
   DEFAULT CHARSET = utf8mb4
   ROW_FORMAT = DYNAMIC;
 
-CREATE TABLE IF NOT EXISTS `#__protostore_customer`
+
+
+CREATE TABLE `#__protostore_customer`
 (
     `id`          int(11)          NOT NULL AUTO_INCREMENT,
     `j_user_id`   int(11)          NOT NULL DEFAULT '0',
     `email`       varchar(255)     NOT NULL DEFAULT '',
     `name`        varchar(255)     NOT NULL DEFAULT '',
-    `params`      text             NOT NULL,
     `published`   tinyint(3)       NOT NULL DEFAULT '1',
     `created_by`  int(10) unsigned NOT NULL DEFAULT '0',
     `modified_by` int(10) unsigned NOT NULL DEFAULT '0',
@@ -263,8 +179,7 @@ CREATE TABLE IF NOT EXISTS `#__protostore_customer`
   DEFAULT CHARSET = utf8mb4
   ROW_FORMAT = DYNAMIC;
 
-
-CREATE TABLE IF NOT EXISTS `#__protostore_discount`
+CREATE TABLE `#__protostore_discount`
 (
     `id`            int(11)   NOT NULL AUTO_INCREMENT,
     `name`          varchar(255)   DEFAULT NULL,
@@ -282,7 +197,8 @@ CREATE TABLE IF NOT EXISTS `#__protostore_discount`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
-CREATE TABLE IF NOT EXISTS `#__protostore_email_log`
+
+CREATE TABLE `#__protostore_email_log`
 (
     `id`           int(11)          NOT NULL AUTO_INCREMENT,
     `emailaddress` varchar(255)     NOT NULL DEFAULT '',
@@ -290,29 +206,29 @@ CREATE TABLE IF NOT EXISTS `#__protostore_email_log`
     `sentdate`     varchar(50)      NOT NULL DEFAULT '',
     `customer_id`  int(11)          NOT NULL DEFAULT '0',
     `order_id`     int(11)                   DEFAULT NULL,
+    `params`       text             NOT NULL,
     `created_by`   int(10) unsigned NOT NULL DEFAULT '0',
     `modified_by`  int(10) unsigned NOT NULL DEFAULT '0',
-    `created`      datetime         NOT NULL DEFAULT '0000-00-00 00:00:00',
-    `modified`     datetime         NOT NULL DEFAULT '0000-00-00 00:00:00',
+    `created`      datetime         NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `modified`     datetime         NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   ROW_FORMAT = DYNAMIC;
 
-CREATE TABLE IF NOT EXISTS `#__protostore_order_log`
+CREATE TABLE `#__protostore_order_log`
 (
     `id`         int(11)          NOT NULL AUTO_INCREMENT,
     `order_id`   int(11)                   DEFAULT NULL,
     `note`       text,
     `created_by` int(10) unsigned NOT NULL DEFAULT '0',
-    `created`    datetime         NOT NULL DEFAULT '0000-00-00 00:00:00',
+    `created`    datetime         NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   ROW_FORMAT = DYNAMIC;
 
-
-CREATE TABLE IF NOT EXISTS `#__protostore_coupon_cart`
+CREATE TABLE `#__protostore_coupon_cart`
 (
     `id`        int(11) unsigned NOT NULL AUTO_INCREMENT,
     `cookie_id` varbinary(192) DEFAULT NULL,
@@ -321,40 +237,75 @@ CREATE TABLE IF NOT EXISTS `#__protostore_coupon_cart`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
-CREATE TABLE IF NOT EXISTS `#__protostore_order_notes`
+CREATE TABLE `#__protostore_order_notes`
 (
     `id`         int(11)          NOT NULL AUTO_INCREMENT,
     `order_id`   int(11)                   DEFAULT NULL,
     `note`       text,
     `created_by` int(10) unsigned NOT NULL DEFAULT '0',
-    `created`    datetime         NOT NULL DEFAULT '0000-00-00 00:00:00',
+    `created`    datetime         NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   ROW_FORMAT = DYNAMIC;
 
 
+CREATE TABLE `#__protostore_product_file`
+(
+    `id`                int(11)  NOT NULL AUTO_INCREMENT,
+    `product_id`        int(11)           DEFAULT NULL,
+    `filename`          varchar(255)      DEFAULT NULL,
+    `filename_obscured` text,
+    `isjoomla`          tinyint(4)        DEFAULT NULL,
+    `version`           varchar(255)      DEFAULT NULL,
+    `type`              varchar(255)      DEFAULT NULL,
+    `stability_level`   tinyint(4)        DEFAULT NULL,
+    `php_min`           varchar(15)       DEFAULT NULL,
+    `download_access`   int(11)           DEFAULT NULL,
+    `published`         tinyint(4)        DEFAULT NULL,
+    `downloads`         int(11)           DEFAULT NULL,
+    `created`           datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `modified`          datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  ROW_FORMAT = DYNAMIC;
 
-CREATE TABLE IF NOT EXISTS `#__protostore_shipping_rate`
+CREATE TABLE `#__protostore_option_preset`
+(
+    `id`          int(11)          NOT NULL AUTO_INCREMENT,
+    `options`     text             NOT NULL,
+    `title`       varchar(255)     NOT NULL DEFAULT '',
+    `params`      text             NOT NULL,
+    `published`   tinyint(3)       NOT NULL DEFAULT '1',
+    `created_by`  int(10) unsigned NOT NULL DEFAULT '0',
+    `modified_by` int(10) unsigned NOT NULL DEFAULT '0',
+    `created`     datetime         NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `modified`    datetime         NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  ROW_FORMAT = DYNAMIC;
+
+CREATE TABLE `#__protostore_shipping_rate`
 (
     `id`            int(11)      NOT NULL AUTO_INCREMENT,
-    `country_id`    int(11)               DEFAULT NULL,
+    `country_id`    varchar(255) NOT NULL DEFAULT '',
     `weight_from`   varchar(255) NOT NULL DEFAULT '',
     `weight_to`     varchar(255) NOT NULL DEFAULT '',
-    `cost`          int(11)               DEFAULT NULL,
-    `handling_cost` int(11)               DEFAULT NULL,
+    `cost`          varchar(255) NOT NULL DEFAULT '',
+    `handling_cost` varchar(255) NOT NULL,
     `published`     tinyint(3)   NOT NULL DEFAULT '1',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   ROW_FORMAT = DYNAMIC;
 
-
-CREATE TABLE IF NOT EXISTS `#__protostore_cart_addresses`
+CREATE TABLE `#__protostore_cart_addresses`
 (
     `id`         int(11) unsigned NOT NULL AUTO_INCREMENT,
     `cookie_id`  varbinary(192) DEFAULT NULL,
-    `added`      datetime       DEFAULT NULL,
+    `added`      datetime       NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `address_id` int(11)        DEFAULT NULL,
     `type`       varchar(255)   DEFAULT NULL,
     PRIMARY KEY (`id`)
@@ -362,25 +313,27 @@ CREATE TABLE IF NOT EXISTS `#__protostore_cart_addresses`
   DEFAULT CHARSET = utf8mb4
   ROW_FORMAT = DYNAMIC;
 
-CREATE TABLE IF NOT EXISTS `#__protostore_checkout_notes`
+CREATE TABLE `#__protostore_checkout_notes`
 (
     `id`        int(11) unsigned NOT NULL AUTO_INCREMENT,
-    `cookie_id` varbinary(192) DEFAULT NULL,
-    `orderid`   int(11)        DEFAULT NULL,
+    `cookie_id` varbinary(192)            DEFAULT NULL,
+    `orderid`   int(11)                   DEFAULT NULL,
     `note`      text,
-    `added`     datetime       DEFAULT NULL,
+    `added`     datetime         NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   ROW_FORMAT = DYNAMIC;
 
-CREATE TABLE IF NOT EXISTS `#__protostore_order_products`
+
+CREATE TABLE `#__protostore_order_products`
 (
     `id`            int(11) NOT NULL AUTO_INCREMENT,
     `order_id`      int(11) NOT NULL DEFAULT '0',
     `j_item`        int(11)          DEFAULT NULL,
     `j_item_cat`    int(11)          DEFAULT NULL,
     `j_item_name`   varchar(255)     DEFAULT NULL,
+    `variant_id`    int(11)          DEFAULT NULL,
     `item_options`  text,
     `price_at_sale` int(11)          DEFAULT NULL,
     `amount`        int(11)          DEFAULT NULL,
@@ -389,18 +342,91 @@ CREATE TABLE IF NOT EXISTS `#__protostore_order_products`
   DEFAULT CHARSET = utf8mb4
   ROW_FORMAT = DYNAMIC;
 
-CREATE TABLE IF NOT EXISTS `#__protostore_product_option`
+
+
+CREATE TABLE `#__protostore_order_tracking`
 (
-    `id`          int(11) NOT NULL AUTO_INCREMENT,
-    `name`        varchar(255) DEFAULT NULL,
-    `option_type` varchar(255) DEFAULT NULL,
+    `id`                int(11)  NOT NULL AUTO_INCREMENT,
+    `order_id`          int(11)  NOT NULL DEFAULT '0',
+    `tracking_code`     text,
+    `tracking_provider` varchar(255)      DEFAULT NULL,
+    `tracking_link`     text,
+    `created`           datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  ROW_FORMAT = DYNAMIC;
+
+CREATE TABLE `#__protostore_product_option`
+(
+    `id`             int(11) NOT NULL AUTO_INCREMENT,
+    `product_id`     int(11)      DEFAULT NULL,
+    `option_name`    varchar(255) DEFAULT NULL,
+    `modifier_value` int(11)      DEFAULT NULL,
+    `modifier_type`  char(6)      DEFAULT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  ROW_FORMAT = DYNAMIC;
+
+CREATE TABLE `#__protostore_tandcs_checked`
+(
+    `id`        int(11) unsigned NOT NULL AUTO_INCREMENT,
+    `cookie_id` varbinary(192) DEFAULT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   ROW_FORMAT = DYNAMIC;
 
 
-CREATE TABLE IF NOT EXISTS `#__protostore_order_subscription`
+CREATE TABLE `#__protostore_product_variant`
+(
+    `id`         int(11) NOT NULL AUTO_INCREMENT,
+    `product_id` int(11)      DEFAULT NULL,
+    `name`       varchar(255) DEFAULT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  ROW_FORMAT = DYNAMIC;
+
+
+CREATE TABLE `#__protostore_customer_address`
+(
+    `id`           int(11)      NOT NULL AUTO_INCREMENT,
+    `customer_id`  int(11)      NOT NULL DEFAULT '0',
+    `name`         varchar(255)          DEFAULT NULL,
+    `address1`     varchar(255) NOT NULL DEFAULT '',
+    `address2`     varchar(255) NOT NULL DEFAULT '',
+    `address3`     varchar(255) NOT NULL DEFAULT '',
+    `town`         varchar(255) NOT NULL DEFAULT '',
+    `zone`         int(11)               DEFAULT NULL,
+    `country`      int(11)               DEFAULT NULL,
+    `postcode`     varchar(255) NOT NULL DEFAULT '',
+    `phone`        varchar(64)  NOT NULL DEFAULT '',
+    `email`        varchar(255) NOT NULL DEFAULT '',
+    `mobile_phone` varchar(64)  NOT NULL DEFAULT '',
+    `created`      datetime     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    L,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  ROW_FORMAT = DYNAMIC;
+
+CREATE TABLE `#__protostore_zone_shipping_rate`
+(
+    `id`            int(11)      NOT NULL AUTO_INCREMENT,
+    `zone_id`       varchar(255) NOT NULL DEFAULT '',
+    `weight_from`   varchar(255) NOT NULL DEFAULT '',
+    `weight_to`     varchar(255) NOT NULL DEFAULT '',
+    `cost`          varchar(255) NOT NULL DEFAULT '',
+    `handling_cost` varchar(255) NOT NULL,
+    `published`     tinyint(3)   NOT NULL DEFAULT '1',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  ROW_FORMAT = DYNAMIC;
+
+CREATE TABLE `#__protostore_order_subscription`
 (
     `id`                 int(11) NOT NULL AUTO_INCREMENT,
     `order_id`           int(11) NOT NULL DEFAULT '0',
@@ -410,8 +436,8 @@ CREATE TABLE IF NOT EXISTS `#__protostore_order_subscription`
     `item_options`       text,
     `price_at_sale`      int(11)          DEFAULT NULL,
     `amount`             int(11)          DEFAULT NULL,
-    `start`              datetime         DEFAULT NULL,
-    `end`                datetime         DEFAULT NULL,
+    `start`              datetime         NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `end`                datetime         NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `subscription_title` varchar(255)     DEFAULT NULL,
     `subscription_desc`  text,
     PRIMARY KEY (`id`)
@@ -419,289 +445,284 @@ CREATE TABLE IF NOT EXISTS `#__protostore_order_subscription`
   DEFAULT CHARSET = utf8mb4
   ROW_FORMAT = DYNAMIC;
 
-CREATE TABLE IF NOT EXISTS `#__protostore_customer_address`
+CREATE TABLE `#__protostore_product_variant_data`
 (
-    `id`           int(11)          NOT NULL AUTO_INCREMENT,
-    `asset_id`     int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'FK to the #__assets table.',
-    `customer_id`  int(11)          NOT NULL DEFAULT '0',
-    `name`         varchar(255)              DEFAULT NULL,
-    `address1`     varchar(255)     NOT NULL DEFAULT '',
-    `address2`     varchar(255)     NOT NULL DEFAULT '',
-    `address3`     varchar(255)     NOT NULL DEFAULT '',
-    `town`         varchar(255)     NOT NULL DEFAULT '',
-    `zone`         int(11)                   DEFAULT NULL,
-    `country`      int(11)                   DEFAULT NULL,
-    `postcode`     varchar(255)     NOT NULL DEFAULT '',
-    `phone`        varchar(64)      NOT NULL DEFAULT '',
-    `email`        varchar(255)     NOT NULL DEFAULT '',
-    `mobile_phone` varchar(64)      NOT NULL DEFAULT '',
-    `created`      datetime                  DEFAULT NULL,
+    `id`         int(11) NOT NULL AUTO_INCREMENT,
+    `product_id` int(11)      DEFAULT NULL,
+    `label_ids`  varchar(255) DEFAULT NULL,
+    `price`      int(11)      DEFAULT NULL,
+    `stock`      int(11)      DEFAULT NULL,
+    `sku`        varchar(255) DEFAULT NULL,
+    `active`     tinyint(4)   DEFAULT NULL,
+    `default`    tinyint(4)   DEFAULT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   ROW_FORMAT = DYNAMIC;
 
-CREATE TABLE IF NOT EXISTS `#__protostore_zone_shipping_rate`
+
+CREATE TABLE `#__protostore_product_variant_label`
 (
-    `id`            int(11)      NOT NULL AUTO_INCREMENT,
-    `zone_id`       int(11)               DEFAULT NULL,
-    `weight_from`   varchar(255) NOT NULL DEFAULT '',
-    `weight_to`     varchar(255) NOT NULL DEFAULT '',
-    `cost`          int(11)               DEFAULT NULL,
-    `handling_cost` int(11)               DEFAULT NULL,
-    `published`     tinyint(3)   NOT NULL DEFAULT '1',
+    `id`         int(11) NOT NULL AUTO_INCREMENT,
+    `variant_id` int(11)      DEFAULT NULL,
+    `product_id` int(11)      DEFAULT NULL,
+    `name`       varchar(255) DEFAULT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   ROW_FORMAT = DYNAMIC;
 
+
+
+INSERT INTO `#__protostore_setup` (`id`, `value`)
+VALUES ('1', '0');
 
 
 INSERT INTO `#__protostore_country` (`id`, `country_name`, `country_isocode_3`, `country_isocode_2`, `requires_vat`,
-                                     `taxrate`, `published`)
-VALUES ('1', 'Afghanistan', 'AFG', 'AF', '0', '0', '1'),
-       ('2', 'Albania', 'ALB', 'AL', '0', '0', '1'),
-       ('3', 'Algeria', 'DZA', 'DZ', '0', '0', '1'),
-       ('4', 'American Samoa', 'ASM', 'AS', '0', '0', '1'),
-       ('5', 'Andorra', 'AND', 'AD', '0', '0', '1'),
-       ('6', 'Angola', 'AGO', 'AO', '0', '0', '1'),
-       ('7', 'Anguilla', 'AIA', 'AI', '0', '0', '1'),
-       ('8', 'Antarctica', 'ATA', 'AQ', '0', '0', '1'),
-       ('9', 'Antigua and Barbuda', 'ATG', 'AG', '0', '0', '1'),
-       ('10', 'Argentina', 'ARG', 'AR', '0', '0', '1'),
-       ('11', 'Armenia', 'ARM', 'AM', '0', '0', '1'),
-       ('12', 'Aruba', 'ABW', 'AW', '0', '0', '1'),
-       ('13', 'Australia', 'AUS', 'AU', '0', '0', '1'),
-       ('14', 'Austria', 'AUT', 'AT', '1', '20', '1'),
-       ('16', 'Bahamas', 'BHS', 'BS', '0', '0', '1'),
-       ('17', 'Bahrain', 'BHR', 'BH', '0', '0', '1'),
-       ('18', 'Bangladesh', 'BGD', 'BD', '0', '0', '1'),
-       ('19', 'Barbados', 'BRB', 'BB', '0', '0', '1'),
-       ('20', 'Belarus', 'BLR', 'BY', '0', '0', '1'),
-       ('21', 'Belgium', 'BEL', 'BE', '1', '21', '1'),
-       ('22', 'Belize', 'BLZ', 'BZ', '0', '0', '1'),
-       ('23', 'Benin', 'BEN', 'BJ', '0', '0', '1'),
-       ('24', 'Bermuda', 'BMU', 'BM', '0', '0', '1'),
-       ('25', 'Bhutan', 'BTN', 'BT', '0', '0', '1'),
-       ('26', 'Bolivia', 'BOL', 'BO', '0', '0', '1'),
-       ('27', 'Bosnia and Herzegowina', 'BIH', 'BA', '0', '0', '1'),
-       ('28', 'Botswana', 'BWA', 'BW', '0', '0', '1'),
-       ('29', 'Bouvet Island', 'BVT', 'BV', '0', '0', '1'),
-       ('30', 'Brazil', 'BRA', 'BR', '0', '0', '1'),
-       ('31', 'British Indian Ocean Territory', 'IOT', 'IO', '0', '0', '1'),
-       ('32', 'Brunei Darussalam', 'BRN', 'BN', '0', '0', '1'),
-       ('33', 'Bulgaria', 'BGR', 'BG', '1', '20', '1'),
-       ('34', 'Burkina Faso', 'BFA', 'BF', '0', '0', '1'),
-       ('35', 'Burundi', 'BDI', 'BI', '0', '0', '1'),
-       ('36', 'Cambodia', 'KHM', 'KH', '0', '0', '1'),
-       ('37', 'Cameroon', 'CMR', 'CM', '0', '0', '1'),
-       ('38', 'Canada', 'CAN', 'CA', '0', '0', '1'),
-       ('39', 'Cape Verde', 'CPV', 'CV', '0', '0', '1'),
-       ('40', 'Cayman Islands', 'CYM', 'KY', '0', '0', '1'),
-       ('41', 'Central African Republic', 'CAF', 'CF', '0', '0', '1'),
-       ('42', 'Chad', 'TCD', 'TD', '0', '0', '1'),
-       ('43', 'Chile', 'CHL', 'CL', '0', '0', '1'),
-       ('44', 'China', 'CHN', 'CN', '0', '0', '1'),
-       ('45', 'Christmas Island', 'CXR', 'CX', '0', '0', '1'),
-       ('46', 'Cocos (Keeling) Islands', 'CCK', 'CC', '0', '0', '1'),
-       ('47', 'Colombia', 'COL', 'CO', '0', '0', '1'),
-       ('48', 'Comoros', 'COM', 'KM', '0', '0', '1'),
-       ('49', 'Congo', 'COG', 'CG', '0', '0', '1'),
-       ('50', 'Cook Islands', 'COK', 'CK', '0', '0', '1'),
-       ('51', 'Costa Rica', 'CRI', 'CR', '0', '0', '1'),
-       ('52', 'Cote DIvoire', 'CIV', 'CI', '0', '0', '1'),
-       ('53', 'Croatia', 'HRV', 'HR', '1', '25', '1'),
-       ('54', 'Cuba', 'CUB', 'CU', '0', '0', '1'),
-       ('55', 'Cyprus', 'CYP', 'CY', '1', '19', '1'),
-       ('56', 'Czech Republic', 'CZE', 'CZ', '1', '21', '1'),
-       ('57', 'Denmark', 'DNK', 'DK', '1', '25', '1'),
-       ('58', 'Djibouti', 'DJI', 'DJ', '0', '0', '1'),
-       ('59', 'Dominica', 'DMA', 'DM', '0', '0', '1'),
-       ('60', 'Dominican Republic', 'DOM', 'DO', '0', '0', '1'),
-       ('61', 'East Timor', 'TMP', 'TP', '0', '0', '1'),
-       ('62', 'Ecuador', 'ECU', 'EC', '0', '0', '1'),
-       ('63', 'Egypt', 'EGY', 'EG', '0', '0', '1'),
-       ('64', 'El Salvador', 'SLV', 'SV', '0', '0', '1'),
-       ('65', 'Equatorial Guinea', 'GNQ', 'GQ', '0', '0', '1'),
-       ('66', 'Eritrea', 'ERI', 'ER', '0', '0', '1'),
-       ('67', 'Estonia', 'EST', 'EE', '1', '20', '1'),
-       ('68', 'Ethiopia', 'ETH', 'ET', '0', '0', '1'),
-       ('69', 'Falkland Islands (Malvinas)', 'FLK', 'FK', '0', '0', '1'),
-       ('70', 'Faroe Islands', 'FRO', 'FO', '0', '0', '1'),
-       ('71', 'Fiji', 'FJI', 'FJ', '0', '0', '1'),
-       ('72', 'Finland', 'FIN', 'FI', '1', '24', '1'),
-       ('73', 'France', 'FRA', 'FR', '1', '20', '1'),
-       ('74', 'France, Metropolitan', 'FXX', 'FX', '0', '0', '1'),
-       ('75', 'French Guiana', 'GUF', 'GF', '0', '0', '1'),
-       ('76', 'French Polynesia', 'PYF', 'PF', '0', '0', '1'),
-       ('77', 'French Southern Territories', 'ATF', 'TF', '0', '0', '1'),
-       ('78', 'Gabon', 'GAB', 'GA', '0', '0', '1'),
-       ('79', 'Gambia', 'GMB', 'GM', '0', '0', '1'),
-       ('80', 'Georgia', 'GEO', 'GE', '0', '0', '1'),
-       ('81', 'Germany', 'DEU', 'DE', '1', '19', '1'),
-       ('82', 'Ghana', 'GHA', 'GH', '0', '0', '1'),
-       ('83', 'Gibraltar', 'GIB', 'GI', '0', '0', '1'),
-       ('84', 'Greece', 'GRC', 'EL', '1', '23', '1'),
-       ('85', 'Greenland', 'GRL', 'GL', '0', '0', '1'),
-       ('86', 'Grenada', 'GRD', 'GD', '0', '0', '1'),
-       ('87', 'Guadeloupe', 'GLP', 'GP', '0', '0', '1'),
-       ('88', 'Guam', 'GUM', 'GU', '0', '0', '1'),
-       ('89', 'Guatemala', 'GTM', 'GT', '0', '0', '1'),
-       ('90', 'Guinea', 'GIN', 'GN', '0', '0', '1'),
-       ('91', 'Guinea-bissau', 'GNB', 'GW', '0', '0', '1'),
-       ('93', 'Haiti', 'HTI', 'HT', '0', '0', '1'),
-       ('94', 'Heard and Mc Donald Islands', 'HMD', 'HM', '0', '0', '1'),
-       ('95', 'Honduras', 'HND', 'HN', '0', '0', '1'),
-       ('96', 'Hong Kong', 'HKG', 'HK', '0', '0', '1'),
-       ('97', 'Hungary', 'HUN', 'HU', '1', '27', '1'),
-       ('98', 'Iceland', 'ISL', 'IS', '0', '0', '1'),
-       ('99', 'India', 'IND', 'IN', '0', '0', '1'),
-       ('100', 'Indonesia', 'IDN', 'ID', '0', '0', '1'),
-       ('101', 'Iran (Islamic Republic of)', 'IRN', 'IR', '0', '0', '1'),
-       ('102', 'Iraq', 'IRQ', 'IQ', '0', '0', '1'),
-       ('103', 'Ireland', 'IRL', 'IE', '1', '23', '1'),
-       ('104', 'Israel', 'ISR', 'IL', '0', '0', '1'),
-       ('105', 'Italy', 'ITA', 'IT', '1', '22', '1'),
-       ('106', 'Jamaica', 'JAM', 'JM', '0', '0', '1'),
-       ('107', 'Japan', 'JPN', 'JP', '0', '0', '1'),
-       ('108', 'Jordan', 'JOR', 'JO', '0', '0', '1'),
-       ('109', 'Kazakhstan', 'KAZ', 'KZ', '0', '0', '1'),
-       ('110', 'Kenya', 'KEN', 'KE', '0', '0', '1'),
-       ('111', 'Kiribati', 'KIR', 'KI', '0', '0', '1'),
-       ('112', 'Korea, Democratic Peoples Republic of', 'PRK', 'KP', '0', '0', '1'),
-       ('113', 'Korea, Republic of', 'KOR', 'KR', '0', '0', '1'),
-       ('114', 'Kuwait', 'KWT', 'KW', '0', '0', '1'),
-       ('115', 'Kyrgyzstan', 'KGZ', 'KG', '0', '0', '1'),
-       ('116', 'Lao Peoples Democratic Republic', 'LAO', 'LA', '0', '0', '1'),
-       ('117', 'Latvia', 'LVA', 'LV', '1', '21', '1'),
-       ('118', 'Lebanon', 'LBN', 'LB', '0', '0', '1'),
-       ('119', 'Lesotho', 'LSO', 'LS', '0', '0', '1'),
-       ('120', 'Liberia', 'LBR', 'LR', '0', '0', '1'),
-       ('121', 'Libyan Arab Jamahiriya', 'LBY', 'LY', '0', '0', '1'),
-       ('122', 'Liechtenstein', 'LIE', 'LI', '0', '0', '1'),
-       ('123', 'Lithuania', 'LTU', 'LT', '1', '21', '1'),
-       ('124', 'Luxembourg', 'LUX', 'LU', '1', '17', '1'),
-       ('125', 'Macau', 'MAC', 'MO', '0', '0', '1'),
-       ('126', 'Macedonia, The Former Yugoslav Republic of', 'MKD', 'MK', '0', '0', '1'),
-       ('127', 'Madagascar', 'MDG', 'MG', '0', '0', '1'),
-       ('128', 'Malawi', 'MWI', 'MW', '0', '0', '1'),
-       ('129', 'Malaysia', 'MYS', 'MY', '0', '0', '1'),
-       ('130', 'Maldives', 'MDV', 'MV', '0', '0', '1'),
-       ('131', 'Mali', 'MLI', 'ML', '0', '0', '1'),
-       ('132', 'Malta', 'MLT', 'MT', '1', '18', '1'),
-       ('133', 'Marshall Islands', 'MHL', 'MH', '0', '0', '1'),
-       ('134', 'Martinique', 'MTQ', 'MQ', '0', '0', '1'),
-       ('135', 'Mauritania', 'MRT', 'MR', '0', '0', '1'),
-       ('136', 'Mauritius', 'MUS', 'MU', '0', '0', '1'),
-       ('137', 'Mayotte', 'MYT', 'YT', '0', '0', '1'),
-       ('138', 'Mexico', 'MEX', 'MX', '0', '0', '1'),
-       ('139', 'Micronesia, Federated States of', 'FSM', 'FM', '0', '0', '1'),
-       ('140', 'Moldova, Republic of', 'MDA', 'MD', '0', '0', '1'),
-       ('141', 'Monaco', 'MCO', 'MC', '0', '0', '1'),
-       ('142', 'Mongolia', 'MNG', 'MN', '0', '0', '1'),
-       ('143', 'Montserrat', 'MSR', 'MS', '0', '0', '1'),
-       ('144', 'Morocco', 'MAR', 'MA', '0', '0', '1'),
-       ('145', 'Mozambique', 'MOZ', 'MZ', '0', '0', '1'),
-       ('146', 'Myanmar', 'MMR', 'MM', '0', '0', '1'),
-       ('147', 'Namibia', 'NAM', 'NA', '0', '0', '1'),
-       ('148', 'Nauru', 'NRU', 'NR', '0', '0', '1'),
-       ('149', 'Nepal', 'NPL', 'NP', '0', '0', '1'),
-       ('150', 'Netherlands', 'NLD', 'NL', '1', '21', '1'),
-       ('151', 'Netherlands Antilles', 'ANT', 'AN', '0', '0', '1'),
-       ('152', 'New Caledonia', 'NCL', 'NC', '0', '0', '1'),
-       ('153', 'New Zealand', 'NZL', 'NZ', '0', '0', '1'),
-       ('154', 'Nicaragua', 'NIC', 'NI', '0', '0', '1'),
-       ('155', 'Niger', 'NER', 'NE', '0', '0', '1'),
-       ('156', 'Nigeria', 'NGA', 'NG', '0', '0', '1'),
-       ('157', 'Niue', 'NIU', 'NU', '0', '0', '1'),
-       ('158', 'Norfolk Island', 'NFK', 'NF', '0', '0', '1'),
-       ('159', 'Northern Mariana Islands', 'MNP', 'MP', '0', '0', '1'),
-       ('160', 'Norway', 'NOR', 'NO', '0', '0', '1'),
-       ('161', 'Oman', 'OMN', 'OM', '0', '0', '1'),
-       ('162', 'Pakistan', 'PAK', 'PK', '0', '0', '1'),
-       ('163', 'Palau', 'PLW', 'PW', '0', '0', '1'),
-       ('164', 'Panama', 'PAN', 'PA', '0', '0', '1'),
-       ('165', 'Papua New Guinea', 'PNG', 'PG', '0', '0', '1'),
-       ('166', 'Paraguay', 'PRY', 'PY', '0', '0', '1'),
-       ('167', 'Peru', 'PER', 'PE', '0', '0', '1'),
-       ('168', 'Philippines', 'PHL', 'PH', '0', '0', '1'),
-       ('169', 'Pitcairn', 'PCN', 'PN', '0', '0', '1'),
-       ('170', 'Poland', 'POL', 'PL', '1', '23', '1'),
-       ('171', 'Portugal', 'PRT', 'PT', '1', '23', '1'),
-       ('172', 'Puerto Rico', 'PRI', 'PR', '0', '0', '1'),
-       ('173', 'Qatar', 'QAT', 'QA', '0', '0', '1'),
-       ('174', 'Reunion', 'REU', 'RE', '0', '0', '1'),
-       ('175', 'Romania', 'ROM', 'RO', '1', '20', '1'),
-       ('176', 'Russian Federation', 'RUS', 'RU', '0', '0', '1'),
-       ('177', 'Rwanda', 'RWA', 'RW', '0', '0', '1'),
-       ('178', 'Saint Kitts and Nevis', 'KNA', 'KN', '0', '0', '1'),
-       ('179', 'Saint Lucia', 'LCA', 'LC', '0', '0', '1'),
-       ('180', 'Saint Vincent and the Grenadines', 'VCT', 'VC', '0', '0', '1'),
-       ('181', 'Samoa', 'WSM', 'WS', '0', '0', '1'),
-       ('182', 'San Marino', 'SMR', 'SM', '0', '0', '1'),
-       ('183', 'Sao Tome and Principe', 'STP', 'ST', '0', '0', '1'),
-       ('184', 'Saudi Arabia', 'SAU', 'SA', '0', '0', '1'),
-       ('185', 'Senegal', 'SEN', 'SN', '0', '0', '1'),
-       ('186', 'Seychelles', 'SYC', 'SC', '0', '0', '1'),
-       ('187', 'Sierra Leone', 'SLE', 'SL', '0', '0', '1'),
-       ('188', 'Singapore', 'SGP', 'SG', '0', '0', '1'),
-       ('189', 'Slovakia (Slovak Republic)', 'SVK', 'SK', '1', '20', '1'),
-       ('190', 'Slovenia', 'SVN', 'SI', '1', '22', '1'),
-       ('191', 'Solomon Islands', 'SLB', 'SB', '0', '0', '1'),
-       ('192', 'Somalia', 'SOM', 'SO', '0', '0', '1'),
-       ('193', 'South Africa', 'ZAF', 'ZA', '0', '0', '1'),
-       ('194', 'South Georgia and the South Sandwich Islands', 'SGS', 'GS', '0', '0', '1'),
-       ('195', 'Spain', 'ESP', 'ES', '1', '21', '1'),
-       ('196', 'Sri Lanka', 'LKA', 'LK', '0', '0', '1'),
-       ('197', 'St. Helena', 'SHN', 'SH', '0', '0', '1'),
-       ('198', 'St. Pierre and Miquelon', 'SPM', 'PM', '0', '0', '1'),
-       ('199', 'Sudan', 'SDN', 'SD', '0', '0', '1'),
-       ('200', 'Suriname', 'SUR', 'SR', '0', '0', '1'),
-       ('201', 'Svalbard and Jan Mayen Islands', 'SJM', 'SJ', '0', '0', '1'),
-       ('202', 'Swaziland', 'SWZ', 'SZ', '0', '0', '1'),
-       ('203', 'Sweden', 'SWE', 'SE', '1', '25', '1'),
-       ('204', 'Switzerland', 'CHE', 'CH', '0', '0', '1'),
-       ('205', 'Syrian Arab Republic', 'SYR', 'SY', '0', '0', '1'),
-       ('206', 'Taiwan', 'TWN', 'TW', '0', '0', '1'),
-       ('207', 'Tajikistan', 'TJK', 'TJ', '0', '0', '1'),
-       ('208', 'Tanzania, United Republic of', 'TZA', 'TZ', '0', '0', '1'),
-       ('209', 'Thailand', 'THA', 'TH', '0', '0', '1'),
-       ('210', 'Togo', 'TGO', 'TG', '0', '0', '1'),
-       ('211', 'Tokelau', 'TKL', 'TK', '0', '0', '1'),
-       ('212', 'Tonga', 'TON', 'TO', '0', '0', '1'),
-       ('213', 'Trinidad and Tobago', 'TTO', 'TT', '0', '0', '1'),
-       ('214', 'Tunisia', 'TUN', 'TN', '0', '0', '1'),
-       ('215', 'Turkey', 'TUR', 'TR', '0', '0', '1'),
-       ('216', 'Turkmenistan', 'TKM', 'TM', '0', '0', '1'),
-       ('217', 'Turks and Caicos Islands', 'TCA', 'TC', '0', '0', '1'),
-       ('218', 'Tuvalu', 'TUV', 'TV', '0', '0', '1'),
-       ('219', 'Uganda', 'UGA', 'UG', '0', '0', '1'),
-       ('220', 'Ukraine', 'UKR', 'UA', '0', '0', '1'),
-       ('221', 'United Arab Emirates', 'ARE', 'AE', '0', '0', '1'),
-       ('222', 'United Kingdom', 'GBR', 'GB', '1', '20', '1'),
-       ('223', 'United States', 'USA', 'US', '0', '0', '1'),
-       ('224', 'United States Minor Outlying Islands', 'UMI', 'UM', '0', '0', '1'),
-       ('225', 'Uruguay', 'URY', 'UY', '0', '0', '1'),
-       ('226', 'Uzbekistan', 'UZB', 'UZ', '0', '0', '1'),
-       ('227', 'Vanuatu', 'VUT', 'VU', '0', '0', '1'),
-       ('228', 'Vatican City State (Holy See)', 'VAT', 'VA', '0', '0', '1'),
-       ('229', 'Venezuela', 'VEN', 'VE', '0', '0', '1'),
-       ('230', 'Viet Nam', 'VNM', 'VN', '0', '0', '1'),
-       ('231', 'Virgin Islands (British)', 'VGB', 'VG', '0', '0', '1'),
-       ('232', 'Virgin Islands (U.S.)', 'VIR', 'VI', '0', '0', '1'),
-       ('233', 'Wallis and Futuna Islands', 'WLF', 'WF', '0', '0', '1'),
-       ('234', 'Western Sahara', 'ESH', 'EH', '0', '0', '1'),
-       ('235', 'Yemen', 'YEM', 'YE', '0', '0', '1'),
-       ('236', 'Serbia', 'SRB', 'RS', '0', '0', '1'),
-       ('237', 'The Democratic Republic of Congo', 'DRC', 'DC', '0', '0', '1'),
-       ('238', 'Zambia', 'ZMB', 'ZM', '0', '0', '1'),
-       ('239', 'Zimbabwe', 'ZWE', 'ZW', '0', '0', '1'),
-       ('240', 'East Timor', 'XET', 'XE', '0', '0', '1'),
-       ('241', 'Jersey', 'XJE', 'XJ', '0', '0', '1'),
-       ('242', 'St. Barthelemy', 'XSB', 'XB', '0', '0', '1'),
-       ('243', 'St. Eustatius', 'XSE', 'XU', '0', '0', '1'),
-       ('244', 'Canary Islands', 'XCA', 'XC', '0', '0', '1'),
-       ('245', 'Montenegro', 'MNE', 'ME', '0', '0', '1');
+                                     `taxrate`, `default`, `published`)
+VALUES ('1', 'Afghanistan', 'AFG', 'AF', '0', '0', '0', '1'),
+       ('2', 'Albania', 'ALB', 'AL', '0', '0', '0', '1'),
+       ('3', 'Algeria', 'DZA', 'DZ', '0', '0', '0', '1'),
+       ('4', 'American Samoa', 'ASM', 'AS', '0', '0', '0', '1'),
+       ('5', 'Andorra', 'AND', 'AD', '0', '0', '0', '1'),
+       ('6', 'Angola', 'AGO', 'AO', '0', '0', '0', '1'),
+       ('7', 'Anguilla', 'AIA', 'AI', '0', '0', '0', '1'),
+       ('8', 'Antarctica', 'ATA', 'AQ', '0', '0', '0', '1'),
+       ('9', 'Antigua and Barbuda', 'ATG', 'AG', '0', '0', '0', '1'),
+       ('10', 'Argentina', 'ARG', 'AR', '0', '0', '0', '1'),
+       ('11', 'Armenia', 'ARM', 'AM', '0', '0', '0', '1'),
+       ('12', 'Aruba', 'ABW', 'AW', '0', '0', '0', '1'),
+       ('13', 'Australia', 'AUS', 'AU', '0', '0', '0', '1'),
+       ('14', 'Austria', 'AUT', 'AT', '1', '20', '0', '1'),
+       ('16', 'Bahamas', 'BHS', 'BS', '0', '0', '0', '1'),
+       ('17', 'Bahrain', 'BHR', 'BH', '0', '0', '0', '1'),
+       ('18', 'Bangladesh', 'BGD', 'BD', '0', '0', '0', '1'),
+       ('19', 'Barbados', 'BRB', 'BB', '0', '0', '0', '1'),
+       ('20', 'Belarus', 'BLR', 'BY', '0', '0', '0', '1'),
+       ('21', 'Belgium', 'BEL', 'BE', '1', '21', '0', '1'),
+       ('22', 'Belize', 'BLZ', 'BZ', '0', '0', '0', '1'),
+       ('23', 'Benin', 'BEN', 'BJ', '0', '0', '0', '1'),
+       ('24', 'Bermuda', 'BMU', 'BM', '0', '0', '0', '1'),
+       ('25', 'Bhutan', 'BTN', 'BT', '0', '0', '0', '1'),
+       ('26', 'Bolivia', 'BOL', 'BO', '0', '0', '0', '1'),
+       ('27', 'Bosnia and Herzegowina', 'BIH', 'BA', '0', '0', '0', '1'),
+       ('28', 'Botswana', 'BWA', 'BW', '0', '0', '0', '1'),
+       ('29', 'Bouvet Island', 'BVT', 'BV', '0', '0', '0', '1'),
+       ('30', 'Brazil', 'BRA', 'BR', '0', '0', '0', '1'),
+       ('31', 'British Indian Ocean Territory', 'IOT', 'IO', '0', '0', '0', '1'),
+       ('32', 'Brunei Darussalam', 'BRN', 'BN', '0', '0', '0', '1'),
+       ('33', 'Bulgaria', 'BGR', 'BG', '1', '20', '0', '1'),
+       ('34', 'Burkina Faso', 'BFA', 'BF', '0', '0', '0', '1'),
+       ('35', 'Burundi', 'BDI', 'BI', '0', '0', '0', '1'),
+       ('36', 'Cambodia', 'KHM', 'KH', '0', '0', '0', '1'),
+       ('37', 'Cameroon', 'CMR', 'CM', '0', '0', '0', '1'),
+       ('38', 'Canada', 'CAN', 'CA', '0', '0', '0', '1'),
+       ('39', 'Cape Verde', 'CPV', 'CV', '0', '0', '0', '1'),
+       ('40', 'Cayman Islands', 'CYM', 'KY', '0', '0', '0', '1'),
+       ('41', 'Central African Republic', 'CAF', 'CF', '0', '0', '0', '1'),
+       ('42', 'Chad', 'TCD', 'TD', '0', '0', '0', '1'),
+       ('43', 'Chile', 'CHL', 'CL', '0', '0', '0', '1'),
+       ('44', 'China', 'CHN', 'CN', '0', '0', '0', '1'),
+       ('45', 'Christmas Island', 'CXR', 'CX', '0', '0', '0', '1'),
+       ('46', 'Cocos (Keeling) Islands', 'CCK', 'CC', '0', '0', '0', '1'),
+       ('47', 'Colombia', 'COL', 'CO', '0', '0', '0', '1'),
+       ('48', 'Comoros', 'COM', 'KM', '0', '0', '0', '1'),
+       ('49', 'Congo', 'COG', 'CG', '0', '0', '0', '1'),
+       ('50', 'Cook Islands', 'COK', 'CK', '0', '0', '0', '1'),
+       ('51', 'Costa Rica', 'CRI', 'CR', '0', '0', '0', '1'),
+       ('52', 'Cote DIvoire', 'CIV', 'CI', '0', '0', '0', '1'),
+       ('53', 'Croatia', 'HRV', 'HR', '1', '25', '0', '1'),
+       ('54', 'Cuba', 'CUB', 'CU', '0', '0', '0', '1'),
+       ('55', 'Cyprus', 'CYP', 'CY', '1', '19', '0', '1'),
+       ('56', 'Czech Republic', 'CZE', 'CZ', '1', '21', '0', '1'),
+       ('57', 'Denmark', 'DNK', 'DK', '1', '25', '0', '1'),
+       ('58', 'Djibouti', 'DJI', 'DJ', '0', '0', '0', '1'),
+       ('59', 'Dominica', 'DMA', 'DM', '0', '0', '0', '1'),
+       ('60', 'Dominican Republic', 'DOM', 'DO', '0', '0', '0', '1'),
+       ('61', 'East Timor', 'TMP', 'TP', '0', '0', '0', '1'),
+       ('62', 'Ecuador', 'ECU', 'EC', '0', '0', '0', '1'),
+       ('63', 'Egypt', 'EGY', 'EG', '0', '0', '0', '1'),
+       ('64', 'El Salvador', 'SLV', 'SV', '0', '0', '0', '1'),
+       ('65', 'Equatorial Guinea', 'GNQ', 'GQ', '0', '0', '0', '1'),
+       ('66', 'Eritrea', 'ERI', 'ER', '0', '0', '0', '1'),
+       ('67', 'Estonia', 'EST', 'EE', '1', '20', '0', '1'),
+       ('68', 'Ethiopia', 'ETH', 'ET', '0', '0', '0', '1'),
+       ('69', 'Falkland Islands (Malvinas)', 'FLK', 'FK', '0', '0', '0', '1'),
+       ('70', 'Faroe Islands', 'FRO', 'FO', '0', '0', '0', '1'),
+       ('71', 'Fiji', 'FJI', 'FJ', '0', '0', '0', '1'),
+       ('72', 'Finland', 'FIN', 'FI', '1', '24', '0', '1'),
+       ('73', 'France', 'FRA', 'FR', '1', '20', '0', '1'),
+       ('74', 'France, Metropolitan', 'FXX', 'FX', '0', '0', '0', '1'),
+       ('75', 'French Guiana', 'GUF', 'GF', '0', '0', '0', '1'),
+       ('76', 'French Polynesia', 'PYF', 'PF', '0', '0', '0', '1'),
+       ('77', 'French Southern Territories', 'ATF', 'TF', '0', '0', '0', '1'),
+       ('78', 'Gabon', 'GAB', 'GA', '0', '0', '0', '1'),
+       ('79', 'Gambia', 'GMB', 'GM', '0', '0', '0', '1'),
+       ('80', 'Georgia', 'GEO', 'GE', '0', '0', '0', '1'),
+       ('81', 'Germany', 'DEU', 'DE', '1', '19', '0', '1'),
+       ('82', 'Ghana', 'GHA', 'GH', '0', '0', '0', '1'),
+       ('83', 'Gibraltar', 'GIB', 'GI', '0', '0', '0', '1'),
+       ('84', 'Greece', 'GRC', 'EL', '1', '23', '0', '1'),
+       ('85', 'Greenland', 'GRL', 'GL', '0', '0', '0', '1'),
+       ('86', 'Grenada', 'GRD', 'GD', '0', '0', '0', '1'),
+       ('87', 'Guadeloupe', 'GLP', 'GP', '0', '0', '0', '1'),
+       ('88', 'Guam', 'GUM', 'GU', '0', '0', '0', '1'),
+       ('89', 'Guatemala', 'GTM', 'GT', '0', '0', '0', '1'),
+       ('90', 'Guinea', 'GIN', 'GN', '0', '0', '0', '1'),
+       ('91', 'Guinea-bissau', 'GNB', 'GW', '0', '0', '0', '1'),
+       ('93', 'Haiti', 'HTI', 'HT', '0', '0', '0', '1'),
+       ('94', 'Heard and Mc Donald Islands', 'HMD', 'HM', '0', '0', '0', '1'),
+       ('95', 'Honduras', 'HND', 'HN', '0', '0', '0', '1'),
+       ('96', 'Hong Kong', 'HKG', 'HK', '0', '0', '0', '1'),
+       ('97', 'Hungary', 'HUN', 'HU', '1', '27', '0', '1'),
+       ('98', 'Iceland', 'ISL', 'IS', '0', '0', '0', '1'),
+       ('99', 'India', 'IND', 'IN', '0', '0', '0', '1'),
+       ('100', 'Indonesia', 'IDN', 'ID', '0', '0', '0', '1'),
+       ('101', 'Iran (Islamic Republic of)', 'IRN', 'IR', '0', '0', '0', '1'),
+       ('102', 'Iraq', 'IRQ', 'IQ', '0', '0', '0', '1'),
+       ('103', 'Ireland', 'IRL', 'IE', '1', '23', '0', '1'),
+       ('104', 'Israel', 'ISR', 'IL', '0', '0', '0', '1'),
+       ('105', 'Italy', 'ITA', 'IT', '1', '22', '0', '1'),
+       ('106', 'Jamaica', 'JAM', 'JM', '0', '0', '0', '1'),
+       ('107', 'Japan', 'JPN', 'JP', '0', '0', '0', '1'),
+       ('108', 'Jordan', 'JOR', 'JO', '0', '0', '0', '1'),
+       ('109', 'Kazakhstan', 'KAZ', 'KZ', '0', '0', '0', '1'),
+       ('110', 'Kenya', 'KEN', 'KE', '0', '0', '0', '1'),
+       ('111', 'Kiribati', 'KIR', 'KI', '0', '0', '0', '1'),
+       ('112', 'Korea, Democratic Peoples Republic of', 'PRK', 'KP', '0', '0', '0', '1'),
+       ('113', 'Korea, Republic of', 'KOR', 'KR', '0', '0', '0', '1'),
+       ('114', 'Kuwait', 'KWT', 'KW', '0', '0', '0', '1'),
+       ('115', 'Kyrgyzstan', 'KGZ', 'KG', '0', '0', '0', '1'),
+       ('116', 'Lao Peoples Democratic Republic', 'LAO', 'LA', '0', '0', '0', '1'),
+       ('117', 'Latvia', 'LVA', 'LV', '1', '21', '0', '1'),
+       ('118', 'Lebanon', 'LBN', 'LB', '0', '0', '0', '1'),
+       ('119', 'Lesotho', 'LSO', 'LS', '0', '0', '0', '1'),
+       ('120', 'Liberia', 'LBR', 'LR', '0', '0', '0', '1'),
+       ('121', 'Libyan Arab Jamahiriya', 'LBY', 'LY', '0', '0', '0', '1'),
+       ('122', 'Liechtenstein', 'LIE', 'LI', '0', '0', '0', '1'),
+       ('123', 'Lithuania', 'LTU', 'LT', '1', '21', '0', '1'),
+       ('124', 'Luxembourg', 'LUX', 'LU', '1', '17', '0', '1'),
+       ('125', 'Macau', 'MAC', 'MO', '0', '0', '0', '1'),
+       ('126', 'Macedonia, The Former Yugoslav Republic of', 'MKD', 'MK', '0', '0', '0', '1'),
+       ('127', 'Madagascar', 'MDG', 'MG', '0', '0', '0', '1'),
+       ('128', 'Malawi', 'MWI', 'MW', '0', '0', '0', '1'),
+       ('129', 'Malaysia', 'MYS', 'MY', '0', '0', '0', '1'),
+       ('130', 'Maldives', 'MDV', 'MV', '0', '0', '0', '1'),
+       ('131', 'Mali', 'MLI', 'ML', '0', '0', '0', '1'),
+       ('132', 'Malta', 'MLT', 'MT', '1', '18', '0', '1'),
+       ('133', 'Marshall Islands', 'MHL', 'MH', '0', '0', '0', '1'),
+       ('134', 'Martinique', 'MTQ', 'MQ', '0', '0', '0', '1'),
+       ('135', 'Mauritania', 'MRT', 'MR', '0', '0', '0', '1'),
+       ('136', 'Mauritius', 'MUS', 'MU', '0', '0', '0', '1'),
+       ('137', 'Mayotte', 'MYT', 'YT', '0', '0', '0', '1'),
+       ('138', 'Mexico', 'MEX', 'MX', '0', '0', '0', '1'),
+       ('139', 'Micronesia, Federated States of', 'FSM', 'FM', '0', '0', '0', '1'),
+       ('140', 'Moldova, Republic of', 'MDA', 'MD', '0', '0', '0', '1'),
+       ('141', 'Monaco', 'MCO', 'MC', '0', '0', '0', '1'),
+       ('142', 'Mongolia', 'MNG', 'MN', '0', '0', '0', '1'),
+       ('143', 'Montserrat', 'MSR', 'MS', '0', '0', '0', '1'),
+       ('144', 'Morocco', 'MAR', 'MA', '0', '0', '0', '1'),
+       ('145', 'Mozambique', 'MOZ', 'MZ', '0', '0', '0', '1'),
+       ('146', 'Myanmar', 'MMR', 'MM', '0', '0', '0', '1'),
+       ('147', 'Namibia', 'NAM', 'NA', '0', '0', '0', '1'),
+       ('148', 'Nauru', 'NRU', 'NR', '0', '0', '0', '1'),
+       ('149', 'Nepal', 'NPL', 'NP', '0', '0', '0', '1'),
+       ('150', 'Netherlands', 'NLD', 'NL', '1', '21', '0', '1'),
+       ('151', 'Netherlands Antilles', 'ANT', 'AN', '0', '0', '0', '1'),
+       ('152', 'New Caledonia', 'NCL', 'NC', '0', '0', '0', '1'),
+       ('153', 'New Zealand', 'NZL', 'NZ', '0', '0', '0', '1'),
+       ('154', 'Nicaragua', 'NIC', 'NI', '0', '0', '0', '1'),
+       ('155', 'Niger', 'NER', 'NE', '0', '0', '0', '1'),
+       ('156', 'Nigeria', 'NGA', 'NG', '0', '0', '0', '1'),
+       ('157', 'Niue', 'NIU', 'NU', '0', '0', '0', '1'),
+       ('158', 'Norfolk Island', 'NFK', 'NF', '0', '0', '0', '1'),
+       ('159', 'Northern Mariana Islands', 'MNP', 'MP', '0', '0', '0', '1'),
+       ('160', 'Norway', 'NOR', 'NO', '0', '0', '0', '1'),
+       ('161', 'Oman', 'OMN', 'OM', '0', '0', '0', '1'),
+       ('162', 'Pakistan', 'PAK', 'PK', '0', '0', '0', '1'),
+       ('163', 'Palau', 'PLW', 'PW', '0', '0', '0', '1'),
+       ('164', 'Panama', 'PAN', 'PA', '0', '0', '0', '1'),
+       ('165', 'Papua New Guinea', 'PNG', 'PG', '0', '0', '0', '1'),
+       ('166', 'Paraguay', 'PRY', 'PY', '0', '0', '0', '1'),
+       ('167', 'Peru', 'PER', 'PE', '0', '0', '0', '1'),
+       ('168', 'Philippines', 'PHL', 'PH', '0', '0', '0', '1'),
+       ('169', 'Pitcairn', 'PCN', 'PN', '0', '0', '0', '1'),
+       ('170', 'Poland', 'POL', 'PL', '1', '23', '0', '1'),
+       ('171', 'Portugal', 'PRT', 'PT', '1', '23', '0', '1'),
+       ('172', 'Puerto Rico', 'PRI', 'PR', '0', '0', '0', '1'),
+       ('173', 'Qatar', 'QAT', 'QA', '0', '0', '0', '1'),
+       ('174', 'Reunion', 'REU', 'RE', '0', '0', '0', '1'),
+       ('175', 'Romania', 'ROM', 'RO', '1', '20', '0', '1'),
+       ('176', 'Russian Federation', 'RUS', 'RU', '0', '0', '0', '1'),
+       ('177', 'Rwanda', 'RWA', 'RW', '0', '0', '0', '1'),
+       ('178', 'Saint Kitts and Nevis', 'KNA', 'KN', '0', '0', '0', '1'),
+       ('179', 'Saint Lucia', 'LCA', 'LC', '0', '0', '0', '1'),
+       ('180', 'Saint Vincent and the Grenadines', 'VCT', 'VC', '0', '0', '0', '1'),
+       ('181', 'Samoa', 'WSM', 'WS', '0', '0', '0', '1'),
+       ('182', 'San Marino', 'SMR', 'SM', '0', '0', '0', '1'),
+       ('183', 'Sao Tome and Principe', 'STP', 'ST', '0', '0', '0', '1'),
+       ('184', 'Saudi Arabia', 'SAU', 'SA', '0', '0', '0', '1'),
+       ('185', 'Senegal', 'SEN', 'SN', '0', '0', '0', '1'),
+       ('186', 'Seychelles', 'SYC', 'SC', '0', '0', '0', '1'),
+       ('187', 'Sierra Leone', 'SLE', 'SL', '0', '0', '0', '1'),
+       ('188', 'Singapore', 'SGP', 'SG', '0', '0', '0', '1'),
+       ('189', 'Slovakia (Slovak Republic)', 'SVK', 'SK', '1', '20', '0', '1'),
+       ('190', 'Slovenia', 'SVN', 'SI', '1', '22', '0', '1'),
+       ('191', 'Solomon Islands', 'SLB', 'SB', '0', '0', '0', '1'),
+       ('192', 'Somalia', 'SOM', 'SO', '0', '0', '0', '1'),
+       ('193', 'South Africa', 'ZAF', 'ZA', '0', '0', '0', '1'),
+       ('194', 'South Georgia and the South Sandwich Islands', 'SGS', 'GS', '0', '0', '0', '1'),
+       ('195', 'Spain', 'ESP', 'ES', '1', '21', '0', '1'),
+       ('196', 'Sri Lanka', 'LKA', 'LK', '0', '0', '0', '1'),
+       ('197', 'St. Helena', 'SHN', 'SH', '0', '0', '0', '1'),
+       ('198', 'St. Pierre and Miquelon', 'SPM', 'PM', '0', '0', '0', '1'),
+       ('199', 'Sudan', 'SDN', 'SD', '0', '0', '0', '1'),
+       ('200', 'Suriname', 'SUR', 'SR', '0', '0', '0', '1'),
+       ('201', 'Svalbard and Jan Mayen Islands', 'SJM', 'SJ', '0', '0', '0', '1'),
+       ('202', 'Swaziland', 'SWZ', 'SZ', '0', '0', '0', '1'),
+       ('203', 'Sweden', 'SWE', 'SE', '1', '25', '0', '1'),
+       ('204', 'Switzerland', 'CHE', 'CH', '0', '0', '0', '1'),
+       ('205', 'Syrian Arab Republic', 'SYR', 'SY', '0', '0', '0', '1'),
+       ('206', 'Taiwan', 'TWN', 'TW', '0', '0', '0', '1'),
+       ('207', 'Tajikistan', 'TJK', 'TJ', '0', '0', '0', '1'),
+       ('208', 'Tanzania, United Republic of', 'TZA', 'TZ', '0', '0', '0', '1'),
+       ('209', 'Thailand', 'THA', 'TH', '0', '0', '0', '1'),
+       ('210', 'Togo', 'TGO', 'TG', '0', '0', '0', '1'),
+       ('211', 'Tokelau', 'TKL', 'TK', '0', '0', '0', '1'),
+       ('212', 'Tonga', 'TON', 'TO', '0', '0', '0', '1'),
+       ('213', 'Trinidad and Tobago', 'TTO', 'TT', '0', '0', '0', '1'),
+       ('214', 'Tunisia', 'TUN', 'TN', '0', '0', '0', '1'),
+       ('215', 'Turkey', 'TUR', 'TR', '0', '0', '0', '1'),
+       ('216', 'Turkmenistan', 'TKM', 'TM', '0', '0', '0', '1'),
+       ('217', 'Turks and Caicos Islands', 'TCA', 'TC', '0', '0', '0', '1'),
+       ('218', 'Tuvalu', 'TUV', 'TV', '0', '0', '0', '1'),
+       ('219', 'Uganda', 'UGA', 'UG', '0', '0', '0', '1'),
+       ('220', 'Ukraine', 'UKR', 'UA', '0', '0', '0', '1'),
+       ('221', 'United Arab Emirates', 'ARE', 'AE', '0', '0', '0', '1'),
+       ('222', 'United Kingdom', 'GBR', 'GB', '1', '20', '0', '1'),
+       ('223', 'United States', 'USA', 'US', '0', '0', '0', '1'),
+       ('224', 'United States Minor Outlying Islands', 'UMI', 'UM', '0', '0', '0', '1'),
+       ('225', 'Uruguay', 'URY', 'UY', '0', '0', '0', '1'),
+       ('226', 'Uzbekistan', 'UZB', 'UZ', '0', '0', '0', '1'),
+       ('227', 'Vanuatu', 'VUT', 'VU', '0', '0', '0', '1'),
+       ('228', 'Vatican City State (Holy See)', 'VAT', 'VA', '0', '0', '0', '1'),
+       ('229', 'Venezuela', 'VEN', 'VE', '0', '0', '0', '1'),
+       ('230', 'Viet Nam', 'VNM', 'VN', '0', '0', '0', '1'),
+       ('231', 'Virgin Islands (British)', 'VGB', 'VG', '0', '0', '0', '1'),
+       ('232', 'Virgin Islands (U.S.)', 'VIR', 'VI', '0', '0', '0', '1'),
+       ('233', 'Wallis and Futuna Islands', 'WLF', 'WF', '0', '0', '0', '1'),
+       ('234', 'Western Sahara', 'ESH', 'EH', '0', '0', '0', '1'),
+       ('235', 'Yemen', 'YEM', 'YE', '0', '0', '0', '1'),
+       ('236', 'Serbia', 'SRB', 'RS', '0', '0', '0', '1'),
+       ('237', 'The Democratic Republic of Congo', 'DRC', 'DC', '0', '0', '0', '1'),
+       ('238', 'Zambia', 'ZMB', 'ZM', '0', '0', '0', '1'),
+       ('239', 'Zimbabwe', 'ZWE', 'ZW', '0', '0', '0', '1'),
+       ('240', 'East Timor', 'XET', 'XE', '0', '0', '0', '1'),
+       ('241', 'Jersey', 'XJE', 'XJ', '0', '0', '0', '1'),
+       ('242', 'St. Barthelemy', 'XSB', 'XB', '0', '0', '0', '1'),
+       ('243', 'St. Eustatius', 'XSE', 'XU', '0', '0', '0', '1'),
+       ('244', 'Canary Islands', 'XCA', 'XC', '0', '0', '0', '1'),
+       ('245', 'Montenegro', 'MNE', 'ME', '0', '0', '0', '1');
 
 
 INSERT INTO `#__protostore_currency` (`id`, `name`, `currencysymbol`, `iso`, `rate`, `default`, `published`)
@@ -819,8 +840,6 @@ VALUES ('0', 'Rupees', '₹', 'INR', '', '0', '0'),
        ('0', 'Rials', '﷼', 'YER', '', '0', '0'),
        ('0', 'Zimbabwe Dollars', 'Z$', 'ZWD', '', '0', '0'),
        ('0', 'Rupees', '₹', 'INR', '', '0', '0');
-
-
 
 INSERT INTO `#__protostore_zone` (`id`, `country_id`, `zone_name`, `zone_isocode`, `taxrate`, `published`)
 VALUES ('0', '73', 'Guadeloupe', 'GLP', '0', '0'),

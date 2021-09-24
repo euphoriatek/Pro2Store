@@ -113,7 +113,7 @@ class bootstrapWrapper
 		$doc->addScript("https://kit.fontawesome.com/6afbbf2d93.js");
 
 
-		$doc->addScript('/media/com_protostore/js/vue/bundle.min.js', array('type' => 'text/javascript'));
+		$doc->addScript('../media/com_protostore/js/vue/bundle.min.js', array('type' => 'text/javascript'));
 
 		$doc->addCustomTag('<script id="base_url" type="application/json">' . Uri::base() . '</script>');
 		$doc->addCustomTag(' <script id="currency" type="application/json">' . json_encode($this->vars['currency']) . '</script>');

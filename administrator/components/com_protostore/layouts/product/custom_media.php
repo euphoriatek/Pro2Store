@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Version;
+
 /**
  * Layout variables
  * -----------------
@@ -45,13 +47,15 @@ defined('_JEXEC') or die;
  * @var   string   $link            The link text
  */
 extract($displayData);
-
-// Load the modal behavior script.
-JHtml::_('behavior.modal');
+if (Version::MAJOR_VERSION === 3) {
+	// Load the modal behavior script.
+	JHtml::_('behavior.modal');
 
 // Include jQuery
-JHtml::_('jquery.framework');
-JHtml::_('script', 'media/mediafield-mootools.min.js', array('version' => 'auto', 'relative' => true, 'framework' => true));
+	JHtml::_('jquery.framework');
+	JHtml::_('script', 'media/mediafield-mootools.min.js', array('version' => 'auto', 'relative' => true, 'framework' => true));
+
+
 
 // Tooltip for INPUT showing whole image path
 $options = array(
@@ -59,7 +63,7 @@ $options = array(
 );
 
 JHtml::_('behavior.tooltip', '.hasTipImgpath', $options);
-
+}
 if (!empty($class))
 {
 	$class .= ' hasTipImgpath';

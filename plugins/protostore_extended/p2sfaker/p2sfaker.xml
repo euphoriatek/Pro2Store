@@ -19,5 +19,7 @@
     <files>
         <filename plugin="p2sfaker">p2sfaker.php</filename>
         <folder>vendor</folder>
+        <folder>views</folder>
+        <folder>forms</folder>
     </files>
 </extension>

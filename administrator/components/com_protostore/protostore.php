@@ -14,6 +14,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Access\Exception\NotAllowed;
+use Joomla\CMS\Version;
 
 HTMLHelper::_('behavior.keepalive');
 
@@ -36,7 +37,7 @@ if(\Protostore\Setup\SetupFactory::isSetup()) {
 
 ?>
 
-
+<?php if (Version::MAJOR_VERSION === 3) : ?>
 
 <script>
     // Remove Joomla admin headers and toolbars
@@ -54,7 +55,7 @@ if(\Protostore\Setup\SetupFactory::isSetup()) {
     // jQuery('link[rel=stylesheet][href*="isis/css/template"]').remove();
 </script>
 
-
+<?php endif; ?>
 
 
 

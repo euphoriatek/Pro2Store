@@ -134,12 +134,13 @@ class CurrencyFactory
 	 * @param $id
 	 *
 	 *
+	 * @return bool
 	 * @throws Exception
 	 * @since 1.5
 	 */
 
 
-	public static function setCurrency($id): void
+	public static function setCurrency($id): bool
 	{
 
 		Factory::getApplication()->input->cookie->set(
@@ -151,6 +152,7 @@ class CurrencyFactory
 			Factory::getApplication()->isSSLConnection()
 		);
 
+		return true;
 	}
 
 
@@ -468,17 +470,17 @@ class CurrencyFactory
 
 
 		//first set all items to 0
-		$query = $db->getQuery(true);
-		$fields = array($db->quoteName('default') . ' = 0');
+		$query      = $db->getQuery(true);
+		$fields     = array($db->quoteName('default') . ' = 0');
 		$conditions = array($db->quoteName('default') . ' = 1');
 		$query->update($db->quoteName('#__protostore_currency'))->set($fields)->where($conditions);
 		$db->setQuery($query);
 		$db->execute();
 
 
-		$object = new stdClass();
-		$object->id = $item['id'];
-		$object->default = 1;
+		$object            = new stdClass();
+		$object->id        = $item['id'];
+		$object->default   = 1;
 		$object->published = 1;
 
 		$result = $db->updateObject('#__protostore_currency', $object, 'id');

@@ -13,11 +13,13 @@ defined('_JEXEC') or die('Restricted access');
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Layout\LayoutHelper;
-use Joomla\CMS\Uri\Uri;
 
-HTMLHelper::_('behavior.keepalive');
-HTMLHelper::_('behavior.formvalidator');
+use Joomla\CMS\Version;
 
+if (Version::MAJOR_VERSION === 3){
+	HTMLHelper::_('behavior.keepalive');
+	HTMLHelper::_('behavior.formvalidator');
+}
 /** @var array $vars */
 /** @var Protostore\Product\Product $item */
 $item = $vars['item'];
