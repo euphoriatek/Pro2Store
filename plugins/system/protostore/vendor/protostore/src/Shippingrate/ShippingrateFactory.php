@@ -36,7 +36,7 @@ class ShippingrateFactory
 	 *
 	 * @return Shippingrate
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function get(int $id): ?Shippingrate
@@ -70,7 +70,7 @@ class ShippingrateFactory
 	 *
 	 * @return Shippingrate
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getZone(int $id): ?Shippingrate
@@ -109,7 +109,7 @@ class ShippingrateFactory
 	 *
 	 *
 	 * @return array
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getList(int $limit = 0, int $offset = 0, bool $publishedOnly = false, int $country_id = null, string $orderBy = 'published', string $orderDir = 'DESC'): ?array
@@ -172,7 +172,7 @@ class ShippingrateFactory
 	 *
 	 * @return array|null
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -239,7 +239,7 @@ class ShippingrateFactory
 	 * @return string
 	 *
 	 * @throws UnknownCurrencyException
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function intToFormat(int $int, string $currency = null): string
@@ -256,7 +256,7 @@ class ShippingrateFactory
 	 *
 	 * @return Shippingrate
 	 * @throws Exception
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -323,7 +323,7 @@ class ShippingrateFactory
 	 *
 	 * @return Shippingrate|bool
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -363,7 +363,7 @@ class ShippingrateFactory
 	 *
 	 *
 	 * @return bool
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -400,7 +400,7 @@ class ShippingrateFactory
 	 * @return BigDecimal
 	 *
 	 * @throws UnknownCurrencyException
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getFloat($price): BigDecimal
@@ -415,7 +415,7 @@ class ShippingrateFactory
 	 *
 	 * @return string
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getCountryName(int $country_id): string
@@ -430,7 +430,7 @@ class ShippingrateFactory
 	 *
 	 * @return string
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getZoneName(int $zone_id): string

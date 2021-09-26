@@ -35,7 +35,7 @@ class CustomerFactory
 	 *
 	 * @return Customer
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function get($id = null): ?Customer
@@ -145,7 +145,7 @@ class CustomerFactory
 	 *
 	 * @return bool
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -188,7 +188,7 @@ class CustomerFactory
 	 * @param $id  - customer id NOT Joomla user ID
 	 *
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -209,7 +209,7 @@ class CustomerFactory
 	 * @return int|mixed|string
 	 *
 	 * @throws UnknownCurrencyException
-	 * @since 1.6
+	 * @since 2.0
 	 *
 	 */
 
@@ -249,7 +249,7 @@ class CustomerFactory
 	 *
 	 * @return array
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getCustomerAddresses($cusomter_id): ?array
@@ -265,7 +265,7 @@ class CustomerFactory
 	 *
 	 * @return bool
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function delete(Input $data)

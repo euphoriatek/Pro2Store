@@ -23,7 +23,7 @@ use Joomla\CMS\Language\Text;
             <div class="uk-grid" uk-grid>
                 <div class="uk-width-expand"><h5>Variant Types</h5></div>
                 <div class="uk-width-auto">
-                    <a href="" class="uk-icon-button" uk-icon="info"></a>
+                    <button type="button" class="uk-icon-button" uk-icon="info"></button>
 
                 </div>
             </div>

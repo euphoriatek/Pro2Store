@@ -31,13 +31,13 @@ class bootstrap extends AdminModel
 
 	/**
 	 * @var array $vars
-	 * @since 1.6
+	 * @since 2.0
 	 */
 	public $vars;
 
 	/**
 	 * @var string $view
-	 * @since 1.6
+	 * @since 2.0
 	 */
 	public static $view = 'customer';
 
@@ -62,7 +62,7 @@ class bootstrap extends AdminModel
 	 *
 	 * @return void
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	private function init($id)
@@ -95,7 +95,7 @@ class bootstrap extends AdminModel
 	 *
 	 * @return false|Customer
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public function getTheItem($id)
@@ -133,7 +133,7 @@ class bootstrap extends AdminModel
 	 *
 	 * @return void
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	private function addScripts()
@@ -188,7 +188,7 @@ class bootstrap extends AdminModel
 	 *
 	 * @return void
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	private function addStylesheets()

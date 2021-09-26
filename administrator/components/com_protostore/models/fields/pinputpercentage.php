@@ -15,7 +15,7 @@ use Joomla\CMS\Form\FormField;
 /**
  * Clicks field.
  *
- * @since  1.6
+ * @since 2.0
  */
 class JFormFieldPinputpercentage extends FormField
 {
@@ -23,7 +23,7 @@ class JFormFieldPinputpercentage extends FormField
 	 * The form field type.
 	 *
 	 * @var    string
-	 * @since  1.6
+	 * @since 2.0
 	 */
 	protected $type = 'pinputpercentage';
 
@@ -37,7 +37,7 @@ class JFormFieldPinputpercentage extends FormField
 	 *
 	 * @return  string    The field input markup.
 	 *
-	 * @since   1.6
+	 * @since 2.0
 	 */
 	protected function getInput()
 	{

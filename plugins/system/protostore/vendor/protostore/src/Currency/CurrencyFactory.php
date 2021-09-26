@@ -338,7 +338,7 @@ class CurrencyFactory
 	 *
 	 * @throws UnknownCurrencyException
 	 * @throws Exception
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function toFloat(int $number, string $currencyISO = null): BigDecimal
@@ -375,7 +375,7 @@ class CurrencyFactory
 	 * @return int
 	 *
 	 * @throws Exception
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -415,7 +415,7 @@ class CurrencyFactory
 	 *
 	 *
 	 * @return bool
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function togglePublishedFromInputData(Input $data): bool
@@ -451,7 +451,7 @@ class CurrencyFactory
 	 *
 	 *
 	 * @return bool
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function toggleDefaultFromInputData(Input $data): bool

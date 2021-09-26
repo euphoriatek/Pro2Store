@@ -20,7 +20,7 @@ class PlgContentProtostore_shortcodes extends JPlugin
 
 	/**
 	 * @var $order Order
-	 * @since 1.6
+	 * @since 2.0
 	 */
 	private $order;
 
@@ -36,7 +36,7 @@ class PlgContentProtostore_shortcodes extends JPlugin
 	 * @return  mixed   true if there is an error. Void otherwise.
 	 *
 	 * @throws Exception
-	 * @since   1.6
+	 * @since 2.0
 	 */
 	public function onContentPrepare($context, &$article, &$params, $page = 0)
 	{
@@ -91,7 +91,7 @@ class PlgContentProtostore_shortcodes extends JPlugin
 
 	/**
 	 * @throws Exception
-	 * @since 1.6
+	 * @since 2.0
 	 */
 	private function getOrder(): ?Order
 	{

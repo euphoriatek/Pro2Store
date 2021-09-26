@@ -34,7 +34,7 @@ class AddressFactory
 	 *
 	 * @return Address
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function get($id): ?Address
@@ -70,7 +70,7 @@ class AddressFactory
 	 *
 	 * @return string
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getAsCSVFromId($id): string
@@ -108,7 +108,7 @@ class AddressFactory
 	 * @param   int|null     $countryId
 	 *
 	 * @return array|null
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getList(int $limit = 0, int $offset = 0, string $searchTerm = null, string $orderBy = 'name', string $orderDir = 'DESC', int $customerId = null, int $zoneId = null, int $countryId = null): ?array
@@ -184,7 +184,7 @@ class AddressFactory
 	 *
 	 * @return Address|bool
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -299,7 +299,7 @@ class AddressFactory
 	 *
 	 * @return string
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getZoneName($zone_id): string
@@ -325,7 +325,7 @@ class AddressFactory
 	 *
 	 * @return string
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -361,7 +361,7 @@ class AddressFactory
 	 *
 	 * @return Address|null
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -394,7 +394,7 @@ class AddressFactory
 	 *
 	 * @return Address|null
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getCurrentBillingAddress(): ?Address
@@ -456,7 +456,7 @@ class AddressFactory
 	 *
 	 * @return bool
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 

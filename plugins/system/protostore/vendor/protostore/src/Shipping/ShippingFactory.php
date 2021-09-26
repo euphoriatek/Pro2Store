@@ -39,7 +39,7 @@ class ShippingFactory
 	 * @return int
 	 *
 	 * @throws Exception
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getShipping(Cart $cart): int
@@ -72,7 +72,7 @@ class ShippingFactory
 	 *
 	 * @return string
 	 * @throws UnknownCurrencyException
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -109,7 +109,7 @@ class ShippingFactory
 	 *
 	 * @return int
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -174,7 +174,7 @@ class ShippingFactory
 	 *
 	 * @return int
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getItemFlatShipping(CartItem $cartitem): int
@@ -202,7 +202,7 @@ class ShippingFactory
 	 *
 	 * @return int
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -231,7 +231,7 @@ class ShippingFactory
 	 *
 	 * @return int
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 

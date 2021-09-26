@@ -22,7 +22,7 @@ interface AdminViewExtended
 	 *
 	 * @return Sidebarlink
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 	public function onGetSidebarLink(): Sidebarlink;
 

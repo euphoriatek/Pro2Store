@@ -43,8 +43,8 @@ CREATE TABLE `#__protostore_email`
     `language`    char(7)                   DEFAULT '*',
     `created_by`  int(10) unsigned NOT NULL DEFAULT '0',
     `modified_by` int(10) unsigned NOT NULL DEFAULT '0',
-    `created`     datetime                  NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `modified`    datetime                  NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `created`     datetime         NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `modified`    datetime         NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
 
 ) ENGINE = InnoDB
@@ -133,15 +133,15 @@ CREATE TABLE `#__protostore_cart_item`
 (
     `id`              int(11) unsigned NOT NULL AUTO_INCREMENT,
     `cart_id`         int(11)          NOT NULL,
-    `joomla_item_id`  int(11)  DEFAULT NULL,
-    `variant_id`      int(11)  DEFAULT NULL,
+    `joomla_item_id`  int(11)                   DEFAULT NULL,
+    `variant_id`      int(11)                   DEFAULT NULL,
     `item_options`    text,
-    `bought_at_price` int(11)  DEFAULT NULL,
-    `added`           datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `order_id`        int(11)  DEFAULT NULL,
-    `cookie_id`       int(11)  DEFAULT NULL,
-    `user_id`         int(11)  DEFAULT NULL,
-    `amount`          int(11)  DEFAULT NULL,
+    `bought_at_price` int(11)                   DEFAULT NULL,
+    `added`           datetime         NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `order_id`        int(11)                   DEFAULT NULL,
+    `cookie_id`       int(11)                   DEFAULT NULL,
+    `user_id`         int(11)                   DEFAULT NULL,
+    `amount`          int(11)                   DEFAULT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
@@ -304,10 +304,10 @@ CREATE TABLE `#__protostore_shipping_rate`
 CREATE TABLE `#__protostore_cart_addresses`
 (
     `id`         int(11) unsigned NOT NULL AUTO_INCREMENT,
-    `cookie_id`  varbinary(192) DEFAULT NULL,
-    `added`      datetime       NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `address_id` int(11)        DEFAULT NULL,
-    `type`       varchar(255)   DEFAULT NULL,
+    `cookie_id`  varbinary(192)            DEFAULT NULL,
+    `added`      datetime         NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `address_id` int(11)                   DEFAULT NULL,
+    `type`       varchar(255)              DEFAULT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
@@ -405,8 +405,7 @@ CREATE TABLE `#__protostore_customer_address`
     `phone`        varchar(64)  NOT NULL DEFAULT '',
     `email`        varchar(255) NOT NULL DEFAULT '',
     `mobile_phone` varchar(64)  NOT NULL DEFAULT '',
-    `created`      datetime     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    L,
+    `created`      datetime              DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
@@ -428,17 +427,17 @@ CREATE TABLE `#__protostore_zone_shipping_rate`
 
 CREATE TABLE `#__protostore_order_subscription`
 (
-    `id`                 int(11) NOT NULL AUTO_INCREMENT,
-    `order_id`           int(11) NOT NULL DEFAULT '0',
-    `j_item`             int(11)          DEFAULT NULL,
-    `j_item_cat`         int(11)          DEFAULT NULL,
-    `j_item_name`        varchar(255)     DEFAULT NULL,
+    `id`                 int(11)  NOT NULL AUTO_INCREMENT,
+    `order_id`           int(11)  NOT NULL DEFAULT '0',
+    `j_item`             int(11)           DEFAULT NULL,
+    `j_item_cat`         int(11)           DEFAULT NULL,
+    `j_item_name`        varchar(255)      DEFAULT NULL,
     `item_options`       text,
-    `price_at_sale`      int(11)          DEFAULT NULL,
-    `amount`             int(11)          DEFAULT NULL,
-    `start`              datetime         NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `end`                datetime         NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `subscription_title` varchar(255)     DEFAULT NULL,
+    `price_at_sale`      int(11)           DEFAULT NULL,
+    `amount`             int(11)           DEFAULT NULL,
+    `start`              datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `end`                datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `subscription_title` varchar(255)      DEFAULT NULL,
     `subscription_desc`  text,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB

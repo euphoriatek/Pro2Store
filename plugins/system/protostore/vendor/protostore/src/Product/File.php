@@ -52,7 +52,7 @@ class File
 	 * @param $data
 	 *
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	private function hydrate($data)
@@ -75,7 +75,7 @@ class File
 	 * @param $data
 	 *
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	private function init()

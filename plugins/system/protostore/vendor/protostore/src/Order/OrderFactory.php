@@ -52,7 +52,7 @@ class OrderFactory
 	 *
 	 * @return Order
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function get(int $id): ?Order
@@ -90,7 +90,7 @@ class OrderFactory
 	 * @param   string|null  $dateTo
 	 *
 	 * @return array
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getList(int $limit = 0, int $offset = 0, string $searchTerm = null, int $customerId = null, string $status = null, string $currency = null, string $dateFrom = null, string $dateTo = null): ?array
@@ -163,7 +163,7 @@ class OrderFactory
 	 *
 	 * @return array
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -213,7 +213,7 @@ class OrderFactory
 	 * @return Order|null
 	 *
 	 * @throws Exception
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -275,7 +275,7 @@ class OrderFactory
 	 *
 	 * @return array
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -319,7 +319,7 @@ class OrderFactory
 	 *
 	 * @return array
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getEmailLogs($order_id): ?array
@@ -336,7 +336,7 @@ class OrderFactory
 	 * @param   string  $note
 	 *
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function log(int $order_id, string $note)
@@ -359,7 +359,7 @@ class OrderFactory
 	 *
 	 * @return Address
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -379,7 +379,7 @@ class OrderFactory
 	 *
 	 * @return array
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -421,7 +421,7 @@ class OrderFactory
 	 * @param $note
 	 *
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function note($order_id, $note)
@@ -444,7 +444,7 @@ class OrderFactory
 	 * @param $note
 	 *
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function updateNote($note_id, $note)
@@ -467,7 +467,7 @@ class OrderFactory
 	 * @return string
 	 *
 	 * @throws UnknownCurrencyException
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function intToFormat(int $int, string $currency = null): string
@@ -487,7 +487,7 @@ class OrderFactory
 	 *
 	 * @return string
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -514,7 +514,7 @@ class OrderFactory
 	 *
 	 * @return User
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -530,7 +530,7 @@ class OrderFactory
 	 *
 	 * @return mixed|null
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -556,7 +556,7 @@ class OrderFactory
 	 *
 	 * @return string
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getAvatarAbb(string $name): string
@@ -578,7 +578,7 @@ class OrderFactory
 	 *
 	 * @return string
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -616,7 +616,7 @@ class OrderFactory
 	 *
 	 * @return mixed|null
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -642,7 +642,7 @@ class OrderFactory
 	 *
 	 * @return bool
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -677,7 +677,7 @@ class OrderFactory
 	 * @return bool
 	 *
 	 * @throws Exception
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -703,7 +703,7 @@ class OrderFactory
 	 * @return bool
 	 *
 	 * @throws Exception
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -744,7 +744,7 @@ class OrderFactory
 	 * @return bool
 	 *
 	 * @throws Exception
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function updateTracking(string $tracking_code, string $tracking_link, string $tracking_provider, int $order_id, bool $sendEmail): bool
@@ -790,7 +790,7 @@ class OrderFactory
 	 * @return bool
 	 *
 	 * @throws Exception
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -825,7 +825,7 @@ class OrderFactory
 	 *
 	 * @return bool
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function saveTracking(Order $order): bool
@@ -881,7 +881,7 @@ class OrderFactory
 	 * @return Order
 	 *
 	 * @throws Exception
-	 * @since 1.6
+	 * @since 2.0
 	 *
 	 *
 	 */
@@ -1067,7 +1067,7 @@ class OrderFactory
 	 *
 	 * @return array
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 

@@ -11,11 +11,11 @@
 defined('_JEXEC') or die('Restricted access');
 
 /**
- * Clicks field.
+ * Image field.
  *
- * @since 2.0
+ * @since  2.0
  */
-class JFormFieldNumber extends JFormField
+class JFormFieldImage extends JFormField
 {
 	/**
 	 * The form field type.
@@ -23,7 +23,7 @@ class JFormFieldNumber extends JFormField
 	 * @var    string
 	 * @since 2.0
 	 */
-	protected $type = 'Number';
+	protected $type = 'Image';
 
 	/**
 	 * Method to get the field input markup.
@@ -35,14 +35,11 @@ class JFormFieldNumber extends JFormField
 	protected function getInput()
 	{
 
-
 		$html = array();
 
-		$html[] = '<input class="input-small ' . $this->class . '" type="number" ';
-		$html[] = 'name="' . $this->name . '" ';
-		$html[] = 'v-model="form.' . $this->id . '" ';
-		$html[] = 'id="' . $this->id . '" ';
-		$html[] = ' />';
+
+		$html[] = '<p-inputnumber @input="getSellPrice()" mode="currency" :currency="p2s_currency.iso" :locale="p2s_locale" name="' . $this->name . '" v-model="form.' . $this->id . '" id="' . $this->id . '">';
+		$html[] = '</p-inputnumber> ';
 
 		return implode('', $html);
 

@@ -67,7 +67,7 @@ class TotalFactory
 	 * @param   Cart  $cart
 	 *
 	 * @return int
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
     public static function getSubTotal(Cart $cart) : int

@@ -49,7 +49,7 @@ class bootstrap
 	 *
 	 * @return array
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	private function init()
@@ -64,7 +64,7 @@ class bootstrap
 	 *
 	 * @return void
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public function setVars(): void
@@ -124,7 +124,7 @@ class bootstrap
 	/**
 	 *
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	private function addStylesheets()
@@ -134,7 +134,7 @@ class bootstrap
 	/**
 	 *
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 

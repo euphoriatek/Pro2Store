@@ -23,7 +23,7 @@ class Variant
 
 	/**
 	 * @var array $variants
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public $variants;
@@ -31,7 +31,7 @@ class Variant
 
 	/**
 	 * @var array $variantList
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public $variantList;
@@ -39,7 +39,7 @@ class Variant
 
 	/**
 	 * @var array $default
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public $default;
@@ -63,7 +63,7 @@ class Variant
 	 * @param $data
 	 *
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	private function hydrate($data)
@@ -85,7 +85,7 @@ class Variant
 	 *
 	 *
 	 * @throws Exception
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	private function init()

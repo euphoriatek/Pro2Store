@@ -30,7 +30,7 @@ class CountryFactory
 	 *
 	 * @return Country
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function get($id): ?Country
@@ -64,7 +64,7 @@ class CountryFactory
 	 *
 	 * @return Zone
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getZone($id): ?Zone
@@ -103,7 +103,7 @@ class CountryFactory
 	 *
 	 *
 	 * @return array
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getList(int $limit = 0, int $offset = 0, bool $publishedOnly = false, string $searchTerm = null, string $orderBy = 'published', string $orderDir = 'DESC'): ?array
@@ -169,7 +169,7 @@ class CountryFactory
 	 *
 	 * @return array
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getZoneList(int $limit = 0, int $offset = 0, bool $publishedOnly = false, string $searchTerm = null, int $country_id = null, string $orderBy = 'published', string $orderDir = 'DESC'): ?array
@@ -231,7 +231,7 @@ class CountryFactory
 	 *
 	 * @return Country|null
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getDefault(): ?Country
@@ -268,7 +268,7 @@ class CountryFactory
 	 *
 	 *
 	 * @return Country
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -319,7 +319,7 @@ class CountryFactory
 	 *
 	 * @return Country
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -353,7 +353,7 @@ class CountryFactory
 	 * @param   Country  $item
 	 *
 	 * @return bool
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -388,7 +388,7 @@ class CountryFactory
 	 *
 	 *
 	 * @return bool
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function togglePublishedFromInputData(Input $data): bool
@@ -425,7 +425,7 @@ class CountryFactory
 	 *
 	 *
 	 * @return bool
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function trashFromInputData(Input $data): bool
@@ -456,7 +456,7 @@ class CountryFactory
 	/**
 	 * @param   array|object  $item
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	private static function updateZoneList($item)

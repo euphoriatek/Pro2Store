@@ -45,7 +45,7 @@ class UserFactory
 	 * @return array
 	 *
 	 * @throws Exception
-	 * @since 1.6
+	 * @since 2.0
 	 */
 	public static function login(Input $data)
 	{
@@ -143,7 +143,7 @@ class UserFactory
 	 * @return array
 	 *
 	 * @throws Exception
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -327,7 +327,7 @@ class UserFactory
 	 *
 	 * @return bool
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 

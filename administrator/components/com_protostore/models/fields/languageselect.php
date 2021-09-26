@@ -16,7 +16,7 @@ defined('_JEXEC') or die('Restricted access');
 /**
  * Clicks field.
  *
- * @since  1.6
+ * @since 2.0
  */
 class JFormFieldLanguageselect extends JFormField
 {
@@ -24,7 +24,7 @@ class JFormFieldLanguageselect extends JFormField
 	 * The form field type.
 	 *
 	 * @var    string
-	 * @since  1.6
+	 * @since 2.0
 	 */
 	protected $type = 'Languageselect';
 
@@ -33,7 +33,7 @@ class JFormFieldLanguageselect extends JFormField
 	 *
 	 * @return  string    The field input markup.
 	 *
-	 * @since   1.6
+	 * @since 2.0
 	 */
 	protected function getInput()
 	{

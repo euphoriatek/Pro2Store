@@ -39,7 +39,7 @@ class CartFactory
 	 *
 	 * @return Cart
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function get(): Cart
@@ -85,7 +85,7 @@ class CartFactory
 	 *
 	 * @return Cart
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function init(): Cart
@@ -204,7 +204,7 @@ class CartFactory
 	 *
 	 * @return null|array
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -274,7 +274,7 @@ class CartFactory
 	 * @return null|array
 	 *
 	 * @throws UnknownCurrencyException
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -309,7 +309,7 @@ class CartFactory
 	 *
 	 * @return SelectedVariant|null
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -436,7 +436,7 @@ class CartFactory
 	 *
 	 * @return bool
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -470,7 +470,7 @@ class CartFactory
 	 *
 	 * @return bool
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -506,7 +506,7 @@ class CartFactory
 	 * @return null|array
 	 *
 	 * @throws UnknownCurrencyException
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function addToCart(int $itemid, int $amount, array $options = null, array $variant_ids = null): ?array
@@ -755,7 +755,7 @@ class CartFactory
 	 *
 	 * @return array
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 *
 	 *        todo - stock management
 	 */
@@ -866,7 +866,7 @@ class CartFactory
 	 *
 	 *
 	 * @return mixed|null
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	private static function getVariantRow(array $variant_ids)
@@ -895,7 +895,7 @@ class CartFactory
 	 * @return array
 	 *
 	 * @throws UnknownCurrencyException
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function addNonVariantToCart(Product $product, int $cart_id, int $amount, array $options = null): array
@@ -999,7 +999,7 @@ class CartFactory
 	 *
 	 * @return CartItem|null
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -1050,7 +1050,7 @@ class CartFactory
 	 *
 	 * @return int
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -1119,7 +1119,7 @@ class CartFactory
 	 *
 	 * @return int|null
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -1177,7 +1177,7 @@ class CartFactory
 	 * @param   int  $cartItemId
 	 * @param   int  $newAmount
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	private static function updateExistingCartAmount(int $cartItemId, int $newAmount)
@@ -1203,7 +1203,7 @@ class CartFactory
 	 *
 	 * @return bool
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -1303,7 +1303,7 @@ class CartFactory
 	 * Called when guest user clicks "Start Over"
 	 *
 	 * @return bool
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function destroyCartAddress(): bool
@@ -1330,7 +1330,7 @@ class CartFactory
 	 *
 	 * @return bool
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -1362,7 +1362,7 @@ class CartFactory
 	 *
 	 * @return mixed|null
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -1457,7 +1457,7 @@ class CartFactory
 	 *
 	 * @return bool|void
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -1543,7 +1543,7 @@ class CartFactory
 	 * @param   Cart  $cart
 	 *
 	 * @return int
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getSubTotal(Cart $cart): int
@@ -1579,7 +1579,7 @@ class CartFactory
 	 *
 	 * @return int
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getGrandTotal(Cart $cart): int
@@ -1610,7 +1610,7 @@ class CartFactory
 	 *
 	 * @return bool
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -1642,7 +1642,7 @@ class CartFactory
 	 *
 	 * @return bool
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 

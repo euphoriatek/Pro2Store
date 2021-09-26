@@ -27,7 +27,7 @@ class plgAjaxProtostore_ajaxhelper extends JPlugin
 
 	/**
 	 * @throws Exception
-	 * @since 1.6
+	 * @since 2.0
 	 */
 	public function onAjaxProtostore_ajaxhelper()
 	{

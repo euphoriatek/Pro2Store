@@ -99,7 +99,7 @@ class bootstrapWrapper
 	/**
 	 * Function to add the scripts to the header
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -127,7 +127,7 @@ class bootstrapWrapper
 	 *
 	 * @return void
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 

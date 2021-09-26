@@ -34,7 +34,7 @@ class DiscountFactory
 	 *
 	 * @return Discount
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function get($id): ?Discount
@@ -124,7 +124,7 @@ class DiscountFactory
 	 *
 	 * @return string
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getDiscountTypeAsString(int $discount_type): string
@@ -153,7 +153,7 @@ class DiscountFactory
 	 *
 	 * @return string|void
 	 * @throws UnknownCurrencyException
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -175,7 +175,7 @@ class DiscountFactory
 	 *
 	 *
 	 * @return Discount
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -242,7 +242,7 @@ class DiscountFactory
 	 *
 	 * @return Discount|bool
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -282,7 +282,7 @@ class DiscountFactory
 	 *
 	 *
 	 * @return bool
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -321,7 +321,7 @@ class DiscountFactory
 	 *
 	 *
 	 * @return bool
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function trashFromInputData(Input $data): bool
@@ -354,7 +354,7 @@ class DiscountFactory
 	 *
 	 *
 	 * @return bool
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function togglePublishedFromInputData(Input $data): bool

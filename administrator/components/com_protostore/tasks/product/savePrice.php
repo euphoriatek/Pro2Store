@@ -22,7 +22,7 @@ class protostoreTask_savePrice
 	 *
 	 * @return bool
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 	public function getResponse(Input $data): bool
 	{

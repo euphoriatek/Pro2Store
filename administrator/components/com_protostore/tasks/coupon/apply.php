@@ -19,7 +19,7 @@ class protostoreTask_apply
 
 	/**
 	 * @throws Exception
-	 * @since 1.6
+	 * @since 2.0
 	 */
 	public function getResponse($data)
 	{

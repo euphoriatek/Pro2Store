@@ -23,7 +23,7 @@ class protostoreTask_calculatePrice
 
 	/**
 	 * @throws UnknownCurrencyException
-	 * @since 1.6
+	 * @since 2.0
 	 */
 	public function getResponse(Input $data): Price
 	{

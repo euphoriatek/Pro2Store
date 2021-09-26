@@ -65,7 +65,7 @@ class plgSystemProtostore_offlinepay extends CMSPlugin
 	 * @return Order
 	 *
 	 * @throws Exception
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public function onInitP2SPaymentOfflinepay()

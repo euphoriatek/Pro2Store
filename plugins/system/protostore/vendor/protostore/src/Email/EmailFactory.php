@@ -42,7 +42,7 @@ class EmailFactory
 	 *
 	 * @return Email
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function get(int $id): ?Email
@@ -85,7 +85,7 @@ class EmailFactory
 	 *
 	 *
 	 * @return array
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getList(int $limit = 0, int $offset = 0, string $searchTerm = null, string $type = null, string $language = '*', string $orderBy = 'id', string $orderDir = 'DESC'): ?array
@@ -150,7 +150,7 @@ class EmailFactory
 	 *
 	 * @return string
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function emailTypeToString($emailType): string
@@ -181,7 +181,7 @@ class EmailFactory
 	 *
 	 * @return string
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getLanguageImageString(string $language): string
@@ -196,7 +196,7 @@ class EmailFactory
 	 * @param   Input  $data
 	 *
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function togglePublishedFromInputData(Input $data)
@@ -224,7 +224,7 @@ class EmailFactory
 	 *
 	 *
 	 * @return Email
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -272,7 +272,7 @@ class EmailFactory
 	 *
 	 *
 	 * @return bool
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -310,7 +310,7 @@ class EmailFactory
 	 *
 	 * @return Email|bool
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -350,7 +350,7 @@ class EmailFactory
 	 *
 	 *
 	 * @return bool
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function trashFromInputData(Input $data): bool
@@ -388,7 +388,7 @@ class EmailFactory
 	 * @return void
 	 *
 	 * @throws \Exception
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -483,7 +483,7 @@ class EmailFactory
 	 *
 	 * @return string
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 

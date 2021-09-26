@@ -31,13 +31,13 @@ class bootstrap extends AdminModel
 	 * @var array $vars
 
 
-	 * @since 1.6
+	 * @since 2.0
 	 */
 	public $vars;
 
 	/**
 	 * @var string $view
-	 * @since 1.6
+	 * @since 2.0
 	 */
 	public static $view = 'order';
 

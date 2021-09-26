@@ -30,13 +30,13 @@ class bootstrap implements listView
 	 * @var array $vars
 
 
-	 * @since 1.6
+	 * @since 2.0
 	 */
 	public $vars;
 
 	/**
 	 * @var string $view
-	 * @since 1.6
+	 * @since 2.0
 	 */
 	public static $view = 'shippingrateszone';
 
@@ -56,7 +56,7 @@ class bootstrap implements listView
 	 *
 	 * @return array
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public function init(): void
@@ -68,7 +68,7 @@ class bootstrap implements listView
 	 *
 	 * @return array
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public function getItems(): ?array

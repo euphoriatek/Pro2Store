@@ -30,7 +30,7 @@ class Productoption
 
 	/**
 	 * @throws \Brick\Money\Exception\UnknownCurrencyException
-	 * @since 1.6
+	 * @since 2.0
 	 */
 	public function __construct($data)
 	{
@@ -50,7 +50,7 @@ class Productoption
 	 * @param $data
 	 *
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	private function hydrate($data)
@@ -71,7 +71,7 @@ class Productoption
 	 * Function to "hydrate" all non-database values.
 	 *
 	 * @throws \Brick\Money\Exception\UnknownCurrencyException
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	private function init()

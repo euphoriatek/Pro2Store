@@ -24,7 +24,7 @@ class protostoreTask_save
 	 * @return Product|null
 	 *
 	 * @throws Exception
-	 * @since 1.6
+	 * @since 2.0
 	 */
 	public function getResponse(Input $data): ?Product
 	{

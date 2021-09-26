@@ -50,7 +50,7 @@ class Email
 	 * @param $data
 	 *
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	private function hydrate($data)
@@ -70,7 +70,7 @@ class Email
 	 *
 	 * Function to "hydrate" all non-database values.
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	private function init()

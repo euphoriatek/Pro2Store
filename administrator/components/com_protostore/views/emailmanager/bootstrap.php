@@ -23,7 +23,7 @@ use Protostore\Utilities\Utilities;
 
 /**
  *
- * @since 1.6
+ * @since 2.0
  */
 class bootstrap implements listView
 {
@@ -46,7 +46,7 @@ class bootstrap implements listView
 	 *
 	 * @return void
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public function init(): void
@@ -58,7 +58,7 @@ class bootstrap implements listView
 	 *
 	 * @return void
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public function setVars(): void
@@ -75,7 +75,7 @@ class bootstrap implements listView
 	 *
 	 * @return array
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public function getItems(): ?array
@@ -89,7 +89,7 @@ class bootstrap implements listView
 	/**
 	 *
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public function addScripts(): void
@@ -115,7 +115,7 @@ class bootstrap implements listView
 	 *
 	 *
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -132,7 +132,7 @@ class bootstrap implements listView
 	/**
 	 *
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public function addStylesheets(): void

@@ -42,7 +42,7 @@ class Currency
 	 * @param $data
 	 *
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	private function hydrate($data)

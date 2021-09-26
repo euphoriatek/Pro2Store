@@ -48,7 +48,7 @@ class bootstrap extends AdminModel
 	 *
 	 * @return array
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	private function init($id)
@@ -77,7 +77,7 @@ class bootstrap extends AdminModel
 	 *
 	 * @return array|false
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public function getTheItem($id)
@@ -91,7 +91,7 @@ class bootstrap extends AdminModel
 	 *
 	 * @return bool|JForm
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public function getForm($data = array(), $loadData = true)
@@ -122,7 +122,7 @@ class bootstrap extends AdminModel
 	/**
 	 *
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	private function addScripts()

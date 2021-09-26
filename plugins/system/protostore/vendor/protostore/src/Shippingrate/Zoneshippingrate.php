@@ -51,7 +51,7 @@ class Zoneshippingrate
 	 * @param $data
 	 *
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	private function hydrate($data)
@@ -71,7 +71,7 @@ class Zoneshippingrate
 	 * Function to "hydrate" all non-database values.
 	 *
 	 * @throws UnknownCurrencyException
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	private function init()

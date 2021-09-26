@@ -51,7 +51,7 @@ class Utilities
 	 * @return int|null
 	 *
 	 * @throws Exception
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 

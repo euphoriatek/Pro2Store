@@ -33,13 +33,13 @@ class bootstrap extends AdminModel
 
 	/**
 	 * @var array $vars
-	 * @since 1.6
+	 * @since 2.0
 	 */
 	public $vars;
 
 	/**
 	 * @var string $view
-	 * @since 1.6
+	 * @since 2.0
 	 */
 	public static $view = 'product';
 
@@ -61,7 +61,7 @@ class bootstrap extends AdminModel
 	 *
 	 * @return array
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	private function init($id)
@@ -94,7 +94,7 @@ class bootstrap extends AdminModel
 	 *
 	 * @return Product|null
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public function getTheItem($id)
@@ -108,7 +108,7 @@ class bootstrap extends AdminModel
 	 *
 	 * @return bool|JForm
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public function getForm($data = array(), $loadData = true)
@@ -180,7 +180,7 @@ class bootstrap extends AdminModel
 	/**
 	 *
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	private function addScripts()
@@ -246,7 +246,7 @@ class bootstrap extends AdminModel
 	/**
 	 *
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	private function addStylesheets()
@@ -256,7 +256,7 @@ class bootstrap extends AdminModel
 	/**
 	 *
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 

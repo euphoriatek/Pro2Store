@@ -31,13 +31,13 @@ class bootstrap implements listView
 	 * @var array $vars
 
 
-	 * @since 1.6
+	 * @since 2.0
 	 */
 	public $vars;
 
 	/**
 	 * @var string $view
-	 * @since 1.6
+	 * @since 2.0
 	 */
 	public static $view = 'productoptions';
 
@@ -57,7 +57,7 @@ class bootstrap implements listView
 	 *
 	 * @return void
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public function init(): void
@@ -71,7 +71,7 @@ class bootstrap implements listView
 	 *
 	 * @return void
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public function setVars(): void
@@ -84,7 +84,7 @@ class bootstrap implements listView
 	 *
 	 * @return array
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public function getItems(): ?array
@@ -96,7 +96,7 @@ class bootstrap implements listView
 	/**
 	 *
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public function addScripts(): void

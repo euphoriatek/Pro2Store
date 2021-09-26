@@ -33,7 +33,7 @@ class Sidebarlink
 	 *
 	 * @return string
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 

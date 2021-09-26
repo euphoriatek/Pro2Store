@@ -25,7 +25,7 @@ class EmailerFactory
 	 * @param   int     $orderid
 	 *
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function sendEmailByType(string $type, int $orderid)

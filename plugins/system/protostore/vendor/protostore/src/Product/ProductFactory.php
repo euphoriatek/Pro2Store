@@ -50,7 +50,7 @@ class ProductFactory
 	 * @param   int  $joomla_item_id
 	 *
 	 * @return Product|null
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function get(int $joomla_item_id): ?Product
@@ -87,7 +87,7 @@ class ProductFactory
 	 * @param   string       $orderDir
 	 *
 	 * @return array
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getList(int $limit = 0, int $offset = 0, int $category = 0, string $searchTerm = null, string $orderBy = 'id', string $orderDir = 'DESC'): ?array
@@ -154,7 +154,7 @@ class ProductFactory
 	 *
 	 * @return null|Product
 	 * @throws Exception
-	 * @since 1.6
+	 * @since 2.0
 	 */
 	public static function saveFromInputData(Input $data): ?Product
 	{
@@ -264,7 +264,7 @@ class ProductFactory
 	 * @return null|Product
 	 *
 	 * @throws Exception
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	private static function createNewProduct(Input $data): ?Product
@@ -402,7 +402,7 @@ class ProductFactory
 	 * @return bool
 	 *
 	 * @throws Exception
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	private static function commitToDatabase(Product $product): bool
@@ -601,7 +601,7 @@ class ProductFactory
 	 * @return bool
 	 *
 	 * @throws Exception
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function commitVariants(Product $product): bool
@@ -729,7 +729,7 @@ class ProductFactory
 	 *
 	 * @return void
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	private static function removeDeletedVariants(int $j_item_id, array $variantIds): void
@@ -793,7 +793,7 @@ class ProductFactory
 	 *
 	 * @return void
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	private static function removeDeletedVariantLabels(array $variant, array $labelIds): void
@@ -846,7 +846,7 @@ class ProductFactory
 	 *
 	 * @return void
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	private static function removeDeletedVariantListItems(int $joomla_item_id, array $variantListLabelIds): void
@@ -907,7 +907,7 @@ class ProductFactory
 	 *
 	 * @return array
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getOptionList(int $limit = 0, int $offset = 0, $searchTerm = null, string $optionType = null): ?array
@@ -959,7 +959,7 @@ class ProductFactory
 	 *
 	 *
 	 * @return int
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getCurrentStock(int $j_item_id): int
@@ -984,7 +984,7 @@ class ProductFactory
 	 *
 	 * @return JoomlaItem
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getJoomlaItem($joomla_item_id): ?JoomlaItem
@@ -1020,7 +1020,7 @@ class ProductFactory
 	 *
 	 * @return string|null
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getRoute(string $type, int $joomla_item_id, int $catid): ?string
@@ -1045,7 +1045,7 @@ class ProductFactory
 	 * @return BigDecimal
 	 *
 	 * @throws UnknownCurrencyException
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getFloat($price): BigDecimal
@@ -1062,7 +1062,7 @@ class ProductFactory
 	 * @return string
 	 *
 	 * @throws UnknownCurrencyException
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getFormattedPrice(int $price): string
@@ -1078,7 +1078,7 @@ class ProductFactory
 	 *
 	 * @return string|null
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getCategoryName($category_id): ?string
@@ -1097,7 +1097,7 @@ class ProductFactory
 	 *
 	 * @return array
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getTags($joomla_item_id): array
@@ -1121,7 +1121,7 @@ class ProductFactory
 	 *
 	 * @return array|null
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getAvailableTags($id = null): ?array
@@ -1188,7 +1188,7 @@ class ProductFactory
 	 *
 	 * @return array
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getAvailableCustomFields(int $itemid, int $catid = 0): array
@@ -1284,7 +1284,7 @@ class ProductFactory
 	 *
 	 * @return mixed|null
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function setCustomFieldValue(int $custom_field_id, int $itemId)
@@ -1313,7 +1313,7 @@ class ProductFactory
 	 * @return null|array
 	 *
 	 * @throws UnknownCurrencyException
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getOptions(int $j_item_id): ?array
@@ -1328,7 +1328,7 @@ class ProductFactory
 	 *
 	 * @return bool
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function togglePublishedFromInputData(Input $data)
@@ -1363,7 +1363,7 @@ class ProductFactory
 	 *
 	 * @return bool
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -1404,7 +1404,7 @@ class ProductFactory
 	 *
 	 * @return bool
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function batchUpdateStock(Input $data): bool
@@ -1443,7 +1443,7 @@ class ProductFactory
 	 *
 	 * @return false|string
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getImagePath($image)
@@ -1464,7 +1464,7 @@ class ProductFactory
 	 *
 	 * @return array
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getRefreshedVariantData(Input $data): array
@@ -1488,7 +1488,7 @@ class ProductFactory
 	 *
 	 * @return bool
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -1570,7 +1570,7 @@ class ProductFactory
 	 * @return bool
 	 *
 	 * @throws Exception
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -1752,7 +1752,7 @@ class ProductFactory
 	 *
 	 * @return bool
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -1792,7 +1792,7 @@ class ProductFactory
 	 *
 	 *
 	 * @return bool
-	 * @since 1.6
+	 * @since 2.0
 	 *
 	 */
 
@@ -1847,7 +1847,7 @@ class ProductFactory
 	 * @param   array  $variant
 	 *
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	private static function saveLabels(array $variant)
@@ -1912,7 +1912,7 @@ class ProductFactory
 	 *
 	 * @return array|array[]
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -1946,7 +1946,7 @@ class ProductFactory
 	 *
 	 * @return Variant
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getVariantData(int $j_item_id): Variant
@@ -2007,7 +2007,7 @@ class ProductFactory
 	 * @return array
 	 *
 	 * @throws UnknownCurrencyException
-	 * @since 1.6
+	 * @since 2.0
 	 *
 	 */
 
@@ -2069,7 +2069,7 @@ class ProductFactory
 	 *
 	 * @return array|mixed
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getLabels(int $j_item_id)
@@ -2097,7 +2097,7 @@ class ProductFactory
 	 *
 	 * @return array
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function attachVariantLabels(array $variants): array
@@ -2140,7 +2140,7 @@ class ProductFactory
 	 *
 	 * @return array
 	 * @throws UnknownCurrencyException
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getSelectedVariant(int $joomla_item_id, array $selected): array
@@ -2188,7 +2188,7 @@ class ProductFactory
 	 *
 	 * @return bool
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -2254,7 +2254,7 @@ class ProductFactory
 	 *
 	 *
 	 * @return array
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getVariantDefault(array $variantList): array
@@ -2283,7 +2283,7 @@ class ProductFactory
 	 *
 	 * @return bool
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function trashFromInputData(Input $data): bool
@@ -2331,7 +2331,7 @@ class ProductFactory
 	 *
 	 * @return File|null
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -2365,7 +2365,7 @@ class ProductFactory
 	 *
 	 * @return array|null
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getFiles(int $product_id): ?array
@@ -2405,7 +2405,7 @@ class ProductFactory
 	 *
 	 * @return string|void
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getFileStabilityLevelString(int $type)
@@ -2434,7 +2434,7 @@ class ProductFactory
 	 *
 	 * @return File
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -2485,7 +2485,7 @@ class ProductFactory
 	 *
 	 * @return ?File
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -2526,7 +2526,7 @@ class ProductFactory
 	 *
 	 * @return array|false
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -2583,7 +2583,7 @@ class ProductFactory
 	 *
 	 * @return bool
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -2617,7 +2617,7 @@ class ProductFactory
 	 * @return bool
 	 *
 	 * @throws Exception
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function savePriceFromInputData(Input $data): bool
@@ -2659,7 +2659,7 @@ class ProductFactory
 	 *
 	 *
 	 * @return false|string
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	private static function processImagesForSave($teaserImage, $fullImage)
@@ -2681,7 +2681,7 @@ class ProductFactory
 	 * @return string
 	 *
 	 * @throws Exception
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	private static function processVariantPrices($product): string

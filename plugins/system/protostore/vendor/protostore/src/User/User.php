@@ -37,7 +37,7 @@ class User
 	 * @param $data
 	 *
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	private function hydrate($data)
@@ -57,7 +57,7 @@ class User
 	 *
 	 * Function to "hydrate" all non-database values.
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	private function init()

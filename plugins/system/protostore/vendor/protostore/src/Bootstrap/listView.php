@@ -20,7 +20,7 @@ interface listView
 	 *
 	 * @return mixed
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 	public function init(): void;
 
@@ -28,7 +28,7 @@ interface listView
 	 *
 	 * @return void
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 	public function setVars(): void;
 

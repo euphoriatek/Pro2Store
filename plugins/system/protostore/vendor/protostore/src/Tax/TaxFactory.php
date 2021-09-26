@@ -45,7 +45,7 @@ class TaxFactory
 	 *
 	 * @throws UnknownCurrencyException
 	 * @throws Exception
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -87,7 +87,7 @@ class TaxFactory
 	 *
 	 * @return int
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getItemTaxableValue(CartItem $cartItem): int
@@ -181,7 +181,7 @@ class TaxFactory
 	 *
 	 * @return int
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -231,7 +231,7 @@ class TaxFactory
 	 *
 	 * @return int
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getTotalDefaultTax(int $totalTaxableValue): int
@@ -293,7 +293,7 @@ class TaxFactory
 	 *
 	 * @return int
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getTotalDefaultTaxRate(): int
@@ -316,7 +316,7 @@ class TaxFactory
 	 *
 	 * @return int
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 

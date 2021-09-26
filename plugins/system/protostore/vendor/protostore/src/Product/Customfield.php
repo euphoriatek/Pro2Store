@@ -55,7 +55,7 @@ class Customfield
 	 * @param $data
 	 *
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	private function hydrate($data)
@@ -77,7 +77,7 @@ class Customfield
 	 *
 	 * @param $itemid
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	private function init($itemid)
@@ -110,7 +110,7 @@ class Customfield
 	 *
 	 * @return array
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -138,7 +138,7 @@ class Customfield
 	 *
 	 * @return string
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	private function setType(string $type = 'text', string $fieldParams): string

@@ -21,7 +21,7 @@ use Protostore\Utilities\Utilities;
 
 /**
  *
- * @since 1.6
+ * @since 2.0
  */
 class bootstrap extends AdminModel implements genericView
 {
@@ -69,7 +69,7 @@ class bootstrap extends AdminModel implements genericView
 	/**
 	 *
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public function init(): void
@@ -84,7 +84,7 @@ class bootstrap extends AdminModel implements genericView
 	 *
 	 * @return void
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public function setVars(): void
@@ -99,7 +99,7 @@ class bootstrap extends AdminModel implements genericView
 	/**
 	 *
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public function addScripts(): void

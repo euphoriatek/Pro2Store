@@ -26,7 +26,7 @@ class EmaillogFactory
 	 *
 	 * @return Emaillog
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function get(int $id): ?Emaillog
@@ -64,7 +64,7 @@ class EmaillogFactory
 	 *
 	 * @return array
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -136,7 +136,7 @@ class EmaillogFactory
 	 *
 	 * @return string|null
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -162,7 +162,7 @@ class EmaillogFactory
 	 *
 	 * @return string|null
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -187,7 +187,7 @@ class EmaillogFactory
 	 *
 	 * @return string|null
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -205,7 +205,7 @@ class EmaillogFactory
 	 * @param   int     $order_id
 	 *
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 

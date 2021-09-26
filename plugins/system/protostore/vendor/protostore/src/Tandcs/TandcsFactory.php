@@ -26,7 +26,7 @@ class TandcsFactory
 	 *
 	 * @return bool
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function isChecked(): bool

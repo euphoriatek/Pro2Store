@@ -13,7 +13,7 @@ defined('_JEXEC') or die('Restricted access');
 /**
  * Tags field.
  *
- * @since  1.6
+ * @since 2.0
  */
 class JFormFieldPmultiselect extends JFormField
 {
@@ -21,7 +21,7 @@ class JFormFieldPmultiselect extends JFormField
 	 * The form field type.
 	 *
 	 * @var    string
-	 * @since  1.6
+	 * @since 2.0
 	 */
 	protected $type = 'Pmultiselect';
 
@@ -30,7 +30,7 @@ class JFormFieldPmultiselect extends JFormField
 	 *
 	 * @return  string    The field input markup.
 	 *
-	 * @since   1.6
+	 * @since 2.0
 	 */
 	protected function getInput()
 	{

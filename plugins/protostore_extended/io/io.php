@@ -53,7 +53,7 @@ class plgProtostore_extendedIo extends CMSPlugin implements AdminViewExtended
 	 *
 	 * @return Sidebarlink
 	 *
-	 * @since 1.6.0
+	 * @since 2.0.0
 	 */
 
 

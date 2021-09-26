@@ -27,7 +27,7 @@ class plgProtostoresystemProtostore_emailer extends JPlugin
 	 *
 	 *
 	 * @throws Exception
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public function onSendProtoStoreEmail(string $emailType, int $order_id)

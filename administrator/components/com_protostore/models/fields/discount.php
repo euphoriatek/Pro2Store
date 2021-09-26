@@ -15,7 +15,7 @@ defined('_JEXEC') or die('Restricted access');
 /**
  * Clicks field.
  *
- * @since  1.6
+ * @since 2.0
  */
 class JFormFieldDiscount extends JFormField
 {
@@ -23,7 +23,7 @@ class JFormFieldDiscount extends JFormField
 	 * The form field type.
 	 *
 	 * @var    string
-	 * @since  1.6
+	 * @since 2.0
 	 */
 	protected $type = 'Discount';
 
@@ -38,7 +38,7 @@ class JFormFieldDiscount extends JFormField
 	 *
 	 * @return  string    The field input markup.
 	 *
-	 * @since   1.6
+	 * @since 2.0
 	 */
 	protected function getInput()
 	{

@@ -24,7 +24,7 @@ class Render
 	 *
 	 * @return bool|string|null
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function render($path, array $vars)

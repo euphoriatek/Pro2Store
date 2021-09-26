@@ -20,7 +20,7 @@ use Joomla\CMS\Language\Text;
 	<div class="uk-modal-dialog">
 		<button class="uk-modal-close-default" type="button" uk-close></button>
 		<div class="uk-modal-header">
-			<h2 class="uk-modal-title">Advanced Options</h2>
+			<h2 class="uk-modal-title">Advanced Options (COMING SOON!)</h2>
 		</div>
 		<div class="uk-modal-body">
 			<div class="uk-grid uk-child-width-1-3@m">

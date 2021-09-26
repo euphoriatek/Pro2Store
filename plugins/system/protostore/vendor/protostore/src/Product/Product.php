@@ -91,7 +91,7 @@ class Product
 	 * @param $data
 	 *
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	private function hydrate($data)
@@ -112,7 +112,7 @@ class Product
 	 * Function to "hydrate" all non-database values.
 	 *
 	 * @throws \Brick\Money\Exception\UnknownCurrencyException
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	private function init()

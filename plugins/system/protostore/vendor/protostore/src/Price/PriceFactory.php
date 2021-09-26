@@ -44,7 +44,7 @@ class PriceFactory
 	 * @return Price
 	 *
 	 * @throws UnknownCurrencyException
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function calculatePriceFromInputData(Input $data): ?Price
@@ -230,7 +230,7 @@ class PriceFactory
 	 *
 	 * @return int
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 
@@ -274,7 +274,7 @@ class PriceFactory
 	 *
 	 * @return int
 	 *
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function calculatePriceAfterDiscount(Product $product)

@@ -35,7 +35,7 @@ class ProductoptionFactory
 	 * @return Productoption
 	 *
 	 * @throws UnknownCurrencyException
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function get($id): ?Productoption
@@ -66,7 +66,7 @@ class ProductoptionFactory
 	 * @return array|null
 	 *
 	 * @throws UnknownCurrencyException
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getListFromGivenIds(array $ids = array()): ?array
@@ -116,7 +116,7 @@ class ProductoptionFactory
 	 * @return array
 	 *
 	 * @throws UnknownCurrencyException
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function getProductOptions(int $j_item_id): ?array
@@ -158,7 +158,7 @@ class ProductoptionFactory
 	 *
 	 * @return BigDecimal
 	 * @throws UnknownCurrencyException
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function processModifierValue(int $value): BigDecimal
@@ -174,7 +174,7 @@ class ProductoptionFactory
 	 *
 	 * @return string
 	 * @throws UnknownCurrencyException
-	 * @since 1.6
+	 * @since 2.0
 	 */
 
 	public static function translateModifierValue(int $value, string $type): string

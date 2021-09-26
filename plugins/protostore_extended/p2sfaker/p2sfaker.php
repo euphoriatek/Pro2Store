@@ -53,7 +53,7 @@ class plgProtostore_extendedP2sfaker extends CMSPlugin implements AdminViewExten
 	 *
 	 * @return Sidebarlink
 	 *
-	 * @since 1.60
+	 * @since 2.00
 	 */
 
 

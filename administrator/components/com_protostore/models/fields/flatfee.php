@@ -15,7 +15,7 @@ use Joomla\CMS\Language\Text;
 /**
  * Clicks field.
  *
- * @since  1.6
+ * @since 2.0
  */
 class JFormFieldFlatfee extends JFormField
 {
@@ -23,7 +23,7 @@ class JFormFieldFlatfee extends JFormField
 	 * The form field type.
 	 *
 	 * @var    string
-	 * @since  1.6
+	 * @since 2.0
 	 */
 	protected $type = 'Flatfee';
 
@@ -38,7 +38,7 @@ class JFormFieldFlatfee extends JFormField
 	 *
 	 * @return  string    The field input markup.
 	 *
-	 * @since   1.6
+	 * @since 2.0
 	 */
 	protected function getInput()
 	{

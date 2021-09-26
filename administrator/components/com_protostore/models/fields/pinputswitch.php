@@ -15,7 +15,7 @@ use Joomla\CMS\Language\Text;
 /**
  * Clicks field.
  *
- * @since  1.6
+ * @since 2.0
  */
 class JFormFieldPinputswitch extends JFormField
 {
@@ -23,7 +23,7 @@ class JFormFieldPinputswitch extends JFormField
 	 * The form field type.
 	 *
 	 * @var    string
-	 * @since  1.6
+	 * @since 2.0
 	 */
 	protected $type = 'pinputswitch';
 
@@ -37,7 +37,7 @@ class JFormFieldPinputswitch extends JFormField
 	 *
 	 * @return  string    The field input markup.
 	 *
-	 * @since   1.6
+	 * @since 2.0
 	 */
 	protected function getInput()
 	{

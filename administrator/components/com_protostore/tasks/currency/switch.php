@@ -25,7 +25,7 @@ class protostoreTask_switch
 	 * @return bool
 	 *
 	 * @throws Exception
-	 * @since 1.6
+	 * @since 2.0
 	 */
 	public function getResponse(Input $data): bool
 	{

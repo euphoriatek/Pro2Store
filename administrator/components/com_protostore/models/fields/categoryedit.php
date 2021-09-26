@@ -19,7 +19,7 @@ FormHelper::loadFieldClass('list');
 /**
  * Category Edit field..
  *
- * @since  1.6
+ * @since 2.0
  */
 class JFormFieldCategoryEdit extends JFormFieldList
 {
@@ -43,7 +43,7 @@ class JFormFieldCategoryEdit extends JFormFieldList
 	 * A flexible category list that respects access controls
 	 *
 	 * @var    string
-	 * @since  1.6
+	 * @since 2.0
 	 */
 	public $type = 'CategoryEdit';
 
@@ -130,7 +130,7 @@ class JFormFieldCategoryEdit extends JFormFieldList
 	 *
 	 * @return  array  The field option objects.
 	 *
-	 * @since   1.6
+	 * @since 2.0
 	 */
 	protected function getOptions()
 	{
