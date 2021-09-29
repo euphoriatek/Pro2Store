@@ -42,7 +42,6 @@ const p2s_product_form = {
             product_type: 1,
             custom_fields: [],
             available_tags: [],
-            // available_options: [],
             option_for_edit: [],
             p2s_currency: [],
             p2s_local: '',
@@ -57,22 +56,77 @@ const p2s_product_form = {
             sellPrice: 0,
             variants_loading: false,
             setSavedClass: false,
+            //media manager
+            media_view: 'table',
+            selected_images: [],
+            selected_folders: [],
+            folderTree: [],
+            breadcrumbs: [],
+            currentParent: 0,
+            currentFolderId: 0,
+            mediaLoading: false,
+            COM_PROTOSTORE_MEDIA_MANAGER_EDIT_NAME_PROMPT: '',
+            COM_PROTOSTORE_MEDIA_MANAGER_DELETE_ARE_YOU_SURE: '',
+            COM_PROTOSTORE_MEDIA_MANAGER_FOLDER_ADD_FOLDER_PROMPT: ''
         }
 
     },
     created() {
-        emitter.on('p2s_product_file_upload', this.fileUploaded)
+        emitter.on('p2s_product_file_upload', this.fileUploaded);
+
     },
     mounted() {
 
     },
     computed: {
+        currentDirectory() {
+            return this.folderTree.find(o => o.id === this.currentParent);
+        },
         modifierValueInputType() {
             if (this.option_for_edit.modifiertype === "perc") {
                 return "[0-9]*";
             } else if (this.option_for_edit.modifiertype === "amount") {
                 return "^[0-9]+(\.[0-9]{1,2})?$"
             }
+        },
+        singleSelection() {
+            if (this.selected_images.length === 1 && this.selected_folders.length === 0) {
+                return false;
+            } else {
+                return true;
+            }
+        },
+        singleFolderSelection() {
+            if (this.selected_folders.length === 1 && this.selected_images.length === 0) {
+                return false;
+            } else {
+                return true;
+            }
+        },
+        somethingIsSelected() {
+            if (this.selected_folders.length > 0 || this.selected_images.length > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        },
+        checkDeleteDisabled() {
+
+            if (this.selected_images.length === 0 && this.selected_folders.length === 0) {
+                return true;
+            }
+
+
+            return false;
+        },
+        checkEditDisabled() {
+
+            if ((this.selected_images.length === 0 && this.selected_folders.length === 0) || (this.selected_images.length > 1 && this.selected_folders.length > 1)) {
+                return true;
+            }
+
+
+            return false;
         }
     },
     async beforeMount() {
@@ -104,6 +158,17 @@ const p2s_product_form = {
             } catch (err) {
             }
         }
+
+        const folderTree = document.getElementById('folderTree_data');
+        if (folderTree != null) {
+            try {
+                this.folderTree = JSON.parse(folderTree.innerText);
+                // folderTree.remove();
+            } catch (err) {
+            }
+        }
+
+
         const default_category = document.getElementById('default_category_data');
         if (default_category != null) {
             try {
@@ -130,8 +195,20 @@ const p2s_product_form = {
             } catch (err) {
             }
 
-            this.setData();
 
+            // set images
+            const images = document.getElementById('jform_images_data');
+            if (images != null) {
+                try {
+                    const imageArray = JSON.parse(images.innerText);
+
+                    this.form.jform_teaserimage = imageArray.image_intro;
+                    this.form.jform_fullimage = imageArray.image_fulltext;
+                    // images.remove();
+                } catch (err) {
+                }
+            }
+            this.setData();
             const successMessage = document.getElementById('successMessage');
             if (successMessage != null) {
                 try {
@@ -153,9 +230,33 @@ const p2s_product_form = {
         if (options != null) {
             try {
                 this.form.jform_options = JSON.parse(options.innerText);
-                // options.remove();
+                options.remove();
             } catch (err) {
                 this.form.jform_options = [];
+            }
+        }
+        const COM_PROTOSTORE_MEDIA_MANAGER_EDIT_NAME_PROMPT = document.getElementById('COM_PROTOSTORE_MEDIA_MANAGER_EDIT_NAME_PROMPT');
+        if (COM_PROTOSTORE_MEDIA_MANAGER_EDIT_NAME_PROMPT != null) {
+            try {
+                this.COM_PROTOSTORE_MEDIA_MANAGER_EDIT_NAME_PROMPT = COM_PROTOSTORE_MEDIA_MANAGER_EDIT_NAME_PROMPT.innerText;
+                COM_PROTOSTORE_MEDIA_MANAGER_EDIT_NAME_PROMPT.remove();
+            } catch (err) {
+            }
+        }
+        const COM_PROTOSTORE_MEDIA_MANAGER_DELETE_ARE_YOU_SURE = document.getElementById('COM_PROTOSTORE_MEDIA_MANAGER_DELETE_ARE_YOU_SURE');
+        if (COM_PROTOSTORE_MEDIA_MANAGER_DELETE_ARE_YOU_SURE != null) {
+            try {
+                this.COM_PROTOSTORE_MEDIA_MANAGER_DELETE_ARE_YOU_SURE = COM_PROTOSTORE_MEDIA_MANAGER_DELETE_ARE_YOU_SURE.innerText;
+                COM_PROTOSTORE_MEDIA_MANAGER_DELETE_ARE_YOU_SURE.remove();
+            } catch (err) {
+            }
+        }
+        const COM_PROTOSTORE_MEDIA_MANAGER_FOLDER_ADD_FOLDER_PROMPT = document.getElementById('COM_PROTOSTORE_MEDIA_MANAGER_FOLDER_ADD_FOLDER_PROMPT');
+        if (COM_PROTOSTORE_MEDIA_MANAGER_FOLDER_ADD_FOLDER_PROMPT != null) {
+            try {
+                this.COM_PROTOSTORE_MEDIA_MANAGER_FOLDER_ADD_FOLDER_PROMPT = COM_PROTOSTORE_MEDIA_MANAGER_FOLDER_ADD_FOLDER_PROMPT.innerText;
+                COM_PROTOSTORE_MEDIA_MANAGER_FOLDER_ADD_FOLDER_PROMPT.remove();
+            } catch (err) {
             }
         }
     },
@@ -455,7 +556,6 @@ const p2s_product_form = {
             this.file_for_edit.filename_obscured = false;
         },
         fileUploaded(data) {
-            console.log("Data is: ", data)
             this.file_for_edit.filename_obscured = data.path;
             this.file_for_edit.filename = data.filename;
         },
@@ -528,8 +628,6 @@ const p2s_product_form = {
 
             this.form.jform_long_description = this.getFrameContents('jform_long_description');
             this.form.jform_short_description = this.getFrameContents('jform_short_description');
-            this.form.jform_teaserimage = document.getElementById("jform_teaserimage").value;
-            this.form.jform_fullimage = document.getElementById("jform_fullimage").value;
             this.form.jform_publish_up_date = document.getElementById("jform_publish_up_date").value;
             this.form.jform_access = document.getElementById("jform_access").value;
 
@@ -683,76 +781,288 @@ const p2s_product_form = {
                     str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
                 }
             return str.join("&");
+        },
+        async getFolderTree() {
+
+            this.mediaLoading = true;
+            this.selected_images = [];
+            this.selected_folders = [];
+
+            const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=mediaManager.getFolderTree&format=raw", {
+                method: 'POST',
+                mode: 'cors',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                redirect: 'follow',
+                referrerPolicy: 'no-referrer',
+                body: ''
+            });
+
+
+            const response = await request.json();
+
+            if (response.success) {
+                this.selected_images = [];
+                this.folderTree = response.data;
+            }
+
+        },
+        async openBreadcrumb(folder, index) {
+            this.selected_images = [];
+            this.selected_folders = [];
+            this.breadcrumbs.splice((index + 1), this.breadcrumbs.length);
+            this.currentParent = folder.id;
+        },
+        async openFolder(folder) {
+            this.selected_images = [];
+            this.selected_folders = [];
+            this.breadcrumbs.push(folder);
+            this.currentParent = folder.id;
+        },
+        async setToHome() {
+            this.selected_images = [];
+            this.selected_folders = [];
+            this.breadcrumbs = [];
+            this.currentParent = 0;
+        },
+        toggleSelectImage(image) {
+
+            const index = this.selected_images.indexOf(image);
+
+            if (index > -1) {
+                this.selected_images.splice(index, 1);
+
+            } else {
+                this.selected_images.push(image);
+            }
+
+
+        },
+        selectFile(image) {
+            this.selected_images.push(image);
+        },
+        selectImage(id) {
+            const keys = Object.keys(this.form);
+            keys.forEach((jfrom) => {
+                if (jfrom == id) {
+                    this.form[jfrom] = this.selected_images[0].relname;
+                }
+            });
+
+            UIkit.modal('#mediaField' + id).hide();
+        },
+        async editFileName() {
+
+            const name = await UIkit.modal.prompt(this.COM_PROTOSTORE_MEDIA_MANAGER_EDIT_NAME_PROMPT, this.selected_images[0].name, {stack: true})
+            if (name) {
+
+                const params = {
+                    image: this.selected_images[0],
+                    new_name: name
+                }
+
+                const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=mediaManager.editName&format=raw", {
+                    method: 'POST',
+                    mode: 'cors',
+                    cache: 'no-cache',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    redirect: 'follow',
+                    referrerPolicy: 'no-referrer',
+                    body: JSON.stringify(params)
+                });
+
+
+                const response = await request.json();
+
+
+                if (response.success) {
+
+                    await this.getFolderTree();
+
+                }
+
+            }
+
+        },
+        async editFolderName() {
+
+            const name = await UIkit.modal.prompt(this.COM_PROTOSTORE_MEDIA_MANAGER_EDIT_NAME_PROMPT, this.selected_folders[0].name, {stack: true})
+            if (name) {
+
+                const params = {
+                    folder: this.selected_folders[0],
+                    new_name: name
+                }
+
+                const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=mediaManager.editFolderName&format=raw", {
+                    method: 'POST',
+                    mode: 'cors',
+                    cache: 'no-cache',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    redirect: 'follow',
+                    referrerPolicy: 'no-referrer',
+                    body: JSON.stringify(params)
+                });
+
+
+                const response = await request.json();
+
+
+                if (response.success) {
+                    this.selected_images = [];
+                    this.selected_folders = [];
+                    await this.getFolderTree();
+
+                }
+
+            }
+
+        },
+        async trashSelected() {
+
+            await UIkit.modal.confirm(this.COM_PROTOSTORE_MEDIA_MANAGER_DELETE_ARE_YOU_SURE, {stack: true})
+
+            const params = {
+                folders: this.selected_folders,
+                images: this.selected_images
+            }
+
+            const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=mediaManager.trashSelected&format=raw", {
+                method: 'POST',
+                mode: 'cors',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                redirect: 'follow',
+                referrerPolicy: 'no-referrer',
+                body: JSON.stringify(params)
+            });
+
+
+            const response = await request.json();
+
+
+            if (response.success) {
+                await this.getFolderTree();
+
+            }
+
+        },
+        async addFolder() {
+
+            const name = await UIkit.modal.prompt(this.COM_PROTOSTORE_MEDIA_MANAGER_FOLDER_ADD_FOLDER_PROMPT, '', {stack: true})
+            if (name) {
+
+
+                const params = {name, currentDirectory: this.currentDirectory}
+
+                const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=mediaManager.addFolder&format=raw", {
+                    method: 'POST',
+                    mode: 'cors',
+                    cache: 'no-cache',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    redirect: 'follow',
+                    referrerPolicy: 'no-referrer',
+                    body: JSON.stringify(params)
+                });
+
+
+                const response = await request.json();
+
+
+                if (response.success) {
+                    await this.getFolderTree();
+
+                }
+
+            }
+
+        },
+        async uploadImage(e) {
+
+            console.log(e.target.files);
+            const formdata = new FormData();
+            formdata.append("image", e.target.files[0], e.target.files[0].name);
+            const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=mediaManager.uploadImage&format=raw&directory=" + this.currentDirectory.fullname, {
+                method: 'POST',
+                mode: 'cors',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+
+                redirect: 'follow',
+                referrerPolicy: 'no-referrer',
+                body: formdata
+            });
+
+
+            const response = await request.json();
+
+
+            if (response.success) {
+                await this.getFolderTree();
+
+            }
+
+            //
+            // // const params = {
+            // //     files: e.target.files,
+            // //     directory: this.currentDirectory
+            // // }
+            //
+            // let files = e.target.files;
+            //
+            // [...files].forEach((file) => {
+            //
+            //     const formdata = new FormData();
+            //     formdata.append("image", file, "image");
+            //
+            //     fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=mediaManager.uploadImage&format=raw&directory=" + this.currentDirectory.fullname, {
+            //         method: 'POST',
+            //         mode: 'cors',
+            //         cache: 'no-cache',
+            //         credentials: 'same-origin',
+            //         redirect: 'follow',
+            //         referrerPolicy: 'no-referrer',
+            //         body: formdata
+            //     }).then((response)=> {
+            //         if (response.success) {
+            //             this.getFolderTree();
+            //         }
+            //     });
+            //
+            // })
+
+
         }
+
 
     },
     components: {
-        'p-inputswitch': primevue.inputswitch,
-        'p-chips': primevue.chips,
-        'p-chip': primevue.chip,
-        'p-inputnumber': primevue.inputnumber,
-        'p-multiselect': primevue.multiselect
+        'p-inputswitch':
+        primevue.inputswitch,
+        'p-chips':
+        primevue.chips,
+        'p-chip':
+        primevue.chip,
+        'p-inputnumber':
+        primevue.inputnumber,
+        'p-multiselect':
+        primevue.multiselect
     }
 }
 Vue.createApp(p2s_product_form).mount('#p2s_product_form');
 
-
-var bar = document.getElementById('js-progressbar');
-
-
-UIkit.upload('.p2s_file_upload', {
-
-    url: '',
-    multiple: false,
-    beforeAll: function () {
-        this.url = '<?= Uri::base(); ?>index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=file.upload&format=raw';
-        console.log('beforeAll', arguments);
-    },
-
-    loadStart: function (e) {
-
-        bar.removeAttribute('hidden');
-        bar.max = e.total;
-        bar.value = e.loaded;
-    },
-
-    progress: function (e) {
-
-        bar.max = e.total;
-        bar.value = e.loaded;
-    },
-
-    loadEnd: function (e) {
-
-        bar.max = e.total;
-        bar.value = e.loaded;
-    },
-
-    completeAll: function () {
-
-
-        const response = JSON.parse(arguments[0].response);
-
-        if (response.success) {
-            setTimeout(function () {
-                bar.setAttribute('hidden', 'hidden');
-            }, 1000);
-            emitter.emit('p2s_product_file_upload', response.data);
-            UIkit.notification({
-                message: 'Uploaded',
-                status: 'success',
-                pos: 'top-right',
-                timeout: 5000
-            });
-        } else {
-            UIkit.notification({
-                message: 'There was an error',
-                status: 'danger',
-                pos: 'top-right',
-                timeout: 5000
-            });
-        }
-    }
-
-
-});

@@ -8,23 +8,23 @@
  */
 // no direct access
 
-
 defined('_JEXEC') or die('Restricted access');
 
-use Protostore\Cart\CartFactory;
+use Protostore\MediaManager\MediaManagerFactory;
+use Joomla\Input\Input;
 
-class protostoreTask_createproducts
+class protostoreTask_getHome
 {
 
-	public function getResponse($data)
+
+	public function getResponse(Input $data): ?array
 	{
 
-		// init
-		$response   = array();
-		$cartItemId = $data->get('cartitemid');
 
-		$response['status'] = CartFactory::removeAll($cartItemId);
-		return $response;
+		return MediaManagerFactory::getFolderTree();
+
+
 	}
+
 
 }

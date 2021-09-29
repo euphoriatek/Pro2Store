@@ -14,6 +14,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Layout\LayoutHelper;
 
+use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Version;
 
 if (Version::MAJOR_VERSION === 3){
@@ -50,10 +51,10 @@ $item = $vars['item'];
 
                             <div class="uk-navbar-right">
 
-<!--                                <button type="button"-->
-<!--                                        class="uk-button uk-button-primary uk-button-small uk-margin-right"-->
-<!--                                        @click="logIt">LogIt-->
-<!--                                </button>-->
+                                <button type="button"
+                                        class="uk-button uk-button-primary uk-button-small uk-margin-right"
+                                        @click="logIt">LogIt
+                                </button>
                                 <button type="submit" @click="andClose = false"
                                         class="uk-button uk-button-default button-success uk-button-small uk-margin-right">
 									<?= Text::_('JTOOLBAR_APPLY'); ?>
@@ -188,3 +189,66 @@ $item = $vars['item'];
 	<?= LayoutHelper::render('product/modals/advancedOptions'); ?>
 
 </div>
+
+<script>
+
+    var bar = document.getElementById('js-progressbar');
+
+    UIkit.upload('.p2s_file_upload', {
+
+        url: '',
+        multiple: false,
+        beforeAll: function () {
+            this.url = '<?= Uri::base(); ?>index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=file.upload&format=raw';
+            console.log('beforeAll', arguments);
+        },
+
+        loadStart: function (e) {
+
+            bar.removeAttribute('hidden');
+            bar.max = e.total;
+            bar.value = e.loaded;
+        },
+
+        progress: function (e) {
+
+            bar.max = e.total;
+            bar.value = e.loaded;
+        },
+
+        loadEnd: function (e) {
+
+            bar.max = e.total;
+            bar.value = e.loaded;
+        },
+
+        completeAll: function () {
+
+
+            const response = JSON.parse(arguments[0].response);
+
+            if (response.success) {
+                setTimeout(function () {
+                    bar.setAttribute('hidden', 'hidden');
+                }, 1000);
+                emitter.emit('p2s_product_file_upload', response.data);
+                UIkit.notification({
+                    message: 'Uploaded',
+                    status: 'success',
+                    pos: 'top-right',
+                    timeout: 5000
+                });
+            } else {
+                UIkit.notification({
+                    message: 'There was an error',
+                    status: 'danger',
+                    pos: 'top-right',
+                    timeout: 5000
+                });
+            }
+        }
+
+
+    });
+
+</script>

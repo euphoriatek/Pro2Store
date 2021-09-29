@@ -32,9 +32,9 @@
         <field name="long_description" type="editor" label="COM_PROTOSTORE_ADD_PRODUCT_LONG_DESCRIPTION_LABEL" description="" width="" height="100px"
                filter="safehtml"/>
 
-        <field name="teaserimage" type="media" directory="" preview="true" class="uk-input uk-form-width-small non-uk-input" label="COM_PROTOSTORE_ADD_PRODUCT_INTRO_IMAGE_LABEL"  />
+        <field name="teaserimage" type="image" directory="" preview="true" class="uk-input uk-form-width-small non-uk-input" label="COM_PROTOSTORE_ADD_PRODUCT_INTRO_IMAGE_LABEL"  />
 
-        <field name="fullimage" type="media" directory="" preview="true" class="uk-input uk-form-width-small non-uk-input" label="COM_PROTOSTORE_ADD_PRODUCT_FULL_IMAGE_LABEL" />
+        <field name="fullimage" type="image" directory="" preview="true" class="uk-input uk-form-width-small non-uk-input" label="COM_PROTOSTORE_ADD_PRODUCT_FULL_IMAGE_LABEL" />
 
         <field name="shipping_mode" type="list" default="" label="COM_PROTOSTORE_ADD_PRODUCT_SHIPPING_MODE" description="">
             <option value="">COM_PROTOSTORE_SHIPPING_NO_SHIPPING_FEE</option>

@@ -8,6 +8,8 @@
  */
 
 // No direct access to this file
+use Joomla\CMS\Layout\LayoutHelper;
+
 defined('_JEXEC') or die('Restricted access');
 
 /**
@@ -35,13 +37,9 @@ class JFormFieldImage extends JFormField
 	protected function getInput()
 	{
 
-		$html = array();
 
+		return LayoutHelper::render('product/modals/media_manager', array('id' => $this->id));
 
-		$html[] = '<p-inputnumber @input="getSellPrice()" mode="currency" :currency="p2s_currency.iso" :locale="p2s_locale" name="' . $this->name . '" v-model="form.' . $this->id . '" id="' . $this->id . '">';
-		$html[] = '</p-inputnumber> ';
-
-		return implode('', $html);
 
 
 	}

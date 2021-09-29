@@ -14,14 +14,13 @@ defined('_JEXEC') or die('Restricted access');
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\TagsHelper;
 use Joomla\CMS\MVC\Model\AdminModel;
-use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Language\Text;
 
+use Protostore\MediaManager\MediaManagerFactory;
 use Protostore\Product\Product;
 use Protostore\Render\Render;
 use Protostore\Product\ProductFactory;
 use Protostore\Utilities\Utilities;
-use Protostore\Currency\CurrencyFactory;
 use Protostore\Config\ConfigFactory;
 
 /**
@@ -73,6 +72,8 @@ class bootstrap extends AdminModel
 		$this->vars['default_category'] = $config->get('defaultproductcategory');
 		$this->vars['available_tags']   = ProductFactory::getAvailableTags();
 		$this->vars['custom_fields']    = [];
+		$this->vars['folderTree']       = MediaManagerFactory::getFolderTree();
+		$this->vars['currentPath']       = MediaManagerFactory::getHomePath();
 		if ($id)
 		{
 			$this->vars['item']           = $this->getTheItem($id);
@@ -239,6 +240,11 @@ class bootstrap extends AdminModel
 		$doc->addCustomTag(' <script id="custom_fields_data" type="application/json">' . json_encode($this->vars['custom_fields']) . '</script>');
 		$doc->addCustomTag(' <script id="available_tags_data" type="application/json">' . json_encode($this->vars['available_tags']) . '</script>');
 		$doc->addCustomTag(' <script id="default_category_data" type="application/json">' . $this->vars['default_category'] . '</script>');
+		$doc->addCustomTag(' <script id="folderTree_data" type="application/json">' . json_encode($this->vars['folderTree']) . '</script>');
+		$doc->addCustomTag(' <script id="currentPath_data" type="application/json">' . json_encode($this->vars['currentPath']) . '</script>');
+		$doc->addCustomTag(' <script id="COM_PROTOSTORE_MEDIA_MANAGER_EDIT_NAME_PROMPT" type="application/json">' . Text::_('COM_PROTOSTORE_MEDIA_MANAGER_EDIT_NAME_PROMPT') . '</script>');
+		$doc->addCustomTag(' <script id="COM_PROTOSTORE_MEDIA_MANAGER_DELETE_ARE_YOU_SURE" type="application/json">' . Text::_('COM_PROTOSTORE_MEDIA_MANAGER_DELETE_ARE_YOU_SURE') . '</script>');
+		$doc->addCustomTag(' <script id="COM_PROTOSTORE_MEDIA_MANAGER_FOLDER_ADD_FOLDER_PROMPT" type="application/json">' . Text::_('COM_PROTOSTORE_MEDIA_MANAGER_FOLDER_ADD_FOLDER_PROMPT') . '</script>');
 
 
 	}

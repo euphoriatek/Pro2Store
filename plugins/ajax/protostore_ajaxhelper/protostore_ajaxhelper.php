@@ -32,6 +32,7 @@ class plgAjaxProtostore_ajaxhelper extends JPlugin
 	public function onAjaxProtostore_ajaxhelper()
 	{
 
+
 		// init vars
 
 		$this->db    = Factory::getDbo();
@@ -73,10 +74,29 @@ class plgAjaxProtostore_ajaxhelper extends JPlugin
 	private function _initTask(): JsonResponse
 	{
 
-		$taskType = $this->input->get('type');
+		//get the task and process it
+		$taskType = $this->input->getString('type');
 		$taskType = explode('.', $taskType);
-		require_once JPATH_ADMINISTRATOR . '/components/com_protostore/tasks/' . $taskType[0] . '/' . $taskType[1] . '.php';
+
+		// check if there's a P2S plugin type specified to allow overrides
+		$pluginType = $this->input->getString('pluginType');
+		$pluginName = $this->input->getString('pluginName');
+
+		// if there's an override specified... run it...
+		if ($pluginType && $pluginName)
+		{
+			require_once JPATH_BASE . '/plugins/' . $pluginType . '/' . $pluginName . '/tasks/' . $taskType[0] . '/' . $taskType[1] . '.php';
+		}
+		else
+		{
+
+			//otherwise... just run the admin task
+
+			require_once JPATH_ADMINISTRATOR . '/components/com_protostore/tasks/' . $taskType[0] . '/' . $taskType[1] . '.php';
+
+		}
 		$class = 'protostoreTask_' . $taskType[1];
+
 
 		$taskWorker = new $class();
 
