@@ -48,7 +48,6 @@ class Product
 	public $taxable;
 	public $link;
 	public $category_link;
-	public $product_type;
 	public $published;
 
 
@@ -69,8 +68,8 @@ class Product
 	public $variantList;
 	public $variantDefault;
 
-	// files
-	public $files;
+	// custom fields
+	public $custom_fields;
 
 
 	public function __construct($data)
@@ -163,16 +162,18 @@ class Product
 			$this->variantDefault    = $variantData->default;
 		}
 
+		$this->custom_fields = ProductFactory::getCustomFields($this->id);
+
 
 		//get files data if digital
-		if ($this->product_type == 2)
-		{
-			$this->files = ProductFactory::getFiles($this->id);
-		}
-		else
-		{
-			$this->files = null;
-		}
+//		if ($this->product_type == 2)
+//		{
+//			$this->files = ProductFactory::getFiles($this->id);
+//		}
+//		else
+//		{
+//			$this->files = null;
+//		}
 
 
 	}

@@ -82,8 +82,7 @@ use Joomla\CMS\Layout\LayoutHelper;
 
                                                     <div class="uk-width-1-2">
                                                         <div class="uk-margin">
-                                                            <label class="uk-form-label" for="date_from">Date
-                                                                From</label>
+                                                            <label class="uk-form-label" for="date_from"><?= Text::_('COM_PROTOSTORE_DATE_FROM'); ?></label>
                                                             <div class="uk-form-controls">
                                                                 <input type="date" id="date_from" v-model="dateFrom"
                                                                        value="<?= HtmlHelper::date($vars['now'], 'Y-m-d'); ?>"
@@ -105,7 +104,7 @@ use Joomla\CMS\Layout\LayoutHelper;
                                                     </div>
                                                     <div class="uk-width-1-2">
                                                         <div class="uk-margin">
-                                                            <label class="uk-form-label" for="date_to">Date To</label>
+                                                            <label class="uk-form-label" for="date_to"><?= Text::_('COM_PROTOSTORE_DATE_TO'); ?></label>
                                                             <div class="uk-form-controls">
                                                                 <input type="date" id="date_to" name="date_to"
                                                                        v-model="dateTo"
@@ -119,14 +118,14 @@ use Joomla\CMS\Layout\LayoutHelper;
                                                             <div class="uk-width-expand">
                                                                 <div class="uk-margin">
                                                                     <button class="uk-button uk-button-small uk-button-default"
-                                                                            @click="clearDates">clear
+                                                                            @click="clearDates"><?= Text::_('COM_PROTOSTORE_TABLE_CLEAR_SEARCH'); ?>
                                                                     </button>
                                                                 </div>
                                                             </div>
                                                             <div class="uk-width-auto">
                                                                 <div class="uk-margin">
                                                                     <button class="uk-button uk-button-small uk-button-primary"
-                                                                            @click="filter">Search
+                                                                            @click="filter"><?= Text::_('COM_PROTOSTORE_TABLE_SEARCH_PLACEHOLDER'); ?>
                                                                     </button>
                                                                 </div>
                                                             </div>
@@ -157,32 +156,32 @@ use Joomla\CMS\Layout\LayoutHelper;
 
                                 <th class="uk-text-left">
                                 </th>
-                                <th class="uk-text-left">Order Number
+                                <th class="uk-text-left"><?= Text::_('COM_PROTOSTORE_ORDERS_TABLE_ORDER_NUMBER'); ?>
                                     <a href="#" @click="sort('order_number')" class="uk-margin-small-right uk-icon"
                                        uk-icon="triangle-down">
                                     </a>
                                 </th>
-                                <th class="uk-text-left">Customer
+                                <th class="uk-text-left"><?= Text::_('COM_PROTOSTORE_ORDERS_TABLE_CUSTOMER'); ?>
                                     <a href="#" @click="sort('customer')" class="uk-margin-small-right uk-icon"
                                        uk-icon="triangle-down">
                                     </a>
                                 </th>
-                                <th class="uk-text-left">Status
+                                <th class="uk-text-left"><?= Text::_('COM_PROTOSTORE_ORDERS_TABLE_STATUS'); ?>
                                     <a href="#" @click="sort('status')" class="uk-margin-small-right uk-icon"
                                        uk-icon="triangle-down">
                                     </a>
-                                <th class="uk-text-left">Date
+                                <th class="uk-text-left"><?= Text::_('COM_PROTOSTORE_ORDERS_TABLE_DATE'); ?>
                                     <a href="#" @click="sort('order_date')" class="uk-margin-small-right uk-icon"
                                        uk-icon="triangle-down">
                                     </a>
                                 </th>
 
-                                <th class="uk-text-left">Paid
+                                <th class="uk-text-left"><?= Text::_('COM_PROTOSTORE_ORDERS_TABLE_PAID'); ?>
                                     <a href="#" @click="sort('paid')" class="uk-margin-small-right uk-icon"
                                        uk-icon="triangle-down">
                                     </a>
                                 </th>
-                                <th class="uk-text-left">Total
+                                <th class="uk-text-left"><?= Text::_('COM_PROTOSTORE_ORDERS_TABLE_TOTAL'); ?>
                                     <a href="#" @click="sort('order_total')" class="uk-margin-small-right uk-icon"
                                        uk-icon="triangle-down">
                                     </a>
@@ -213,7 +212,17 @@ use Joomla\CMS\Layout\LayoutHelper;
                                     <div>{{order.order_date}}</div>
                                 </td>
                                 <td>
-                                    <div>{{order.order_paid}}</div>
+                                    <span v-if="order.order_paid == '1'"
+                                          @click="togglePaid(order)"
+                                          style="font-size: 18px; color: green; cursor: pointer;">
+                                      <i class="fal fa-check-circle"></i>
+                                  </span>
+                                    <span
+                                            v-if="order.order_paid == '0'"
+                                            @click="togglePaid(order)"
+                                            style="font-size: 18px; color: red; cursor: pointer;">
+                                        <i class="fal fa-times-circle"></i>
+                                    </span>
                                 </td>
                                 <td>
                                     <div>{{order.order_total_formatted}}</div>

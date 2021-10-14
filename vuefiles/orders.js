@@ -164,9 +164,11 @@ const p2s_orders = {
                 this.filter();
             }, 600)
         },
-        convertDate(date){
-
+        convertDate(date) {
             return date.toLocaleDateString('fr-CA');
+        },
+        togglePaid(order) {
+
         },
         sort(s) {
             //if s == current sort, reverse

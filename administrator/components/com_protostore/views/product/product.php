@@ -17,7 +17,8 @@ use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Version;
 
-if (Version::MAJOR_VERSION === 3){
+if (Version::MAJOR_VERSION === 3)
+{
 	HTMLHelper::_('behavior.keepalive');
 	HTMLHelper::_('behavior.formvalidator');
 }
@@ -67,7 +68,7 @@ $item = $vars['item'];
                                    href="index.php?option=com_protostore&view=products"><?= Text::_('JTOOLBAR_CANCEL'); ?></a>
                                 <button type="button" uk-toggle="target: #advancedOptions"
                                         class="uk-button uk-button-primary uk-button-small uk-margin-right">
-                                    Advanced Options
+									<?= Text::_('COM_PROTOSTORE_ADD_PRODUCT_ADVANCED_OPTIONS'); ?>
                                     <span uk-icon="icon: settings"></span>
                                 </button>
 
@@ -104,14 +105,14 @@ $item = $vars['item'];
 							'cardId'    => 'digital',
 						)); ?>
 					</span>
-	                <?= LayoutHelper::render('product/card_variant', array(
-		                'form'             => $vars['form'],
-		                'cardTitle'        => 'COM_PROTOSTORE_ADD_PRODUCT_VARIANTS',
-		                'cardStyle'        => 'default',
-		                'cardId'           => 'variants',
-		                'fields'           => array('variants'),
-		                'field_grid_width' => '1-1',
-	                )); ?>
+					<?= LayoutHelper::render('product/card_variant', array(
+						'form'             => $vars['form'],
+						'cardTitle'        => 'COM_PROTOSTORE_ADD_PRODUCT_VARIANTS',
+						'cardStyle'        => 'default',
+						'cardId'           => 'variants',
+						'fields'           => array('variants'),
+						'field_grid_width' => '1-1',
+					)); ?>
 
 					<?php echo LayoutHelper::render('product/card_options', array(
 						'form'             => $vars['form'],
@@ -125,6 +126,7 @@ $item = $vars['item'];
 
 					<?= LayoutHelper::render('product/card_custom_fields', array(
 						'form'             => $vars['form'],
+						'custom_fields'    => $vars['custom_fields'],
 						'cardTitle'        => 'COM_PROTOSTORE_ADD_PRODUCT_JOOMLA_CUSTOM_FIELDS',
 						'cardStyle'        => 'default',
 						'cardId'           => 'custom_fields',
@@ -159,25 +161,24 @@ $item = $vars['item'];
 						'cardId'    => 'pricing',
 						'fields'    => array('base_price', 'taxable', 'show_discount', 'discount')
 					)); ?>
-                    <span v-show="form.jform_product_type == 1">
-                        <?= LayoutHelper::render('card', array(
-	                        'form'      => $vars['form'],
-	                        'cardTitle' => 'COM_PROTOSTORE_ADD_PRODUCT_INVENTORY',
-	                        'cardStyle' => 'default',
-	                        'cardId'    => 'inventory',
-	                        'fields'    => array('sku', 'manage_stock', 'stock')
-                        )); ?>
-                    </span>
 
-                    <span v-show="form.jform_product_type == 1">
-						<?= LayoutHelper::render('card', array(
-							'form'      => $vars['form'],
-							'cardTitle' => 'COM_PROTOSTORE_ADD_PRODUCT_SHIPPING',
-							'cardStyle' => 'default',
-							'cardId'    => 'shipping',
-							'fields'    => array('shipping_mode', 'flatfee')
-						)); ?>
-					</span>
+					<?= LayoutHelper::render('card', array(
+						'form'      => $vars['form'],
+						'cardTitle' => 'COM_PROTOSTORE_ADD_PRODUCT_INVENTORY',
+						'cardStyle' => 'default',
+						'cardId'    => 'inventory',
+						'fields'    => array('sku', 'manage_stock', 'stock')
+					)); ?>
+
+
+
+					<?= LayoutHelper::render('card', array(
+						'form'      => $vars['form'],
+						'cardTitle' => 'COM_PROTOSTORE_ADD_PRODUCT_SHIPPING',
+						'cardStyle' => 'default',
+						'cardId'    => 'shipping',
+						'fields'    => array('shipping_mode', 'flatfee')
+					)); ?>
 
 
                 </div>

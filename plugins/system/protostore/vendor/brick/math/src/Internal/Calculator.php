@@ -1,13 +1,5 @@
 <?php
 
-/**
- * @package   Pro2Store
- * @author    Ray Lawlor - pro2.store
- * @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
- * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
- *
- */
-
 declare(strict_types=1);
 
 namespace Brick\Math\Internal;
@@ -107,7 +99,7 @@ abstract class Calculator
      * @param string $a The first operand.
      * @param string $b The second operand.
      *
-     * @return array{0: bool, 1: bool, 2: string, 3: string} Whether $a and $b are negative, followed by their digits.
+     * @return array{bool, bool, string, string} Whether $a and $b are negative, followed by their digits.
      */
     final protected function init(string $a, string $b) : array
     {
@@ -685,9 +677,6 @@ abstract class Calculator
     }
 
     /**
-     * @psalm-suppress InvalidOperand
-     * @see https://github.com/vimeo/psalm/issues/4456
-     *
      * @param string $number A positive, binary number.
      *
      * @return string

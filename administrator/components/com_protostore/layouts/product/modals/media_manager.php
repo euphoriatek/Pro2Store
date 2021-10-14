@@ -17,6 +17,7 @@ use Joomla\CMS\Language\Text;
 /** @var array $displayData */
 $data = $displayData;
 
+$model = ($data['isCustom'] ? 'custom_fields[' . $data['key'] . '].value' : 'form.' . $data['id']);
 
 ?>
 
@@ -25,7 +26,7 @@ $data = $displayData;
 
         <div class="uk-grid uk-grid-small" uk-grid="">
             <div class="uk-width-expand">
-                <input class="uk-input" v-model="form.<?= $data['id']; ?>">
+                <input class="uk-input" v-model="<?= $model; ?>">
             </div>
             <div class="uk-width-auto uk-grid-item-match uk-flex-middle">
                 <button type="button" uk-toggle="target: #mediaField<?= $data['id']; ?>"
@@ -37,8 +38,8 @@ $data = $displayData;
     </div>
     <div class="uk-width-1-1">
         <a uk-toggle="target: #mediaField<?= $data['id']; ?>">
-            <img class="uk-preserve-width"
-                 :src="'<?= \Joomla\CMS\Uri\Uri::root(); ?>' + form.<?= $data['id']; ?>"
+            <img class="uk-preserve-width" v-show="<?= $model; ?> !== null && <?= $model; ?> !== ''"
+                 :src="'<?= \Joomla\CMS\Uri\Uri::root(); ?>' + <?= $model; ?>"
                  width="400">
         </a>
     </div>
@@ -52,8 +53,12 @@ $data = $displayData;
             <div class="uk-grid">
                 <div class="uk-width-expand">
                     <div class="uk-grid">
-                        <div class="uk-width-auto"><h5
-                                    class=""><?= Text::_('COM_PROTOSTORE_MEDIA_MANAGER_LABEL'); ?></h5></div>
+                        <div class="uk-width-auto">
+                            <h5 class=""><?= Text::_('COM_PROTOSTORE_MEDIA_MANAGER_LABEL'); ?>
+                            <span v-show="mediaLoading">
+                            <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="spinner-third" class="svg-inline--fa fa-spinner-third fa-w-16 fa-spin" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M460.115 373.846l-6.941-4.008c-5.546-3.202-7.564-10.177-4.661-15.886 32.971-64.838 31.167-142.731-5.415-205.954-36.504-63.356-103.118-103.876-175.8-107.701C260.952 39.963 256 34.676 256 28.321v-8.012c0-6.904 5.808-12.337 12.703-11.982 83.552 4.306 160.157 50.861 202.106 123.67 42.069 72.703 44.083 162.322 6.034 236.838-3.14 6.149-10.75 8.462-16.728 5.011z"></path></svg></h5>
+                            </span>
+                        </div>
                         <div class="uk-width-auto">
                             <ul class="uk-iconnav uk-margin-small-top">
                                 <li>
@@ -110,7 +115,7 @@ $data = $displayData;
             </div>
         </div>
 
-        <!--        TODO - SPINNERS-->
+
         <div class="uk-modal-body">
             <ul class="uk-breadcrumb">
                 <li>
@@ -140,7 +145,7 @@ $data = $displayData;
 
                     <template v-for="folder in folderTree">
                         <div v-for="image in folder.images">
-                            <div @click="toggleSelectImage(image)"
+                            <div @click="toggleSelectImage(image)" v-if="image.folder_id == currentParent"
                                  :class="selected_images.includes(image) ? 'uk-card uk-card-primary uk-card-small' : 'uk-card uk-card-default uk-card-small'"
                                  style="cursor: pointer">
                                 <div class="uk-card-media-top">
@@ -219,4 +224,3 @@ $data = $displayData;
         </div>
     </div>
 </div>
-

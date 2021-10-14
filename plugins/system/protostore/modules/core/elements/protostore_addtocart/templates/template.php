@@ -7,7 +7,12 @@
  *
  */
 
+use Joomla\CMS\Language\Text;
+
 defined('_JEXEC') or die;
+
+/** @var array $attrs */
+/** @var array $props */
 
 $id = uniqid('yps_add_to_cart');
 
@@ -101,11 +106,11 @@ if ($props['instock']) : ?>
 
 	<?= $el($props, $attrs) ?>
 	<?php if ($props['oos_color'] == 'background') : ?>
-        <span class="uk-text-background"><?= $props['oos_message'] ?></span>
+        <span class="uk-text-background"><?= Text::_($props['oos_message']); ?></span>
 	<?php elseif ($props['oos_decoration'] == 'line') : ?>
-        <span><?= $props['oos_message'] ?></span>
+        <span><?= Text::_($props['oos_message']); ?></span>
 	<?php else : ?>
-		<?= $props['oos_message'] ?>
+		<?= Text::_($props['oos_message']); ?>
 	<?php endif ?>
 	<?= $el->end() ?>
 

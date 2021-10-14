@@ -117,9 +117,12 @@ use Joomla\CMS\Layout\LayoutHelper;
                                        uk-icon="triangle-down">
                                     </a>
                                 </th>
-
-                                <th class="uk-text-left@m uk-text-nowrap">
+                                <th class="uk-text-left"><?= Text::_('COM_PROTOSTORE_COUNTRIES_TABLE_DEFAULT'); ?>
+                                    <a href="#" @click="sort('default')" class="uk-margin-small-right uk-icon"
+                                       uk-icon="triangle-down">
+                                    </a>
                                 </th>
+
                             </tr>
                             </thead>
 
@@ -169,6 +172,20 @@ use Joomla\CMS\Layout\LayoutHelper;
                                         <i class="fal fa-times-circle"></i>
                                     </span>
                                 </td>
+                                <td class="uk-text-center">
+                                  <span v-if="item.default == '1'"
+                                        @click="toggleDefault(item)"
+                                        style="font-size: 18px; color: green; cursor: pointer;">
+                                      <i class="fal fa-check-circle"></i>
+                                  </span>
+                                    <span
+                                            v-if="item.default == '0'"
+
+                                            @click="toggleDefault(item)"
+                                            style="font-size: 18px; color: red; cursor: pointer;">
+                                        <i class="fal fa-times-circle"></i>
+                                    </span>
+                                </td>
 
                             </tr>
 
@@ -198,14 +215,14 @@ use Joomla\CMS\Layout\LayoutHelper;
                     <div class="uk-card uk-card-default ">
 
                         <div class="uk-card-header">
-                            <h4> Controls</h4>
+                            <h4> <?= Text::_('COM_PROTOSTORE_CONTROLS'); ?></h4>
                         </div>
                         <div class="uk-card-body">
                             <ul class="uk-nav-default uk-nav-parent-icon" uk-nav>
                                 <li>
                                     <a class="uk-text-emphasis" href="index.php?option=com_protostore&view=country">
                                         <span class="uk-margin-small-right" uk-icon="icon: plus-circle"></span>
-                                        Add Country
+                                       <?= Text::_('COM_PROTOSTORE_COUNTRY_ADD'); ?>
                                     </a>
                                 </li>
                                 <li class="uk-nav-divider"></li>

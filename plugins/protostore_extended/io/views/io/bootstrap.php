@@ -12,8 +12,6 @@
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\MVC\Model\AdminModel;
-use Joomla\CMS\Form\Form;
 
 use Protostore\Bootstrap\genericView;
 use Protostore\Render\Render;
@@ -23,7 +21,7 @@ use Protostore\Utilities\Utilities;
  *
  * @since 2.0
  */
-class bootstrap extends AdminModel implements genericView
+class bootstrap implements genericView
 {
 
 	public  $vars;
@@ -36,32 +34,11 @@ class bootstrap extends AdminModel implements genericView
 
 		$this->init();
 		$this->setVars();
-		$this->getForm();
 		$this->addScripts();
 		$this->addStylesheets();
 		$this->addTranslationStrings();
 
 		echo Render::render(JPATH_PLUGINS . '/protostore_extended/'.self::$view.'/views/'.self::$view.'/'.self::$view.'.php', $this->vars);
-
-	}
-
-
-	/**
-	 * @param   array  $data
-	 * @param   bool   $loadData
-	 *
-	 * @return bool|JForm
-	 *
-	 * @since version
-	 */
-
-	public function getForm($data = array(), $loadData = true)
-	{
-		// Get the form.
-
-		$form = new Form('p2sfaker');
-		$form->loadFile(JPATH_PLUGINS . '/protostore_extended/p2sfaker/forms/faker.xml', false);
-		$this->vars['form'] = $form;
 
 	}
 

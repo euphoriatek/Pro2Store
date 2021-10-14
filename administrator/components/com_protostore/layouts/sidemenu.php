@@ -55,11 +55,7 @@ $extensions = Factory::getApplication()->triggerEvent('onGetSidebarLink');
                 <li>
                     <a href="index.php?option=com_protostore&view=products"><?= Text::_('COM_PROTOSTORE_SIDEMENU_PRODUCT_LIST'); ?></a>
                 </li>
-<!--                <li>-->
-<!--                    <a href="index.php?option=com_protostore&view=productoptions">--><?//= Text::_('COM_PROTOSTORE_SIDEMENU_PRODUCT_OPTIONS'); ?><!--</a>-->
-<!--                </li>-->
-                <!-- <li><a href="/optionpresets">Option Presets</a></li>
-			  <li><a href="/brands">Brands</a></li> -->
+<!--			  <li><a href="index.php?option=com_protostore&view=presetvariants">--><?//= Text::_('COM_PROTOSTORE_SIDEMENU_PRESET_VARIANTS'); ?><!--</a></li>-->
             </ul>
         <li>
             <a href="index.php?option=com_protostore&view=orders">
@@ -167,13 +163,25 @@ $extensions = Factory::getApplication()->triggerEvent('onGetSidebarLink');
             </ul>
         </li>
 
-		<?php foreach ($extensions as $extension) : ?>
 
-            <li>
+		<?php
+		/** @var \Protostore\Sidebarlink\Sidebarlink $extension */
+		foreach ($extensions as $extension) : ?>
+
+            <li <?= ($extension->hasParent ? 'class="uk-parent"' : ''); ?>>
                 <a href="<?= $extension->view; ?>">
-                    <?= $extension->icon; ?>
-                     <?= Text::_($extension->linkText); ?>
+					<?= $extension->icon; ?>
+					<?= Text::_($extension->linkText); ?>
                 </a>
+				<?php if ($extension->hasParent) : ?>
+                    <ul class="uk-nav-sub" hidden="">
+						<?php foreach ($extension->subLinks as $subLink) : ?>
+                            <li>
+                                <a href="index.php?option=com_protostore&view=<?= $subLink['view']; ?>"><?= Text::_($subLink['linkText']); ?></a>
+                            </li>
+						<?php endforeach; ?>
+                    </ul>
+				<?php endif; ?>
             </li>
 
 		<?php endforeach; ?>

@@ -57,7 +57,7 @@ class Rating
 
         $query->select('*');
         $query->from($this->db->quoteName('#__protostore_rating'));
-        $query->where($this->db->quoteName('jitem_id') . ' = ' . $this->db->quote($this->jitem_id), 'AND');
+        $query->where($this->db->quoteName('jitem_id') . ' = ' . $this->db->quote($this->jitem_id));
         $query->where($this->db->quoteName('user_id') . ' = ' . $this->db->quote($this->user_id));
 
         $this->db->setQuery($query);
@@ -87,7 +87,7 @@ class Rating
 
         $query->select('*');
         $query->from($this->db->quoteName('#__protostore_rating'));
-        $query->where($this->db->quoteName('jitem_id') . ' = ' . $this->db->quote($this->jitem_id), 'AND');
+        $query->where($this->db->quoteName('jitem_id') . ' = ' . $this->db->quote($this->jitem_id));
         $query->where($this->db->quoteName('cookie_id') . ' = ' . $this->db->quote($this->cookie_id));
 
         $this->db->setQuery($query);

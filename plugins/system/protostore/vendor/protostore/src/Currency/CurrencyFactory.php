@@ -290,6 +290,7 @@ class CurrencyFactory
 	 * @return string
 	 *
 	 * @throws UnknownCurrencyException
+	 * @throws Exception
 	 * @since 1.5
 	 */
 
@@ -361,7 +362,7 @@ class CurrencyFactory
 
 		}
 
-		$float = Money::ofMinor((int) $number, $currencyISO, new CashContext(1), RoundingMode::DOWN);
+		$float = Money::ofMinor( $number, $currencyISO, new CashContext(1), RoundingMode::DOWN);
 
 		return $float->getAmount();
 

@@ -14,10 +14,25 @@ defined('_JEXEC') or die('Restricted access');
 use Protostore\Order\OrderFactory;
 use Joomla\Input\Input;
 
+
+/**
+ *
+ * @since       2.0
+ */
+
 class protostoreTask_updatestatus
 {
 
-	public function getResponse(Input $data)
+	/**
+	 * @param   Input  $data
+	 *
+	 * @return bool
+	 *
+	 * @throws Exception
+	 * @since 2.0
+	 */
+
+	public function getResponse(Input $data): bool
 	{
 
 		return OrderFactory::updateStatus($data->getString('status'), $data->getString('order_id'), $data->getBool('sendEmail'));

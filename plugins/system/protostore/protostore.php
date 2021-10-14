@@ -42,23 +42,25 @@ class plgSystemProtostore extends CMSPlugin
 		{
 			$doc->addScript('media/com_protostore/js/vue/bundle.min.js', array('type' => 'text/javascript'));
 			$doc->addStyleDeclaration('[v-cloak] {display: none}');
+
 		}
 		$doc->addStyleDeclaration('[v-cloak] {display: none}');
 
 		// set the Pro2Store Cookie
-		        $value = $app->input->cookie->get('yps-cart', null);
-		        if ($value == null) {
-		            $value = md5(Factory::getSession()->getId());
-		            $time = 0;
-			        $app->input->cookie->set(
-		            	'yps-cart',
-			            $value,
-			            $time,
-			            $app->get('cookie_path', '/'),
-			            $app->get('cookie_domain'),
-			            $app->isSSLConnection()
-		            );
-		        }
+		$value = $app->input->cookie->get('yps-cart', null);
+		if ($value == null)
+		{
+			$value = md5(Factory::getSession()->getId());
+			$time  = 0;
+			$app->input->cookie->set(
+				'yps-cart',
+				$value,
+				$time,
+				$app->get('cookie_path', '/'),
+				$app->get('cookie_domain'),
+				$app->isSSLConnection()
+			);
+		}
 
 		//check if the setup is done
 

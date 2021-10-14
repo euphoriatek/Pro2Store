@@ -52,12 +52,13 @@ $order = $data['item'];
                         <a href="index.php?option=com_protostore&view=product&id=<?= $product->j_item; ?>"><?= $product->j_item_name; ?></a>
                     </td>
                     <td>
-
-						<?php foreach ($product->item_options_array as $option) : ?>
-                            <div>
-								<?= $option->optiontypename; ?>: <?= $option->optionname; ?>
-                            </div>
-						<?php endforeach; ?>
+						<?php if ($product->item_options_array) : ?>
+							<?php foreach ($product->item_options_array as $option) : ?>
+                                <div>
+									<?= $option->optiontypename; ?>: <?= $option->optionname; ?>
+                                </div>
+							<?php endforeach; ?>
+						<?php endif; ?>
                     </td>
                     <td><?= $product->price_at_sale_formatted; ?></td>
                     <td><?= $product->amount; ?></td>

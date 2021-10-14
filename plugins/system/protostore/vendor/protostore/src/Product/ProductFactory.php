@@ -15,6 +15,7 @@ namespace Protostore\Product;
 defined('_JEXEC') or die('Restricted access');
 
 
+use Joomla\CMS\Date\Date;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Categories\Categories;
 use Joomla\CMS\Helper\TagsHelper;
@@ -187,6 +188,7 @@ class ProductFactory
 		$currentProduct->joomlaItem->state       = $data->json->getInt('state', $currentProduct->joomlaItem->state);
 		$currentProduct->joomlaItem->publish_up  = $data->json->getString('publish_up_date', $currentProduct->joomlaItem->publish_up);
 		$currentProduct->joomlaItem->catid       = $data->json->getInt('category', $currentProduct->joomlaItem->catid);
+		$currentProduct->joomlaItem->language    = $data->json->getString('language', $currentProduct->joomlaItem->language);
 
 
 		// with prices... we need to run it through the Brick system first.
@@ -236,11 +238,13 @@ class ProductFactory
 		$currentProduct->maxPerOrder   = $data->json->getInt('maxPerOrder', $currentProduct->maxPerOrder);
 		$currentProduct->taxable       = $data->json->getInt('taxable', $currentProduct->taxable);
 		$currentProduct->weight        = $data->json->getInt('weight', $currentProduct->weight);
-		$currentProduct->product_type  = $data->json->getInt('product_type', $currentProduct->product_type);
 		$currentProduct->weight_unit   = $data->json->getString('weight_unit', $currentProduct->weight_unit);
 		$currentProduct->sku           = $data->json->getString('sku', $currentProduct->sku);
 		$currentProduct->discount_type = $data->json->getString('discount_type', $currentProduct->discount_type);
 		$currentProduct->tags          = $data->json->getString('tags');
+
+		// custom fields
+		$currentProduct->custom_fields = $data->json->get('custom_fields', $currentProduct->custom_fields, 'ARRAY');
 
 		$currentProduct->options     = $data->json->get('options', $currentProduct->options, 'ARRAY');
 		$currentProduct->variants    = $data->json->get('variants', $currentProduct->variants, 'ARRAY');
@@ -291,6 +295,7 @@ class ProductFactory
 		$content->catid       = $data->json->getInt('category');
 		$content->access      = $data->json->getInt('access');
 		$content->featured    = $data->json->getInt('featured');
+		$content->language    = $data->json->getString('language');
 		$content->created     = Utilities::getDate();
 		$content->created_by  = Factory::getUser()->id;
 		$content->modified    = Utilities::getDate();
@@ -345,7 +350,6 @@ class ProductFactory
 		$product->maxPerOrder   = $data->json->getInt('maxPerOrder', 0);
 		$product->taxable       = $data->json->getInt('taxable', 0);
 		$product->weight        = $data->json->getInt('weight', 0);
-		$product->product_type  = $data->json->getInt('product_type', 1);
 		$product->weight_unit   = $data->json->getString('weight_unit');
 		$product->sku           = $data->json->getString('sku');
 		$product->discount_type = $data->json->getString('discount_type');
@@ -427,7 +431,6 @@ class ProductFactory
 		$insertProduct->maxPerOrder    = $product->maxPerOrder;
 		$insertProduct->discount_type  = $product->discount_type;
 		$insertProduct->taxable        = $product->taxable;
-		$insertProduct->product_type   = $product->product_type;
 
 		$result = $db->updateObject('#__protostore_product', $insertProduct, 'joomla_item_id');
 
@@ -471,6 +474,33 @@ class ProductFactory
 
 		}
 
+		// now do custom fields
+		foreach ($product->custom_fields as $field)
+		{
+			// delete current field value
+			$query = $db->getQuery(true);
+
+			$conditions = array(
+				$db->quoteName('item_id') . ' = ' . $db->quote($product->joomla_item_id),
+				$db->quoteName('field_id') . ' = ' . $db->quote($field['id'])
+			);
+
+			$query->delete($db->quoteName('#__fields_values'));
+			$query->where($conditions);
+
+			$db->setQuery($query);
+			$db->execute();
+
+			// insert value back:
+
+			$object           = new stdClass();
+			$object->field_id = $field['id'];
+			$object->item_id  = $product->joomla_item_id;
+			$object->value    = $field['value'];
+
+			$db->insertObject('#__fields_values', $object);
+
+		}
 
 		return true;
 
@@ -480,6 +510,7 @@ class ProductFactory
 	 * @param   Product  $product
 	 *
 	 *
+	 * @throws Exception
 	 * @since 1..6
 	 */
 
@@ -1012,6 +1043,21 @@ class ProductFactory
 
 	}
 
+	/**
+	 * @param   int  $j_item_id
+	 *
+	 * @return array|null
+	 *
+	 * @since 2.0
+	 */
+
+
+	public static function getCustomFields(int $j_item_id): ?array
+	{
+
+		return array();
+	}
+
 
 	/**
 	 * @param   string  $type
@@ -1256,7 +1302,7 @@ class ProductFactory
 		$query->select('*');
 		$query->from($db->quoteName('#__fields'));
 		$query->where($db->quoteName('context') . ' = ' . $db->quote('com_content.article'));
-		$query->where($db->quoteName('state') . ' = 1', 'AND');
+		$query->where($db->quoteName('state') . ' = 1');
 		$query->where($db->quoteName('type') . ' IN (\'text\', \'list\', \'radio\', \'textarea\', \'media\', \'editor\')');
 		$query->where($db->quoteName('id') . ' NOT IN (' . implode(",", $listedIds) . ')');
 		$query->order('ordering ASC');
@@ -2650,6 +2696,54 @@ class ProductFactory
 		}
 
 		return false;
+
+	}
+
+
+	/**
+	 * @param   Input  $data
+	 *
+	 *
+	 * @since 2.0
+	 */
+
+	public static function export(Input $data)
+	{
+
+		$response = false;
+
+		$db = Factory::getDbo();
+
+		$items = $data->json->get('items', '', 'ARRAY');
+
+
+		$date = new Date('now');
+
+		$filename = "export." . $date->toISO8601() . ".csv";
+
+		header('Content-Type: application/csv');
+		header('Content-Disposition: attachment; filename="' . $filename . '";');
+
+		// clean output buffer
+		ob_end_clean();
+
+		$handle = fopen('php://output', 'w');
+
+		// use keys as column titles
+		fputcsv($handle, array_keys($array['0']), ',');
+
+		foreach ($array as $value)
+		{
+			fputcsv($handle, $value, ',');
+		}
+
+		fclose($handle);
+
+		// flush buffer
+		ob_flush();
+
+		// use exit to get rid of unexpected output afterward
+		exit();
 
 	}
 

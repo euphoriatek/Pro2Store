@@ -48,7 +48,6 @@ const p2s_product_form = {
             discount_type: 1,
             andClose: false,
             variantsSet: false,
-            successMessage: '',
             file_for_edit: {},
             newOptionTypeName: '',
             newOptionTypeType: 'Dropdown',
@@ -65,18 +64,17 @@ const p2s_product_form = {
             currentParent: 0,
             currentFolderId: 0,
             mediaLoading: false,
+            // strings
+            COM_PROTOSTORE_ADD_PRODUCT_ALERT_SAVED: '',
             COM_PROTOSTORE_MEDIA_MANAGER_EDIT_NAME_PROMPT: '',
             COM_PROTOSTORE_MEDIA_MANAGER_DELETE_ARE_YOU_SURE: '',
-            COM_PROTOSTORE_MEDIA_MANAGER_FOLDER_ADD_FOLDER_PROMPT: ''
+            COM_PROTOSTORE_MEDIA_MANAGER_FOLDER_ADD_FOLDER_PROMPT: '',
+            COM_PROTOSTORE_MEDIA_MANAGER_DROPZONE_LABEL: ''
         }
 
     },
     created() {
         emitter.on('p2s_product_file_upload', this.fileUploaded);
-
-    },
-    mounted() {
-
     },
     computed: {
         currentDirectory() {
@@ -181,7 +179,7 @@ const p2s_product_form = {
         if (custom_fields != null) {
             try {
                 this.custom_fields = JSON.parse(custom_fields.innerText);
-                custom_fields.remove();
+                // custom_fields.remove();
             } catch (err) {
             }
         }
@@ -209,11 +207,11 @@ const p2s_product_form = {
                 }
             }
             this.setData();
-            const successMessage = document.getElementById('successMessage');
-            if (successMessage != null) {
+            const COM_PROTOSTORE_ADD_PRODUCT_ALERT_SAVED = document.getElementById('COM_PROTOSTORE_ADD_PRODUCT_ALERT_SAVED');
+            if (COM_PROTOSTORE_ADD_PRODUCT_ALERT_SAVED != null) {
                 try {
-                    this.successMessage = successMessage.innerText;
-                    // successMessage.remove();
+                    this.COM_PROTOSTORE_ADD_PRODUCT_ALERT_SAVED = COM_PROTOSTORE_ADD_PRODUCT_ALERT_SAVED.innerText;
+                    // COM_PROTOSTORE_ADD_PRODUCT_ALERT_SAVED.remove();
                 } catch (err) {
                 }
             }
@@ -226,6 +224,7 @@ const p2s_product_form = {
             } catch (err) {
             }
         }
+        this.form.jform_options = [];
         const options = document.getElementById('options');
         if (options != null) {
             try {
@@ -235,6 +234,8 @@ const p2s_product_form = {
                 this.form.jform_options = [];
             }
         }
+
+        // LANGUANGE STRINGS
         const COM_PROTOSTORE_MEDIA_MANAGER_EDIT_NAME_PROMPT = document.getElementById('COM_PROTOSTORE_MEDIA_MANAGER_EDIT_NAME_PROMPT');
         if (COM_PROTOSTORE_MEDIA_MANAGER_EDIT_NAME_PROMPT != null) {
             try {
@@ -259,73 +260,29 @@ const p2s_product_form = {
             } catch (err) {
             }
         }
+        const COM_PROTOSTORE_MEDIA_MANAGER_UPLOADED_MODAL = document.getElementById('COM_PROTOSTORE_MEDIA_MANAGER_UPLOADED_MODAL');
+        if (COM_PROTOSTORE_MEDIA_MANAGER_UPLOADED_MODAL != null) {
+            try {
+                this.COM_PROTOSTORE_MEDIA_MANAGER_UPLOADED_MODAL = COM_PROTOSTORE_MEDIA_MANAGER_UPLOADED_MODAL.innerText;
+                COM_PROTOSTORE_MEDIA_MANAGER_UPLOADED_MODAL.remove();
+            } catch (err) {
+            }
+        }
+        const COM_PROTOSTORE_MEDIA_MANAGER_DROPZONE_LABEL = document.getElementById('COM_PROTOSTORE_MEDIA_MANAGER_DROPZONE_LABEL');
+        if (COM_PROTOSTORE_MEDIA_MANAGER_DROPZONE_LABEL != null) {
+            try {
+                this.COM_PROTOSTORE_MEDIA_MANAGER_DROPZONE_LABEL = COM_PROTOSTORE_MEDIA_MANAGER_DROPZONE_LABEL.innerText;
+                COM_PROTOSTORE_MEDIA_MANAGER_DROPZONE_LABEL.remove();
+            } catch (err) {
+            }
+        }
     },
     methods: {
 
-        getSellPrice() {
-
-            const options = {
-                maximumFractionDigits: 2,
-                currency: this.p2s_currency.iso,
-                style: "currency",
-                currencyDisplay: "symbol"
-            }
-
-
-            if (this.discount_type == 1) {
-
-                this.sellPrice = this.localStringToNumber(this.form.jform_base_price - this.form.jform_discount).toLocaleString(undefined, options);
-            } else {
-
-                // work out the percentage
-                const discount = (this.form.jform_base_price / 100) * this.form.jform_discount;
-
-                this.sellPrice = this.localStringToNumber(this.form.jform_base_price - discount).toLocaleString(undefined, options);
-            }
-        },
-
         logIt() {
-            console.log(this.form);
+            console.log(this.custom_fields);
         },
 
-        async addLabel(e, variant_id) {
-
-
-            // get the array of current labels
-            let loc_array = e.value;
-
-            console.log(loc_array);
-
-            // get the last entered label
-            let enteredValue = loc_array[loc_array.length - 1];
-
-            // chop off the last label, since it only contains the entered text
-            loc_array.splice(-1);
-
-            // now push a new object into the array with the id as zero etc.
-            loc_array.push({
-                id: 0,
-                name: enteredValue,
-                product_id: this.form.itemid,
-                variant_id: variant_id
-            });
-
-
-        },
-
-        async onAddNewLabel(e, variant_id) {
-            await this.addLabel(e, variant_id);
-            await this.setVariants();
-            await this.saveItem();
-        },
-        async removeLabel(event, index, variant_id) {
-
-            this.form.jform_variants[index].labels.push(event.value[0]);
-            await UIkit.modal.confirm('Are you sure? This action cannot be undone!');
-            this.form.jform_variants[index].labels.splice(-1);
-            await this.setVariants();
-            await this.saveItem();
-        },
 
         /**
          * TAGS
@@ -335,7 +292,6 @@ const p2s_product_form = {
             this.form.jform_tags.push(tag);
             this.available_tags.splice(i, 1);
         },
-
         addBackToAvailable(e) {
             this.available_tags.push(e.value[0]);
         },
@@ -344,7 +300,6 @@ const p2s_product_form = {
          * VARIANTS
          */
         addVariant() {
-
             let newVariant = {
                 id: 0,
                 product_id: this.form.itemid,
@@ -355,13 +310,12 @@ const p2s_product_form = {
             this.form.jform_variants.push(newVariant);
         },
         async removeVariant(i) {
-            await UIkit.modal.confirm('Are you sure? This action cannot be undone!');
+            await UIkit.modal.confirm(this.COM_PROTOSTORE_MEDIA_MANAGER_DELETE_ARE_YOU_SURE);
             this.form.jform_variants[i].labels = [];
             this.form.jform_variants.splice(i, 1);
             await this.setVariants();
             await this.saveItem();
         },
-
         async updateVariantValues() {
             this.variants_loading = true;
             clearTimeout(this.debounce)
@@ -369,8 +323,6 @@ const p2s_product_form = {
                 this.saveVariantValues();
             }, 1600)
         },
-
-
         async setVariants() {
             this.variants_loading = true;
 
@@ -444,7 +396,6 @@ const p2s_product_form = {
 
 
         },
-
         async refreshVariants() {
 
             const params = {
@@ -473,8 +424,6 @@ const p2s_product_form = {
                 return true;
             }
         },
-
-
         setVariantDefault(itemIndex) {
 
             this.form.jform_variantList.forEach((variant, index) => {
@@ -487,7 +436,6 @@ const p2s_product_form = {
                 }
             });
         },
-
         checkVariantDefault(itemIndex) {
             this.form.jform_variantList.forEach((variant, index) => {
                 if (itemIndex === index) {
@@ -498,7 +446,6 @@ const p2s_product_form = {
                 }
             });
         },
-
         formatToCurrency(itemPrice) {
 
             const value = itemPrice;
@@ -516,16 +463,50 @@ const p2s_product_form = {
         localStringToNumber(s) {
             return Number(String(s).replace(/[^0-9.-]+/g, ""))
         },
+        async addLabel(e, variant_id) {
+
+
+            // get the array of current labels
+            let loc_array = e.value;
+
+            console.log(loc_array);
+
+            // get the last entered label
+            let enteredValue = loc_array[loc_array.length - 1];
+
+            // chop off the last label, since it only contains the entered text
+            loc_array.splice(-1);
+
+            // now push a new object into the array with the id as zero etc.
+            loc_array.push({
+                id: 0,
+                name: enteredValue,
+                product_id: this.form.itemid,
+                variant_id: variant_id
+            });
+
+
+        },
+        async onAddNewLabel(e, variant_id) {
+            await this.addLabel(e, variant_id);
+            await this.setVariants();
+            await this.saveItem();
+        },
+        async removeLabel(event, index, variant_id) {
+
+            this.form.jform_variants[index].labels.push(event.value[0]);
+            await UIkit.modal.confirm(this.COM_PROTOSTORE_MEDIA_MANAGER_DELETE_ARE_YOU_SURE);
+            this.form.jform_variants[index].labels.splice(-1);
+            await this.setVariants();
+            await this.saveItem();
+        },
 
 
         /**
          * CHECKBOX OPTIONS
          */
 
-
         addOption() {
-
-            console.log(this.form.jform_options);
 
             this.form.jform_options.push({
                 id: 0,
@@ -535,11 +516,9 @@ const p2s_product_form = {
                 delete: false
             })
         },
-
         removeOption(option) {
             option.delete = true;
         },
-
 
         /**
          * FILE EDIT
@@ -596,7 +575,7 @@ const p2s_product_form = {
             if (response.success) {
 
                 UIkit.notification({
-                    message: this.successMessage,
+                    message: this.COM_PROTOSTORE_ADD_PRODUCT_ALERT_SAVED,
                     status: 'success',
                     pos: 'top-center',
                     timeout: 5000
@@ -613,7 +592,6 @@ const p2s_product_form = {
             }
 
         },
-
         cancelFile() {
             this.file_for_edit = {};
         },
@@ -630,12 +608,6 @@ const p2s_product_form = {
             this.form.jform_short_description = this.getFrameContents('jform_short_description');
             this.form.jform_publish_up_date = document.getElementById("jform_publish_up_date").value;
             this.form.jform_access = document.getElementById("jform_access").value;
-
-
-            console.log(this.form);
-
-
-            // return;
 
             const params = {
                 'itemid': this.form.itemid,
@@ -661,7 +633,8 @@ const p2s_product_form = {
                 'product_type': this.form.jform_product_type,
                 'options': this.form.jform_options,
                 'variants': this.form.jform_variants,
-                'variantList': this.form.jform_variantList
+                'variantList': this.form.jform_variantList,
+                'custom_fields': this.custom_fields
             };
 
             const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=product.save&format=raw", {
@@ -686,7 +659,7 @@ const p2s_product_form = {
                 this.form.jform_options = response.data.options;
 
                 UIkit.notification({
-                    message: this.successMessage,
+                    message: this.COM_PROTOSTORE_ADD_PRODUCT_ALERT_SAVED,
                     status: 'success',
                     pos: 'bottom-right',
                     timeout: 5000
@@ -719,6 +692,27 @@ const p2s_product_form = {
             }
 
 
+        },
+        getSellPrice() {
+
+            const options = {
+                maximumFractionDigits: 2,
+                currency: this.p2s_currency.iso,
+                style: "currency",
+                currencyDisplay: "symbol"
+            }
+
+
+            if (this.discount_type == 1) {
+
+                this.sellPrice = this.localStringToNumber(this.form.jform_base_price - this.form.jform_discount).toLocaleString(undefined, options);
+            } else {
+
+                // work out the percentage
+                const discount = (this.form.jform_base_price / 100) * this.form.jform_discount;
+
+                this.sellPrice = this.localStringToNumber(this.form.jform_base_price - discount).toLocaleString(undefined, options);
+            }
         },
         getFrameContents(elementId) {
             const iFrame = document.getElementById(elementId + '_ifr');
@@ -782,6 +776,10 @@ const p2s_product_form = {
                 }
             return str.join("&");
         },
+
+        /**
+         * MEDIA MANAGER
+         */
         async getFolderTree() {
 
             this.mediaLoading = true;
@@ -805,6 +803,7 @@ const p2s_product_form = {
             const response = await request.json();
 
             if (response.success) {
+                this.mediaLoading = false;
                 this.selected_images = [];
                 this.folderTree = response.data;
             }
@@ -851,6 +850,13 @@ const p2s_product_form = {
                     this.form[jfrom] = this.selected_images[0].relname;
                 }
             });
+
+            const custom_field = this.custom_fields.find(custom_field => custom_field.id === id);
+
+            if (custom_field) {
+                custom_field.value = this.selected_images[0].relname;
+            }
+
 
             UIkit.modal('#mediaField' + id).hide();
         },
@@ -993,62 +999,43 @@ const p2s_product_form = {
 
         },
         async uploadImage(e) {
+            this.mediaLoading = true;
 
-            console.log(e.target.files);
-            const formdata = new FormData();
-            formdata.append("image", e.target.files[0], e.target.files[0].name);
-            const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=mediaManager.uploadImage&format=raw&directory=" + this.currentDirectory.fullname, {
-                method: 'POST',
-                mode: 'cors',
-                cache: 'no-cache',
-                credentials: 'same-origin',
+            let files = e.target.files;
 
-                redirect: 'follow',
-                referrerPolicy: 'no-referrer',
-                body: formdata
+            [...files].forEach((file) => {
+
+                let formData = new FormData();
+                formData.append("image", file, file.name);
+
+                fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=mediaManager.uploadImage&format=raw&directory=" + this.currentDirectory.fullname, {
+                    method: 'POST',
+                    mode: 'cors',
+                    cache: 'no-cache',
+                    credentials: 'same-origin',
+                    redirect: 'follow',
+                    referrerPolicy: 'no-referrer',
+                    reportProgress: true,
+                    observe: 'events',
+                    body: formData
+                }).then((response) => {
+                    if (response.success) {
+
+                    }
+                });
+
             });
 
+            UIkit.notification({
+                message: this.COM_PROTOSTORE_MEDIA_MANAGER_UPLOADED_MODAL,
+                status: 'success',
+                pos: 'bottom-right',
+                timeout: 5000
+            });
 
-            const response = await request.json();
-
-
-            if (response.success) {
-                await this.getFolderTree();
-
-            }
-
-            //
-            // // const params = {
-            // //     files: e.target.files,
-            // //     directory: this.currentDirectory
-            // // }
-            //
-            // let files = e.target.files;
-            //
-            // [...files].forEach((file) => {
-            //
-            //     const formdata = new FormData();
-            //     formdata.append("image", file, "image");
-            //
-            //     fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=mediaManager.uploadImage&format=raw&directory=" + this.currentDirectory.fullname, {
-            //         method: 'POST',
-            //         mode: 'cors',
-            //         cache: 'no-cache',
-            //         credentials: 'same-origin',
-            //         redirect: 'follow',
-            //         referrerPolicy: 'no-referrer',
-            //         body: formdata
-            //     }).then((response)=> {
-            //         if (response.success) {
-            //             this.getFolderTree();
-            //         }
-            //     });
-            //
-            // })
-
+            await this.getFolderTree();
 
         }
-
 
     },
     components: {

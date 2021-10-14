@@ -139,7 +139,7 @@ class Shipping
 
 		}
 
-	}
+	       }
 
 
 	public static function getItemWeight($cartitem)

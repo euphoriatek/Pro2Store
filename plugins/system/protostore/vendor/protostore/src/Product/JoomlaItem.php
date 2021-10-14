@@ -38,6 +38,7 @@ class JoomlaItem
 	public $access;
 	public $hits;
 	public $featured;
+	public $language;
 
 
 

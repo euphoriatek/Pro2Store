@@ -14,6 +14,7 @@ namespace Protostore\Cart;
 defined('_JEXEC') or die('Restricted access');
 
 use Brick\Money\Exception\UnknownCurrencyException;
+use Exception;
 use Joomla\CMS\Factory;
 
 use Joomla\CMS\Language\Text;
@@ -1579,6 +1580,7 @@ class CartFactory
 	 *
 	 * @return int
 	 *
+	 * @throws Exception
 	 * @since 2.0
 	 */
 
@@ -1678,7 +1680,9 @@ class CartFactory
 	 *
 	 * @return bool
 	 *
-	 * @since 1.0
+	 * @throws Exception
+	 * @deprecated  2.0
+	 * @since       1.0
 	 */
 
 	public static function convertToOrder($paymentMethod, $shippingMethod = 'default', $vendorToken = '', $sendEmail = false)

@@ -34,6 +34,7 @@ class Order
 	public $tax_total;
 	public $currency;
 	public $payment_method;
+	public $payment_method_icon;
 	public $customer_notes;
 	public $vendor_token;
 	public $guest_pin;
@@ -193,6 +194,8 @@ class Order
 		{
 			$this->product_count = count($this->ordered_products);
 		}
+
+		$this->payment_method_icon = OrderFactory::getPaymentMethodIcon($this->payment_method);
 
 		// Tracking
 

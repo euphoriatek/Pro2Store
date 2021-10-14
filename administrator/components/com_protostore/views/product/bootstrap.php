@@ -73,7 +73,7 @@ class bootstrap extends AdminModel
 		$this->vars['available_tags']   = ProductFactory::getAvailableTags();
 		$this->vars['custom_fields']    = [];
 		$this->vars['folderTree']       = MediaManagerFactory::getFolderTree();
-		$this->vars['currentPath']       = MediaManagerFactory::getHomePath();
+		$this->vars['currentPath']      = MediaManagerFactory::getHomePath();
 		if ($id)
 		{
 			$this->vars['item']           = $this->getTheItem($id);
@@ -118,26 +118,8 @@ class bootstrap extends AdminModel
 
 		$item = $data['item'];
 
-		// default to physical
-		$form_type = 'physical';
 
-		if ($item)
-		{
-			switch ($item->product_type)
-			{
-				case 1:
-					$form_type = 'physical';
-					break;
-				case 2:
-					$form_type = 'digital';
-					break;
-				case 3:
-					$form_type = 'subscription';
-					break;
-			}
-		}
-
-		$form = $this->loadForm('com_protostore.' . $form_type . '_product', $form_type . '_product', array('control' => 'jform', 'load_data' => $loadData));
+		$form = $this->loadForm('com_protostore.' . 'product', 'product', array('control' => 'jform', 'load_data' => $loadData));
 
 		if ($item)
 		{
@@ -154,24 +136,11 @@ class bootstrap extends AdminModel
 			$form->setValue('discount', null, $item->discountFloat);
 			$form->setValue('base_price', null, $item->basepriceFloat);
 			$form->setValue('manage_stock', null, $item->manage_stock);
-
+			$form->setValue('shipping_mode', null, $item->shipping_mode);
 			$tagsHelper = new TagsHelper();
 			$form->setValue('tags', null, $tagsHelper->getTagIds($item->joomlaItem->id, "com_content.article"));
 
 
-			switch ($item->product_type)
-			{
-				case 1:
-					// add physical only form stuff here.
-					$form->setValue('shipping_mode', null, $item->shipping_mode);
-					break;
-				case 2:
-					// add digital only form stuff here.
-					break;
-				case 3:
-					// add subscription stuff here only form stuff here.
-					break;
-			}
 
 		}
 
@@ -194,7 +163,7 @@ class bootstrap extends AdminModel
 
 
 		// include prime
-		Utilities::includePrime(array('inputswitch', 'button', 'chips', 'chip', 'inputtext', 'inputnumber'));
+		Utilities::includePrime(array('inputswitch', 'button', 'chip', 'chips', 'inputtext', 'inputnumber'));
 
 		if ($this->vars['item'])
 		{
@@ -242,9 +211,6 @@ class bootstrap extends AdminModel
 		$doc->addCustomTag(' <script id="default_category_data" type="application/json">' . $this->vars['default_category'] . '</script>');
 		$doc->addCustomTag(' <script id="folderTree_data" type="application/json">' . json_encode($this->vars['folderTree']) . '</script>');
 		$doc->addCustomTag(' <script id="currentPath_data" type="application/json">' . json_encode($this->vars['currentPath']) . '</script>');
-		$doc->addCustomTag(' <script id="COM_PROTOSTORE_MEDIA_MANAGER_EDIT_NAME_PROMPT" type="application/json">' . Text::_('COM_PROTOSTORE_MEDIA_MANAGER_EDIT_NAME_PROMPT') . '</script>');
-		$doc->addCustomTag(' <script id="COM_PROTOSTORE_MEDIA_MANAGER_DELETE_ARE_YOU_SURE" type="application/json">' . Text::_('COM_PROTOSTORE_MEDIA_MANAGER_DELETE_ARE_YOU_SURE') . '</script>');
-		$doc->addCustomTag(' <script id="COM_PROTOSTORE_MEDIA_MANAGER_FOLDER_ADD_FOLDER_PROMPT" type="application/json">' . Text::_('COM_PROTOSTORE_MEDIA_MANAGER_FOLDER_ADD_FOLDER_PROMPT') . '</script>');
 
 
 	}
@@ -272,7 +238,13 @@ class bootstrap extends AdminModel
 		$doc = Factory::getDocument();
 
 
-		$doc->addCustomTag('<script id="successMessage" type="application/json">' . Text::_('COM_PROTOSTORE_ADD_PRODUCT_ALERT_SAVED') . '</script>');
+		$doc->addCustomTag('<script id="COM_PROTOSTORE_ADD_PRODUCT_ALERT_SAVED" type="application/json">' . Text::_('COM_PROTOSTORE_ADD_PRODUCT_ALERT_SAVED') . '</script>');
+		$doc->addCustomTag(' <script id="COM_PROTOSTORE_MEDIA_MANAGER_EDIT_NAME_PROMPT" type="application/json">' . Text::_('COM_PROTOSTORE_MEDIA_MANAGER_EDIT_NAME_PROMPT') . '</script>');
+		$doc->addCustomTag(' <script id="COM_PROTOSTORE_MEDIA_MANAGER_DELETE_ARE_YOU_SURE" type="application/json">' . Text::_('COM_PROTOSTORE_MEDIA_MANAGER_DELETE_ARE_YOU_SURE') . '</script>');
+		$doc->addCustomTag(' <script id="COM_PROTOSTORE_MEDIA_MANAGER_FOLDER_ADD_FOLDER_PROMPT" type="application/json">' . Text::_('COM_PROTOSTORE_MEDIA_MANAGER_FOLDER_ADD_FOLDER_PROMPT') . '</script>');
+		$doc->addCustomTag(' <script id="COM_PROTOSTORE_MEDIA_MANAGER_UPLOADED_MODAL" type="application/json">' . Text::_('COM_PROTOSTORE_MEDIA_MANAGER_UPLOADED_MODAL') . '</script>');
+		$doc->addCustomTag(' <script id="COM_PROTOSTORE_MEDIA_MANAGER_DROPZONE_LABEL" type="application/json">' . Text::_('COM_PROTOSTORE_MEDIA_MANAGER_DROPZONE_LABEL') . '</script>');
+		$doc->addCustomTag(' <script id="COM_PROTOSTORE_MEDIA_MANAGER_DELETE_ARE_YOU_SURE" type="application/json">' . Text::_('COM_PROTOSTORE_MEDIA_MANAGER_DELETE_ARE_YOU_SURE') . '</script>');
 
 	}
 

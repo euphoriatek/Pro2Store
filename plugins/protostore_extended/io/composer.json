@@ -1,9 +1,0 @@
-{
-  "name": "protostore/p2sfaker",
-  "description": "Hello Pro2Store",
-  "type": "library",
-  "license": "MIT",
-  "require": {
-   "fzaninotto/faker": "v1.9.2"
-  }
-}

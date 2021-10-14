@@ -36,6 +36,7 @@ class CartItem
 
 	public $bought_at_price_formatted;
 	public $total_bought_at_price_formatted;
+	public $total_bought_at_price_with_tax;
 	public $total_bought_at_price_with_tax_formatted;
 	public $manage_stock_enabled;
 	public $product;
@@ -44,6 +45,11 @@ class CartItem
 	public $variant_id;
 	public $selected_variant;
 
+
+	/**
+	 * @throws Exception
+	 * @since 2.0
+	 */
 	public function __construct($data)
 	{
 

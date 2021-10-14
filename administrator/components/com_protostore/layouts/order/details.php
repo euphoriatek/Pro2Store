@@ -13,7 +13,9 @@ defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Language\Text;
 
+/** @var array  $displayData */
 $data  = $displayData;
+/** @var \Protostore\Order\Order $order */
 $order = $data['item'];
 
 ?>
@@ -78,10 +80,7 @@ $order = $data['item'];
                     </div>
                 </td>
                 <td class="uk-text-nowrap uk-table-shrink">
-                    <ul class="uk-iconnav uk-flex-right uk-preserve-width">
-                        <li><a href="#orderupdatemodal" uk-toggle><span
-                                        uk-icon="icon: more-vertical;"></span></a></li>
-                    </ul>
+
                 </td>
             </tr>
             <tr>
@@ -162,7 +161,7 @@ $order = $data['item'];
                 </td>
                 <td>
                     <div id="payment_method" class="el-content uk-panel"><img
-                                src="../plugins/system/protostore_<?= strtolower($order->payment_method); ?>/modules/<?= str_replace(' ', '', strtolower($order->payment_method)); ?>/elements/protostore_<?= strtolower($order->payment_method); ?>/images/protostore_<?= strtolower($order->payment_method); ?>.svg"
+                                src="<?= $order->payment_method_icon; ?>"
                         />
 						<?= $order->payment_method; ?>
 						<?= $order->vendor_token; ?></div>

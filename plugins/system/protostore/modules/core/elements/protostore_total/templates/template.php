@@ -10,8 +10,8 @@
 
 
 $id = uniqid('yps_total');
-
-
+/** @var array $attrs */
+/** @var array $props */
 // Create div tag
 $el = $this->el($props['title_element'], [
 
@@ -26,8 +26,7 @@ $el = $this->el($props['title_element'], [
 ]);
 
 ?>
-<script id="yps-total-baseUrl" type="application/json"><?= $props['baseUrl']; ?></script>
-<script id="yps_total_item_id_data" type="application/json"><?= $props['item_id']; ?></script>
+
 <?= $el($props, $attrs) ?>
 <div id="<?= $id; ?>">
     <div v-show="loading" id="yps-total-spinner" uk-spinner></div>
@@ -41,10 +40,10 @@ $el = $this->el($props['title_element'], [
         const <?= $id; ?> = {
             data() {
                 return {
-                    baseUrl: '',
+                    base_url: '<?= \Joomla\CMS\Uri\Uri::base(); ?>',
                     total: 0,
                     loading: false,
-                    itemid: 0,
+                    itemid: <?= $props['item_id']; ?>,
                     multiplier: 1,
                     selected: [],
                     options: [],
@@ -56,35 +55,7 @@ $el = $this->el($props['title_element'], [
                 emitter.on("yps_optionsChange", this.recalculateTotal)
                 emitter.on("yps_variantsChange", this.recalculateTotal)
             },
-            async beforeMount() {
-                // set the itemid from the inline scripts
 
-                const base_url = document.getElementById('yps-total-baseUrl');
-                try {
-                    this.base_url = base_url.innerText;
-                    base_url.remove();
-                } catch (err) {
-                }
-
-                const itemId = document.getElementById('yps_total_item_id_data');
-                try {
-                    this.itemid = itemId.innerText;
-                } catch (err) {
-                    throw new Error('Data is missing...')
-                }
-
-                if (!this.itemid) {
-                    throw new Error('Data is missing...')
-                }
-                itemId.remove();
-
-
-                const baseUrl = document.getElementById('yps-total-baseUrl');
-                this.baseUrl = baseUrl.innerText;
-                baseUrl.remove();
-
-
-            },
             async mounted() {
 
                 await this.recalculateTotal();

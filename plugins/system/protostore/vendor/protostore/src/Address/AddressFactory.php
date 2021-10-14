@@ -130,8 +130,8 @@ class AddressFactory
 		// if there is a search term, iterate over the columns looking for a match
 		if ($searchTerm)
 		{
-			$query->where($db->quoteName('name') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'), 'OR');
-			$query->where($db->quoteName('address1') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'), 'OR');
+			$query->where($db->quoteName('name') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'));
+			$query->where($db->quoteName('address1') . ' LIKE ' . $db->quote('%' . $searchTerm . '%') );
 			$query->where($db->quoteName('address2') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'));
 			$query->where($db->quoteName('address3') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'));
 			$query->where($db->quoteName('town') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'));

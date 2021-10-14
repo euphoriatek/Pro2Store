@@ -12,8 +12,9 @@
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Factory;
-
+use Joomla\CMS\Version;
 use Joomla\CMS\Uri\Uri;
+
 use Protostore\Currency\CurrencyFactory;
 use Protostore\Render\Render;
 
@@ -107,13 +108,9 @@ class bootstrapWrapper
 	{
 
 		$doc = Factory::getDocument();
-		$doc->addScript("https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.0/chart.min.js");
-		$doc->addScript("https://cdn.jsdelivr.net/npm/uikit@latest/dist/js/uikit.min.js");
-		$doc->addScript("https://cdn.jsdelivr.net/npm/uikit@latest/dist/js/uikit-icons.min.js");
-		$doc->addScript("https://kit.fontawesome.com/6afbbf2d93.js");
-
 
 		$doc->addScript('../media/com_protostore/js/vue/bundle.min.js', array('type' => 'text/javascript'));
+
 
 		$doc->addCustomTag('<script id="base_url" type="application/json">' . Uri::base() . '</script>');
 		$doc->addCustomTag(' <script id="currency" type="application/json">' . json_encode($this->vars['currency']) . '</script>');
@@ -135,12 +132,21 @@ class bootstrapWrapper
 	{
 
 		$doc = Factory::getDocument();
-		$doc->addStyleSheet("https://cdn.jsdelivr.net/npm/uikit@latest/dist/css/uikit.min.css");
-		$doc->addStyleSheet("/media/com_protostore/css/theme.css");
-		$doc->addStyleSheet("/media/com_protostore/css/style.css");
-		$doc->addStyleSheet("https://unpkg.com/primevue/resources/primevue.min.css");
-		$doc->addStyleSheet("https://unpkg.com/primevue/resources/themes/saga-blue/theme.css");
-		$doc->addStyleSheet("https://unpkg.com/primeicons/primeicons.css");
+		$doc->addStyleSheet("/media/com_protostore/css/bundle.min.css");
+//		if (Version::MAJOR_VERSION === 3)  {
+//			$doc->addStyleSheet("/media/com_protostore/css/bundle.min.css");
+//
+//		} else {
+//
+//			$doc->addStyleSheet("https://cdn.jsdelivr.net/npm/uikit@latest/dist/css/uikit.min.css");
+//			$doc->addStyleSheet("/media/com_protostore/css/bundle4.min.css");
+//			$doc->addStyleSheet("/media/com_protostore/css/theme.css");
+//			$doc->addStyleSheet("/media/com_protostore/css/style.css");
+//			$doc->addStyleSheet("https://unpkg.com/primevue/resources/primevue.min.css");
+//			$doc->addStyleSheet("https://unpkg.com/primevue/resources/themes/saga-blue/theme.css");
+//			$doc->addStyleSheet("https://unpkg.com/primeicons/primeicons.css");
+//		}
+
 
 
 	}

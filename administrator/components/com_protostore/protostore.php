@@ -55,6 +55,13 @@ if(\Protostore\Setup\SetupFactory::isSetup()) {
     // jQuery('link[rel=stylesheet][href*="isis/css/template"]').remove();
 </script>
 
+<?php else : ?>
+
+
+    <script>
+        document.getElementById("subhead-container").remove();
+    </script>
+
 <?php endif; ?>
 
 

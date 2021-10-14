@@ -38,7 +38,7 @@ class JFormFieldImage extends JFormField
 	{
 
 
-		return LayoutHelper::render('product/modals/media_manager', array('id' => $this->id));
+		return LayoutHelper::render('product/modals/media_manager', array('id' => $this->id, 'isCustom' => false));
 
 
 

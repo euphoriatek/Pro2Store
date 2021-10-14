@@ -83,8 +83,8 @@ class EmaillogFactory
 
 		if ($searchTerm)
 		{
-			$query->where($db->quoteName('emailaddress') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'), 'OR');
-			$query->where($db->quoteName('emailtype') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'), 'OR');
+			$query->where($db->quoteName('emailaddress') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'));
+			$query->where($db->quoteName('emailtype') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'));
 		}
 
 

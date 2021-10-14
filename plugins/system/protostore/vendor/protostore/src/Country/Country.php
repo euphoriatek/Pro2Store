@@ -24,6 +24,7 @@ class Country
 	public $requires_vat;
 	public $taxrate;
 	public $published;
+	public $default;
 
 
 	public function __construct($data)

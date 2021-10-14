@@ -49,6 +49,7 @@
 !/administrator/components/
 /administrator/components/*
 !/administrator/components/com_protostore/
+/administrator/components/com_protostore/import_files
 
 !/administrator/modules/
 /administrator/modules/*

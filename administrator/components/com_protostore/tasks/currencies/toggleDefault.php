@@ -29,7 +29,6 @@ class protostoreTask_toggleDefault
 	{
 
 
-
 		return CurrencyFactory::toggleDefaultFromInputData($data);
 
 

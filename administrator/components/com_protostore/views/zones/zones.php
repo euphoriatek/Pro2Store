@@ -122,8 +122,6 @@ use Joomla\CMS\Layout\LayoutHelper;
                                     </a>
                                 </th>
 
-                                <th class="uk-text-left@m uk-text-nowrap">
-                                </th>
                             </tr>
                             </thead>
 

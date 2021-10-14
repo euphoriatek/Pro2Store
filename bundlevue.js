@@ -12,7 +12,7 @@ const terser = require('@node-minify/terser');
 
 (async function exec() {
 
-
+    console.clear()
     const timeElapsed = Date.now();
     const today = new Date(timeElapsed);
     const theTime = today.toUTCString();

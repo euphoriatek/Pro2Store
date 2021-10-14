@@ -1,0 +1,9 @@
+{
+  "name": "protostore/protostore",
+  "description": "Pro2Store TESTS",
+  "type": "library",
+  "license": "MIT",
+  "require-dev": {
+    "phpunit/phpunit": "^9"
+  }
+}

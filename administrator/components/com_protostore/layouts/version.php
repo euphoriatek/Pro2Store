@@ -16,3 +16,4 @@ target="_blank"
    data-uk-tooltip="title:View Changelog; pos: bottom;"
    class="uk-text-xsmall uk-text-muted uk-display-block"
    title="" aria-expanded="false"> <?= \Protostore\Config\ConfigFactory::getVersion(); ?>
+</a>

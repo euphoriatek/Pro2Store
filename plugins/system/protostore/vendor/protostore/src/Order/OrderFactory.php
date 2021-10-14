@@ -93,7 +93,7 @@ class OrderFactory
 	 * @since 2.0
 	 */
 
-	public static function getList(int $limit = 0, int $offset = 0, string $searchTerm = null, int $customerId = null, string $status = null, string $currency = null, string $dateFrom = null, string $dateTo = null): ?array
+	public static function getList(int $limit = 0, int $offset = 0, string $searchTerm = null, int $customerId = null, string $status = null, string $currency = null, string $dateFrom = null, string $dateTo = null, $orderBy = 'order_date', $orderDir = 'DESC'): ?array
 	{
 
 
@@ -138,6 +138,7 @@ class OrderFactory
 			$query->where($db->quoteName('order_date') . ' >= ' . $db->quote($dateFrom . ' 00:00:00'));
 		}
 
+		$query->order($orderBy . ' ' . $orderDir);
 
 		$db->setQuery($query, $offset, $limit);
 
@@ -248,12 +249,12 @@ class OrderFactory
 			$order = self::get($id);
 
 			// get a Date() object of the order date
-			$orderDate  = new Date($order->order_date);
+			$orderDate = new Date($order->order_date);
 
 			// get a Date() object of the expiry... so now minus however amount of minutes.
 			$expiryDate = new Date('now +1 hour -' . $expiry . ' minutes');
 
-			$expiryDate =  $expiryDate->toSQL();
+			$expiryDate = $expiryDate->toSQL();
 			// if the order date is more than the expiry date... then we're good to go.
 			if ($orderDate > $expiryDate)
 			{
@@ -342,7 +343,7 @@ class OrderFactory
 	public static function log(int $order_id, string $note)
 	{
 
-		$object             = new \stdClass();
+		$object             = new stdClass();
 		$object->id         = 0;
 		$object->order_id   = $order_id;
 		$object->note       = $note;
@@ -427,7 +428,7 @@ class OrderFactory
 	public static function note($order_id, $note)
 	{
 
-		$object             = new \stdClass();
+		$object             = new stdClass();
 		$object->id         = 0;
 		$object->order_id   = $order_id;
 		$object->note       = $note;
@@ -449,7 +450,7 @@ class OrderFactory
 
 	public static function updateNote($note_id, $note)
 	{
-		$object       = new \stdClass();
+		$object       = new stdClass();
 		$object->id   = $note_id;
 		$object->note = $note;
 
@@ -1099,6 +1100,23 @@ class OrderFactory
 
 
 		return $statuses;
+	}
+
+
+	/**
+	 * @param   string  $payment_method
+	 *
+	 * @return string
+	 *
+	 * @since 2.0
+	 */
+
+	public static function getPaymentMethodIcon(string $payment_method): string
+	{
+
+		$pluginName = str_replace(' ', '', strtolower($payment_method));
+
+		return \Joomla\CMS\Uri\Uri::root() . "plugins/system/protostore_" .  $pluginName . "/modules/" . $pluginName . "/elements/protostore_" . $pluginName . "/images/protostore_" . $pluginName . ".svg";
 	}
 
 

@@ -130,8 +130,8 @@ class CountryFactory
 		// if there is a search term, iterate over the columns looking for a match
 		if ($searchTerm)
 		{
-			$query->where($db->quoteName('country_name') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'), 'OR');
-			$query->where($db->quoteName('country_isocode_2') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'), 'OR');
+			$query->where($db->quoteName('country_name') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'));
+			$query->where($db->quoteName('country_isocode_2') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'));
 			$query->where($db->quoteName('country_isocode_3') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'));
 		}
 
@@ -413,6 +413,56 @@ class CountryFactory
 
 			self::updateZoneList($item);
 			$response = true;
+		}
+
+
+		return $response;
+	}
+
+
+	/**
+	 * @param   Input  $data
+	 *
+	 *
+	 * @return bool
+	 * @since 2.0
+	 */
+
+	public static function toggleDefaultFromInputData(Input $data): bool
+	{
+
+
+		$response = true;
+
+		$db = Factory::getDbo();
+
+		$item = $data->json->get('item', '', 'ARRAY');
+
+		if (!$item)
+		{
+			return false;
+		}
+
+
+		//first set all items to 0
+		$query      = $db->getQuery(true);
+		$fields     = array($db->quoteName('default') . ' = 0');
+		$conditions = array($db->quoteName('default') . ' = 1');
+		$query->update($db->quoteName('#__protostore_country'))->set($fields)->where($conditions);
+		$db->setQuery($query);
+		$db->execute();
+
+
+		$object            = new stdClass();
+		$object->id        = $item['id'];
+		$object->default   = 1;
+		$object->published = 1;
+
+		$result = $db->updateObject('#__protostore_country', $object, 'id');
+
+		if (!$result)
+		{
+			$response = false;
 		}
 
 

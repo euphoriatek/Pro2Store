@@ -33,9 +33,11 @@ const p2s_countries = {
         const items_data = document.getElementById('items_data');
         try {
             this.items = JSON.parse(items_data.innerText);
-            items_data.remove();
+            // items_data.remove();
         } catch (err) {
         }
+
+        console.log(this.items);
 
         const show = document.getElementById('page_size');
         try {
@@ -57,9 +59,6 @@ const p2s_countries = {
             confirmLangString.remove();
         } catch (err) {
         }
-
-
-
 
 
 
@@ -123,7 +122,6 @@ const p2s_countries = {
 
         },
         changeShow() {
-
             this.itemsChunked = this.items.reduce((resultArray, item, index) => {
                 const chunkIndex = Math.floor(index / this.show)
                 if (!resultArray[chunkIndex]) {
@@ -260,6 +258,40 @@ const p2s_countries = {
                 this.selected = this.itemsChunked[this.currentPage];
             } else {
                 this.selected = [];
+            }
+
+        },
+        async toggleDefault(item) {
+
+            const params = {
+                'item': item
+            };
+
+            const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=countries.toggleDefault&format=raw", {
+                method: 'POST',
+                mode: 'cors',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                redirect: 'follow',
+                referrerPolicy: 'no-referrer',
+                body: JSON.stringify(params)
+            });
+
+            const response = await request.json();
+
+            if (response.success) {
+                await this.filter();
+
+            } else {
+                UIkit.notification({
+                    message: 'There was an error.',
+                    status: 'danger',
+                    pos: 'top-center',
+                    timeout: 5000
+                });
             }
 
         },

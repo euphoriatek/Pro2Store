@@ -18,6 +18,9 @@
     <description>Enables Pro2Store's Import/Export system</description>
     <files>
         <filename plugin="io">io.php</filename>
-        <folder>vendor</folder>
+        <folder>files</folder>
+        <folder>forms</folder>
+        <folder>tasks</folder>
+        <folder>views</folder>
     </files>
 </extension>

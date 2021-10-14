@@ -94,11 +94,6 @@ use Joomla\CMS\Layout\LayoutHelper;
                                        uk-icon="triangle-down">
                                     </a>
                                 </th>
-                                <th class="uk-text-center">
-                                    <a href="#" @click="sort('product_type')" class="uk-margin-small-right uk-icon"
-                                       uk-icon="triangle-down">
-                                    </a>
-                                </th>
                                 <th class="uk-text-left">
                                     <a href="#" @click="sort('published')" class="uk-margin-small-right uk-icon"
                                        uk-icon="triangle-down">
@@ -150,13 +145,6 @@ use Joomla\CMS\Layout\LayoutHelper;
                                                    placeholder="Stock" @blur="saveProductStock(product)"
                                                    v-model="product.stock" style="width: 60px!important;">
                                         </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div>
-                                        <span v-show="product.product_type == 1"><i class="fal fa-box"></i></span>
-                                        <span v-show="product.product_type == 2"><i class="fal fa-download"></i></span>
-
                                     </div>
                                 </td>
                                 <td class="uk-text-center">
@@ -295,6 +283,14 @@ use Joomla\CMS\Layout\LayoutHelper;
                                             </div>
                                         </div>
                                     </div>
+                                </li>
+                                <li>
+                                    <a @click="exportSelected"
+                                       :class="[selected.length == 0 ? 'uk-disabled' : ' uk-text-bold uk-text-emphasis']">
+                                        <span class="uk-margin-small-right" uk-icon="icon: pull"></span>
+			                            Export
+                                    </a>
+
                                 </li>
                             </ul>
 

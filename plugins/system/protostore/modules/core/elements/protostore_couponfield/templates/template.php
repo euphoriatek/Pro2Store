@@ -73,33 +73,58 @@ $el = $this->el('div', [
         beforeMount() {
 
             // set the data from the inline script
+
             const isCouponApplied = document.getElementById('yps-coupon-field-isCouponApplied');
-            this.isCouponApplied = (isCouponApplied.innerText == 'true' ? true : false);
-            isCouponApplied.remove();
+            try {
+                this.isCouponApplied = (isCouponApplied.innerText == 'true' ? true : false);
+                isCouponApplied.remove();
+
+            } catch (err) {
+            }
 
             const buttontext = document.getElementById('yps-coupon-field-buttontext');
-            this.buttontext = buttontext.innerText;
-            buttontext.remove();
+            try {
+                this.buttontext = buttontext.innerText;
+                buttontext.remove();
+
+            } catch (err) {
+            }
 
             const appliedcouponcode = document.getElementById('yps-coupon-field-appliedcouponcode');
-            this.appliedcouponcode = appliedcouponcode.innerText;
-            // appliedcouponcode.remove();
+            try {
+                this.appliedcouponcode = appliedcouponcode.innerText;
+                appliedcouponcode.remove();
+            } catch (err) {
+            }
 
             const removebuttontext = document.getElementById('yps-coupon-field-removebuttontext');
-            this.removebuttontext = removebuttontext.innerText;
-            removebuttontext.remove();
+            try {
+                this.removebuttontext = removebuttontext.innerText;
+                removebuttontext.remove();
+            } catch (err) {
+            }
 
             const couponapplied = document.getElementById('yps-coupon-field-couponapplied');
-            this.couponapplied = couponapplied.innerText;
-            couponapplied.remove();
+            try {
+                this.couponapplied = couponapplied.innerText;
+                couponapplied.remove();
+            } catch (err) {
+            }
 
             const entercouponcode = document.getElementById('yps-coupon-field-entercouponcode');
-            this.entercouponcode = entercouponcode.innerText;
-            entercouponcode.remove();
+            try {
+                this.entercouponcode = entercouponcode.innerText;
+                entercouponcode.remove();
+            } catch (err) {
+            }
 
             const couponremoved = document.getElementById('yps-coupon-field-couponremoved');
-            this.couponremoved = couponremoved.innerText;
-            couponremoved.remove();
+            try {
+                this.couponremoved = couponremoved.innerText;
+                couponremoved.remove();
+            } catch (err) {
+            }
+
 
 
         },

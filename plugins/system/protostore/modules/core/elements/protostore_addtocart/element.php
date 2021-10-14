@@ -51,7 +51,7 @@ return [
 				}
 			}
 
-//TODO - GET CHECKOUT LINK
+			//TODO - GET CHECKOUT LINK
 			$node->props['checkoutlink'] = Route::_('index.php?Itemid=');
 			$node->props['baseUrl']      = Uri::base();
 
