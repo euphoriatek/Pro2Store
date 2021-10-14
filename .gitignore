@@ -30,15 +30,22 @@
 /cache/
 /bin/
 /dist*/
-/media/
+
 /dist_gridandfilter/
 /gridandfilterpackage/
 
+
+!/media/
+/media/*
+
+/media/com_protostore/js/vue/
+
+!/media/com_protostore/
 !/media/com_protostore/css/
 !/media/com_protostore/fonts/
 !/media/com_protostore/images/
 !/media/com_protostore/js/
-/media/com_protostore/js/vue/
+
 
 
 !/libraries/
