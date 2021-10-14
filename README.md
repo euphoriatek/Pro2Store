@@ -12,7 +12,7 @@ Pro2Store is an Ecommerce Extension for YOOtheme Pro
 npm install
 ```
 
-- NPM install creates a folder called 'node_modules' in your installations - it includes all the JavaScript needed to run the builds.
+- NPM install creates a folder called 'node_modules' in your installation - it includes all the JavaScript needed to run the builds.
 - In your Joomla backend, use the "Discover" function to install the Pro2Store system
 
 ## Vue Development
