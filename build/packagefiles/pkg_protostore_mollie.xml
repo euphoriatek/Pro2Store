@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<!-- @package   Pro2Store -->
+<!-- @author    Ray Lawlor - pro2.store -->
+<!-- @copyright Copyright (C) 2021 Ray Lawlor - pro2.store -->
+<!-- @license   http://www.gnu.org/licenses/gpl.html GNU/GPL -->
+<!-- -->
+
+<extension type="package" version="3.2" method="upgrade">
+    <name>Pro2Store Mollie Package</name>
+    <author>Ray Lawlor</author>
+    <creationDate>Sept 2020</creationDate>
+    <packagename>protostore_mollie</packagename>
+    <version>{{version}}</version>
+    <copyright>Copyright (C) 2020 Ray Lawlor</copyright>
+    <license>http://www.gnu.org/licenses/gpl.html GNU/GPL</license>
+    <authorEmail>info@pro2.store</authorEmail>
+    <authorUrl>https://pro2.store</authorUrl>
+    <description>
+        <![CDATA[
+        <h1>Pro2Store Mollie ({{version}})</h1>
+		<div style="clear: both;"></div>
+		<p>Pro2Store Mollie - Add Mollie Hosted Checkout to your Pro2Store checkout.</p>
+		<p>Visit https://pro2.store for more info</p>
+	]]>
+    </description>
+    <files folder="packages">
+        <file type="plugin" id="protostore_mollie" group="system">plg_system_protostore_mollie.zip</file>
+        <file type="plugin" id="mollie" group="protostorepayment">plg_protostorepayment_mollie.zip</file>
+    </files>
+    <scriptfile>script.php</scriptfile>
+    <updateservers>
+        <server type="extension" priority="1" name="Pro2Store Mollie"><![CDATA[https://pro2.store/index.php?option=com_rdsubs&view=updater&format=xml&element=protostore_mollie]]></server>
+    </updateservers>
+</extension>

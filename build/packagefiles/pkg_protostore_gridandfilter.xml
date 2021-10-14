@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<!-- @package   Pro2Store -->
+<!-- @author    Ray Lawlor - pro2.store -->
+<!-- @copyright Copyright (C) 2021 Ray Lawlor - pro2.store -->
+<!-- @license   http://www.gnu.org/licenses/gpl.html GNU/GPL -->
+<!-- -->
+
+<extension type="package" version="3.2" method="upgrade">
+    <name>Pro2Store Grid and Filter</name>
+    <author>Ray Lawlor</author>
+    <creationDate>March 2021</creationDate>
+    <packagename>protostore_gridandfilter</packagename>
+    <version>{{version}}</version>
+    <copyright>Copyright (C) 2021 Ray Lawlor</copyright>
+    <license>http://www.gnu.org/licenses/gpl.html GNU/GPL</license>
+    <authorEmail>info@pro2.store</authorEmail>
+    <authorUrl>https://pro2.store</authorUrl>
+    <description>
+        <![CDATA[
+        <h1>Pro2Store Grid & Filter System ({{version}})</h1>
+		<div style="clear: both;"></div>
+		<p>Pro2Store Grid & Filter - An advanced ecommerce filtering system</p>
+		<p>Visit https://pro2.store for more info</p>
+	]]>
+    </description>
+    <files folder="packages">
+        <file type="plugin" id="protostore_gridandfilter" group="system">plg_system_protostore_gridandfilter.zip</file>
+        <file type="plugin" id="protostore_gridandfilter_content" group="content">plg_content_protostore_gridandfilter.zip</file>
+    </files>
+    <scriptfile>script.php</scriptfile>
+    <updateservers>
+        <server type="extension" priority="1" name="Pro2Store Grid and Filter"><![CDATA[https://pro2.store/index.php?option=com_rdsubs&view=updater&format=xml&element=protostore_gridandfilter]]></server>
+    </updateservers>
+</extension>
