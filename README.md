@@ -5,7 +5,7 @@ Pro2Store is an Ecommerce Extension for YOOtheme Pro
 ## Requirements
 
 - Requires at least PHP 7.1 
-- Joomla 3.10
+- Joomla 3.10 + (J4 Supported)
 - YOOtheme Pro (latest!)
 
 ## Installation
