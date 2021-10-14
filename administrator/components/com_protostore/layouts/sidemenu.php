@@ -28,6 +28,7 @@ $extensions = Factory::getApplication()->triggerEvent('onGetSidebarLink');
     <ul
             class="uk-nav uk-nav-primary uk-nav-parent-icon uk-margin-top"
             data-uk-nav>
+
         <li>
             <a href="index.php?option=com_protostore">
                 <svg width="1.125em" aria-hidden="true" focusable="false" data-prefix="fal"

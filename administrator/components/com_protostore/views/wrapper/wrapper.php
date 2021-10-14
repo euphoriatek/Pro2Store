@@ -22,18 +22,24 @@ $input = Factory::getApplication()->input;
 $view  = $input->get('view', 'dashboard');
 
 $isSetup = \Protostore\Setup\SetupFactory::isSetup();
-if (Version::MAJOR_VERSION === 4) {
+if (Version::MAJOR_VERSION === 4)
+{
 	Factory::getApplication()->input->set('hidemainmenu', true);
 }
 
 
 ?>
 <div id="p2s_main">
-	<?php if ( $isSetup) : ?>
+	<?php if ($isSetup) : ?>
         <div id="p2s_leftCol">
             <div style="position: absolute; top: 50px; bottom: 60px; left: 0; right: 0; overflow: hidden;">
                 <div style="width: 300px;box-sizing: border-box; height: 100%; width: 100%; padding: 15px 35px; overflow-y: auto; overflow-x: hidden; position: absolute;">
                     <div class="uk-flex-middle uk-text-center uk-padding-small">
+						<?php if (Version::MAJOR_VERSION === 4): ?>
+                            <a class="uk-text-small" href="index.php">
+                                << Back to Joomla
+                            </a>
+						<?php endif; ?>
                         <a href="index.php?option=com_protostore">
 							<?= LayoutHelper::render('svglogo'); ?>
                         </a>
