@@ -10,7 +10,7 @@ const p2s_product_form = {
         return {
             base_url: '',
             form: {
-                itemid: '',
+                itemid: 0,
                 jform_title: '',
                 jform_catid: '',
                 jform_short_description: '',

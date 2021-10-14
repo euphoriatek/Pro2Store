@@ -32,6 +32,7 @@ class JoomlaItem
 	public $publish_up;
 	public $publish_down;
 	public $images;
+	public $urls;
 	public $ordering;
 	public $metakey;
 	public $metadesc;

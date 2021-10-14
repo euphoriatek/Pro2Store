@@ -164,8 +164,12 @@ class ProductFactory
 		// if there's no item id, then we need to create a new product
 		if ($data->json->getInt('itemid') === 0)
 		{
+
 			return self::createNewProduct($data);
 		}
+
+
+
 		// product exists so we can run an update
 
 
@@ -301,6 +305,12 @@ class ProductFactory
 		$content->modified    = Utilities::getDate();
 		$content->modified_by = Factory::getUser()->id;
 		$content->publish_up  = $data->json->getString('publish_up_date');
+		$content->urls        = '{"urla":"","urlatext":"","targeta":"","urlb":"","urlbtext":"","targetb":"","urlc":"","urlctext":"","targetc":""}';
+		$content->attribs        = '{"article_layout":"","show_title":"","link_titles":"","show_tags":"","show_intro":"","info_block_position":"","info_block_show_title":"","show_category":"","link_category":"","show_parent_category":"","link_parent_category":"","show_author":"","link_author":"","show_create_date":"","show_modify_date":"","show_publish_date":"","show_item_navigation":"","show_hits":"","show_noauth":"","urls_position":"","alternative_readmore":"","article_page_title":"","show_publishing_options":"","show_article_options":"","show_urls_images_backend":"","show_urls_images_frontend":""}';
+		$content->metadesc        = '';
+		$content->metakey        = '';
+		$content->metadata        = '';
+		$content->language        = '*';
 		$content->images      = self::processImagesForSave(
 			$data->json->getString('teaserimage'),
 			$data->json->getString('fullimage')
