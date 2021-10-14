@@ -28,7 +28,12 @@ npm run-script vuedev
 ```
 
 ## Building an installable Joomla Package
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
+- run:
+```bash
+npm run-script build
+```
+- this will bundle all the plugins, modules and the main component into a zip file and place it in the 'dist' folder
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
