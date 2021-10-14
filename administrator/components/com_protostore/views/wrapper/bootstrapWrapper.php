@@ -109,7 +109,7 @@ class bootstrapWrapper
 
 		$doc = Factory::getDocument();
 
-		$doc->addScript('../media/com_protostore/js/vue/bundle.min.js', array('type' => 'text/javascript'));
+		$doc->addScript('../media/com_protostore/js/bundle.min.js', array('type' => 'text/javascript'));
 
 
 		$doc->addCustomTag('<script id="base_url" type="application/json">' . Uri::base() . '</script>');
@@ -132,7 +132,7 @@ class bootstrapWrapper
 	{
 
 		$doc = Factory::getDocument();
-		$doc->addStyleSheet("/media/com_protostore/css/bundle.min.css");
+		$doc->addStyleSheet("../media/com_protostore/css/bundle.min.css");
 //		if (Version::MAJOR_VERSION === 3)  {
 //			$doc->addStyleSheet("/media/com_protostore/css/bundle.min.css");
 //
