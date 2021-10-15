@@ -133,20 +133,6 @@ class bootstrapWrapper
 
 		$doc = Factory::getDocument();
 		$doc->addStyleSheet("../media/com_protostore/css/bundle.min.css");
-//		if (Version::MAJOR_VERSION === 3)  {
-//			$doc->addStyleSheet("/media/com_protostore/css/bundle.min.css");
-//
-//		} else {
-//
-//			$doc->addStyleSheet("https://cdn.jsdelivr.net/npm/uikit@latest/dist/css/uikit.min.css");
-//			$doc->addStyleSheet("/media/com_protostore/css/bundle4.min.css");
-//			$doc->addStyleSheet("/media/com_protostore/css/theme.css");
-//			$doc->addStyleSheet("/media/com_protostore/css/style.css");
-//			$doc->addStyleSheet("https://unpkg.com/primevue/resources/primevue.min.css");
-//			$doc->addStyleSheet("https://unpkg.com/primevue/resources/themes/saga-blue/theme.css");
-//			$doc->addStyleSheet("https://unpkg.com/primeicons/primeicons.css");
-//		}
-
 
 
 	}
