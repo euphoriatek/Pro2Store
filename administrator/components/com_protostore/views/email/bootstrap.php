@@ -12,6 +12,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Model\AdminModel;
 
 use Protostore\Currency\CurrencyFactory;
 use Protostore\Email\EmailFactory;
@@ -23,10 +24,21 @@ use Protostore\Utilities\Utilities;
  *
  * @since       2.0
  */
-class bootstrap
+class bootstrap extends AdminModel
 {
 
-	private $vars;
+
+	/**
+	 * @var array $vars
+	 * @since 2.0
+	 */
+	public $vars;
+
+	/**
+	 * @var string $view
+	 * @since 2.0
+	 */
+	public static $view = 'email';
 
 
 	public function __construct()
@@ -38,8 +50,7 @@ class bootstrap
 
 		$this->init($id);
 
-		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/email/email.php', $this->vars);
-
+		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/' . self::$view . '/' . self::$view . '.php', $this->vars);
 
 	}
 
