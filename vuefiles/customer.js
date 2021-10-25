@@ -39,13 +39,13 @@ const p2s_customer_form = {
         const jform = document.getElementById('jform_data');
         try {
             this.jform = JSON.parse(jform.innerText);
-            jform.remove();
+            // jform.remove();
         } catch (err) {
         }
         const base_url = document.getElementById('base_url');
         try {
             this.base_url = base_url.innerText;
-            base_url.remove();
+            // base_url.remove();
         } catch (err) {
         }
 
@@ -53,7 +53,7 @@ const p2s_customer_form = {
         const currency = document.getElementById('currency');
         try {
             this.currency = currency.innerText;
-            currency.remove();
+            // currency.remove();
         } catch (err) {
         }
 
@@ -61,7 +61,7 @@ const p2s_customer_form = {
         const locale = document.getElementById('locale');
         try {
             this.locale = locale.innerText;
-            locale.remove();
+            // locale.remove();
         } catch (err) {
         }
         const deleteConfirmMessage = document.getElementById('deleteConfirmMessage');

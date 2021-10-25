@@ -42,7 +42,7 @@ class JFormFieldNumber extends JFormField
 		$html[] = 'name="' . $this->name . '" ';
 		$html[] = 'v-model="form.' . $this->id . '" ';
 		$html[] = 'id="' . $this->id . '" ';
-		$html[] = ' />';
+		$html[] = ' />test';
 
 		return implode('', $html);
 

@@ -83,9 +83,9 @@ class plgProtostore_extendedP2sfaker extends CMSPlugin implements AdminViewExten
 	public function onAjaxP2sfaker()
 	{
 
+
 		$this->app   = Factory::getApplication();
 		$this->input = $this->app->input;
-
 
 		return new JsonResponse($this->getResponse($this->input));
 

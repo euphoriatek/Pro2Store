@@ -23,7 +23,6 @@ HTMLHelper::_('behavior.formvalidator');
 $item = $vars['item'];
 
 
-
 ?>
 
 <div id="p2s_customer_form">

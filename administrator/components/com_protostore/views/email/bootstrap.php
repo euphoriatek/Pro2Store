@@ -12,7 +12,6 @@
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\MVC\Model\AdminModel;
 
 use Protostore\Currency\CurrencyFactory;
 use Protostore\Email\EmailFactory;
@@ -24,7 +23,7 @@ use Protostore\Utilities\Utilities;
  *
  * @since       2.0
  */
-class bootstrap extends AdminModel
+class bootstrap
 {
 
 	private $vars;

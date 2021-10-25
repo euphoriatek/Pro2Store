@@ -39,6 +39,7 @@
         </schemas>
     </update>
 
+    <namespace path="src">Joomla\Component\Protostore</namespace>
 
     <administration>
         <menu>COM_PROTOSTORE_MENU</menu>

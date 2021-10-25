@@ -10,8 +10,8 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
-
 use Joomla\CMS\Language\Text;
+use Protostore\VueFields\FieldFactory;
 
 /** @var  array $displayData */
 $data = $displayData;
@@ -19,6 +19,7 @@ $data = $displayData;
 $form = $data['form'];
 
 ?>
+
 
 <div class="uk-card uk-card-<?= $data['cardStyle']; ?> uk-margin-bottom uk-animation-fade">
     <div class="uk-card-header">
@@ -58,7 +59,6 @@ $form = $data['form'];
 			<?php if (isset($data['field_grid_width'])): ?>
         </div>
 	<?php endif; ?>
-
     </div>
     <div class="uk-card-footer"></div>
 </div>

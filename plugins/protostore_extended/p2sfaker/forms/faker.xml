@@ -7,7 +7,7 @@
 <!-- -->
 
 <form>
-    <fieldset name="details"  addfieldpath="/administrator/components/com_protostore/models/fields">
+    <fieldset name="details" addfieldpath="administrator/components/com_protostore/models/fields" >
 
         <field name="products" type="number" default="0" label="Number of Products (Max 15)" description="" min="0" max="15" step="1" />
         <field name="orders" type="number" default="0" label="Number of Orders (Max 15)" description="" min="0" max="15" step="1" />

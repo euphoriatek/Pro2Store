@@ -26,7 +26,8 @@ use Protostore\Utilities\Utilities;
 class bootstrap extends AdminModel implements genericView
 {
 
-	public  $vars;
+
+	public $vars;
 	public static $view = 'p2sfaker';
 
 
@@ -41,7 +42,7 @@ class bootstrap extends AdminModel implements genericView
 		$this->addStylesheets();
 		$this->addTranslationStrings();
 
-		echo Render::render(JPATH_PLUGINS . '/protostore_extended/'.self::$view.'/views/'.self::$view.'/'.self::$view.'.php', $this->vars);
+		echo Render::render(JPATH_PLUGINS . '/protostore_extended/' . self::$view . '/views/' . self::$view . '/' . self::$view . '.php', $this->vars);
 
 	}
 
@@ -59,8 +60,10 @@ class bootstrap extends AdminModel implements genericView
 	{
 		// Get the form.
 
-		$form = new Form('p2sfaker');
+		$form            = new Form('p2sfaker');
+
 		$form->loadFile(JPATH_PLUGINS . '/protostore_extended/p2sfaker/forms/faker.xml', false);
+		$form->addFieldPath('administrator/components/com_protostore/models/fields');
 		$this->vars['form'] = $form;
 
 	}
@@ -76,7 +79,6 @@ class bootstrap extends AdminModel implements genericView
 	{
 
 
-
 	}
 
 
@@ -90,7 +92,7 @@ class bootstrap extends AdminModel implements genericView
 	public function setVars(): void
 	{
 
-		$this->vars = array();
+		$this->vars         = array();
 		$this->vars['test'] = "TEST";
 
 	}
