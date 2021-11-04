@@ -233,6 +233,8 @@ const p2s_product_form = {
             } catch (err) {
                 this.form.jform_options = [];
             }
+        } else{
+            this.form.jform_options = [];
         }
 
         // LANGUANGE STRINGS
