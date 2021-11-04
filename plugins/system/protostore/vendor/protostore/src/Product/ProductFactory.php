@@ -27,7 +27,6 @@ use Joomla\CMS\Table\Table;
 use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\Filesystem\File as JoomlaFile;
 use Joomla\Utilities\ArrayHelper;
-use JDatabaseDriver;
 
 use Brick\Math\BigDecimal;
 use Brick\Money\Exception\UnknownCurrencyException;
@@ -157,7 +156,7 @@ class ProductFactory
 	 * @throws Exception
 	 * @since 2.0
 	 */
-	public static function saveFromInputData(Input $data): ?Product
+	public static function saveFromInputData(Input $data)
 	{
 
 
@@ -275,8 +274,9 @@ class ProductFactory
 	 * @since 2.0
 	 */
 
-	private static function createNewProduct(Input $data): ?Product
+	private static function createNewProduct(Input $data)
 	{
+
 
 		$db = Factory::getDbo();
 
@@ -286,6 +286,8 @@ class ProductFactory
 		$content->id    = 0;
 		$content->title = $data->json->getString('title');
 
+
+
 		//alias:
 		// Workaround for Greek titles.
 		$alias = GreekSlugGenerator::getSlug($content->title);
@@ -293,6 +295,8 @@ class ProductFactory
 		$alias = Utilities::generateUniqueAlias($alias);
 
 		$content->alias       = $alias;
+
+
 		$content->introtext   = $data->json->getString('introtext');
 		$content->fulltext    = $data->json->getString('fulltext');
 		$content->state       = $data->json->getInt('state');
@@ -371,39 +375,30 @@ class ProductFactory
 		}
 
 
-		// Create the Variants
-
-		if ($data->json->getString('variants'))
-		{
-			self::commitVariants($product);
-		}
-
+		//todo - Sort out how J4 saves tags.
 
 		// Create the Tags
 
-		if ($tags = $data->json->getString('tags'))
-		{
-
-			$tags = Utilities::processTagsByName($tags);
-
-			$table = Table::getInstance('Content');
-			$table->load($product->joomla_item_id);
-			$table->newTags = $tags;
-			$table->store();
-			if (!$table->store())
-			{
-
-				return null;
-
-			}
-		}
-
-
-		// Create the Old Options (deprecated)
-//		if ($data->json->getString('options'))
+//		if ($tags = $data->json->getString('tags'))
 //		{
-//			self::commitOptions($product);
+//
+//			$tags = Utilities::processTagsByName($tags);
+//
+//			$table = Table::getInstance('Content');
+//			$table->load($productId);
+//			$table->newTags = $tags;
+//			$table->store();
+//			if (!$table->store())
+//			{
+//
+//				return null;
+//
+//			}
 //		}
+
+
+
+
 
 		return self::get($product->joomla_item_id);
 
@@ -521,7 +516,7 @@ class ProductFactory
 	 *
 	 *
 	 * @throws Exception
-	 * @since 1..6
+	 * @since 2.0
 	 */
 
 

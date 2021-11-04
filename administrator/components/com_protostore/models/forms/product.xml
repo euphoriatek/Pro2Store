@@ -63,12 +63,13 @@
 
         <field name="category" type="CategoryEdit" extension="com_content" label="COM_PROTOSTORE_ADD_PRODUCT_ORGANISATION_CATEGORY_SELECT_LABEL" description="" class="uk-select" required="true"/>
 
-        <field name="tags" type="tags" label="JTAG" description="JTAG_DESC" mode="ajax" class="inputbox span12 small" multiple="true"/>
+        <field name="tags" type="tags" label="JTAG" description="" mode="ajax" class="inputbox span12 small" multiple="true"/>
 
-        <field name="publish_up_date" type="calendar" default="now" label="COM_PROTOSTORE_ADD_PRODUCT_PUBLISH_DATE_AND_TIME" description=""
-               class="input-medium uk-input non-uk-input" required="true" filter="user_utc" format="%Y-%m-%d %H:%M:%S"
-               singleheader="true" showtime="true" timeformat="12" todaybutton="true" weeknumbers="true"
-               filltable="true" minyear="-3" maxyear="5" />
+<!--        <field name="publish_up_date" type="calendar" default="now" label="COM_PROTOSTORE_ADD_PRODUCT_PUBLISH_DATE_AND_TIME" description=""-->
+<!--               class="input-medium uk-input non-uk-input" required="true" filter="user_utc" format="%Y-%m-%d %H:%M:%S"-->
+<!--               singleheader="true" showtime="true" timeformat="12" todaybutton="true" weeknumbers="true"-->
+<!--               filltable="true" minyear="-3" maxyear="5" />-->
+        <field name="publish_up_date" type="datetime" label="COM_PROTOSTORE_ADD_PRODUCT_PUBLISH_DATE_AND_TIME" />
 
         <field name="taxable" type="pinputswitch" default="0" label="COM_PROTOSTORE_ADD_PRODUCT_APPLY_TAX" description=""
                class="btn-group btn-group-yesno">

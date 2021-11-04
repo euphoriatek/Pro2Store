@@ -26,8 +26,10 @@ class protostoreTask_save
 	 * @throws Exception
 	 * @since 2.0
 	 */
-	public function getResponse(Input $data): ?Product
+	public function getResponse(Input $data)
 	{
+
+
 
 
 		return ProductFactory::saveFromInputData($data);

@@ -314,6 +314,7 @@ class JFormFieldCalendar extends JFormField
 			'minYear'      => $this->minyear,
 			'maxYear'      => $this->maxyear,
 			'direction'    => $direction,
+			'class'    => 'uk-input uk-width-1-3 test',
 		);
 
 		return array_merge($data, $extraData);

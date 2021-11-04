@@ -159,7 +159,7 @@ class bootstrap extends AdminModel
 		$doc = Factory::getDocument();
 
 		// include the vue script - defer
-		$doc->addScript('../media/com_protostore/js/vue/' . self::$view . '/' . self::$view . '.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
+//		$doc->addScript('../media/com_protostore/js/vue/' . self::$view . '/' . self::$view . '.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
 
 
 		// include prime
