@@ -133,7 +133,7 @@ class bootstrapWrapper
 
 		$doc = Factory::getDocument();
 		$doc->addStyleSheet("../media/com_protostore/css/bundle.min.css");
-
+		$doc->addStyleSheet("https://unpkg.com/primeicons@5.0.0/primeicons.css");
 
 	}
 
