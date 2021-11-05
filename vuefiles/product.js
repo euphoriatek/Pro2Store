@@ -211,7 +211,7 @@ const p2s_product_form = {
             if (COM_PROTOSTORE_ADD_PRODUCT_ALERT_SAVED != null) {
                 try {
                     this.COM_PROTOSTORE_ADD_PRODUCT_ALERT_SAVED = COM_PROTOSTORE_ADD_PRODUCT_ALERT_SAVED.innerText;
-                    // COM_PROTOSTORE_ADD_PRODUCT_ALERT_SAVED.remove();
+                    COM_PROTOSTORE_ADD_PRODUCT_ALERT_SAVED.remove();
                 } catch (err) {
                 }
             }

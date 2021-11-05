@@ -52,10 +52,10 @@ $item = $vars['item'];
 
                             <div class="uk-navbar-right">
 
-                                <button type="button"
-                                        class="uk-button uk-button-primary uk-button-small uk-margin-right"
-                                        @click="logIt">LogIt
-                                </button>
+<!--                                <button type="button"-->
+<!--                                        class="uk-button uk-button-primary uk-button-small uk-margin-right"-->
+<!--                                        @click="logIt">LogIt-->
+<!--                                </button>-->
                                 <button type="submit" @click="andClose = false"
                                         class="uk-button uk-button-default button-success uk-button-small uk-margin-right">
 									<?= Text::_('JTOOLBAR_APPLY'); ?>
@@ -66,11 +66,11 @@ $item = $vars['item'];
                                 </button>
                                 <a class="uk-button uk-button-default uk-button-small uk-margin-right"
                                    href="index.php?option=com_protostore&view=products"><?= Text::_('JTOOLBAR_CANCEL'); ?></a>
-                                <button type="button" uk-toggle="target: #advancedOptions"
-                                        class="uk-button uk-button-primary uk-button-small uk-margin-right">
-									<?= Text::_('COM_PROTOSTORE_ADD_PRODUCT_ADVANCED_OPTIONS'); ?>
-                                    <span uk-icon="icon: settings"></span>
-                                </button>
+<!--                                <button type="button" uk-toggle="target: #advancedOptions"-->
+<!--                                        class="uk-button uk-button-primary uk-button-small uk-margin-right">-->
+<!--									--><?//= Text::_('COM_PROTOSTORE_ADD_PRODUCT_ADVANCED_OPTIONS'); ?>
+<!--                                    <span uk-icon="icon: settings"></span>-->
+<!--                                </button>-->
 
                             </div>
 

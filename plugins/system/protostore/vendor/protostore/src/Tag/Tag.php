@@ -9,7 +9,7 @@
  */
 
 // no direct access
-namespace Protostore\Product;
+namespace Protostore\Tag;
 
 defined('_JEXEC') or die('Restricted access');
 

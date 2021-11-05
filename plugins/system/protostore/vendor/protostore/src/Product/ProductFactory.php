@@ -34,6 +34,7 @@ use Brick\Money\Exception\UnknownCurrencyException;
 use Protostore\Currency\CurrencyFactory;
 use Protostore\Productoption\Productoption;
 use Protostore\Productoption\ProductoptionFactory;
+use Protostore\Tag\TagFactory;
 use Protostore\Utilities\Utilities;
 
 use StathisG\GreekSlugGenerator\GreekSlugGenerator;
@@ -168,7 +169,6 @@ class ProductFactory
 		}
 
 
-
 		// product exists so we can run an update
 
 
@@ -287,14 +287,13 @@ class ProductFactory
 		$content->title = $data->json->getString('title');
 
 
-
 		//alias:
 		// Workaround for Greek titles.
 		$alias = GreekSlugGenerator::getSlug($content->title);
 		$alias = OutputFilter::stringUrlUnicodeSlug($alias);
 		$alias = Utilities::generateUniqueAlias($alias);
 
-		$content->alias       = $alias;
+		$content->alias = $alias;
 
 
 		$content->introtext   = $data->json->getString('introtext');
@@ -310,11 +309,11 @@ class ProductFactory
 		$content->modified_by = Factory::getUser()->id;
 		$content->publish_up  = $data->json->getString('publish_up_date');
 		$content->urls        = '{"urla":"","urlatext":"","targeta":"","urlb":"","urlbtext":"","targetb":"","urlc":"","urlctext":"","targetc":""}';
-		$content->attribs        = '{"article_layout":"","show_title":"","link_titles":"","show_tags":"","show_intro":"","info_block_position":"","info_block_show_title":"","show_category":"","link_category":"","show_parent_category":"","link_parent_category":"","show_author":"","link_author":"","show_create_date":"","show_modify_date":"","show_publish_date":"","show_item_navigation":"","show_hits":"","show_noauth":"","urls_position":"","alternative_readmore":"","article_page_title":"","show_publishing_options":"","show_article_options":"","show_urls_images_backend":"","show_urls_images_frontend":""}';
-		$content->metadesc        = '';
-		$content->metakey        = '';
-		$content->metadata        = '';
-		$content->language        = '*';
+		$content->attribs     = '{"article_layout":"","show_title":"","link_titles":"","show_tags":"","show_intro":"","info_block_position":"","info_block_show_title":"","show_category":"","link_category":"","show_parent_category":"","link_parent_category":"","show_author":"","link_author":"","show_create_date":"","show_modify_date":"","show_publish_date":"","show_item_navigation":"","show_hits":"","show_noauth":"","urls_position":"","alternative_readmore":"","article_page_title":"","show_publishing_options":"","show_article_options":"","show_urls_images_backend":"","show_urls_images_frontend":""}';
+		$content->metadesc    = '';
+		$content->metakey     = '';
+		$content->metadata    = '';
+		$content->language    = '*';
 		$content->images      = self::processImagesForSave(
 			$data->json->getString('teaserimage'),
 			$data->json->getString('fullimage')
@@ -395,9 +394,6 @@ class ProductFactory
 //
 //			}
 //		}
-
-
-
 
 
 		return self::get($product->joomla_item_id);
@@ -1144,94 +1140,22 @@ class ProductFactory
 
 
 	/**
-	 * @param $joomla_item_id
+	 * @param   int  $joomla_item_id
 	 *
 	 * @return array
 	 *
 	 * @since 2.0
 	 */
 
-	public static function getTags($joomla_item_id): array
+	public static function getTags(int $joomla_item_id): array
 	{
 
-		$tagsHelper = new TagsHelper();
-
-		$tags = $tagsHelper->getItemTags('com_content.article', $joomla_item_id);
-
-		return ArrayHelper::getColumn($tags, 'title');
+		return TagFactory::getTags($joomla_item_id);
 
 	}
 
 
-	/**
-	 *
-	 * Gets the available tags.
-	 * If the ID of the item is supplied, then the function removes the currently selected tags and returns the remaining, unselected tags.
-	 *
-	 * @param   null  $id
-	 *
-	 * @return array|null
-	 *
-	 * @since 2.0
-	 */
 
-	public static function getAvailableTags($id = null): ?array
-	{
-
-		$tags = array();
-
-		$db = Factory::getDbo();
-
-		$query = $db->getQuery(true);
-
-		$query->select('title');
-		$query->from($db->quoteName('#__tags'));
-		$query->where($db->quoteName('published') . ' = 1');
-		$query->where($db->quoteName('title') . ' != ' . $db->quote('ROOT'));
-
-		$db->setQuery($query);
-
-		$results = $db->loadObjectList();
-		if ($results)
-		{
-			foreach ($results as $result)
-			{
-
-				$tags[] = new Tag($result);
-
-
-			}
-
-			$allTags = ArrayHelper::getColumn($tags, 'title');
-
-			if ($id)
-			{
-				$diffs = array_diff($allTags, self::getTags($id));
-
-				$newArray = array();
-
-				foreach ($diffs as $key => $diff)
-				{
-
-					$newArray[] = $allTags[$key];
-				}
-
-				return $newArray;
-
-			}
-			else
-			{
-				return $allTags;
-			}
-
-
-		}
-
-
-		return null;
-
-
-	}
 
 	/**
 	 * @param   int  $itemid
