@@ -38,7 +38,7 @@ $model = ($data['isCustom'] ? 'custom_fields[' . $data['key'] . '].value' : 'for
     </div>
     <div class="uk-width-1-1">
         <a uk-toggle="target: #mediaField<?= $data['id']; ?>">
-            <img class="uk-preserve-width" v-show="<?= $model; ?> !== null && <?= $model; ?> !== ''"
+            <img v-show="<?= $model; ?> !== null && <?= $model; ?> !== ''"
                  :src="'<?= \Joomla\CMS\Uri\Uri::root(); ?>' + <?= $model; ?>"
                  width="400">
         </a>

@@ -27,6 +27,11 @@ class JFormFieldImage extends JFormField
 	 */
 	protected $type = 'Image';
 
+
+	protected function getLabel(){
+		return '';
+	}
+
 	/**
 	 * Method to get the field input markup.
 	 *
@@ -38,7 +43,7 @@ class JFormFieldImage extends JFormField
 	{
 
 
-		return LayoutHelper::render('product/modals/media_manager', array('id' => $this->id, 'isCustom' => false));
+		return \Joomla\CMS\Language\Text::_($this->element['label']) . LayoutHelper::render('product/modals/media_manager', array('id' => $this->id, 'isCustom' => false));
 
 
 

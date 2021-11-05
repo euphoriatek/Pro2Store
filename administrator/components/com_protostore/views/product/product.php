@@ -191,8 +191,14 @@ $item = $vars['item'];
 
 </div>
 
+<!--REMOVE ALL EMPTY LABELS-->
+<script>Array.from(document.getElementsByClassName("control-label")).forEach(function(e){console.log(e),""===e.innerHTML&&e.remove()});</script>
 
 <script>
+
+
+
+
 
     var bar = document.getElementById('js-progressbar');
 
