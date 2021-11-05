@@ -378,22 +378,10 @@ class ProductFactory
 
 		// Create the Tags
 
-//		if ($tags = $data->json->getString('tags'))
-//		{
-//
-//			$tags = Utilities::processTagsByName($tags);
-//
-//			$table = Table::getInstance('Content');
-//			$table->load($productId);
-//			$table->newTags = $tags;
-//			$table->store();
-//			if (!$table->store())
-//			{
-//
-//				return null;
-//
-//			}
-//		}
+		if ($tags = $data->json->getString('tags'))
+		{
+			TagFactory::saveTags($product->joomla_item_id, $tags);
+		}
 
 
 		return self::get($product->joomla_item_id);
@@ -413,6 +401,8 @@ class ProductFactory
 	private static function commitToDatabase(Product $product): bool
 	{
 
+
+		// todo - fix workflows for j4
 
 		$db = Factory::getDbo();
 
@@ -456,22 +446,10 @@ class ProductFactory
 
 			if ($tags = $product->tags)
 			{
-
-				$tags = Utilities::processTagsByName($tags);
-
-
-				$table = Table::getInstance('Content');
-				$table->load($product->joomla_item_id);
-				$table->newTags = $tags;
-
+				TagFactory::saveTags($product->joomla_item_id, $tags);
+			} else {
+				TagFactory::clearTags($product->joomla_item_id);
 			}
-			else
-			{
-				$table = Table::getInstance('Content');
-				$table->load($product->joomla_item_id);
-
-			}
-			$table->store();
 
 		}
 
