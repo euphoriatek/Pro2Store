@@ -25,7 +25,7 @@ const p2s_product_form = {
                 jform_taxable: false,
                 jform_show_discount: false,
                 jform_discount: 0,
-                jform_discount_type: 1,
+                jform_discount_type: "1",
                 jform_teaserimage: '',
                 jform_fullimage: '',
                 jform_shipping_mode: '',
@@ -52,7 +52,7 @@ const p2s_product_form = {
             newOptionTypeName: '',
             newOptionTypeType: 'Dropdown',
             showNewOptionTypeNameWarning: false,
-            sellPrice: 0,
+            // sellPrice: 0,
             variants_loading: false,
             setSavedClass: false,
             //media manager
@@ -75,6 +75,7 @@ const p2s_product_form = {
     },
     created() {
         emitter.on('p2s_product_file_upload', this.fileUploaded);
+
     },
     computed: {
         currentDirectory() {
@@ -125,6 +126,26 @@ const p2s_product_form = {
 
 
             return false;
+        },
+        sellPrice(){
+            const options = {
+                maximumFractionDigits: 2,
+                currency: this.p2s_currency.iso,
+                style: "currency",
+                currencyDisplay: "symbol"
+            }
+
+            console.log(this.form.jform_base_price);
+            console.log(this.form.jform_discount);
+            console.log(this.form.jform_discount_type);
+
+            if (this.form.jform_discount_type === "1") {
+                return this.localStringToNumber(this.form.jform_base_price - this.form.jform_discount).toLocaleString(this.p2s_local, options);
+            } else {
+                // work out the percentage
+                const discount = (this.form.jform_base_price / 100) * this.form.jform_discount;
+                return this.localStringToNumber(this.form.jform_base_price - discount).toLocaleString(this.p2s_local, options);
+            }
         }
     },
     async beforeMount() {
@@ -278,6 +299,13 @@ const p2s_product_form = {
             } catch (err) {
             }
         }
+    },
+    mounted(){
+
+        if (!this.form.jform_discount_type) {
+            this.form.jform_discount_type = 1;
+        }
+
     },
     methods: {
 
@@ -697,24 +725,24 @@ const p2s_product_form = {
         },
         getSellPrice() {
 
-            const options = {
-                maximumFractionDigits: 2,
-                currency: this.p2s_currency.iso,
-                style: "currency",
-                currencyDisplay: "symbol"
-            }
-
-
-            if (this.discount_type == 1) {
-
-                this.sellPrice = this.localStringToNumber(this.form.jform_base_price - this.form.jform_discount).toLocaleString(undefined, options);
-            } else {
-
-                // work out the percentage
-                const discount = (this.form.jform_base_price / 100) * this.form.jform_discount;
-
-                this.sellPrice = this.localStringToNumber(this.form.jform_base_price - discount).toLocaleString(undefined, options);
-            }
+            // const options = {
+            //     maximumFractionDigits: 2,
+            //     currency: this.p2s_currency.iso,
+            //     style: "currency",
+            //     currencyDisplay: "symbol"
+            // }
+            //
+            //
+            // if (this.discount_type == 1) {
+            //
+            //     this.sellPrice = this.localStringToNumber(this.form.jform_base_price - this.form.jform_discount).toLocaleString(undefined, options);
+            // } else {
+            //
+            //     // work out the percentage
+            //     const discount = (this.form.jform_base_price / 100) * this.form.jform_discount;
+            //
+            //     this.sellPrice = this.localStringToNumber(this.form.jform_base_price - discount).toLocaleString(undefined, options);
+            // }
         },
         getFrameContents(elementId) {
             const iFrame = document.getElementById(elementId + '_ifr');
