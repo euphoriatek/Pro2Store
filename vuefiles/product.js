@@ -25,7 +25,7 @@ const p2s_product_form = {
                 jform_taxable: false,
                 jform_show_discount: false,
                 jform_discount: 0,
-                jform_discount_type: "1",
+                jform_discount_type: "amount",
                 jform_teaserimage: '',
                 jform_fullimage: '',
                 jform_shipping_mode: '',
@@ -139,7 +139,7 @@ const p2s_product_form = {
             console.log(this.form.jform_discount);
             console.log(this.form.jform_discount_type);
 
-            if (this.form.jform_discount_type === "1") {
+            if (this.form.jform_discount_type === "amount") {
                 return this.localStringToNumber(this.form.jform_base_price - this.form.jform_discount).toLocaleString(this.p2s_local, options);
             } else {
                 // work out the percentage
@@ -303,7 +303,7 @@ const p2s_product_form = {
     mounted(){
 
         if (!this.form.jform_discount_type) {
-            this.form.jform_discount_type = 1;
+            this.form.jform_discount_type = "amount";
         }
 
     },
@@ -648,6 +648,7 @@ const p2s_product_form = {
                 'access': this.form.jform_access,
                 'base_price': this.form.jform_base_price,
                 'discount': this.form.jform_discount,
+                'discount_type': this.form.jform_discount_type,
                 'tags': this.form.jform_tags,
                 'sku': this.form.jform_sku,
                 'stock': this.form.jform_stock,
