@@ -20,6 +20,7 @@ use Protostore\MediaManager\MediaManagerFactory;
 use Protostore\Product\Product;
 use Protostore\Render\Render;
 use Protostore\Product\ProductFactory;
+use Protostore\Tag\TagFactory;
 use Protostore\Utilities\Utilities;
 use Protostore\Config\ConfigFactory;
 
@@ -70,14 +71,14 @@ class bootstrap extends AdminModel
 
 		$this->vars['item']             = false;
 		$this->vars['default_category'] = $config->get('defaultproductcategory');
-		$this->vars['available_tags']   = ProductFactory::getAvailableTags();
+		$this->vars['available_tags']   = TagFactory::getAvailableTags();
 		$this->vars['custom_fields']    = [];
 		$this->vars['folderTree']       = MediaManagerFactory::getFolderTree();
 		$this->vars['currentPath']      = MediaManagerFactory::getHomePath();
 		if ($id)
 		{
 			$this->vars['item']           = $this->getTheItem($id);
-			$this->vars['available_tags'] = ProductFactory::getAvailableTags($id);
+			$this->vars['available_tags'] = TagFactory::getAvailableTags($id);
 			$this->vars['custom_fields']  = ProductFactory::getAvailableCustomFields($id, $this->vars['item']->joomlaItem->catid);
 		}
 
