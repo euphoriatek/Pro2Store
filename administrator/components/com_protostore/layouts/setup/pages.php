@@ -32,7 +32,7 @@ use Joomla\CMS\Language\Text;
             </div>
             <div class="uk-width-1-2"></div>
         </div>
-        <div class="uk-grid uk-grid-collapse" uk-grid="">
+        <div class="uk-grid uk-grid-collapse uk-margin-bottom" uk-grid="">
             <div class="uk-width-auto uk-grid-item-match uk-flex-middle">
                 <input class="uk-checkbox" type="checkbox" checked v-model="createCheckout"
                        style="width: 20px!important; height: 20px; border-radius: 3px; ">
@@ -41,7 +41,7 @@ use Joomla\CMS\Language\Text;
                 <span class="uk-h6">  &nbsp;&nbsp;<?= Text::_('COM_PROTOSTORE_SETUP_CREATE_CHECKOUT_PAGE_BUTTON'); ?> </span>
             </div>
         </div>
-        <div class="uk-grid uk-grid-collapse" uk-grid="">
+        <div class="uk-grid uk-grid-collapse uk-margin-bottom" uk-grid="">
             <div class="uk-width-auto uk-grid-item-match uk-flex-middle">
                 <input class="uk-checkbox" type="checkbox" v-model="createConfirmation"
                        style="width: 20px!important; height: 20px; border-radius: 3px; ">
@@ -50,7 +50,7 @@ use Joomla\CMS\Language\Text;
                 <span class="uk-h6">  &nbsp;&nbsp;<?= Text::_('COM_PROTOSTORE_SETUP_CREATE_CONFIRMATION_PAGE_BUTTON'); ?> </span>
             </div>
         </div>
-        <div class="uk-grid uk-grid-collapse" uk-grid="">
+        <div class="uk-grid uk-grid-collapse uk-margin-bottom" uk-grid="">
             <div class="uk-width-auto uk-grid-item-match uk-flex-middle">
                 <input class="uk-checkbox" type="checkbox" v-model="createTandcs"
                        style="width: 20px!important; height: 20px; border-radius: 3px; ">
@@ -59,7 +59,7 @@ use Joomla\CMS\Language\Text;
                 <span class="uk-h6">  &nbsp;&nbsp;<?= Text::_('COM_PROTOSTORE_SETUP_CREATE_TERMS_PAGE_BUTTON'); ?> </span>
             </div>
         </div>
-        <div class="uk-grid uk-grid-collapse" uk-grid="">
+        <div class="uk-grid uk-grid-collapse uk-margin-bottom" uk-grid="">
             <div class="uk-width-auto uk-grid-item-match uk-flex-middle">
                 <input class="uk-checkbox" type="checkbox" v-model="createCancel"
                        style="width: 20px!important; height: 20px; border-radius: 3px; ">
