@@ -177,7 +177,7 @@ $item = $vars['item'];
 						'cardTitle' => 'COM_PROTOSTORE_ADD_PRODUCT_SHIPPING',
 						'cardStyle' => 'default',
 						'cardId'    => 'shipping',
-						'fields'    => array('shipping_mode', 'flatfee')
+						'fields'    => array('shipping_mode', 'flatfee', 'weight')
 					)); ?>
 
 

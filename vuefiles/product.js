@@ -28,8 +28,10 @@ const p2s_product_form = {
                 jform_discount_type: "amount",
                 jform_teaserimage: '',
                 jform_fullimage: '',
-                jform_shipping_mode: '',
+                jform_shipping_mode: 0,
                 jform_flatfee: 0,
+                jform_weight: 0,
+                jform_weight_unit: 0,
                 jform_publish_up_date: '',
                 jform_product_type: '',
                 jform_tags: [],
@@ -135,9 +137,6 @@ const p2s_product_form = {
                 currencyDisplay: "symbol"
             }
 
-            console.log(this.form.jform_base_price);
-            console.log(this.form.jform_discount);
-            console.log(this.form.jform_discount_type);
 
             if (this.form.jform_discount_type === "amount") {
                 return this.localStringToNumber(this.form.jform_base_price - this.form.jform_discount).toLocaleString(this.p2s_local, options);
@@ -660,6 +659,8 @@ const p2s_product_form = {
                 'fullimage': this.form.jform_fullimage,
                 'shipping_mode': this.form.jform_shipping_mode,
                 'flatfee': this.form.jform_flatfee,
+                'weight': this.form.jform_weight,
+                'weight_unit': this.form.jform_weight_unit,
                 'publish_up_date': this.form.jform_publish_up_date,
                 'product_type': this.form.jform_product_type,
                 'options': this.form.jform_options,

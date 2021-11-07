@@ -36,12 +36,11 @@
 
         <field name="fullimage" type="image" directory="" preview="true" class="uk-input uk-form-width-small non-uk-input" label="COM_PROTOSTORE_ADD_PRODUCT_FULL_IMAGE_LABEL" />
 
-        <field name="shipping_mode" type="list" default="" label="COM_PROTOSTORE_ADD_PRODUCT_SHIPPING_MODE" description="">
-            <option value="">COM_PROTOSTORE_SHIPPING_NO_SHIPPING_FEE</option>
-            <option value="flat">COM_PROTOSTORE_ADD_PRODUCT_SHIPPING_MODE_FLAT_RATE</option>
-            <option value="weight">COM_PROTOSTORE_ADD_PRODUCT_SHIPPING_MODE_BY_WEIGHT</option>
-        </field>
+        <field name="shipping_mode" type="shippingmode" default="" label="COM_PROTOSTORE_ADD_PRODUCT_SHIPPING_MODE" description="" />
+
         <field name="flatfee" type="flatfee" default="0" label="COM_PROTOSTORE_ADD_PRODUCT_SHIPPING_FLAT_FEE" description="" size="10"
+               class="uk-input uk-form-width-medium uk-form-large" />
+        <field name="weight" type="byweight" default="0" label="COM_PROTOSTORE_ADD_PRODUCT_SHIPPING_WEIGHT" description="" size="10"
                class="uk-input uk-form-width-medium uk-form-large" />
 
         <field name="state" type="pinputswitch" default="0" label="COM_PROTOSTORE_ADD_PRODUCT_PUBLISHED" description=""
