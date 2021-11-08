@@ -150,6 +150,132 @@ class ProductFactory
 
 
 	/**
+	 * @param   string  $searchTerm
+	 * @param           $categories
+	 * @param           $tags
+	 * @param   float   $priceFrom
+	 * @param   float   $priceTo
+	 *
+	 * @return array|null
+	 * @since 2.0
+	 */
+
+
+	public static function filterList(string $searchTerm, $categories, $tags, float $priceFrom, float $priceTo): ?array
+	{
+
+		$products = array();
+
+		$db = Factory::getDbo();
+
+		$query = $db->getQuery(true);
+
+		$query->select('id');
+		$query->from($db->quoteName('#__content'));
+
+		if ($searchTerm)
+		{
+			$query->where($db->quoteName('title') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'));
+		}
+
+		if ($categories)
+		{
+			if (!is_array($categories))
+			{
+				$categories = array($categories);
+			}
+
+			$query->where($db->quoteName('catid') . ' IN (' . implode(', ', $categories) . ')');
+		}
+
+		// set pricing search to true
+		$searchPrice = true;
+
+		if ($priceFrom == '' && $priceTo == '')
+		{
+			// if we're null on both from and to, then set searchPrice to false
+			$searchPrice = false;
+		}
+		if ($priceFrom == 'null' && $priceTo == 'null')
+		{
+			// if we're null on both from and to, then set searchPrice to false
+			$searchPrice = false;
+		}
+
+		// if we have a search price, set the null values to numbers to allow searching.
+		if ($searchPrice)
+		{
+			if ($priceFrom == 'null' || $priceFrom == '')
+			{
+				// lower price can go to zero
+				$priceFrom = 0;
+			}
+			if ($priceTo == 'null' || $priceTo == '')
+			{
+				// higher price goes to some astronomical value
+				// this allows searches to have a min price but no max price
+				$priceTo = 99999999;
+			}
+
+			// now use Brick to convert the number to minor int.
+			// Currency ISO code doesn't matter here
+			$priceFrom = \Brick\Money\Money::of($priceFrom, 'EUR', new \Brick\Money\Context\CashContext(1), \Brick\Math\RoundingMode::DOWN);
+			$priceFrom = $priceFrom->getMinorAmount()->toInt();
+			$priceTo   = \Brick\Money\Money::of($priceTo, 'EUR', new \Brick\Money\Context\CashContext(1), \Brick\Math\RoundingMode::DOWN);
+			$priceTo   = $priceTo->getMinorAmount()->toInt();
+		}
+
+		$db->setQuery($query);
+
+		$contentResults = $db->loadColumn();
+
+
+		if ($contentResults)
+		{
+			foreach ($contentResults as $contentId)
+			{
+				$query = $db->getQuery(true);
+
+				$query->select('*');
+				$query->from($db->quoteName('#__protostore_product'));
+				$query->where($db->quoteName('joomla_item_id') . ' = ' . $db->quote($contentId));
+				$db->setQuery($query);
+
+				$productResult = $db->loadObject();
+
+				if ($productResult)
+				{
+					// do pricing
+					if ($searchPrice)
+					{
+						if ($productResult->base_price > $priceFrom && $productResult->base_price < $priceTo)
+						{
+							$products[] = new Product($productResult);
+						}
+					}
+					else
+					{
+						$products[] = new Product($productResult);
+					}
+
+
+				}
+
+
+			}
+
+
+			return $products;
+		}
+
+
+		return null;
+
+	}
+
+
+
+	/**
 	 * @param   Input  $data
 	 *
 	 *
