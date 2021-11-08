@@ -60,5 +60,5 @@ $form = $data['form'];
         </div>
 	<?php endif; ?>
     </div>
-    <div class="uk-card-footer"></div>
+<!--    <div class="uk-card-footer"></div>-->
 </div>
