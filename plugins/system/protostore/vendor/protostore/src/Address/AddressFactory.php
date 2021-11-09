@@ -17,6 +17,7 @@ use Joomla\Input\Input;
 
 
 use Protostore\Cart\CartFactory;
+use Protostore\Country\Country;
 use Protostore\Country\CountryFactory;
 
 use Protostore\Customer\CustomerFactory;
@@ -131,7 +132,7 @@ class AddressFactory
 		if ($searchTerm)
 		{
 			$query->where($db->quoteName('name') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'));
-			$query->where($db->quoteName('address1') . ' LIKE ' . $db->quote('%' . $searchTerm . '%') );
+			$query->where($db->quoteName('address1') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'));
 			$query->where($db->quoteName('address2') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'));
 			$query->where($db->quoteName('address3') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'));
 			$query->where($db->quoteName('town') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'));
@@ -291,6 +292,23 @@ class AddressFactory
 			return '';
 		}
 
+
+	}
+
+	/**
+	 * @param $country_id
+	 *
+	 * @return Country|null
+	 *
+	 * @since 2.0
+	 */
+
+	public static function getCountry($country_id): ?Country
+	{
+
+
+		return CountryFactory::get($country_id);
+	
 
 	}
 
