@@ -130,14 +130,14 @@ class plgContentProtostore_fields extends JPlugin
                 }
 
                 // now make sure to clear all cart of this product
-                $query = $db->getQuery(true);
-                $conditions = array(
-                    $db->quoteName('joomla_item_id') . ' = ' . $db->quote($article->id)
-                );
-                $query->delete($db->quoteName('#__protostore_carts'));
-                $query->where($conditions);
-                $db->setQuery($query);
-                $db->execute();
+//                $query = $db->getQuery(true);
+//                $conditions = array(
+//                    $db->quoteName('joomla_item_id') . ' = ' . $db->quote($article->id)
+//                );
+//                $query->delete($db->quoteName('#__protostore_carts'));
+//                $query->where($conditions);
+//                $db->setQuery($query);
+//                $db->execute();
 
             }
 
@@ -164,12 +164,12 @@ class plgContentProtostore_fields extends JPlugin
 
         //also clear any items that are in carts
 
-        $query = $db->getQuery(true);
-        $conditions = array($db->quoteName('joomla_item_id') . ' = ' . $db->quote($data->id));
-        $query->delete($db->quoteName('#__protostore_carts'));
-        $query->where($conditions);
-        $db->setQuery($query);
-        $db->execute();
+//        $query = $db->getQuery(true);
+//        $conditions = array($db->quoteName('joomla_item_id') . ' = ' . $db->quote($data->id));
+//        $query->delete($db->quoteName('#__protostore_carts'));
+//        $query->where($conditions);
+//        $db->setQuery($query);
+//        $db->execute();
 
 
         return true;

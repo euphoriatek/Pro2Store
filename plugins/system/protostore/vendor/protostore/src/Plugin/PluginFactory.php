@@ -30,7 +30,7 @@ class PluginFactory
 	 * @since 2.0
 	 */
 
-	public static function run(string $pluginName, string $updateKey)
+	public static function run(string $pluginName, string $updateKey = '')
 	{
 
 

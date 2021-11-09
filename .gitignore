@@ -29,6 +29,7 @@
 /cli/
 /cache/
 /bin/
+/api/
 /dist*/
 
 /dist_gridandfilter/

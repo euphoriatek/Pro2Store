@@ -316,6 +316,7 @@ class TaxFactory
 	 *
 	 * @return int
 	 *
+	 * @throws Exception
 	 * @since 2.0
 	 */
 
