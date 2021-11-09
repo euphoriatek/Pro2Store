@@ -12,20 +12,17 @@
 defined('_JEXEC') or die('Restricted access');
 
 use Protostore\Checkoutnote\CheckoutnoteFactory;
-
+use Protostore\Checkoutnote\Checkoutnote;
 
 class protostoreTask_save
 {
 
-	public function getResponse($data)
+	public function getResponse($data): ?Checkoutnote
 	{
 
-		// init
-		$response = array();
+		return CheckoutnoteFactory::save($data);
 
-		$response['note'] = CheckoutnoteFactory::save($data);
 
-		return $response;
 	}
 
 }

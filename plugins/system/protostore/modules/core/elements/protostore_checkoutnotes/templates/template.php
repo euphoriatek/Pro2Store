@@ -45,9 +45,27 @@ $el = $this->el('div', [
                     'note': this.message,
                 };
 
-                const URLparams = this.serialize(params);
 
-                const request = await fetch('<?= $props['baseUrl']; ?>index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=checkoutnote.save&format=raw&' + URLparams, {method: 'post'});
+
+                //const request = await fetch('<?//= $props['baseUrl']; ?>//index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=checkoutnote.save&format=raw&' + URLparams, {method: 'post'});
+                //
+                //const params = {
+                //    'paymentType':  this.paymentType
+                //};
+
+                const request = await fetch('<?= $props['baseUrl']; ?>index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=checkoutnote.save&format=raw', {
+                    method: 'POST',
+                    mode: 'cors',
+                    cache: 'no-cache',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    redirect: 'follow',
+                    referrerPolicy: 'no-referrer',
+                    body: JSON.stringify(params)
+                });
+
 
                 const response = await request.json();
 

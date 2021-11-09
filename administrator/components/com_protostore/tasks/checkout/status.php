@@ -18,7 +18,15 @@ defined('_JEXEC') or die('Restricted access');
 class protostoreTask_status
 {
 
-	public function getResponse($data)
+	/**
+	 * @param $data
+	 *
+	 * @return bool
+	 *
+	 * @throws Exception
+	 * @since 2.0
+	 */
+	public function getResponse($data): bool
 	{
 
 

@@ -131,7 +131,7 @@ $el = $this->el('div', [
         methods: {
 
             async fetchCartItems() {
-
+// TODO - FIX THIS SHIT!
                 const requestCartItems = await fetch("<?= $props['baseUrl']; ?>index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=updatecart&format=raw", {
                     method: 'post',
                 });

@@ -15,6 +15,7 @@ defined('_JEXEC') or die('Restricted access');
 
 
 use Joomla\CMS\Factory;
+use Joomla\Input\Input;
 use Protostore\Utilities\Utilities;
 
 use stdClass;
@@ -119,21 +120,21 @@ class CheckoutnoteFactory
 	}
 
 	/**
-	 * @param $data
+	 * @param   Input  $data
 	 *
 	 * @return Checkoutnote
 	 *
-	 * @since 1.5
+	 * @since 2.0
 	 */
 
-	public static function save($data): ?Checkoutnote
+	public static function save(Input $data): ?Checkoutnote
 	{
 
 		$note = self::getCurrentNote();
 
 		if ($note)
 		{
-			$note->note = $data->get('note', '');
+			$note->note = $data->json->getString('note', '');
 
 			$update = Factory::getDbo()->updateObject('#__protostore_checkout_notes', $note, 'id');
 
