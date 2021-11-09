@@ -9,13 +9,23 @@
 
 defined('_JEXEC') or die;
 
+/** @var $checkoutLink */
+/** @var $count */
+/** @var $total */
+/** @var $cartItems */
+/** @var $locale */
+/** @var $currency */
+/** @var $params */
+
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 
 $id = uniqid('yps_cart_module');
 
-?>
 
+
+
+?>
 <div id="<?= $id; ?>">
 
 <div v-cloak class=" uk-visible@m uk-inline boundary-align <?= $params->get('text_colour'); ?>">
@@ -88,7 +98,7 @@ $id = uniqid('yps_cart_module');
                 total: '<?= $total; ?>',
                 cartItems: <?= json_encode($cartItems); ?>,
                 locale: '<?= $locale ?>',
-                iso: '<?= $currencyHelper->currency->iso ?>',
+                iso: '<?= $currency->iso ?>',
                 loading: false,
                 COM_PROTOSTORE_ELM_CARTITEMS_ALERT_REMOVE_ALL_FROM_CART: '<?= addslashes(Text::_('COM_PROTOSTORE_ELM_CARTITEMS_ALERT_REMOVE_ALL_FROM_CART')); ?>'
             }

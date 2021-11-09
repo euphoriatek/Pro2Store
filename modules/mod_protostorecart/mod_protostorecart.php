@@ -23,33 +23,33 @@ if (!PluginHelper::isEnabled('system', 'protostore'))
 	return;
 }
 
-
+use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ModuleHelper;
-use Joomla\CMS\Router\Route;
 
 use Protostore\Language\LanguageFactory;
 use Protostore\Cart\CartFactory;
-use Protostore\Currency\CurrencyFactory;
-use Protostore\Total\Total;
 use Protostore\Config\ConfigFactory;
+use Protostore\Currency\CurrencyFactory;
 
 LanguageFactory::load();
 
-$params = ConfigFactory::get();
+$cParams = ConfigFactory::get();
 
 $currentCartId = CartFactory::getCurrentCartId();
 $cart          = CartFactory::get();
 $cartItems     = $cart->cartItems;
 $count         = $cart->count;
+$currency      = CurrencyFactory::getCurrent();
+$locale        = Factory::getLanguage()->get('tag');
 
-
+/** @var  $params */
 $totalType = $params->get('total_type', 'grandtotal');
 
 switch ($totalType)
 {
 	case 'grandtotal' :
 
-		if ($params->get('add_default_country_tax_to_price', '1') == "1")
+		if ($cParams->get('add_default_country_tax_to_price', '1') == "1")
 		{
 			$total = $cart->totalWithTax;
 		}
@@ -61,7 +61,7 @@ switch ($totalType)
 
 		break;
 	case 'subtotal' :
-		if ($params->get('add_default_country_tax_to_price', '1') == "1")
+		if ($cParams->get('add_default_country_tax_to_price', '1') == "1")
 		{
 			$total = $cart->subtotalWithTax;
 		}
@@ -72,7 +72,6 @@ switch ($totalType)
 		break;
 }
 
-
-$checkoutLink = Route::_("index.php?Itemid={$params['cartmenuitem']}");
+$checkoutLink = "index.php?Itemid=" . $params->get('cartmenuitem');
 
 require ModuleHelper::getLayoutPath('mod_protostorecart', $params->get('layout', 'default'));

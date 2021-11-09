@@ -15,9 +15,11 @@ defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Table\Table;
+use Joomla\CMS\Uri\Uri;
 use Joomla\Registry\Registry;
 
 use Exception;
+use stdClass;
 
 
 /**
@@ -56,6 +58,42 @@ class ConfigFactory
 
 
 		return $manifest->get('version');
+
+	}
+
+
+	/**
+	 *
+	 * @return stdClass
+	 *
+	 * @throws Exception
+	 * @since 2.0
+	 */
+
+	public static function getSystemRedirectUrls(): stdClass
+	{
+
+		$urls = new stdClass();
+		$base = 'index.php?Itemid=';
+		$fullBase = Uri::base() . 'index.php?Itemid=';
+
+		$config = self::get();
+
+		$urls->checkout = new stdClass();
+		$urls->checkout->short = $base . $config->get('checkout_page_url');
+		$urls->checkout->full = $fullBase . $config->get('checkout_page_url');
+
+		$urls->confirmation = new stdClass();
+		$urls->confirmation->short = $base . $config->get('confirmation_page_url');
+		$urls->confirmation->full = $fullBase . $config->get('confirmation_page_url');
+
+		$urls->cancellation = new stdClass();
+		$urls->cancellation->short = $base . $config->get('cancellation_page_url');
+		$urls->cancellation->full = $fullBase . $config->get('cancellation_page_url');
+
+		return $urls;
+
+
 
 	}
 
