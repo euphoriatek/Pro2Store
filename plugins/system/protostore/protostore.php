@@ -40,7 +40,7 @@ class plgSystemProtostore extends CMSPlugin
 		$doc = Factory::getDocument();
 		if ($app->isClient('site'))
 		{
-			$doc->addScript('media/com_protostore/js/vue/bundle.min.js', array('type' => 'text/javascript'));
+			$doc->addScript('media/com_protostore/js/bundle.min.js', array('type' => 'text/javascript'));
 			$doc->addStyleDeclaration('[v-cloak] {display: none}');
 
 		}
