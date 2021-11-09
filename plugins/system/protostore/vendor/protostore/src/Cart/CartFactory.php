@@ -1677,6 +1677,7 @@ class CartFactory
 	 *
 	 * Call this function from the payment plugin. It simply turns the Cart object into an order in Pro2Store.
 	 *
+	 * Deprecated 2.0 use OrderFactory::createOrderFromCart() instead
 	 *
 	 * @return bool
 	 *

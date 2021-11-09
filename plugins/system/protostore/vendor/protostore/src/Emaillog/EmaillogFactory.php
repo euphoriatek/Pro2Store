@@ -222,6 +222,7 @@ class EmaillogFactory
 		$object->customer_id  = $customer_id;
 		$object->order_id     = $order_id;
 		$object->created_by   = $userid;
+		$object->params       = "{}";
 		$object->modified_by  = $userid;
 		$object->created      = Utilities::getDate();
 		$object->modified     = Utilities::getDate();

@@ -808,11 +808,9 @@ class OrderFactory
 		$orderToSave->shipping_address_id = $order->shipping_address_id;
 
 		// log
-
 		self::log($order->id, Text::sprintf('COM_PROTOSTORE_ORDER_UPDATE_LOG', self::getStatusFormatted($order->order_status), Factory::getUser()->name));
 
 		//event trigger
-
 		PluginHelper::importPlugin('protostoresystem');
 		Factory::getApplication()->triggerEvent('onOrderUpdated', array($order->id));
 
