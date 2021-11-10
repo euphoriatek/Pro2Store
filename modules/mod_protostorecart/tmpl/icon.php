@@ -27,59 +27,60 @@ $id = uniqid('yps_cart_module');
 ?>
 <div id="<?= $id; ?>">
 
-    <div v-cloak class=" uk-visible@m uk-inline boundary-align <?= $params->get('text_colour'); ?>">
+    <div v-cloak class=" uk-visible@m p2s_cart_module uk-inline boundary-align <?= $params->get('text_colour'); ?>">
 
-        <div>
+        <div class="uk-text-right">
             <span id="yps_cart_spinner" class="uk-hidden" uk-spinner="ratio: .5"></span>
             <a href="<?= $checkoutLink; ?>">
                 <span id="yps_cart_icon" uk-icon="icon: cart"></span>
-                <span class="uk-badge" id="cartcount">{{count}}</span>
+                <span  class="uk-badge" id="cartcount">{{count}}</span>
             </a>
         </div>
 		<?php if ($params->get('show_drop', '1')): ?>
-            <div uk-drop="pos: bottom-justify; boundary: .uk-container; boundary-align: true; animation: uk-animation-slide-top-small; duration: 200;mode: hover"
-                 class=" uk-width-large">
-                <div id="yps-iconcart-drop"
-                     class="uk-card <?= $params->get('drop_card_style'); ?> <?= $params->get('text_colour'); ?>"
-                     style="min-width: <?= $params->get('min_width', '200'); ?>px">
-                    <div class="uk-card-body">
+            <div uk-drop="pos: bottom-justify; boundary: .p2s_cart_module; boundary-align: true; animation: uk-animation-slide-top-small; duration: 200;mode: hover" style="width: 550px">
+                <div id="yps-iconcart-drop" class="uk-card uk-width-large <?= $params->get('drop_card_style'); ?> <?= $params->get('text_colour'); ?>" style="min-width: <?= $params->get('min_width', '450'); ?>px">
+                    <div class="uk-card-body uk-overflow-auto">
                         <table class="uk-table uk-table-striped uk-table-small">
                             <thead>
                             <tr>
                                 <th></th>
-                                <th>
-                                    <span style="color: <?= ($params->get('text_colour') == 'uk-light' ? '#ffffff' : '#000000'); ?>">Product</span>
-                                </th>
-                                <th class="uk-width-small uk-text-nowrap uk-text-right"><span
-                                            style="color: <?= ($params->get('text_colour') == 'uk-light' ? '#ffffff' : '#000000'); ?>">Total</span>
-                                </th>
+                                <th><span style="color: <?= ($params->get('text_colour') == 'uk-light' ? '#ffffff' : '#000000'); ?>"><?= Text::_('PROTOSTORE_TABLE_PRODUCT'); ?></span></th>
+                                <th class="uk-width-small uk-text-nowrap uk-text-right"> <span style="color: <?= ($params->get('text_colour') == 'uk-light' ? '#ffffff' : '#000000'); ?>"><?= Text::_('PROTOSTORE_TABLE_TOTAL'); ?></span></th>
                                 <th></th>
                             </tr>
                             </thead>
                             <tbody id="yps-iconcart-tablebody">
                             <tr v-for="item in cartItems">
+
                                 <td class="uk-table-shrink">
                                     <img class="uk-preserve-width" alt="" width="80"
-                                         v-bind:src="baseUrl + item.images?.image_fulltext">
+                                         :src="item.product.teaserImagePath">
                                 </td>
                                 <td class="uk-table-expand">
-                                    <h6>
-                                        <span style="color: <?= ($params->get('text_colour') == 'uk-light' ? '#ffffff' : '#000000'); ?>">{{item.joomla_item_title}} x {{item.count}}</span>
-                                    </h6>
+                                    <h6><span style="color: <?= ($params->get('text_colour') == 'uk-light' ? '#ffffff' : '#000000'); ?>">{{item.product.joomlaItem.title}} x {{item.amount}} </span></h6>
                                     <ul class="uk-list uk-list-collapse">
-                                        <li v-for="option in item.selected_options" class="">
-                                            {{option.optiontypename}}:
-                                            {{option.optionname}}
+                                        <li v-for="option in item.product.options" class="">
+                                            {{option.option_name}}:
+                                            {{option.modifier_value_translated}}
                                         </li>
                                     </ul>
+
                                 </td>
 
-                                <td class="uk-width-small uk-text-nowrap uk-text-right">{{
-                                    itemPrice(item.bought_at_price,
-                                    item.count) }}
-                                </td>
+								<?php if($params->get('add_default_country_tax_to_price', '1') == "1") :?>
+
+                                    <td class="uk-width-small uk-text-nowrap uk-text-right">
+                                        {{ itemPrice(item.total_bought_at_price_with_tax, item.amount) }}
+                                    </td>
+								<?php else : ?>
+                                    {{item.total_bought_at_price}}
+                                    <td class="uk-width-small uk-text-nowrap uk-text-right">
+                                        {{ itemPrice(item.total_bought_at_price, item.amount) }}
+                                    </td>
+								<?php endif; ?>
+
                                 <td class="uk-table-shrink uk-text-nowrap uk-text-right"><span
-                                            @click="remove(item.cart_id, item.cart_itemid)" uk-icon="icon: trash"
+                                            @click="remove(item.id, item.cart_id)" uk-icon="icon: trash"
                                             style="width: 20px; cursor: pointer"></span>
                                 </td>
                             </tr>
@@ -89,7 +90,7 @@ $id = uniqid('yps_cart_module');
                         </table>
                     </div>
                     <div class="uk-card-footer">
-                        <a class="uk-button uk-button-primary" href="<?= $checkoutLink; ?>">Checkout</a>
+                        <a class="uk-button uk-button-primary" href="<?= $checkoutLink; ?>"><?= Text::_('PROTOSTORE_CHECKOUT_BUTTON'); ?></a>
                     </div>
 
                 </div>
@@ -117,19 +118,19 @@ $id = uniqid('yps_cart_module');
         },
         methods: {
             async fetchCartItems() {
-// TODO - FIX THIS SHIT!
+
                 this.loading = true;
 
-                const requestCartItems = await fetch("<?= Uri::base(); ?>index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=updatecart&format=raw", {
+                const request = await fetch("<?= Uri::base(); ?>index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=cart.update&format=raw", {
                     method: 'post',
                 });
 
-                const responseCartItems = await requestCartItems.json();
+                const response = await request.json();
 
-                if (responseCartItems.success) {
-                    this.cartItems = responseCartItems.data.cartItems;
-                    this.count = responseCartItems.data.cartCount;
-                    this.total = responseCartItems.data.total;
+                if (response.success) {
+                    this.cartItems = response.data.cartItems;
+                    this.count = response.data.count;
+                    this.total = response.data.total;
                     this.loading = false;
                 } else {
                     UIkit.notification({
@@ -144,10 +145,10 @@ $id = uniqid('yps_cart_module');
             changeCount() {
 
             },
-            remove(cartid, cartitemid) {
+            remove(uid, cart_id) {
 
                 UIkit.modal.confirm(this.COM_PROTOSTORE_ELM_CARTITEMS_ALERT_REMOVE_ALL_FROM_CART).then(function () {
-                    fetch("<?= Uri::base(); ?>index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=removeallfromcart&format=raw&cartid=" + cartid + '&cartitemid=' + cartitemid, {
+                    fetch("<?= Uri::base(); ?>index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=cart.remove&format=raw&uid=" + uid + '&cart_id=' + cart_id, {
                         method: 'post'
                     }).then(function (res) {
                         return res.json();

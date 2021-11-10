@@ -18,6 +18,7 @@ use Exception;
 use Joomla\CMS\Factory;
 
 use Joomla\CMS\Language\Text;
+use Joomla\Input\Input;
 use Protostore\Address\AddressFactory;
 use Protostore\Coupon\CouponFactory;
 use Protostore\Price\PriceFactory;
@@ -451,6 +452,39 @@ class CartFactory
 
 		$conditions = array(
 			$db->quoteName('id') . " = " . $db->quote($id),
+		);
+
+		$query->delete($db->quoteName('#__protostore_cart_item'));
+		$query->where($conditions);
+		$db->setQuery($query);
+		$done = $db->execute();
+
+		if ($done)
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * @param $id
+	 *
+	 * @return bool
+	 *
+	 * @since 2.0
+	 */
+
+
+	public static function remove(Input $data): bool
+	{
+
+		$db    = Factory::getDbo();
+		$query = $db->getQuery(true);
+
+		$conditions = array(
+			$db->quoteName('id') . " = " . $db->quote($data->getInt('uid')),
+			$db->quoteName('cart_id') . " = " . $db->quote($data->getInt('cart_id')),
 		);
 
 		$query->delete($db->quoteName('#__protostore_cart_item'));
