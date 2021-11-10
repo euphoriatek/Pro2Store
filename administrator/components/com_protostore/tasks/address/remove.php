@@ -11,28 +11,25 @@
 
 defined('_JEXEC') or die('Restricted access');
 
+use Protostore\Address\AddressFactory;
 use Joomla\Input\Input;
 
-use Protostore\Address\AddressFactory;
-
-
-class protostoreTask_getCustomerAddresses
+class protostoreTask_remove
 {
 
 	/**
 	 * @param   Input  $data
 	 *
-	 * @return array
+	 * @return bool
 	 *
 	 * @throws Exception
 	 * @since 2.0
 	 */
-	public function getResponse(Input $data): array
+	public function getResponse(Input $data): bool
 	{
 
 
-
-		return AddressFactory::getList(0, 0, null, 'name', 'DESC', $data->json->getInt('customer_id'));
+		return AddressFactory::remove($data);
 
 
 	}

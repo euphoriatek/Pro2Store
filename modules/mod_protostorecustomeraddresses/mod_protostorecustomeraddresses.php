@@ -21,5 +21,6 @@ $countries = \Protostore\Country\CountryFactory::getList(0,0, true);
 
 $addresses = $customer->addresses;
 
+
 /** @var $params */
 require JModuleHelper::getLayoutPath('mod_protostorecustomeraddresses', $params->get('layout', 'default'));

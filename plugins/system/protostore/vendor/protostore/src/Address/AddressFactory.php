@@ -161,7 +161,6 @@ class AddressFactory
 
 		$results = $db->loadAssocList();
 
-//		return $results;
 
 		// only proceed if there's any rows
 		if ($results)
@@ -503,6 +502,39 @@ class AddressFactory
 		}
 
 		return false;
+
+	}
+
+	/**
+	 * @param   Input  $data
+	 *
+	 * @return bool
+	 *
+	 * @since 2.0
+	 */
+
+	public static function remove(Input $data): bool
+	{
+
+		$db    = Factory::getDbo();
+		$query = $db->getQuery(true);
+
+		$conditions = array(
+			$db->quoteName('id') . " = " . $db->quote($data->getInt('address_id'))
+		);
+
+		$query->delete($db->quoteName('#__protostore_customer_address'));
+		$query->where($conditions);
+		$db->setQuery($query);
+		$done = $db->execute();
+
+		if ($done)
+		{
+			return true;
+		}
+
+		return false;
+
 
 	}
 
