@@ -14,20 +14,25 @@ if(Factory::getUser()->guest) {
     return;
 }
 
-use Protostore\Orders\Orders;
-use Protostore\Order\Order;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Plugin\PluginHelper;
+
+if (!ComponentHelper::getComponent('com_protostore', true)->enabled)
+{
+	return;
+}
+
+if (!PluginHelper::isEnabled('system', 'protostore'))
+{
+	return;
+}
+
+
+$orders = \Protostore\Order\OrderFactory::getList(0,0,'', Factory::getUser()->id);
+
+if(!$orders) return;
 
 Factory::getDocument()->addStyleSheet('modules/mod_protostorecustomerorders/assets/css/style.css');
 
-
-$customersOrders = Orders::getOrderListByCustomer();
-
-$orders = array();
-
-foreach ($customersOrders as $order) {
-    $orders[] = new Order($order->id);
-}
-
-if($customersOrders == false) return;
-
+/** @var $params */
 require JModuleHelper::getLayoutPath('mod_protostorecustomerorders', $params->get('layout', 'default'));
