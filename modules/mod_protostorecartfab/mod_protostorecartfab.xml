@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="module" version="3.5" client="site" method="upgrade">
+    <name>Pro2Store - Cart Fab</name>
+    <author>Ray Lawlor - Pro2Store</author>
+    <creationDate>May 2021</creationDate>
+    <copyright>Copyright (C) 2021 Ray Lawlor - Pro2Store. All rights reserved.</copyright>
+    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+    <authorEmail>info@pro2.store</authorEmail>
+    <authorUrl>https://pro2.store</authorUrl>
+    <version>1.0.0</version>
+    <description>Pro2Store Cart Fab - by Ray Lawlor - Pro2Store</description>
+    <files>
+        <filename module="mod_protostorecartfab">mod_protostorecartfab.php</filename>
+        <folder>tmpl</folder>
+    </files>
+    <config>
+        <fields name="params">
+            <fieldset name="basic" label="Basic">
+
+                <field name="cartmenuitem" type="menuitem" default="45" label="Cart Menu Item" description="What is the Cart Menu Item" />
+
+                <field name="position" type="list" default="bottom" label="Position" description="">
+                    <option value="top">Top</option>
+                    <option value="bottom">Bottom</option>
+                </field>
+                <field name="side" type="list" default="right" label="Side" description="">
+                    <option value="left">Left</option>
+                    <option value="right">Right</option>
+                </field>
+                <field name="button_type" type="list" default="default" label="Button Type" description="">
+                    <option value="default">Default</option>
+                    <option value="primary">Primary</option>
+                    <option value="secondary">Secondary</option>
+                </field>
+                <field name="size" type="text" default="50" label="Button Size" description="" filter="integer" />
+
+            </fieldset>
+        </fields>
+    </config>
+</extension>
