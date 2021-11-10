@@ -9,9 +9,12 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+
 use Protostore\Address\Address;
 use Protostore\Utilities\Utilities;
 
+/**  @var $params */
 /**  @var $orders array */
 /**  @var $order Protostore\Order\Order */
 /**  @var $product Protostore\Order\OrderedProduct */
@@ -41,7 +44,7 @@ use Protostore\Utilities\Utilities;
             <td>
                 <span class="uk-label uk-label-<?= strtolower($order->order_status); ?>"><?= Text::_(Utilities::selectionTranslation($order->order_status, 'order_status')); ?></span>
             </td>
-            <td><?= $order->order_date; ?></td>
+            <td><?= HtmlHelper::date($order->order_date, Text::_($params->get('date_format', 'DATE_FORMAT_LC6'))); ?></td>
             <td><?= Text::_(Utilities::selectionTranslation($order->order_paid, 'order_paid')); ?></td>
             <td><?= $order->order_total_formatted ?></td>
         </tr>

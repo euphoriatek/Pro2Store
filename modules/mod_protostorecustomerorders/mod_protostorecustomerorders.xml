@@ -15,8 +15,25 @@
     </files>
     <config>
         <fields name="params">
-            <fieldset name="basic" label="Basic">                
+            <fieldset name="basic" label="Basic">
+                <field name="date_format" type="list" default="DATE_FORMAT_LC6" required="true" label="Select Date Format" description="">
+                    <option value="">Please Select</option>
+                    <option value="DATE_FORMAT_LC">l, d F Y</option>
+                    <option value="DATE_FORMAT_LC2">l, d F Y H:i</option>
+                    <option value="DATE_FORMAT_LC3">d F Y</option>
+                    <option value="DATE_FORMAT_LC4">Y-m-d</option>
+                    <option value="DATE_FORMAT_LC5">Y-m-d H:i</option>
+                    <option value="DATE_FORMAT_LC6">Y-m-d H:i:s</option>
+                    <option value="DATE_FORMAT_JS1">y-m-d</option>
+                </field>
             </fieldset>
         </fields>
     </config>
 </extension>
+
+
+
+
+
+
+
