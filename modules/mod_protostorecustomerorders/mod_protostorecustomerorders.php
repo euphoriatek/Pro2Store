@@ -27,10 +27,12 @@ if (!PluginHelper::isEnabled('system', 'protostore'))
 	return;
 }
 
+$customer = \Protostore\Customer\CustomerFactory::get();
 
-$orders = \Protostore\Order\OrderFactory::getList(0,0,'', Factory::getUser()->id);
+if(!$customer) return;
+if(!$customer->orders) return;
 
-if(!$orders) return;
+$orders = $customer->orders;
 
 Factory::getDocument()->addStyleSheet('modules/mod_protostorecustomerorders/assets/css/style.css');
 
