@@ -15,13 +15,9 @@ if(Factory::getUser()->guest) {
     return;
 }
 
-
-$app = Factory::getApplication();
-$config = $app->getParams('com_protostore');
-
-
+$config = \Protostore\Config\ConfigFactory::get();
 $customer = \Protostore\Customer\CustomerFactory::get();
-$countries = \Protostore\Shippingrate\ShippingrateFactory::getList();
+$countries = \Protostore\Country\CountryFactory::getList(0,0, true);
 
 $addresses = $customer->addresses;
 

@@ -358,6 +358,9 @@ class AddressFactory
 		unset($clone->customer_id);
 		unset($clone->zone);
 		unset($clone->country);
+		unset($clone->country_isocode_2);
+		unset($clone->country_isocode_3);
+
 
 		$string = '';
 

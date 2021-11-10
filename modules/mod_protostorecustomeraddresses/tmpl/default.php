@@ -8,16 +8,17 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Language\Text;
 
 use Protostore\Address\Address;
 use Protostore\Country\Country;
+use Protostore\Customer\Customer;
 use Protostore\Zone\Zone;
 
 /** @var $params */
 /** @var $config */
+/** @var $customer Customer */
 /** @var $addresses array */
 /** @var $address Address */
 /** @var $zones array */
@@ -25,539 +26,562 @@ use Protostore\Zone\Zone;
 /** @var $countries array */
 /** @var $country Country */
 
-$language = Factory::getLanguage();
-$language->load('com_protostore', JPATH_ADMINISTRATOR);
+\Protostore\Language\LanguageFactory::load();
+
+$id = uniqid('yps_customer_addresses');
+
+echo "{emailcloak=off}";
+
 
 ?>
-
-<div class="uk-text-right uk-margin">
+<div id="<?= $id; ?>">
+    <div class="uk-text-right uk-margin">
     <span uk-tooltip="Add New Address">
         <a class="uk-button uk-button-primary" href="#yps-addAddressModal" uk-toggle>
             <?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADD_NEW_ADDRESS'); ?>
             <span uk-icon="icon: plus-circle"></span>
         </a>
     </span>
-</div>
-<div class="uk-grid uk-child-width-1-<?= $params->get('grid_cols'); ?>@m" uk-grid>
-	<?php foreach ($addresses as $address) : ?>
-		<?php $id = $address->id; ?>
-        <div>
-            <div class="uk-card uk-card-body uk-card-default uk-margin">
-                <ul class="uk-iconnav uk-flex-right">
+    </div>
+    <div class="uk-grid uk-child-width-1-<?= $params->get('grid_cols'); ?>@m" uk-grid>
+        <div v-for="address in addresses">
+            <div>
+                <div class="uk-card uk-card-body uk-card-default uk-margin">
+                    <ul class="uk-iconnav uk-flex-right">
+                        <li uk-tooltip="<?= Text::_('COM_PROTOSTORE_CUSTOMER_TOOLTIP_EDIT_ADDRESS'); ?>">
+                            <a @click="openEditModal(address)"
+                               uk-icon="icon: file-edit">
+                            </a>
+                        </li>
 
-                    <li uk-tooltip="Edit Address">
-                        <a href="#yps-editAddressModal<?= $id; ?>"
-                           uk-icon="icon: file-edit" uk-toggle>
-                        </a>
-                    </li>
-
-                    <li uk-tooltip="Delete Address"><a onclick="deleteAddress(<?= $id; ?>)" uk-icon="icon: trash"></a>
-                    </li>
-                </ul>
-                <span id="address<?= $id; ?>">
-                    <h5><?= $address->name; ?></h5>
-
-                    <?= $address->address_as_csv; ?>
-
-                </span>
+                        <li uk-tooltip="Delete Address">
+                            <a :click="deleteAddress(address.id)" uk-icon="icon: trash"></a>
+                        </li>
+                    </ul>
+                    <span><h5>{{address.name}}</h5>{{address.address_as_csv}}</span>
+                </div>
             </div>
-        </div>
 
-        <div id="yps-editAddressModal<?= $id; ?>" class="uk-modal-container" uk-modal="stack: true">
-            <div class="uk-modal-dialog uk-modal-body">
-                <h2 class="uk-modal-title">
-                    <?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADD_NEW_ADDRESS'); ?>
-                    "<?= $address->name; ?>"
-                </h2>
-                <p>
-                <form id="yps_address_form<?= $id; ?>" onsubmit="saveAddress(<?= $id; ?>)">
-                    <input id="yps_address_id<?= $id; ?>" type="hidden" name="address_id"
-                           value="<?= $id; ?>">
+        </div>
+    </div>
+
+    <div id="yps-editAddressModal" class="uk-modal-container" uk-modal="">
+
+        <div class="uk-modal-dialog uk-modal-body">
+
+            <h2 class="uk-modal-title">
+				<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADD_NEW_ADDRESS'); ?>
+                "{{addressForEdit.name}}"
+            </h2>
+
+            <form @submit.prevent="submitUpdateAddress()">
+                <input type="hidden" name="address_id" v-model="addressForEdit.id">
+
+                <div class="uk-margin">
+                    <label class="uk-form-label"
+                           for="yps_editaddress_title">
+                        <?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_NAME'); ?>
+                    </label>
+                    <div class="uk-form-controls">
+                        <input class="uk-input" type="text" v-model="addressForEdit.name"
+                               name="name" id="yps_editaddress_title"
+                               placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_NAME_PLACEHOLDER'); ?>"
+                               required>
+                    </div>
+                </div>
+
+				<?php if ($config->get('address_show') == 1): ?>
 
                     <div class="uk-margin">
                         <label class="uk-form-label"
-                               for="yps_address_title"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_NAME'); ?></label>
+                               for="yps_editaddress_address1"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_ADDRESS_LINE1'); ?></label>
                         <div class="uk-form-controls">
-                            <input class="uk-input" id="yps_address_name<?= $id; ?>" type="text" name="name"
-                                   placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_NAME_PLACEHOLDER'); ?>"
-                                   value="<?= $address->name; ?>" required>
+                            <input class="uk-input" type="text" v-model="addressForEdit.address1"
+                                   name="address1"
+                                   id="yps_editaddress_address1"
+                                   placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_ADDRESS_LINE1_PLACEHOLDER'); ?>">
                         </div>
                     </div>
 
-					<?php if ($config->get('address_show') == 1): ?>
-
-
+					<?php if ($config->get('addressline2_show')): ?>
                         <div class="uk-margin">
                             <label class="uk-form-label"
-                                   for="yps_address_address1<?= $id; ?>"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_ADDRESS_LINE1'); ?></label>
+                                   for="yps_editaddress_address2"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_ADDRESS_LINE2'); ?></label>
                             <div class="uk-form-controls">
-                                <input class="uk-input" id="yps_address_address1<?= $id; ?>" type="text" name="address1"
-                                       placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_ADDRESS_LINE1_PLACEHOLDER'); ?>"
-                                       value="<?= $address->address1; ?>">
-                            </div>
-                        </div>
-
-						<?php if ($config->get('addressline2_show')): ?>
-                            <div class="uk-margin">
-                                <label class="uk-form-label"
-                                       for="yps_address_address2<?= $id; ?>"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_ADDRESS_LINE2'); ?></label>
-                                <div class="uk-form-controls">
-                                    <input class="uk-input" id="yps_address_address2<?= $id; ?>" type="text"
-                                           name="address2"
-                                           placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_ADDRESS_LINE2_PLACEHOLDER'); ?>"
-                                           value="<?= $address->address2; ?>" <?= ($config->get('addressline2_required') ? 'required' : ''); ?>>
-                                </div>
-                            </div>
-						<?php endif; ?>
-
-
-						<?php if ($config->get('addressline3_show')): ?>
-                            <div class="uk-margin">
-                                <label class="uk-form-label"
-                                       for="yps_address_address3<?= $id; ?>"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_ADDRESS_LINE3'); ?></label>
-                                <div class="uk-form-controls">
-                                    <input class="uk-input" id="yps_address_address3<?= $id; ?>" type="text"
-                                           name="address3"
-                                           placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_ADDRESS_LINE3_PLACEHOLDER'); ?>"
-                                           value="<?= $address->address3; ?>" <?= ($config->get('addressline3_required') ? 'required' : ''); ?>>
-                                </div>
-                            </div>
-						<?php endif; ?>
-                        <div class="uk-margin">
-                            <label class="uk-form-label"
-                                   for="yps_address_town<?= $id; ?>"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_TOWN'); ?></label>
-                            <div class="uk-form-controls">
-                                <input class="uk-input" id="yps_address_town<?= $id; ?>" type="text" name="town"
-                                       placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_TOWN_PLACEHOLDER'); ?>"
-                                       value="<?= $address->town; ?>">
-                            </div>
-                        </div>
-
-						<?php if ($config->get('postcode_show')): ?>
-                            <div class="uk-margin">
-                                <label class="uk-form-label"
-                                       for="yps_address_postcode<?= $id; ?>"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_POSTCODE'); ?></label>
-                                <div class="uk-form-controls">
-                                    <input class="uk-input" id="yps_address_postcode<?= $id; ?>" type="text"
-                                           name="postcode"
-                                           placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_POSTCODE_PLACEHOLDER'); ?>"
-                                           value="<?= $address->postcode; ?>" <?= ($config->get('postcode_required') ? 'required' : ''); ?>>
-                                </div>
-                            </div>
-						<?php endif; ?>
-                        <div class="uk-margin">
-                            <label class="uk-form-label"
-                                   for="yps_address_zone<?= $id; ?>"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_STATE'); ?></label>
-                            <div class="uk-form-controls">
-                                <select class="uk-select" id="yps_address_zone<?= $id; ?>" name="zone">
-                                    <option value=""
-                                            disabled><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_STATE_SELECT_DEFAULT'); ?></option>
-									<?php foreach (Zone::getZonesByCountryId($address->country_id) as $zone) : ?>
-                                        <option value="<?= $zone->id; ?>"<?= ($zone->id == $address->zone ? 'selected' : ''); ?> ><?= $zone->zone_name; ?></option>
-									<?php endforeach; ?>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="uk-margin">
-                            <label class="uk-form-label"
-                                   for="yps_address_country<?= $id; ?>">
-                                <?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_COUNTRY'); ?>
-                            </label>
-                            <div class="uk-form-controls">
-                                <select onchange="updateZones(this, <?= $id; ?>)" class="uk-select" name="country"
-                                        id="yps_address_country<?= $id; ?>">
-                                    <option value=""
-                                            disabled><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_COUNTRY_SELECT_DEFAULT'); ?></option>
-									<?php foreach ($countries as $country) : ?>
-                                        <option value="<?= $country->id; ?>" <?= ($country->id == $address->country ? 'selected' : ''); ?>><?= $country->country_name; ?></option>
-									<?php endforeach; ?>
-                                </select>
-                            </div>
-
-                        </div>
-
-					<?php endif; // ends 'address_show' ?>
-					<?php if ($config->get('mtelephone_show')): ?>
-                        <div class="uk-margin">
-                            <label class="uk-form-label"
-                                   for="yps_address_mobile<?= $id; ?>"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_MOBILE'); ?></label>
-                            <div class="uk-form-controls">
-                                <input class="uk-input" id="yps_address_mobile<?= $id; ?>" type="text"
-                                       name="mobilephone"
-                                       placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_MOBILE_PLACEHOLDER'); ?>"
-                                       value="<?= $address->mobile_phone; ?>" <?= ($config->get('mtelephone_required') ? 'required' : ''); ?>>
-                            </div>
-                        </div>
-					<?php endif; ?>
-					<?php if ($config->get('telephone_show')): ?>
-                        <div class="uk-margin">
-                            <label class="uk-form-label"
-                                   for="yps_address_phone<?= $id; ?>"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_TEL'); ?></label>
-                            <div class="uk-form-controls">
-                                <input class="uk-input" id="yps_address_phone<?= $id; ?>" type="text" name="phone"
-                                       placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_TEL_PLACEHOLDER'); ?>"
-                                       value="<?= $address->phone; ?>" <?= ($config->get('telephone_required') ? 'required' : ''); ?>>
+                                <input class="uk-input" v-model="addressForEdit.address2"
+                                       type="text"
+                                       name="address2"
+                                       id="yps_editaddress_address2"
+                                       placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_ADDRESS_LINE2_PLACEHOLDER'); ?>"
+									<?= ($config->get('addressline2_required') ? 'required' : ''); ?>>
                             </div>
                         </div>
 					<?php endif; ?>
 
-					<?php if ($config->get('email_show')): ?>
+
+					<?php if ($config->get('addressline3_show')): ?>
                         <div class="uk-margin">
                             <label class="uk-form-label"
-                                   for="yps_address_email<?= $id; ?>"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_EMAIL'); ?></label>
+                                   for="yps_editaddress_address3"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_ADDRESS_LINE3'); ?></label>
                             <div class="uk-form-controls">
-                                <input class="uk-input" id="yps_address_email<?= $id; ?>" type="email" name="email"
-                                       placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_EMAIL_PLACEHOLDER'); ?>"
-                                       value="<?= $address->email; ?>" <?= ($config->get('email_required') ? 'required' : ''); ?>>
+                                <input class="uk-input"
+                                       type="text"
+                                       id="yps_editaddress_address3"
+                                       name="address3" v-model="addressForEdit.address23"
+                                       placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_ADDRESS_LINE3_PLACEHOLDER'); ?>"
+									<?= ($config->get('addressline3_required') ? 'required' : ''); ?>>
                             </div>
                         </div>
 					<?php endif; ?>
+                    <div class="uk-margin">
+                        <label class="uk-form-label"
+                               for="yps_editaddress_town"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_TOWN'); ?></label>
+                        <div class="uk-form-controls">
+                            <input class="uk-input" type="text" v-model="addressForEdit.town"
+                                   name="town"
+                                   id="yps_editaddress_town"
+                                   placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_TOWN_PLACEHOLDER'); ?>"
+                            >
+                        </div>
+                    </div>
 
-                </form>
+					<?php if ($config->get('postcode_show')): ?>
+                        <div class="uk-margin">
+                            <label class="uk-form-label"
+                                   for="yps_editaddress_postcode"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_POSTCODE'); ?></label>
+                            <div class="uk-form-controls">
+                                <input class="uk-input" v-model="addressForEdit.postcode"
+                                       type="text"
+                                       name="postcode"
+                                       id="yps_editaddress_postcode"
+                                       placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_POSTCODE_PLACEHOLDER'); ?>"
+									<?= ($config->get('postcode_required') ? 'required' : ''); ?>>
+                            </div>
+                        </div>
+					<?php endif; ?>
+                    <div class="uk-margin">
+                        <label class="uk-form-label"
+                               for="yps_editaddress_zone"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_STATE'); ?></label>
+                        <div class="uk-form-controls">
+                            <select class="uk-select" id="yps_editaddress_zone" name="zone"
+                                    v-model="addressForEdit.zone">
+                                <option value=""
+                                        disabled><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_STATE_SELECT_DEFAULT'); ?></option>
+								<?php foreach (Zone::getZonesByCountryId($address->country_id) as $zone) : ?>
+                                    <option value="<?= $zone->id; ?>"<?= ($zone->id == $address->zone ? 'selected' : ''); ?> ><?= $zone->zone_name; ?></option>
+								<?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
 
-                </p>
+                    <div class="uk-margin">
+                        <label class="uk-form-label"
+                               for="yps_editaddress_country">
+							<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_COUNTRY'); ?>
+                        </label>
+                        <div class="uk-form-controls">
+                            <select @change="updateZones()" class="uk-select"
+                                    id="yps_editaddress_country"
+                                    name="country"
+                                    v-model="addressForEdit.country">
+                                <option value="" disabled><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_COUNTRY_SELECT_DEFAULT'); ?></option>
+								<?php foreach ($countries as $country) : ?>
+                                    <option value="<?= $country->id; ?>" :selected="addressForEdit.country === <?= $country->id; ?>"><?= $country->country_name; ?></option>
+								<?php endforeach; ?>
+                            </select>
+                        </div>
+
+                    </div>
+
+				<?php endif; // ends 'address_show' ?>
+				<?php if ($config->get('mtelephone_show')): ?>
+                    <div class="uk-margin">
+                        <label class="uk-form-label"
+                               for="yps_editaddress_mobile"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_MOBILE'); ?></label>
+                        <div class="uk-form-controls">
+                            <input class="uk-input" id="yps_editaddress_mobile" type="text"
+                                   v-model="addressForEdit.mobile_phone"
+                                   name="mobilephone"
+                                   placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_MOBILE_PLACEHOLDER'); ?>"
+								<?= ($config->get('mtelephone_required') ? 'required' : ''); ?>>
+                        </div>
+                    </div>
+				<?php endif; ?>
+				<?php if ($config->get('telephone_show')): ?>
+                    <div class="uk-margin">
+                        <label class="uk-form-label"
+                               for="yps_editaddress_phone"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_TEL'); ?></label>
+                        <div class="uk-form-controls">
+                            <input class="uk-input" id="yps_editaddress_phone" type="text"
+                                   v-model="addressForEdit.phone"
+                                   name="phone"
+                                   placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_TEL_PLACEHOLDER'); ?>"
+								<?= ($config->get('telephone_required') ? 'required' : ''); ?>>
+                        </div>
+                    </div>
+				<?php endif; ?>
+
+				<?php if ($config->get('email_show')): ?>
+                    <div class="uk-margin">
+                        <label class="uk-form-label"
+                               for="yps_editaddress_email"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_EMAIL'); ?></label>
+                        <div class="uk-form-controls">
+                            <input class="uk-input" id="yps_editaddress_email" type="email"
+                                   v-model="addressForEdit.email"
+                                   name="email"
+                                   placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_EMAIL_PLACEHOLDER'); ?>"
+								<?= ($config->get('email_required') ? 'required' : ''); ?>>
+                        </div>
+                    </div>
+				<?php endif; ?>
                 <p class="uk-text-right">
                     <button class="uk-button uk-button-default uk-modal-close"
                             type="button"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_CANCEL'); ?></button>
-                    <button class="uk-button uk-button-primary" type="submit" form="yps_address_form<?= $id; ?>"
+                    <button class="uk-button uk-button-primary" type="submit"
                     ><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_SAVE'); ?>
                     </button>
                 </p>
-            </div>
+            </form>
+
+
         </div>
+    </div>
 
-	<?php endforeach; ?>
-</div>
+    <div id="yps-addAddressModal" class="uk-modal-container" uk-modal="stack: true">
+        <div class="uk-modal-dialog uk-modal-body">
+            <h2 class="uk-modal-title"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADD_NEW_ADDRESS'); ?></h2>
+            <form class="uk-margin-bottom" @submit.prevent="submitAddAddress">
 
-
-<div id="yps-addAddressModal" class="uk-modal-container" uk-modal="stack: true">
-    <div class="uk-modal-dialog uk-modal-body">
-        <h2 class="uk-modal-title"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADD_NEW_ADDRESS'); ?></h2>
-        <p>
-        <form id="yps_address_form_add" onsubmit="addAddress()">
-            <div class="uk-margin">
-                <label class="uk-form-label"
-                       for="yps_address_name_add"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_NAME'); ?></label>
-                <div class="uk-form-controls">
-                    <input class="uk-input" id="yps_address_name_add" type="text" name="name"
-                           placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_NAME_PLACEHOLDER'); ?>"
-                           value="" required>
-                </div>
-            </div>
-
-			<?php if ($config->get('address_show')): ?>
+                <legend class="uk-legend"><?= Text::_('COM_PROTOSTORE_ELM_CART_USER_ADDRESS_LEGEND'); ?></legend>
 
                 <div class="uk-margin">
                     <label class="uk-form-label"
-                           for="yps_address_address1_add"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_ADDRESS_LINE1'); ?></label>
+                           for="yps_cart_name"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_NAME'); ?></label>
                     <div class="uk-form-controls">
-                        <input class="uk-input" id="yps_address_address1_add" type="text" name="address1"
-                               placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_ADDRESS_LINE1_PLACEHOLDER'); ?>"
-                               value="" required>
+                        <input class="uk-input" id="yps_cart_name" type="text"
+                               placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_NAME_PLACEHOLDER'); ?>"
+                               required name="name" v-model="newAddress.name">
                     </div>
                 </div>
 
+				<?php if ($config->get('address_show', 1)): ?>
 
-				<?php if ($config->get('addressline2_show')): ?>
                     <div class="uk-margin">
                         <label class="uk-form-label"
-                               for="yps_address_address2_add"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_ADDRESS_LINE2'); ?></label>
+                               for="yps_cart_address1"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_ADDRESS_LINE1'); ?></label>
                         <div class="uk-form-controls">
-                            <input class="uk-input" id="yps_address_address2_add" type="text" name="address2"
-                                   placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_ADDRESS_LINE2_PLACEHOLDER'); ?>"
-                                   value="" <?= ($config->get('addressline2_required') ? 'required' : ''); ?>>
+                            <input class="uk-input" id="yps_cart_address1" type="text" required name="address1"
+                                   :class="{ 'uk-form-danger' : formErrorsList['address1'] !== undefined ? true : false}"
+                                   :style="formErrorsList['address1'] !== undefined ? 'border-colour: red; border-style: solid; border-width: 1px;' : ''"
+                                   placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_ADDRESS_LINE1_PLACEHOLDER'); ?>"
+                                   v-model="newAddress.address1">
+                        </div>
+                    </div>
+
+					<?php if ($config->get('addressline2_show', 1)): ?>
+
+                        <div class="uk-margin">
+                            <label class="uk-form-label"
+                                   for="yps_cart_address2"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_ADDRESS_LINE2'); ?></label>
+                            <div class="uk-form-controls">
+                                <input class="uk-input" id="yps_cart_address2" type="text" name="address2"
+                                       :class="{ 'uk-form-danger' : formErrorsList['address2'] !== undefined ? true : false}"
+                                       :style="formErrorsList['address2'] !== undefined ? 'border-colour: red; border-style: solid; border-width: 1px;' : ''"
+                                       placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_ADDRESS_LINE2_PLACEHOLDER'); ?>" <?= ($config->get('addressline2_required') ? 'required' : ''); ?>
+                                       v-model="newAddress.address2">
+                            </div>
+                        </div>
+					<?php endif; ?>
+
+
+					<?php if ($config->get('addressline3_show', 1)): ?>
+                        <div class="uk-margin">
+                            <label class="uk-form-label"
+                                   for="yps_cart_address3"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_ADDRESS_LINE3'); ?></label>
+                            <div class="uk-form-controls">
+                                <input class="uk-input" id="yps_cart_address3" type="text" name="address3"
+                                       :class="{ 'uk-form-danger' : formErrorsList['address3'] !== undefined ? true : false}"
+                                       :style="formErrorsList['address3'] !== undefined ? 'border-colour: red; border-style: solid; border-width: 1px;' : ''"
+                                       placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_ADDRESS_LINE3_PLACEHOLDER'); ?>" <?= ($config->get('addressline3_required') ? 'required' : ''); ?>
+                                       v-model="newAddress.address3">
+                            </div>
+                        </div>
+
+					<?php endif; ?>
+					<?php if ($config->get('town_show', 1)): ?>
+                        <div class="uk-margin">
+                            <label class="uk-form-label"
+                                   for="yps_cart_town"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_TOWN'); ?></label>
+                            <div class="uk-form-controls">
+                                <input class="uk-input" id="yps_cart_town"
+                                       :class="{ 'uk-form-danger' : formErrorsList['town'] !== undefined ? true : false}"
+                                       :style="formErrorsList['town'] !== undefined ? 'border-colour: red; border-style: solid; border-width: 1px;' : ''"
+                                       type="text" name="town"
+                                       placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_TOWN_PLACEHOLDER'); ?>" <?= ($config->get('town_required') ? 'required' : ''); ?>
+                                       v-model="newAddress.town">
+                            </div>
+                        </div>
+					<?php endif; ?>
+					<?php if ($config->get('postcode_show', 1)): ?>
+                        <div class="uk-margin">
+                            <label class="uk-form-label"
+                                   for="yps_cart_postcode"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_POSTCODE'); ?></label>
+                            <div class="uk-form-controls">
+                                <input class="uk-input" id="yps_cart_postcode" type="text" name="postcode"
+                                       :class="{ 'uk-form-danger' : formErrorsList['postcode'] !== undefined ? true : false}"
+                                       :style="formErrorsList['postcode'] !== undefined ? 'border-colour: red; border-style: solid; border-width: 1px;' : ''"
+                                       placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_POSTCODE_PLACEHOLDER'); ?>" <?= ($config->get('postcode_required') ? 'required' : ''); ?>
+                                       v-model="newAddress.postcode">
+                            </div>
+                        </div>
+					<?php endif; ?>
+                    <div class="uk-margin">
+                        <label class="uk-form-label"
+                               for="yps_cart_country"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_COUNTRY'); ?></label>
+                        <div class="uk-form-controls">
+                            <select @change="updateZones()" class="uk-select" id="yps_cart_country" name="country"
+                                    v-model="newAddress.country"
+                                    :class="{ 'uk-form-danger' : formErrorsList['country'] !== undefined ? true : false}"
+                                    :style="formErrorsList['country'] !== undefined ? 'border-colour: red; border-style: solid; border-width: 1px;' : ''"
+                            >
+                                <option value=""><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_COUNTRY_SELECT_DEFAULT'); ?></option>
+								<?php foreach ($props['countries'] as $country) : ?>
+                                    <option value="<?= $country->id; ?>"><?= $country->country_name; ?></option>
+								<?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="uk-margin">
+                        <label class="uk-form-label"
+                               for="yps_cart_zone"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_STATE'); ?></label>
+                        <div class="uk-form-controls">
+                            <select class="uk-select" id="yps_cart_zone" name="zone" v-model="newAddress.zone"
+                                    :class="{ 'uk-form-danger' : formErrorsList['zone'] !== undefined ? true : false}"
+                                    :style="formErrorsList['zone'] !== undefined ? 'border-colour: red; border-style: solid; border-width: 1px;' : ''"
+                            >
+                                <option value=""
+                                        disabled><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_STATE_SELECT_DEFAULT'); ?></option>
+                                <option v-for="zone in zones" :value="zone.id">{{ zone.zone_name }}</option>
+                            </select>
+                        </div>
+                    </div>
+
+				<?php endif; // ends 'address_show' ?>
+				<?php if ($config->get('mtelephone_show', 1)): ?>
+                    <div class="uk-margin">
+                        <label class="uk-form-label"
+                               for="yps_cart_mobile"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_MOBILE'); ?></label>
+                        <div class="uk-form-controls">
+                            <input class="uk-input" id="yps_cart_mobile" type="text" name="mobilephone"
+                                   :class="{ 'uk-form-danger' : formErrorsList['mobilephone'] !== undefined ? true : false}"
+                                   :style="formErrorsList['mobilephone'] !== undefined ? 'border-colour: red; border-style: solid; border-width: 1px;' : ''"
+                                   placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_MOBILE_PLACEHOLDER'); ?>" <?= ($config->get('mtelephone_required') ? 'required' : ''); ?>
+                                   v-model="newAddress.mobilephone">
+                        </div>
+                    </div>
+				<?php endif; ?>
+				<?php if ($config->get('telephone_show', 1)): ?>
+                    <div class="uk-margin">
+                        <label class="uk-form-label"
+                               for="yps_cart_phone"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_TEL'); ?></label>
+                        <div class="uk-form-controls">
+                            <input class="uk-input" id="yps_cart_phone" type="text" name="phone"
+                                   :class="{ 'uk-form-danger' : formErrorsList['phone'] !== undefined ? true : false}"
+                                   :style="formErrorsList['phone'] !== undefined ? 'border-colour: red; border-style: solid; border-width: 1px;' : ''"
+                                   placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_TEL_PLACEHOLDER'); ?>" <?= ($config->get('telephone_required') ? 'required' : ''); ?>
+                                   v-model="newAddress.phone">
                         </div>
                     </div>
 				<?php endif; ?>
 
-
-				<?php if ($config->get('addressline3_show')): ?>
+				<?php if ($config->get('email_show', 1)): ?>
                     <div class="uk-margin">
                         <label class="uk-form-label"
-                               for="yps_address_address3_add"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_ADDRESS_LINE3'); ?></label>
+                               for="yps_cartsignup_email"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_EMAIL'); ?></label>
                         <div class="uk-form-controls">
-                            <input class="uk-input" id="yps_address_address3_add" type="text" name="address3"
-                                   placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_ADDRESS_LINE3_PLACEHOLDER'); ?>"
-                                   value="" <?= ($config->get('addressline3_required') ? 'required' : ''); ?>>
+                            <input class="uk-input" id="yps_cart_email" type="email" name="email"
+                                   :class="{ 'uk-form-danger' : formErrorsList['email'] !== undefined ? true : false}"
+                                   :style="formErrorsList['email'] !== undefined ? 'border-colour: red; border-style: solid; border-width: 1px;' : ''"
+                                   placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_EMAIL_PLACEHOLDER'); ?>" <?= ($config->get('email_required') ? 'required' : ''); ?>
+                                   v-model="newAddress.email">
                         </div>
                     </div>
 				<?php endif; ?>
-
-                <div class="uk-margin">
-                    <label class="uk-form-label"
-                           for="yps_address_town_add"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_TOWN'); ?></label>
-                    <div class="uk-form-controls">
-                        <input class="uk-input" id="yps_address_town_add" type="text" name="town"
-                               placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_TOWN_PLACEHOLDER'); ?>"
-                               value="">
+                <div class="uk-grid">
+                    <div class="uk-width-expand">
+                        <button class="uk-button uk-button-primary" type="submit">
+							<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_CONFIRM'); ?>
+                        </button>
                     </div>
-                </div>
-				<?php if ($config->get('postcode_show')): ?>
-                    <div class="uk-margin">
-                        <label class="uk-form-label"
-                               for="yps_address_postcode_add"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_POSTCODE'); ?></label>
-                        <div class="uk-form-controls">
-                            <input class="uk-input" id="yps_address_postcode_add" type="text" name="postcode"
-                                   placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_POSTCODE_PLACEHOLDER'); ?>"
-                                   value="" <?= ($config->get('postcode_required') ? 'required' : ''); ?>>
+                    <div class="uk-width-auto">
+                        <div class="uk-text-right">
+                            <button id="yps__cancel" class="uk-button uk-button-default"
+                                    type="button">
+								<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_CANCEL'); ?>
+                            </button>
                         </div>
                     </div>
-				<?php endif; ?>
-                <div class="uk-margin">
-                    <label class="uk-form-label"
-                           for="yps_address_zone_add"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_STATE'); ?></label>
-                    <div class="uk-form-controls">
-                        <select class="uk-select" id="yps_address_zone_add" name="zone">
-                            <option value=""
-                                    disabled><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_STATE_SELECT_DEFAULT'); ?></option>
-							<?php foreach (Zone::getZonesByCountryId($countries[0]->id) as $zone) : ?>
-                                <option value="<?= $zone->id; ?>"><?= $zone->zone_name; ?></option>
-							<?php endforeach; ?>
-                        </select>
-                    </div>
                 </div>
 
-                <div class="uk-margin">
-                    <label class="uk-form-label"
-                           for="yps_address_country_add"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_COUNTRY'); ?></label>
-                    <div class="uk-form-controls">
-                        <select onchange="updateZones(this, '_add' )" class="uk-select" name="country"
-                                id="yps_address_country_add">
-                            <option value=""
-                                    disabled><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_COUNTRY_SELECT_DEFAULT'); ?></option>
-							<?php foreach ($countries as $country) : ?>
-                                <option value="<?= $country->id; ?>"><?= $country->country_name; ?></option>
-							<?php endforeach; ?>
-                        </select>
-                    </div>
+            </form>
 
-                </div>
-
-
-			<?php endif; // ends 'address_show' ?>
-
-			<?php if ($config->get('mtelephone_show')): ?>
-                <div class="uk-margin">
-                    <label class="uk-form-label"
-                           for="yps_address_mobile_add"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_MOBILE'); ?></label>
-                    <div class="uk-form-controls">
-                        <input class="uk-input" id="yps_address_mobile_add" type="text" name="mobilephone"
-                               placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_MOBILE_PLACEHOLDER'); ?>"
-                               value="" <?= ($config->get('mtelephone_required') ? 'required' : ''); ?>>
-                    </div>
-                </div>
-			<?php endif; ?>
-			<?php if ($config->get('telephone_show')): ?>
-                <div class="uk-margin">
-                    <label class="uk-form-label"
-                           for="yps_address_phone_add"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_TEL'); ?></label>
-                    <div class="uk-form-controls">
-                        <input class="uk-input" id="yps_address_phone_add" type="text" name="phone"
-                               placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_TEL_PLACEHOLDER'); ?>"
-                               value="" <?= ($config->get('telephone_required') ? 'required' : ''); ?>>
-                    </div>
-                </div>
-			<?php endif; ?>
-
-			<?php if ($config->get('email_show')): ?>
-                <div class="uk-margin">
-                    <label class="uk-form-label"
-                           for="yps_address_email_add"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_EMAIL'); ?></label>
-                    <div class="uk-form-controls">
-                        <input class="uk-input" id="yps_address_email_add" type="email" required name="email"
-                               placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_EMAIL_PLACEHOLDER'); ?>"
-                               value="" <?= ($config->get('email_required') ? 'required' : ''); ?>>
-                    </div>
-                </div>
-			<?php endif; ?>
-
-
-        </form>
-
-        </p>
-        <p class="uk-text-right">
-            <button class="uk-button uk-button-default uk-modal-close"
-                    type="button"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_CANCEL'); ?></button>
-            <button class="uk-button uk-button-primary"
-                    type="submit"
-                    form="yps_address_form_add"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_SAVE'); ?></button>
-        </p>
+            <p class="uk-text-right">
+                <button class="uk-button uk-button-default uk-modal-close"
+                        type="button"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_CANCEL'); ?></button>
+                <button class="uk-button uk-button-primary"
+                        type="submit"
+                        form="yps_address_form_add"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_SAVE'); ?></button>
+            </p>
+        </div>
     </div>
 </div>
-
-
 <script>
+    //VUE!
+    const <?= $id; ?> = {
+        data() {
+            return {
+                addresses: <?= json_encode($addresses); ?>,
+                newAddress: {
+                    name: '',
+                    address1: '',
+                    address2: '',
+                    address3: '',
+                    town: '',
+                    country: '',
+                    zone: '',
+                    postcode: '',
+                    mobilephone: '',
+                    phone: '',
+                    email: '',
+                },
+                addressForEdit: {
+                    name: '',
+                    address1: '',
+                    address2: '',
+                    address3: '',
+                    town: '',
+                    country: '',
+                    zone: '',
+                    postcode: '',
+                    mobilephone: '',
+                    phone: '',
+                    email: '',
+                },
+                formErrors: '',
+                formErrorsList: '',
+            }
 
-    function updateZones(selectObject, id) {
-        let sel = document.getElementById('yps_address_zone' + id);
-        let country_id = selectObject.value;
+        },
+        async beforeMount() {
 
-        var length = sel.options.length;
-        for (i = length - 1; i >= 0; i--) {
-            sel.options[i] = null;
-        }
 
-        fetch("<?php echo Uri::root(); ?>index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=getzonesbycountryid&format=raw&country_id=" + country_id, {
-            method: 'post'
-        }).then(function (res) {
-            return res.json();
-        }).then(function (response) {
-            console.log(response);
-            if (response.success) {
-                // TODO - TRANSLATE
+        },
+        mounted() {
 
-                let zones = response.data;
 
-                zones.forEach(function (zone) {
+        },
+        methods: {
+            openEditModal(address) {
+                this.addressForEdit = address;
+                UIkit.modal('#yps-editAddressModal').show()
 
-                    var opt = document.createElement('option');
+            },
+            async submitAddAddress() {
+                await UIkit.modal.confirm('<?= Text::_('COM_PROTOSTORE_ADDRESS_SAVE_CONFIRM'); ?>', {stack: true});
+                await UIkit.modal("#yps-addAddressModal").hide();
 
-                    opt.appendChild(document.createTextNode(zone.zone_name));
+                this.loading = true;
 
-                    opt.value = zone.id;
-
-                    sel.appendChild(opt);
-
+                const request = await fetch("<?= Uri::base(); ?>index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=address.addAddress&format=raw", {
+                    method: 'POST',
+                    mode: 'cors',
+                    cache: 'no-cache',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    redirect: 'follow',
+                    referrerPolicy: 'no-referrer',
+                    body: JSON.stringify(this.newAddress)
                 });
 
-            }
-        });
-    }
+                const response = await request.json();
 
+                if (response.success) {
 
-    function deleteAddress(id) {
-        UIkit.modal.confirm('Are you sure you wish to delete?', {stack: true}).then(function () {
+                    if (response.data.status === 'ok') {
+                        this.loading = false;
+                        UIkit.notification({
+                            message: '<span uk-icon=\'icon: check\'></span> <?= Text::_('COM_PROTOSTORE_ELM_CART_USER_ALERT_ADDRESS_ADDED'); ?>',
+                            status: 'success',
+                            pos: 'top-center'
+                        });
+                        this.updateCustomerAddresses();
+                    } else {
+                        this.loading = false;
+                        UIkit.notification({
+                            message: '<span uk-icon=\'icon: ban\'></span> <?= Text::_('COM_PROTOSTORE_ELM_CART_USER_ALERT_ERROR_IN_ADDRESS_FORM'); ?>',
+                            status: 'warning',
+                            pos: 'top-center'
+                        });
+                        this.formErrors = response.data.errors;
+                        this.formErrorsList = response.data.errorsList;
+                    }
 
-            const params = {
-                address_id: id
-            }
-            const url = Object.keys(params).map(function (k) {
-                return encodeURIComponent(k) + '=' + encodeURIComponent(params[k])
-            }).join('&')
-
-
-            fetch("<?php echo Uri::root(); ?>index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=deleteaddress&format=raw&" + url, {
-                method: 'post'
-            }).then(function (res) {
-                return res.json();
-            }).then(function (response) {
-                console.log(response);
-                if (response.data.status == 'ok') {
+                } else {
                     UIkit.notification({
-                        message: '<span uk-icon=\'icon: check\'></span> Address Deleted',
-                        status: 'success',
-                        pos: 'top-center'
-                    });
-                    location.reload();
-                } else if (response.data.status == 'ko') {
-                    UIkit.notification({
-                        message: '<span uk-icon=\'icon: ban\'></span> Error in form',
-                        status: 'warning',
+                        message: 'ERROR',
+                        status: 'danger',
                         pos: 'top-center'
                     });
                 }
-            });
 
 
-        }, function () {
-            console.log('Rejected.')
-        });
-    }
-
-    // function for preventing default form behaviour
-    var yps_prevent = function (event) {
-        event.preventDefault();
-    };
+            },
+            async updateCustomerAddresses() {
 
 
-	<?php foreach ($addresses as $address) : ?>
-	<?php $id = $address->id; ?>
-    var editform<?= $id; ?> = document.getElementById("yps_address_form<?= $id; ?>");
-    editform<?= $id; ?>.addEventListener("submit", yps_prevent, true);
-	<?php endforeach;?>
+                const params = {
+                    customer_id: <?= $customer->id; ?>
+                }
 
+                const request = await fetch("<?= Uri::base(); ?>index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=address.getCustomerAddresses&format=raw", {
+                    method: 'POST',
+                    mode: 'cors',
+                    cache: 'no-cache',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    redirect: 'follow',
+                    referrerPolicy: 'no-referrer',
+                    body: JSON.stringify(params)
+                });
 
-    function saveAddress(id) {
-        UIkit.modal.confirm('Are you sure you wish to save?', {stack: true}).then(function () {
+                const response = await request.json();
 
-            var kvpairs = [];
-            var form = document.getElementById("yps_address_form" + id);
-            for (var i = 0; i < form.elements.length; i++) {
-                var e = form.elements[i];
-                kvpairs.push(encodeURIComponent(e.name) + "=" + encodeURIComponent(e.value));
-            }
-            var queryString = kvpairs.join("&");
+                if (response.success) {
+                    this.addresses = response.data;
 
-
-            fetch("<?php echo Uri::root(); ?>index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=saveaddress&format=raw&" + queryString, {
-                method: 'post'
-            }).then(function (res) {
-                return res.json();
-            }).then(function (response) {
-                console.log(response);
-                if (response.data.status == 'ok') {
+                } else {
                     UIkit.notification({
-                        message: '<span uk-icon=\'icon: check\'></span> Address Edited',
-                        status: 'success',
-                        pos: 'top-center'
-                    });
-                    location.reload();
-                } else if (response.data.status == 'ko') {
-                    UIkit.notification({
-                        message: '<span uk-icon=\'icon: ban\'></span> Error in form',
-                        status: 'warning',
+                        message: 'ERROR',
+                        status: 'danger',
                         pos: 'top-center'
                     });
                 }
-            });
-        });
-    }
 
-    var form = document.getElementById("yps_address_form_add");
+            },
+            async submitUpdateAddress(){
 
-    // attach event listener
-    form.addEventListener("submit", yps_prevent, true);
+            },
+            updateZones(countryId){
 
-    function addAddress() {
-
-        UIkit.modal.confirm('Are you sure you wish to save?', {stack: true}).then(function () {
-            UIkit.modal("#yps-addAddressModal").hide();
-
-            var kvpairs = [];
-            var form = document.getElementById("yps_address_form_add");
-            for (var i = 0; i < form.elements.length; i++) {
-                var e = form.elements[i];
-                kvpairs.push(encodeURIComponent(e.name) + "=" + encodeURIComponent(e.value));
+            },
+            deleteAddress(i) {
             }
-            var queryString = kvpairs.join("&");
-
-
-            fetch("<?php echo Uri::root(); ?>index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=addaddress&format=raw&" + queryString, {
-                method: 'post'
-            }).then(function (res) {
-                return res.json();
-            }).then(function (response) {
-                console.log(response);
-                if (response.data.status == 'ok') {
-                    UIkit.notification({
-                        message: '<span uk-icon=\'icon: check\'></span> Address Added',
-                        status: 'success',
-                        pos: 'top-center'
-                    });
-                    location.reload();
-                } else if (response.data.status == 'ko') {
-                    UIkit.notification({
-                        message: '<span uk-icon=\'icon: ban\'></span> Error in form',
-                        status: 'warning',
-                        pos: 'top-center'
-                    });
-                }
-            });
-
-
-        });
+        }
     }
-
+    Vue.createApp(<?= $id; ?>).mount('#<?= $id; ?>')
 
 </script>
