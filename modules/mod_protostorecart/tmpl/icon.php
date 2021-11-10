@@ -15,7 +15,6 @@ defined('_JEXEC') or die;
 /** @var $cartItems */
 /** @var $locale */
 /** @var $currency */
-
 /** @var $params */
 
 use Joomla\CMS\Language\Text;
