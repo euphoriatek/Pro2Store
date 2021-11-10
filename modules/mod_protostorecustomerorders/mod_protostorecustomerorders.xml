@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="module" version="3.5" client="site" method="upgrade">
+    <name>Pro2Store - Customer Orders</name>
+    <author>Ray Lawlor - Pro2Store</author>
+    <creationDate>August 2020</creationDate>
+    <copyright>Copyright (C) 2020 Ray Lawlor - Pro2Store. All rights reserved.</copyright>
+    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+    <authorEmail>info@pro2.store</authorEmail>
+    <authorUrl>https://pro2.store</authorUrl>
+    <version>1.0.0</version>
+    <description>Pro2Store - Customer Orders - by Ray Lawlor - Pro2Store</description>
+    <files>
+        <filename module="mod_protostorecustomerorders">mod_protostorecustomerorders.php</filename>
+        <folder>tmpl</folder>
+        <folder>language</folder>
+    </files>
+    <languages folder="language">
+        <language tag="en-GB">en-GB/en-GB.mod_protostorecustomerorders.ini</language>
+        <language tag="en-GB">en-GB/en-GB.mod_protostorecustomerorders.sys.ini</language>
+    </languages>
+    <config>
+        <fields name="params">
+            <fieldset name="basic" label="Basic">                
+            </fieldset>
+        </fields>
+    </config>
+</extension>
