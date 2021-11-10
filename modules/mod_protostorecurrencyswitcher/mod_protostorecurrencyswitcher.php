@@ -8,7 +8,6 @@
 
 defined('_JEXEC') or die;
 
-
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Helper\ModuleHelper;
 use Joomla\CMS\Plugin\PluginHelper;
@@ -21,5 +20,5 @@ if (!PluginHelper::isEnabled('system', 'protostore')) {
     return;
 }
 
-
+/** @var $params */
 require ModuleHelper::getLayoutPath('mod_protostorecurrencyswitcher', $params->get('layout', 'default'));
