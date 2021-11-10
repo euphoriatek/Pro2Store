@@ -9,20 +9,19 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-use Protostore\Zone\Zone;
+
 
 if(Factory::getUser()->guest) {
     return;
 }
 
-use Protostore\Utilities\Utilities;
 
 $app = Factory::getApplication();
 $config = $app->getParams('com_protostore');
 
 
-$customerid = Utilities::getCustomerIdByCurrentUserId();
-$addresses = Utilities::getCustomerAddresses($customerid);
-$countries = Zone::getAllCountries();
+$customer = \Protostore\Customer\CustomerFactory::get();
+$countries = \Protostore\Shippingrate\ShippingrateFactory::getList();
 
+/** @var $params */
 require JModuleHelper::getLayoutPath('mod_protostorecustomeraddresses', $params->get('layout', 'default'));

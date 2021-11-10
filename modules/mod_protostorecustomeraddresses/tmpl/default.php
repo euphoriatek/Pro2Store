@@ -19,13 +19,16 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
 ?>
 
 <div class="uk-text-right uk-margin">
-    <span uk-tooltip="Add New Address"><a class="uk-button uk-button-primary" href="#yps-addAddressModal"
-                                          uk-toggle><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADD_NEW_ADDRESS'); ?> <span
-                    uk-icon="icon: plus-circle"></span></a></span>
+    <span uk-tooltip="Add New Address">
+        <a class="uk-button uk-button-primary" href="#yps-addAddressModal" uk-toggle>
+            <?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADD_NEW_ADDRESS'); ?>
+            <span uk-icon="icon: plus-circle"></span>
+        </a>
+    </span>
 </div>
 <div class="uk-grid uk-child-width-1-<?= $params->get('grid_cols'); ?>@m" uk-grid>
-    <?php foreach ($addresses as $address) : ?>
-        <?php $id = $address->getId(); ?>
+	<?php foreach ($addresses as $address) : ?>
+		<?php $id = $address->getId(); ?>
         <div>
             <div class="uk-card uk-card-body uk-card-default uk-margin">
                 <ul class="uk-iconnav uk-flex-right">
@@ -40,9 +43,9 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
                                 <h5><?= $address->getName(); ?></h5>
 
                                     <?php foreach ($address->getAddressDetailsAsObject() as $line) : ?>
-                                        <?php if (!empty($line)) : ?>
-                                            <?= $line; ?>,
-                                        <?php endif; ?>
+	                                    <?php if (!empty($line)) : ?>
+		                                    <?= $line; ?>,
+	                                    <?php endif; ?>
                                     <?php endforeach; ?>
 
                         </span>
@@ -69,7 +72,7 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
                         </div>
                     </div>
 
-                    <?php if ($config->get('address_show') == 1): ?>
+					<?php if ($config->get('address_show') == 1): ?>
 
 
                         <div class="uk-margin">
@@ -82,30 +85,32 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
                             </div>
                         </div>
 
-                        <?php if ($config->get('addressline2_show')): ?>
+						<?php if ($config->get('addressline2_show')): ?>
                             <div class="uk-margin">
                                 <label class="uk-form-label"
                                        for="yps_address_address2<?= $id; ?>"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_ADDRESS_LINE2'); ?></label>
                                 <div class="uk-form-controls">
-                                    <input class="uk-input" id="yps_address_address2<?= $id; ?>" type="text" name="address2"
+                                    <input class="uk-input" id="yps_address_address2<?= $id; ?>" type="text"
+                                           name="address2"
                                            placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_ADDRESS_LINE2_PLACEHOLDER'); ?>"
                                            value="<?= $address->getAddress2(); ?>" <?= ($config->get('addressline2_required') ? 'required' : ''); ?>>
                                 </div>
                             </div>
-                        <?php endif; ?>
+						<?php endif; ?>
 
 
-                        <?php if ($config->get('addressline3_show')): ?>
+						<?php if ($config->get('addressline3_show')): ?>
                             <div class="uk-margin">
                                 <label class="uk-form-label"
                                        for="yps_address_address3<?= $id; ?>"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_ADDRESS_LINE3'); ?></label>
                                 <div class="uk-form-controls">
-                                    <input class="uk-input" id="yps_address_address3<?= $id; ?>" type="text" name="address3"
+                                    <input class="uk-input" id="yps_address_address3<?= $id; ?>" type="text"
+                                           name="address3"
                                            placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_ADDRESS_LINE3_PLACEHOLDER'); ?>"
                                            value="<?= $address->getAddress3(); ?>" <?= ($config->get('addressline3_required') ? 'required' : ''); ?>>
                                 </div>
                             </div>
-                        <?php endif; ?>
+						<?php endif; ?>
                         <div class="uk-margin">
                             <label class="uk-form-label"
                                    for="yps_address_town<?= $id; ?>"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_TOWN'); ?></label>
@@ -116,17 +121,18 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
                             </div>
                         </div>
 
-                        <?php if ($config->get('postcode_show')): ?>
+						<?php if ($config->get('postcode_show')): ?>
                             <div class="uk-margin">
                                 <label class="uk-form-label"
                                        for="yps_address_postcode<?= $id; ?>"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_POSTCODE'); ?></label>
                                 <div class="uk-form-controls">
-                                    <input class="uk-input" id="yps_address_postcode<?= $id; ?>" type="text" name="postcode"
+                                    <input class="uk-input" id="yps_address_postcode<?= $id; ?>" type="text"
+                                           name="postcode"
                                            placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_POSTCODE_PLACEHOLDER'); ?>"
                                            value="<?= $address->getPostcode(); ?>" <?= ($config->get('postcode_required') ? 'required' : ''); ?>>
                                 </div>
                             </div>
-                        <?php endif; ?>
+						<?php endif; ?>
                         <div class="uk-margin">
                             <label class="uk-form-label"
                                    for="yps_address_zone<?= $id; ?>"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_STATE'); ?></label>
@@ -134,9 +140,9 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
                                 <select class="uk-select" id="yps_address_zone<?= $id; ?>" name="zone">
                                     <option value=""
                                             disabled><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_STATE_SELECT_DEFAULT'); ?></option>
-                                    <?php foreach (Zone::getZonesByCountryId($address->country_id) as $zone) : ?>
+									<?php foreach (Zone::getZonesByCountryId($address->country_id) as $zone) : ?>
                                         <option value="<?= $zone->id; ?>"<?= ($zone->id == $address->zone_id ? 'selected' : ''); ?> ><?= $zone->zone_name; ?></option>
-                                    <?php endforeach; ?>
+									<?php endforeach; ?>
                                 </select>
                             </div>
                         </div>
@@ -149,27 +155,28 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
                                         id="yps_address_country<?= $id; ?>">
                                     <option value=""
                                             disabled><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_COUNTRY_SELECT_DEFAULT'); ?></option>
-                                    <?php foreach ($countries as $country) : ?>
+									<?php foreach ($countries as $country) : ?>
                                         <option value="<?= $country->id; ?>" <?= ($country->id == $address->country_id ? 'selected' : ''); ?>><?= $country->country_name; ?></option>
-                                    <?php endforeach; ?>
+									<?php endforeach; ?>
                                 </select>
                             </div>
 
                         </div>
 
-                    <?php endif; // ends 'address_show' ?>
-                    <?php if ($config->get('mtelephone_show')): ?>
+					<?php endif; // ends 'address_show' ?>
+					<?php if ($config->get('mtelephone_show')): ?>
                         <div class="uk-margin">
                             <label class="uk-form-label"
                                    for="yps_address_mobile<?= $id; ?>"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_MOBILE'); ?></label>
                             <div class="uk-form-controls">
-                                <input class="uk-input" id="yps_address_mobile<?= $id; ?>" type="text" name="mobilephone"
+                                <input class="uk-input" id="yps_address_mobile<?= $id; ?>" type="text"
+                                       name="mobilephone"
                                        placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_MOBILE_PLACEHOLDER'); ?>"
                                        value="<?= $address->getMobilePhone(); ?>" <?= ($config->get('mtelephone_required') ? 'required' : ''); ?>>
                             </div>
                         </div>
-                    <?php endif; ?>
-                    <?php if ($config->get('telephone_show')): ?>
+					<?php endif; ?>
+					<?php if ($config->get('telephone_show')): ?>
                         <div class="uk-margin">
                             <label class="uk-form-label"
                                    for="yps_address_phone<?= $id; ?>"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_TEL'); ?></label>
@@ -179,9 +186,9 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
                                        value="<?= $address->getPhone(); ?>" <?= ($config->get('telephone_required') ? 'required' : ''); ?>>
                             </div>
                         </div>
-                    <?php endif; ?>
+					<?php endif; ?>
 
-                    <?php if ($config->get('email_show')): ?>
+					<?php if ($config->get('email_show')): ?>
                         <div class="uk-margin">
                             <label class="uk-form-label"
                                    for="yps_address_email<?= $id; ?>"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_EMAIL'); ?></label>
@@ -191,7 +198,7 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
                                        value="<?= $address->getEmail(); ?>" <?= ($config->get('email_required') ? 'required' : ''); ?>>
                             </div>
                         </div>
-                    <?php endif; ?>
+					<?php endif; ?>
 
                 </form>
 
@@ -206,7 +213,7 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
             </div>
         </div>
 
-    <?php endforeach; ?>
+	<?php endforeach; ?>
 </div>
 
 
@@ -225,7 +232,7 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
                 </div>
             </div>
 
-            <?php if ($config->get('address_show')): ?>
+			<?php if ($config->get('address_show')): ?>
 
                 <div class="uk-margin">
                     <label class="uk-form-label"
@@ -238,7 +245,7 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
                 </div>
 
 
-                <?php if ($config->get('addressline2_show')): ?>
+				<?php if ($config->get('addressline2_show')): ?>
                     <div class="uk-margin">
                         <label class="uk-form-label"
                                for="yps_address_address2_add"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_ADDRESS_LINE2'); ?></label>
@@ -248,10 +255,10 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
                                    value="" <?= ($config->get('addressline2_required') ? 'required' : ''); ?>>
                         </div>
                     </div>
-                <?php endif; ?>
+				<?php endif; ?>
 
 
-                <?php if ($config->get('addressline3_show')): ?>
+				<?php if ($config->get('addressline3_show')): ?>
                     <div class="uk-margin">
                         <label class="uk-form-label"
                                for="yps_address_address3_add"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_ADDRESS_LINE3'); ?></label>
@@ -261,7 +268,7 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
                                    value="" <?= ($config->get('addressline3_required') ? 'required' : ''); ?>>
                         </div>
                     </div>
-                <?php endif; ?>
+				<?php endif; ?>
 
                 <div class="uk-margin">
                     <label class="uk-form-label"
@@ -272,7 +279,7 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
                                value="">
                     </div>
                 </div>
-                <?php if ($config->get('postcode_show')): ?>
+				<?php if ($config->get('postcode_show')): ?>
                     <div class="uk-margin">
                         <label class="uk-form-label"
                                for="yps_address_postcode_add"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_POSTCODE'); ?></label>
@@ -282,7 +289,7 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
                                    value="" <?= ($config->get('postcode_required') ? 'required' : ''); ?>>
                         </div>
                     </div>
-                <?php endif; ?>
+				<?php endif; ?>
                 <div class="uk-margin">
                     <label class="uk-form-label"
                            for="yps_address_zone_add"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_STATE'); ?></label>
@@ -290,9 +297,9 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
                         <select class="uk-select" id="yps_address_zone_add" name="zone">
                             <option value=""
                                     disabled><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_STATE_SELECT_DEFAULT'); ?></option>
-                            <?php foreach (Zone::getZonesByCountryId($countries[0]->id) as $zone) : ?>
+							<?php foreach (Zone::getZonesByCountryId($countries[0]->id) as $zone) : ?>
                                 <option value="<?= $zone->id; ?>"><?= $zone->zone_name; ?></option>
-                            <?php endforeach; ?>
+							<?php endforeach; ?>
                         </select>
                     </div>
                 </div>
@@ -305,18 +312,18 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
                                 id="yps_address_country_add">
                             <option value=""
                                     disabled><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_COUNTRY_SELECT_DEFAULT'); ?></option>
-                            <?php foreach ($countries as $country) : ?>
+							<?php foreach ($countries as $country) : ?>
                                 <option value="<?= $country->id; ?>"><?= $country->country_name; ?></option>
-                            <?php endforeach; ?>
+							<?php endforeach; ?>
                         </select>
                     </div>
 
                 </div>
 
 
-            <?php endif; // ends 'address_show' ?>
+			<?php endif; // ends 'address_show' ?>
 
-            <?php if ($config->get('mtelephone_show')): ?>
+			<?php if ($config->get('mtelephone_show')): ?>
                 <div class="uk-margin">
                     <label class="uk-form-label"
                            for="yps_address_mobile_add"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_MOBILE'); ?></label>
@@ -326,8 +333,8 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
                                value="" <?= ($config->get('mtelephone_required') ? 'required' : ''); ?>>
                     </div>
                 </div>
-            <?php endif; ?>
-            <?php if ($config->get('telephone_show')): ?>
+			<?php endif; ?>
+			<?php if ($config->get('telephone_show')): ?>
                 <div class="uk-margin">
                     <label class="uk-form-label"
                            for="yps_address_phone_add"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_TEL'); ?></label>
@@ -337,9 +344,9 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
                                value="" <?= ($config->get('telephone_required') ? 'required' : ''); ?>>
                     </div>
                 </div>
-            <?php endif; ?>
+			<?php endif; ?>
 
-            <?php if ($config->get('email_show')): ?>
+			<?php if ($config->get('email_show')): ?>
                 <div class="uk-margin">
                     <label class="uk-form-label"
                            for="yps_address_email_add"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_EMAIL'); ?></label>
@@ -349,7 +356,7 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
                                value="" <?= ($config->get('email_required') ? 'required' : ''); ?>>
                     </div>
                 </div>
-            <?php endif; ?>
+			<?php endif; ?>
 
 
         </form>
@@ -450,11 +457,11 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
     };
 
 
-    <?php foreach ($addresses as $address) : ?>
-    <?php $id = $address->getId(); ?>
+	<?php foreach ($addresses as $address) : ?>
+	<?php $id = $address->getId(); ?>
     var editform<?= $id; ?> = document.getElementById("yps_address_form<?= $id; ?>");
     editform<?= $id; ?>.addEventListener("submit", yps_prevent, true);
-    <?php endforeach;?>
+	<?php endforeach;?>
 
 
     function saveAddress(id) {
