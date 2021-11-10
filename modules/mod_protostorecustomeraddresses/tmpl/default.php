@@ -11,7 +11,19 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Language\Text;
+
+use Protostore\Address\Address;
+use Protostore\Country\Country;
 use Protostore\Zone\Zone;
+
+/** @var $params */
+/** @var $config */
+/** @var $addresses array */
+/** @var $address Address */
+/** @var $zones array */
+/** @var $zone Zone */
+/** @var $countries array */
+/** @var $country Country */
 
 $language = Factory::getLanguage();
 $language->load('com_protostore', JPATH_ADMINISTRATOR);
@@ -28,37 +40,37 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
 </div>
 <div class="uk-grid uk-child-width-1-<?= $params->get('grid_cols'); ?>@m" uk-grid>
 	<?php foreach ($addresses as $address) : ?>
-		<?php $id = $address->getId(); ?>
+		<?php $id = $address->id; ?>
         <div>
             <div class="uk-card uk-card-body uk-card-default uk-margin">
                 <ul class="uk-iconnav uk-flex-right">
 
-                    <li uk-tooltip="Edit Address"><a href="#yps-editAddressModal<?= $id; ?>" uk-icon="icon: file-edit"
-                                                     uk-toggle></a></li>
+                    <li uk-tooltip="Edit Address">
+                        <a href="#yps-editAddressModal<?= $id; ?>"
+                           uk-icon="icon: file-edit" uk-toggle>
+                        </a>
+                    </li>
 
                     <li uk-tooltip="Delete Address"><a onclick="deleteAddress(<?= $id; ?>)" uk-icon="icon: trash"></a>
                     </li>
                 </ul>
                 <span id="address<?= $id; ?>">
-                                <h5><?= $address->getName(); ?></h5>
+                    <h5><?= $address->name; ?></h5>
 
-                                    <?php foreach ($address->getAddressDetailsAsObject() as $line) : ?>
-	                                    <?php if (!empty($line)) : ?>
-		                                    <?= $line; ?>,
-	                                    <?php endif; ?>
-                                    <?php endforeach; ?>
+                    <?= $address->address_as_csv; ?>
 
-                        </span>
+                </span>
             </div>
         </div>
 
         <div id="yps-editAddressModal<?= $id; ?>" class="uk-modal-container" uk-modal="stack: true">
             <div class="uk-modal-dialog uk-modal-body">
-                <h2 class="uk-modal-title"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADD_NEW_ADDRESS'); ?>
-                    "<?= $address->getName(); ?>"</h2>
+                <h2 class="uk-modal-title">
+                    <?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADD_NEW_ADDRESS'); ?>
+                    "<?= $address->name; ?>"
+                </h2>
                 <p>
                 <form id="yps_address_form<?= $id; ?>" onsubmit="saveAddress(<?= $id; ?>)">
-
                     <input id="yps_address_id<?= $id; ?>" type="hidden" name="address_id"
                            value="<?= $id; ?>">
 
@@ -68,7 +80,7 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
                         <div class="uk-form-controls">
                             <input class="uk-input" id="yps_address_name<?= $id; ?>" type="text" name="name"
                                    placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_NAME_PLACEHOLDER'); ?>"
-                                   value="<?= $address->getName(); ?>" required>
+                                   value="<?= $address->name; ?>" required>
                         </div>
                     </div>
 
@@ -81,7 +93,7 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
                             <div class="uk-form-controls">
                                 <input class="uk-input" id="yps_address_address1<?= $id; ?>" type="text" name="address1"
                                        placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_ADDRESS_LINE1_PLACEHOLDER'); ?>"
-                                       value="<?= $address->getAddress1(); ?>">
+                                       value="<?= $address->address1; ?>">
                             </div>
                         </div>
 
@@ -93,7 +105,7 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
                                     <input class="uk-input" id="yps_address_address2<?= $id; ?>" type="text"
                                            name="address2"
                                            placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_ADDRESS_LINE2_PLACEHOLDER'); ?>"
-                                           value="<?= $address->getAddress2(); ?>" <?= ($config->get('addressline2_required') ? 'required' : ''); ?>>
+                                           value="<?= $address->address2; ?>" <?= ($config->get('addressline2_required') ? 'required' : ''); ?>>
                                 </div>
                             </div>
 						<?php endif; ?>
@@ -107,7 +119,7 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
                                     <input class="uk-input" id="yps_address_address3<?= $id; ?>" type="text"
                                            name="address3"
                                            placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_ADDRESS_LINE3_PLACEHOLDER'); ?>"
-                                           value="<?= $address->getAddress3(); ?>" <?= ($config->get('addressline3_required') ? 'required' : ''); ?>>
+                                           value="<?= $address->address3; ?>" <?= ($config->get('addressline3_required') ? 'required' : ''); ?>>
                                 </div>
                             </div>
 						<?php endif; ?>
@@ -117,7 +129,7 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
                             <div class="uk-form-controls">
                                 <input class="uk-input" id="yps_address_town<?= $id; ?>" type="text" name="town"
                                        placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_TOWN_PLACEHOLDER'); ?>"
-                                       value="<?= $address->getTown(); ?>">
+                                       value="<?= $address->town; ?>">
                             </div>
                         </div>
 
@@ -129,7 +141,7 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
                                     <input class="uk-input" id="yps_address_postcode<?= $id; ?>" type="text"
                                            name="postcode"
                                            placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_POSTCODE_PLACEHOLDER'); ?>"
-                                           value="<?= $address->getPostcode(); ?>" <?= ($config->get('postcode_required') ? 'required' : ''); ?>>
+                                           value="<?= $address->postcode; ?>" <?= ($config->get('postcode_required') ? 'required' : ''); ?>>
                                 </div>
                             </div>
 						<?php endif; ?>
@@ -141,7 +153,7 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
                                     <option value=""
                                             disabled><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_STATE_SELECT_DEFAULT'); ?></option>
 									<?php foreach (Zone::getZonesByCountryId($address->country_id) as $zone) : ?>
-                                        <option value="<?= $zone->id; ?>"<?= ($zone->id == $address->zone_id ? 'selected' : ''); ?> ><?= $zone->zone_name; ?></option>
+                                        <option value="<?= $zone->id; ?>"<?= ($zone->id == $address->zone ? 'selected' : ''); ?> ><?= $zone->zone_name; ?></option>
 									<?php endforeach; ?>
                                 </select>
                             </div>
@@ -149,14 +161,16 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
 
                         <div class="uk-margin">
                             <label class="uk-form-label"
-                                   for="yps_address_country<?= $id; ?>"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_COUNTRY'); ?></label>
+                                   for="yps_address_country<?= $id; ?>">
+                                <?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_COUNTRY'); ?>
+                            </label>
                             <div class="uk-form-controls">
                                 <select onchange="updateZones(this, <?= $id; ?>)" class="uk-select" name="country"
                                         id="yps_address_country<?= $id; ?>">
                                     <option value=""
                                             disabled><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_COUNTRY_SELECT_DEFAULT'); ?></option>
 									<?php foreach ($countries as $country) : ?>
-                                        <option value="<?= $country->id; ?>" <?= ($country->id == $address->country_id ? 'selected' : ''); ?>><?= $country->country_name; ?></option>
+                                        <option value="<?= $country->id; ?>" <?= ($country->id == $address->country ? 'selected' : ''); ?>><?= $country->country_name; ?></option>
 									<?php endforeach; ?>
                                 </select>
                             </div>
@@ -172,7 +186,7 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
                                 <input class="uk-input" id="yps_address_mobile<?= $id; ?>" type="text"
                                        name="mobilephone"
                                        placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_MOBILE_PLACEHOLDER'); ?>"
-                                       value="<?= $address->getMobilePhone(); ?>" <?= ($config->get('mtelephone_required') ? 'required' : ''); ?>>
+                                       value="<?= $address->mobile_phone; ?>" <?= ($config->get('mtelephone_required') ? 'required' : ''); ?>>
                             </div>
                         </div>
 					<?php endif; ?>
@@ -183,7 +197,7 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
                             <div class="uk-form-controls">
                                 <input class="uk-input" id="yps_address_phone<?= $id; ?>" type="text" name="phone"
                                        placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_TEL_PLACEHOLDER'); ?>"
-                                       value="<?= $address->getPhone(); ?>" <?= ($config->get('telephone_required') ? 'required' : ''); ?>>
+                                       value="<?= $address->phone; ?>" <?= ($config->get('telephone_required') ? 'required' : ''); ?>>
                             </div>
                         </div>
 					<?php endif; ?>
@@ -195,7 +209,7 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
                             <div class="uk-form-controls">
                                 <input class="uk-input" id="yps_address_email<?= $id; ?>" type="email" name="email"
                                        placeholder="<?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_EMAIL_PLACEHOLDER'); ?>"
-                                       value="<?= $address->getEmail(); ?>" <?= ($config->get('email_required') ? 'required' : ''); ?>>
+                                       value="<?= $address->email; ?>" <?= ($config->get('email_required') ? 'required' : ''); ?>>
                             </div>
                         </div>
 					<?php endif; ?>
@@ -458,7 +472,7 @@ $language->load('com_protostore', JPATH_ADMINISTRATOR);
 
 
 	<?php foreach ($addresses as $address) : ?>
-	<?php $id = $address->getId(); ?>
+	<?php $id = $address->id; ?>
     var editform<?= $id; ?> = document.getElementById("yps_address_form<?= $id; ?>");
     editform<?= $id; ?>.addEventListener("submit", yps_prevent, true);
 	<?php endforeach;?>

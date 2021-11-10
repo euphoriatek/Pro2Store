@@ -23,5 +23,7 @@ $config = $app->getParams('com_protostore');
 $customer = \Protostore\Customer\CustomerFactory::get();
 $countries = \Protostore\Shippingrate\ShippingrateFactory::getList();
 
+$addresses = $customer->addresses;
+
 /** @var $params */
 require JModuleHelper::getLayoutPath('mod_protostorecustomeraddresses', $params->get('layout', 'default'));
