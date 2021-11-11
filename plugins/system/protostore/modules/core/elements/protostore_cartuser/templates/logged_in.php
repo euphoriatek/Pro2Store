@@ -251,7 +251,7 @@ echo "{emailcloak=off}";
                 });
 
                 const response = await request.json();
-                if (response.data.status == 'ok') {
+                if (response.success) {
                     emitter.emit('yps_cart_update');
                     this.updateCustomerAddresses();
                     this.loading = false;
@@ -272,7 +272,7 @@ echo "{emailcloak=off}";
                         method: 'post'
                     });
                     const response = await request.json();
-                    if (response.data.status == 'ok') {
+                    if (response.success) {
                         this.loading = false;
                         this.updateCustomerAddresses();
                         emitter.emit('yps_cart_update');
