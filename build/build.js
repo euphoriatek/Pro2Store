@@ -193,30 +193,29 @@ const {version} = require('../package.json');
     zip.addLocalFolder('./modules/mod_protostorecart', false);
     zip.writeZip(`./build/output/package/packages/mod_protostorecart.zip`);
 
-    // // cart Fab module
-    // const zip6fab = new (require('adm-zip'));
-    // zip6fab.addLocalFolder('modules/mod_protostorecartfab', false);
-    // zip6fab.writeZip(`package/packages/mod_protostorecartfab.zip`);
-    //
+    // cart Fab module
+    const zip6fab = new (require('adm-zip'));
+    zip6fab.addLocalFolder('modules/mod_protostorecartfab', false);
+    zip6fab.writeZip(`package/packages/mod_protostorecartfab.zip`);
 
 
     // currency switcher module
-    // zip = new (require('adm-zip'));
-    // zip.addLocalFolder('./modules/mod_protostorecurrencyswitcher', false);
-    // zip.writeZip(`./build/output/package/packages/mod_protostorecurrencyswitcher.zip`);
+    zip = new (require('adm-zip'));
+    zip.addLocalFolder('./modules/mod_protostorecurrencyswitcher', false);
+    zip.writeZip(`./build/output/package/packages/mod_protostorecurrencyswitcher.zip`);
 
 
-    //
-    //
-    // // Customer Addresses module
-    // const zip8e = new (require('adm-zip'));
-    // zip8e.addLocalFolder('modules/mod_protostorecustomeraddresses', false);
-    // zip8e.writeZip(`package/packages/mod_protostorecustomeraddresses.zip`);
-    //
-    // // Customer Orders module
-    // const zip8f = new (require('adm-zip'));
-    // zip8f.addLocalFolder('modules/mod_protostorecustomerorders', false);
-    // zip8f.writeZip(`package/packages/mod_protostorecustomerorders.zip`);
+
+
+    // Customer Addresses module
+    const zip8e = new (require('adm-zip'));
+    zip8e.addLocalFolder('modules/mod_protostorecustomeraddresses', false);
+    zip8e.writeZip(`package/packages/mod_protostorecustomeraddresses.zip`);
+
+    // Customer Orders module
+    const zip8f = new (require('adm-zip'));
+    zip8f.addLocalFolder('modules/mod_protostorecustomerorders', false);
+    zip8f.writeZip(`package/packages/mod_protostorecustomerorders.zip`);
 
 
     await rimRaf('./build/output/package/protostore.xml');
