@@ -80,8 +80,6 @@ class bootstrap extends AdminModel
 		$this->addStylesheets();
 
 
-		$this->vars['form'] = $this->getForm(array('item' => $this->vars['item']), true);
-
 
 	}
 
@@ -90,16 +88,16 @@ class bootstrap extends AdminModel
 	 * @param   array  $data
 	 * @param   bool   $loadData
 	 *
-	 * @return bool|JForm
+	 * @return bool
 	 *
 	 * @since version
 	 */
 
-	public function getForm($data = array(), $loadData = true)
+	public function getForm($data = array(), $loadData = true): bool
 	{
-		// Get the form.
 
-		return $this->loadForm('com_protostore.' . self::$view, self::$view, array('control' => 'jform', 'load_data' => $loadData));
+
+		return false;
 	}
 
 	/**
