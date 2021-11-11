@@ -196,7 +196,7 @@ const {version} = require('../package.json');
     // cart Fab module
     const zip6fab = new (require('adm-zip'));
     zip6fab.addLocalFolder('modules/mod_protostorecartfab', false);
-    zip6fab.writeZip(`package/packages/mod_protostorecartfab.zip`);
+    zip6fab.writeZip(`./build/output/package/packages/mod_protostorecartfab.zip`);
 
 
     // currency switcher module
@@ -210,12 +210,12 @@ const {version} = require('../package.json');
     // Customer Addresses module
     const zip8e = new (require('adm-zip'));
     zip8e.addLocalFolder('modules/mod_protostorecustomeraddresses', false);
-    zip8e.writeZip(`package/packages/mod_protostorecustomeraddresses.zip`);
+    zip8e.writeZip(`./build/output/package/packages/mod_protostorecustomeraddresses.zip`);
 
     // Customer Orders module
     const zip8f = new (require('adm-zip'));
     zip8f.addLocalFolder('modules/mod_protostorecustomerorders', false);
-    zip8f.writeZip(`package/packages/mod_protostorecustomerorders.zip`);
+    zip8f.writeZip(`./build/output/package/packages/mod_protostorecustomerorders.zip`);
 
 
     await rimRaf('./build/output/package/protostore.xml');

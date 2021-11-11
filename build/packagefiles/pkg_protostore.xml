@@ -69,7 +69,7 @@
         <file type="plugin" id="protostore_user" group="user">plg_user_protostore.zip</file>
         <file type="plugin" id="protostore_fields" group="content">plg_content_protostore_fields.zip</file>
         <file type="plugin" id="protostore_shortcodes" group="content">plg_content_protostore_shortcodes.zip</file>
-        <file type="plugin" id="protostore_quickicon" group="quickicon">plg_quickicon_protostore.zip.zip</file>
+        <file type="plugin" id="protostore_quickicon" group="quickicon">plg_quickicon_protostore.zip</file>
         <file type="plugin" id="protostore_emailer" group="protostoresystem">plg_protostoresystem_protostore_emailer.zip</file>
         <file type="plugin" id="defaultshipping" group="protostoreshipping">plg_protostoreshipping_defaultshipping.zip</file>
         <file type="module" id="mod_protostorecart" client="site">mod_protostorecart.zip</file>
