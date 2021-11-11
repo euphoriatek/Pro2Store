@@ -9,7 +9,6 @@
  */
 
 
-
 namespace Protostore\Cart;
 
 // no direct access
@@ -128,18 +127,18 @@ class Cart
 		$this->default_tax    = CurrencyFactory::translate($this->default_taxInt, $currency);
 
 		$this->totalWithTaxInt = $this->totalInt + $this->taxInt;
-		$this->totalWithTax = CurrencyFactory::translate($this->totalWithTaxInt, $currency);
+		$this->totalWithTax    = CurrencyFactory::translate($this->totalWithTaxInt, $currency);
 
 		$this->totalWithDefaultTaxInt = $this->totalInt + $this->default_taxInt;
-		$this->totalWithDefaultTax = CurrencyFactory::translate($this->totalWithDefaultTaxInt, $currency);
+		$this->totalWithDefaultTax    = CurrencyFactory::translate($this->totalWithDefaultTaxInt, $currency);
 
 		$this->subtotalWithTaxInt = $this->subtotalInt + $this->taxInt;
-		$this->subtotalWithTax = CurrencyFactory::translate($this->subtotalWithTaxInt, $currency);
+		$this->subtotalWithTax    = CurrencyFactory::translate($this->subtotalWithTaxInt, $currency);
 
 		$this->subtotalWithDefaultTaxInt = $this->subtotalInt + $this->default_taxInt;
-		$this->subtotalWithDefaultTax = CurrencyFactory::translate($this->subtotalWithDefaultTaxInt, $currency);
+		$this->subtotalWithDefaultTax    = CurrencyFactory::translate($this->subtotalWithDefaultTaxInt, $currency);
 
-		$this->totalShipping = ShippingFactory::getShipping($this);
+		$this->totalShipping          = ShippingFactory::getShipping($this);
 		$this->totalShippingFormatted = ShippingFactory::getShippingFormatted($this);
 
 

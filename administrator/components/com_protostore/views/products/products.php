@@ -124,7 +124,7 @@ use Joomla\CMS\Layout\LayoutHelper;
                                 </td>
                                 <td>
                                     <div v-show="!product.editPrice" @click="openEditPrice(product)">
-                                        {{product.baseprice_formatted}}
+                                        {{product.base_price_formatted}}
                                     </div>
                                     <div v-show="product.editPrice">
                                         <div class="uk-margin">

@@ -554,6 +554,7 @@ class CartFactory
 
 		// get the product
 		$product = ProductFactory::get($itemid);
+
 		$cart_id = self::getCurrentCartId();
 
 		// check stock right away... sorts out a lot of checking later.
@@ -1053,11 +1054,13 @@ class CartFactory
 
 		$option_ids = array();
 
-		foreach ($options as $option)
+		if ($options)
 		{
-			$option_ids[] = $option['id'];
+			foreach ($options as $option)
+			{
+				$option_ids[] = $option['id'];
+			}
 		}
-
 		$object = new stdClass();
 
 		$object->id              = 0;

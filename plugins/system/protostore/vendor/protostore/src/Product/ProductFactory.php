@@ -35,6 +35,7 @@ use Protostore\Currency\CurrencyFactory;
 use Protostore\Productoption\Productoption;
 use Protostore\Productoption\ProductoptionFactory;
 use Protostore\Tag\TagFactory;
+use Protostore\Tax\TaxFactory;
 use Protostore\Utilities\Utilities;
 
 use StathisG\GreekSlugGenerator\GreekSlugGenerator;
@@ -82,7 +83,7 @@ class ProductFactory
 	 * @param   int          $limit
 	 *
 	 * @param   int          $offset
-	 * @param   int          $category
+	 * @param                $category
 	 * @param   string|null  $searchTerm
 	 * @param   string       $orderBy
 	 * @param   string       $orderDir
@@ -91,7 +92,7 @@ class ProductFactory
 	 * @since 2.0
 	 */
 
-	public static function getList(int $limit = 0, int $offset = 0, int $category = 0, string $searchTerm = null, string $orderBy = 'id', string $orderDir = 'DESC'): ?array
+	public static function getList(int $limit = 0, int $offset = 0, $category = 0, string $searchTerm = null, string $orderBy = 'id', string $orderDir = 'DESC'): ?array
 	{
 
 		$products = array();
@@ -110,7 +111,17 @@ class ProductFactory
 
 		if ($category)
 		{
-			$query->where($db->quoteName('catid') . ' = ' . $db->quote($category));
+
+			if (is_array($category))
+			{
+				$query->where($db->quoteName('catid') . ' IN (' . implode(', ', $category) . ')');
+			}
+			elseif (is_int($category))
+			{
+				$query->where($db->quoteName('catid') . ' = ' . $db->quote($category));
+			}
+
+
 		}
 
 		$query->order($orderBy . ' ' . $orderDir);
@@ -168,24 +179,74 @@ class ProductFactory
 
 		$db = Factory::getDbo();
 
-		$query = $db->getQuery(true);
 
-		$query->select('id');
-		$query->from($db->quoteName('#__content'));
-
-		if ($searchTerm)
+		if ($tags)
 		{
-			$query->where($db->quoteName('title') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'));
-		}
 
-		if ($categories)
+			//if we have tags ... do a search on the Tags table
+
+			$query = $db->getQuery(true);
+
+			$query->select('a.content_item_id');
+			$query->from($db->quoteName('#__contentitem_tag_map', 'a'));
+			$query->join('INNER', $db->quoteName('#__content', 'b') . ' ON ' . $db->quoteName('a.content_item_id') . ' = ' . $db->quoteName('b.id'));
+
+			$query->where($db->quoteName('a.tag_id') . ' IN ( ' . implode(',', $tags) . ')');
+			$query->where($db->quoteName('b.state') . ' = 1');
+
+			if ($categories)
+			{
+				if (!is_array($categories))
+				{
+					$categories = array($categories);
+				}
+
+				//add in categories if we have any
+				$query->where($db->quoteName('b.catid') . ' IN ( ' . implode(',', $categories) . ')');
+			}
+
+			if ($searchTerm)
+			{
+				//add in text search if we have it
+				$query->where($db->quoteName('b.title') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'));
+			}
+
+		}
+		elseif ($categories)
 		{
 			if (!is_array($categories))
 			{
 				$categories = array($categories);
 			}
 
-			$query->where($db->quoteName('catid') . ' IN (' . implode(', ', $categories) . ')');
+			$query = $db->getQuery(true);
+			$query->select('a.id');
+			$query->from($db->quoteName('#__content', 'a'));
+
+			$query->where($db->quoteName('a.catid') . ' IN (' . implode(',', $categories) . ')');
+
+			if ($searchTerm)
+			{
+				//add in text search if we have it
+				$query->where($db->quoteName('a.title') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'));
+			}
+
+		}
+		else
+		{
+
+			$query = $db->getQuery(true);
+
+			$query->select('id');
+			$query->from($db->quoteName('#__content'));
+
+			if ($searchTerm)
+			{
+				//add in text search if we have it
+				$query->where($db->quoteName('title') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'));
+			}
+
+
 		}
 
 		// set pricing search to true
@@ -272,7 +333,6 @@ class ProductFactory
 		return null;
 
 	}
-
 
 
 	/**
@@ -573,7 +633,9 @@ class ProductFactory
 			if ($tags = $product->tags)
 			{
 				TagFactory::saveTags($product->joomla_item_id, $tags);
-			} else {
+			}
+			else
+			{
 				TagFactory::clearTags($product->joomla_item_id);
 			}
 
@@ -1223,6 +1285,21 @@ class ProductFactory
 
 	}
 
+	/**
+	 * @param   int  $price
+	 *
+	 * @return int
+	 *
+	 * @since 2.0
+	 */
+
+	public static function getPriceWithTax(int $price): int
+	{
+
+		return TaxFactory::getTotalDefaultTax($price) + $price;
+
+	}
+
 
 	/**
 	 * @param $category_id
@@ -1257,8 +1334,6 @@ class ProductFactory
 		return TagFactory::getTags($joomla_item_id);
 
 	}
-
-
 
 
 	/**

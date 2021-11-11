@@ -27,13 +27,25 @@ class Product
 	// Pricing
 	public $base_price = 0;
 	public $basepriceFloat;
-	public $baseprice_formatted;
+	public $base_price_formatted;
+
+	public $base_priceWithTax;
+	public $base_priceWithTax_formatted;
+
 	public $show_discount;
+
 	public $discount;
 	public $discountFloat;
 	public $discount_formatted;
+
+
 	public $discount_type;
-	public $discounted_total;
+	public $priceAfterDiscount;
+	public $priceAfterDiscount_formatted;
+
+	public $priceAfterDiscountWithTax;
+	public $priceAfterDiscountWithTax_formatted;
+
 
 	// Checkbox Options
 	public $options;
@@ -132,12 +144,29 @@ class Product
 
 
 		// set the prices
-		$this->basepriceFloat      = ProductFactory::getFloat(($this->base_price ?: 0));
-		$this->baseprice_formatted = ProductFactory::getFormattedPrice(($this->base_price ?: 0));
-		$this->flatfeeFloat        = ProductFactory::getFloat(($this->flatfee ?: 0));
-		$this->show_discount       = ($this->discount ? 1 : 0);
-		$this->discountFloat       = ProductFactory::getFloat(($this->discount ?: 0));
-		$this->discount_formatted  = ProductFactory::getFloat(($this->discount ?: 0));
+		$this->basepriceFloat               = ProductFactory::getFloat(($this->base_price ?: 0));
+		$this->base_price_formatted          = ProductFactory::getFormattedPrice(($this->base_price ?: 0));
+		$this->flatfeeFloat                 = ProductFactory::getFloat(($this->flatfee ?: 0));
+		$this->priceAfterDiscount           = $this->base_price - $this->discount;
+		$this->priceAfterDiscount_formatted = ProductFactory::getFormattedPrice(($this->priceAfterDiscount ?: 0));
+
+		if ($this->taxable === 1)
+		{
+			$this->base_priceWithTax          = ProductFactory::getPriceWithTax(($this->base_price ?: 0));
+			$this->priceAfterDiscountWithTax = ProductFactory::getPriceWithTax(($this->priceAfterDiscount ?: 0));
+		}
+		else
+		{
+			$this->base_priceWithTax = 0;
+			$this->discountWithTax  = 0;
+		}
+		$this->base_priceWithTax_formatted          = ProductFactory::getFormattedPrice(($this->base_priceWithTax ?: $this->base_price));
+		$this->priceAfterDiscountWithTax_formatted = ProductFactory::getFormattedPrice(($this->priceAfterDiscountWithTax ?: 0));
+
+
+		$this->show_discount      = ($this->discount ? 1 : 0);
+		$this->discountFloat      = ProductFactory::getFloat(($this->discount ?: 0));
+		$this->discount_formatted = ProductFactory::getFloat(($this->discount ?: 0));
 
 		//		$this->discounted_total           = $this->getDiscountedTotal(); // todo
 		//		$this->discounted_total_formatted = $this->getFormattedDiscountPrice(); // todo
@@ -157,9 +186,9 @@ class Product
 
 		if ($variantData)
 		{
-			$this->variants          = $variantData->variants;
-			$this->variantList       = $variantData->variantList;
-			$this->variantDefault    = $variantData->default;
+			$this->variants       = $variantData->variants;
+			$this->variantList    = $variantData->variantList;
+			$this->variantDefault = $variantData->default;
 		}
 
 		$this->custom_fields = ProductFactory::getCustomFields($this->id);
