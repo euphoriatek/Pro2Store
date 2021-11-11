@@ -9,8 +9,12 @@
 
 defined('_JEXEC') or die;
 
+/** @var $attrs array */
+
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+
+$componentConfig = \Protostore\Config\ConfigFactory::get();
 
 $id = uniqid('yps_cartsummary');
 
@@ -27,7 +31,6 @@ $el = $this->el('div', [
 ]);
 
 
-
 ?>
 
 <script id="yps-cart-summary-cart" type="application/json"><?= json_encode($props['cart']); ?></script>
@@ -42,7 +45,9 @@ $el = $this->el('div', [
                     <span class="uk-leader-fill"><?= Text::_('COM_PROTOSTORE_ELM_CARTSUMMARY_SUBTOTAL'); ?></span></span>
                 </div>
                 <div>
+
                     <div v-cloak class=" uk-h5 uk-margin-remove yps-cartsummary-subtotal">{{cart.subtotal}}</div>
+
                 </div>
             </div>
 
@@ -88,7 +93,11 @@ $el = $this->el('div', [
                             class="uk-leader-fill"><?= Text::_('COM_PROTOSTORE_ELM_CARTSUMMARY_TAX'); ?></span></span>
                 </div>
                 <div>
-                    <div v-cloak class=" uk-h5 uk-margin-remove yps-cartsummary-totaltax">{{cart.tax}}</div>
+					<?php if ($componentConfig->get('add_default_country_tax_to_price', '1') == "1") : ?>
+                        <div v-cloak class=" uk-h5 uk-margin-remove yps-cartsummary-totaltax">{{cart.default_tax}}</div>
+					<?php else: ?>
+                        <div v-cloak class=" uk-h5 uk-margin-remove yps-cartsummary-totaltax">{{cart.tax}}</div>
+					<?php endif; ?>
                 </div>
             </div>
 
@@ -103,7 +112,15 @@ $el = $this->el('div', [
                             class="uk-leader-fill"><?= Text::_('COM_PROTOSTORE_ELM_CARTSUMMARY_TOTAL'); ?></span></span>
                 </div>
                 <div>
-                    <div v-cloak class=" uk-h5 uk-margin-remove yps-cartsummary-grandtotal">{{cart.totalWithTax}}</div>
+
+					<?php if ($componentConfig->get('add_default_country_tax_to_price', '1') == "1") : ?>
+                        <div v-cloak class=" uk-h5 uk-margin-remove yps-cartsummary-grandtotal">
+                            {{cart.totalWithDefaultTax}}
+                        </div>
+					<?php else: ?>
+                        <div v-cloak class=" uk-h5 uk-margin-remove yps-cartsummary-grandtotal">{{cart.totalWithTax}}
+                        </div>
+					<?php endif; ?>
                 </div>
             </div>
 

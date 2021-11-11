@@ -30,6 +30,10 @@
       "type": "checkbox",
       "text": "Combine Multiple Items"
     },
+    "include_tax": {
+      "type": "checkbox",
+      "text": "Include Tax in price"
+    },
     "empty_text": {
       "label": "Text to show on empty cart",
       "type": "text"
@@ -168,6 +172,7 @@
           "title": "Setup",
           "fields": [
             "layout",
+            "include_tax",
             "empty_text",
             "title_style",
             "title_decoration",

@@ -9,48 +9,52 @@
  */
 
 use Joomla\CMS\Language\Text;
+use Protostore\Language\LanguageFactory;
+
+/** @var $props array */
+/** @var $attrs array */
+
+
+LanguageFactory::load();
 
 $id = uniqid('yps_cartitems_grid');
 
 $el = $this->el('div', [
 
-    'class' => [
-        'uk-panel {@!style}',
-        'uk-card uk-card-body uk-{style}'
-    ],
+	'class' => [
+		'uk-panel {@!style}',
+		'uk-card uk-card-body uk-{style}'
+	],
 
 ]);
 
 
 ?>
-<script id="yps-cart-items-itemsdata" type="application/json"><?= json_encode($props['cartItems']); ?></script>
-<script id="yps-cart-items-trans-remove-all-items"
-        type="application/json"><?= Text::_('COM_PROTOSTORE_ELM_CARTITEMS_ALERT_REMOVE_ALL_FROM_CART'); ?></script>
 
 
 <?= $el($props, $attrs) ?>
 
 <div id="<?= $id; ?>">
 
-    <?php if (empty($props['cartItems'])) : ?>
+	<?php if (empty($props['cartItems'])) : ?>
 
 
-        <?php $title = $this->el($props['title_element'], [
+		<?php $title = $this->el($props['title_element'], [
 
-            'class' => [
-                'uk-{title_style}',
-                'uk-heading-{title_decoration}',
-                'uk-font-{title_font_family}',
-                'uk-text-{title_color} {@!title_color: background}',
-                'uk-margin-remove {position: absolute}',
-            ],
+			'class' => [
+				'uk-{title_style}',
+				'uk-heading-{title_decoration}',
+				'uk-font-{title_font_family}',
+				'uk-text-{title_color} {@!title_color: background}',
+				'uk-margin-remove {position: absolute}',
+			],
 
-        ]);
-        ?>
-        <?= $title($props, $attrs) ?>
-        <?= $props['empty_text']; ?>
-        <?= $title->end(); ?>
-    <?php else : ?>
+		]);
+		?>
+		<?= $title($props, $attrs) ?>
+		<?= $props['empty_text']; ?>
+		<?= $title->end(); ?>
+	<?php else : ?>
 
 
         <div v-for="item in cartItems" class="uk-animation-fade" v-cloak
@@ -58,7 +62,7 @@ $el = $this->el('div', [
 
             <div class="uk-position-relative uk-float-right">
                     <span uk-tooltip="title: <?= Text::_('COM_PROTOSTORE_ELM_CARTITEMS_REMOVE_FROM_CART'); ?>"
-                          @click="remove(item.cart_id, item.cart_itemid)"
+                          @click="remove(item.id)"
                           style="cursor: pointer">
                         <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="times-circle"
                              width="20px"
@@ -73,33 +77,40 @@ $el = $this->el('div', [
                 <div class="uk-width-auto">
                     <div class="uk-margin">
                         <img class="uk-preserve-width" alt="" width="80"
-                             v-bind:src="item.images?.image_intro">
+                             :src="item.product.images.image_intro">
                     </div>
                 </div>
 
                 <div class="uk-width-auto">
-                    <h3 class="">{{item.joomla_item_title}} <?= ($props['combine'] ? 'x {{item.count}}' : ''); ?></h3>
-                    <div class="uk-text-meta uk-margin">
-                        {{item.bought_at_price_formatted}}
-                    </div>
+                    <h3 class="">
+                        {{item.product.joomlaItem.title}} x {{item.amount}}</h3>
+					<?php if ($props['include_tax']) : ?>
+                        <div class="uk-text-meta uk-margin">
+                            {{item.total_bought_at_price_with_tax_formatted}}
+                        </div>
+					<?php else : ?>
+                        <div class="uk-text-meta uk-margin">
+                            {{item.total_bought_at_price_formatted}}
+                        </div>
+					<?php endif; ?>
                     <ul class="uk-list">
-                        <li class="" v-for="option in item.selected_options">
-                            {{option.optiontypename}}:
-                            {{option.optionname}}
+                        <li v-if="item.selected_variant">{{item.selected_variant.labels_csv}}</li>
+                        <li v-for="selected_option in item.selected_options">{{selected_option.option_name}}:
+                            {{selected_option.modifier_value_translated}}
                         </li>
                     </ul>
                 </div>
 
             </div>
-            <?php if (count($props['cartItems']) > 1) : ?>
-                <hr class="uk-divider-icon"> <?php endif; ?>
+			<?php if (count($props['cartItems']) > 1) : ?>
+                <hr class="uk-divider-icon">
+			<?php endif; ?>
         </div>
 
 
-
-    <?php endif; ?>
+	<?php endif; ?>
 </div>
-</div>
+<?= $el->end(); ?>
 
 <script>
 
@@ -107,21 +118,9 @@ $el = $this->el('div', [
     const <?= $id; ?> = {
         data() {
             return {
-                cartItems: {},
-                COM_PROTOSTORE_ELM_CARTITEMS_ALERT_REMOVE_ALL_FROM_CART: ''
+                cartItems: <?= json_encode($props['cartItems']); ?>,
+                COM_PROTOSTORE_ELM_CARTITEMS_ALERT_REMOVE_ALL_FROM_CART: '<?= Text::_('COM_PROTOSTORE_ELM_CARTITEMS_ALERT_REMOVE_ALL_FROM_CART'); ?>'
             }
-
-        },
-        async beforeMount() {
-
-            // set the data from the inline scripts
-            const cartItems = document.getElementById('yps-cart-items-itemsdata');
-            this.cartItems = JSON.parse(cartItems.innerText);
-            // cartItems.remove();
-
-            const removeAll = document.getElementById('yps-cart-items-trans-remove-all-items');
-            this.COM_PROTOSTORE_ELM_CARTITEMS_ALERT_REMOVE_ALL_FROM_CART = removeAll.innerText;
-            removeAll.remove();
 
         },
         created() {
@@ -150,22 +149,34 @@ $el = $this->el('div', [
                 }
 
             },
-            remove(cartid, cartitemid) {
-                const baseurl = this.baseUrl;
-                UIkit.modal.confirm(this.COM_PROTOSTORE_ELM_CARTITEMS_ALERT_REMOVE_ALL_FROM_CART).then(function () {
-                    fetch(baseurl + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=removeallfromcart&format=raw&cartid=" + cartid + '&cartitemid=' + cartitemid, {
-                        method: 'post'
-                    }).then(function (res) {
-                        return res.json();
-                    }).then(function (response) {
-                        if (response.success) {
-                            emitter.emit('yps_cart_update');
-                        }
-                    });
+            async remove(cartitemid) {
+
+                await UIkit.modal.confirm(this.COM_PROTOSTORE_ELM_CARTITEMS_ALERT_REMOVE_ALL_FROM_CART);
+
+                const params = {
+                    'cartitemid': cartitemid
+                };
+
+                const URLparams = this.serialize(params);
+
+                const request = await fetch('<?= $props['baseUrl']; ?>index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=cart.removeall&format=raw&' + URLparams, {
+                    method: 'post'
                 });
 
+                const response = await request.json();
+                if (response.success) {
+                    emitter.emit("yps_cart_update");
+                } else {
+                    UIkit.notification({
+                        message: 'There was an error removing the items.',
+                        status: 'danger',
+                        pos: 'top-center',
+                        timeout: 5000
+                    });
+                }
 
-            }
+
+            },
 
         }
     }

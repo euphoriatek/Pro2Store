@@ -131,6 +131,7 @@ class PriceFactory
 		}
 
 
+
 		return new Price($priceArray);
 
 

@@ -33,16 +33,16 @@ if ($props['instock']) : ?>
         <?php if ($props['button_position'] == 'right') : ?>
             <div class="uk-grid uk-grid-collapse uk-margin" uk-grid="">
                 <div class="uk-width-1-2">
-                    <input id="yps_amount" type="number" min="1" v-model="amount" max="<?= $props['max']; ?>"
+                    <input class="uk-input" type="number" min="1" v-model="amount" max="<?= $props['max']; ?>"
                            @input="changeByText">
                 </div>
                 <div class="uk-width-1-2">
                     <div class="uk-button-group uk-width-1-1 uk-margin-small-left">
-                        <button v-on:click="changeAmount(1)"
+                        <button @click="changeAmount(1)"
                                 class="uk-button uk-button-<?= $props['button_style']; ?> <?= ($props['button_size'] ? 'uk-button' . $props['button_size'] : ''); ?>">
                             +
                         </button>
-                        <button v-on:click="changeAmount(-1)"
+                        <button @click="changeAmount(-1)"
                                 class="uk-button uk-button-<?= $props['button_style']; ?> <?= ($props['button_size'] ? 'uk-button' . $props['button_size'] : ''); ?>">
                             -
                         </button>
@@ -55,11 +55,11 @@ if ($props['instock']) : ?>
             <div class="uk-grid uk-grid-small uk-margin" uk-grid="">
                 <div class="uk-width-auto">
                     <div class="uk-button-group uk-width-1-1">
-                        <button v-on:click="changeAmount(1)"
+                        <button @click="changeAmount(1)"
                                 class="uk-button uk-button-<?= $props['button_style']; ?> <?= ($props['button_size'] ? 'uk-button-' . $props['button_size'] : ''); ?>">
                             +
                         </button>
-                        <button v-on:click="changeAmount(-1)"
+                        <button @click="changeAmount(-1)"
                                 class="uk-button uk-button-<?= $props['button_style']; ?> <?= ($props['button_size'] ? 'uk-button-' . $props['button_size'] : ''); ?>">
                             -
                         </button>
@@ -77,7 +77,7 @@ if ($props['instock']) : ?>
         <?php if ($props['button_position'] == 'split') : ?>
             <div class="uk-grid uk-grid-small uk-margin" uk-grid="">
                 <div class="uk-width-auto">
-                    <button v-on:click="changeAmount(1)"
+                    <button @click="changeAmount(1)"
                             class="uk-button uk-button-<?= $props['button_style']; ?> <?= ($props['button_size'] ? 'uk-button-' . $props['button_size'] : ''); ?>">
                         +
                     </button>
@@ -88,7 +88,7 @@ if ($props['instock']) : ?>
                            v-model="amount" max="<?= $props['max']; ?>">
                 </div>
                 <div class="uk-width-auto">
-                    <button v-on:click="changeAmount(-1)"
+                    <button @click="changeAmount(-1)"
                             class="uk-button uk-button-<?= $props['button_style']; ?> <?= ($props['button_size'] ? 'uk-button-' . $props['button_size'] : ''); ?>">
                         -
                     </button>
@@ -100,10 +100,10 @@ if ($props['instock']) : ?>
         <?php if ($props['button_position'] == 'split-inverse') : ?>
             <div class="uk-grid uk-grid-small uk-margin" uk-grid="">
                 <div class="uk-width-auto">
-                    <butto v-on:click="changeAmount(-1)"
+                    <button @click="changeAmount(-1)"
                            class="uk-button uk-button-<?= $props['button_style']; ?> <?= ($props['button_size'] ? 'uk-button-' . $props['button_size'] : ''); ?>">
                         -
-                    </butto>
+                    </button>
                 </div>
                 <div class="uk-width-expand">
                     <input class="uk-input uk-form-<?= $props['button_size']; ?>" id="yps_amount" type="number" min="1"
@@ -112,7 +112,7 @@ if ($props['instock']) : ?>
                 </div>
                 <div class="uk-width-auto">
 
-                    <button v-on:click="changeAmount(1)"
+                    <button @click="changeAmount(1)"
                             class="uk-button uk-button-<?= $props['button_style']; ?> <?= ($props['button_size'] ? 'uk-button-' . $props['button_size'] : ''); ?>">
                         +
                     </button>

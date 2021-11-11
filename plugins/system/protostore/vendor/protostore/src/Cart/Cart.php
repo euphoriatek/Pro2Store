@@ -40,14 +40,28 @@ class Cart
 
 	public $total;
 	public $totalInt;
+
 	public $totalWithTaxInt;
 	public $totalWithTax;
+
+	public $totalWithDefaultTaxInt;
+	public $totalWithDefaultTax;
+
 	public $subtotal;
 	public $subtotalInt;
+
 	public $subtotalWithTaxInt;
 	public $subtotalWithTax;
+
+	public $subtotalWithDefaultTaxInt;
+	public $subtotalWithDefaultTax;
+
 	public $tax;
 	public $taxInt;
+
+	public $default_tax;
+	public $default_taxInt;
+
 	public $totalShipping;
 	public $totalShippingFormatted;
 	public $totalDiscount;
@@ -110,11 +124,20 @@ class Cart
 		$this->taxInt = TaxFactory::getTotalTax($this);
 		$this->tax    = CurrencyFactory::translate($this->taxInt, $currency);
 
+		$this->default_taxInt = TaxFactory::getTotalDefaultTax($this->subtotalInt);
+		$this->default_tax    = CurrencyFactory::translate($this->default_taxInt, $currency);
+
 		$this->totalWithTaxInt = $this->totalInt + $this->taxInt;
 		$this->totalWithTax = CurrencyFactory::translate($this->totalWithTaxInt, $currency);
 
+		$this->totalWithDefaultTaxInt = $this->totalInt + $this->default_taxInt;
+		$this->totalWithDefaultTax = CurrencyFactory::translate($this->totalWithDefaultTaxInt, $currency);
+
 		$this->subtotalWithTaxInt = $this->subtotalInt + $this->taxInt;
 		$this->subtotalWithTax = CurrencyFactory::translate($this->subtotalWithTaxInt, $currency);
+
+		$this->subtotalWithDefaultTaxInt = $this->subtotalInt + $this->default_taxInt;
+		$this->subtotalWithDefaultTax = CurrencyFactory::translate($this->subtotalWithDefaultTaxInt, $currency);
 
 		$this->totalShipping = ShippingFactory::getShipping($this);
 		$this->totalShippingFormatted = ShippingFactory::getShippingFormatted($this);
