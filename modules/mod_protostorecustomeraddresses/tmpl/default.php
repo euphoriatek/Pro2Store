@@ -49,7 +49,7 @@ echo "{emailcloak=off}";
                         </li>
 
                         <li uk-tooltip="Delete Address">
-                            <a :click="deleteAddress(address.id)" uk-icon="icon: trash"></a>
+                            <a @click="deleteAddress(address.id)" uk-icon="icon: trash"></a>
                         </li>
                     </ul>
                     <span><h5>{{address.name}}</h5>{{address.address_as_csv}}</span>
@@ -64,7 +64,6 @@ echo "{emailcloak=off}";
 
 </div>
 <script>
-    //VUE!
     const <?= $id; ?> = {
         data() {
             return {
@@ -116,10 +115,7 @@ echo "{emailcloak=off}";
                 UIkit.modal('#yps-editAddressModal').show()
             },
             async submitAddAddress() {
-                await UIkit.modal.confirm('<?= Text::_('COM_PROTOSTORE_ADDRESS_SAVE_CONFIRM'); ?>', {stack: true});
-
-
-                this.loading = true;
+                               this.loading = true;
 
                 const request = await fetch("<?= Uri::base(); ?>index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=address.addAddress&format=raw", {
                     method: 'POST',
@@ -138,14 +134,26 @@ echo "{emailcloak=off}";
 
                 if (response.success) {
                     await UIkit.modal("#yps-addAddressModal").hide();
-                    this.newAddress = '';
+                    this.newAddress = {
+                        name: '',
+                        address1: '',
+                        address2: '',
+                        address3: '',
+                        town: '',
+                        country: '',
+                        zone: '',
+                        postcode: '',
+                        mobilephone: '',
+                        phone: '',
+                        email: '',
+                    };
                     this.loading = false;
                     UIkit.notification({
                         message: '<span uk-icon=\'icon: check\'></span> <?= Text::_('COM_PROTOSTORE_ELM_CART_USER_ALERT_ADDRESS_ADDED'); ?>',
                         status: 'success',
                         pos: 'top-center'
                     });
-                    await this.updateCustomerAddresses();
+                    this.updateCustomerAddresses();
 
 
                 } else {
@@ -159,7 +167,6 @@ echo "{emailcloak=off}";
 
             },
             async updateCustomerAddresses() {
-
 
                 const params = {
                     customer_id: <?= $customer->id; ?>
@@ -220,7 +227,7 @@ echo "{emailcloak=off}";
                         status: 'success',
                         pos: 'top-center'
                     });
-                    await this.updateCustomerAddresses();
+                    this.updateCustomerAddresses();
 
 
                 } else {
@@ -247,7 +254,7 @@ echo "{emailcloak=off}";
                 }
             },
             async deleteAddress(uid) {
-
+                await UIkit.modal.confirm('<?= Text::_('COM_PROTOSTORE_ADDRESS_REMOVE_CONFIRM'); ?>', {stack: true});
                 const params = {
                     address_id: uid
                 };
@@ -259,7 +266,7 @@ echo "{emailcloak=off}";
                 const response = await request.json();
 
                 if (response.success) {
-                    await this.updateCustomerAddresses();
+                    this.updateCustomerAddresses();
                 }
             },
             serialize(obj) {

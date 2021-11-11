@@ -11,15 +11,17 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 
 
-if(Factory::getUser()->guest) {
-    return;
+if (Factory::getUser()->guest)
+{
+	return;
 }
 
-$config = \Protostore\Config\ConfigFactory::get();
-$customer = \Protostore\Customer\CustomerFactory::get();
-$countries = \Protostore\Country\CountryFactory::getList(0,0, true);
+$config    = \Protostore\Config\ConfigFactory::get();
+$customer  = \Protostore\Customer\CustomerFactory::get();
+$countries = \Protostore\Country\CountryFactory::getList(0, 0, true);
 
 $addresses = $customer->addresses;
+
 
 
 /** @var $params */

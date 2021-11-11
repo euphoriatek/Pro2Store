@@ -245,17 +245,17 @@ class CustomerFactory
 	}
 
 	/**
-	 * @param $cusomter_id
+	 * @param $customer_id
 	 *
 	 * @return array
 	 *
 	 * @since 2.0
 	 */
 
-	public static function getCustomerAddresses($cusomter_id): ?array
+	public static function getCustomerAddresses($customer_id): ?array
 	{
 
-		return AddressFactory::getList(0, 0, null, 'name', 'desc', $cusomter_id);
+		return AddressFactory::getList(0, 0, null, 'name', 'desc', $customer_id);
 
 	}
 

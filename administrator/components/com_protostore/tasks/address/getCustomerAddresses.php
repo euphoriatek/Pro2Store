@@ -27,7 +27,7 @@ class protostoreTask_getCustomerAddresses
 	 * @throws Exception
 	 * @since 2.0
 	 */
-	public function getResponse(Input $data): array
+	public function getResponse(Input $data): ?array
 	{
 
 

@@ -188,9 +188,9 @@ echo "{emailcloak=off}";
 				</div>
 			<?php endif; ?>
             <p class="uk-text-right">
-                <button class="uk-button uk-button-default uk-modal-close uk-margin-right"
+                <button class="uk-button uk-button-default uk-modal-close"
                         type="button"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_CANCEL'); ?></button>
-                <button class="uk-button uk-button-primary  uk-margin-left"
+                <button class="uk-button uk-button-primary uk-margin-small-left"
                         type="submit"><?= Text::_('COM_PROTOSTORE_MOD_CUSTOMERADDRESSES_ADDRESS_SAVE'); ?></button>
             </p>
 
