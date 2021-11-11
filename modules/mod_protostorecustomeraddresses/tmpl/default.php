@@ -12,12 +12,10 @@ use Joomla\CMS\Helper\ModuleHelper;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Language\Text;
 
-use Protostore\Customer\Customer;
 
 
 /** @var $params */
 /** @var $config */
-/** @var $customer Customer */
 /** @var $addresses array */
 
 \Protostore\Language\LanguageFactory::load();
@@ -168,9 +166,6 @@ echo "{emailcloak=off}";
             },
             async updateCustomerAddresses() {
 
-                const params = {
-                    customer_id: <?= $customer->id; ?>
-                }
 
                 const request = await fetch("<?= Uri::base(); ?>index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=address.getCustomerAddresses&format=raw", {
                     method: 'POST',
@@ -182,7 +177,7 @@ echo "{emailcloak=off}";
                     },
                     redirect: 'follow',
                     referrerPolicy: 'no-referrer',
-                    body: JSON.stringify(params)
+                    body: JSON.stringify('')
                 });
 
                 const response = await request.json();

@@ -30,9 +30,10 @@ class protostoreTask_getCustomerAddresses
 	public function getResponse(Input $data): ?array
 	{
 
+		// grab current customer info here on the server - not on the client!
+		$customer = \Protostore\Customer\CustomerFactory::get();
 
-
-		return AddressFactory::getList(0, 0, null, 'name', 'DESC', $data->json->getInt('customer_id'));
+		return AddressFactory::getList(0, 0, null, 'name', 'DESC', $customer->id);
 
 
 	}
