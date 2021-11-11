@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="3.8" type="plugin" group="quickicon" method="upgrade">
+	<name>Pro2Store Quick Icon</name>
+	<version>2.0.0</version>
+    <creationDate>11-11-2021</creationDate>
+    <author>Ray Lawlor - Pro2Store</author>
+    <authorEmail>info@pro2.store</authorEmail>
+    <authorUrl>http://pro2.store</authorUrl>
+    <copyright>Copyright (C) 2021 Ray Lawlor - Pro2Store. All rights reserved</copyright>
+    <license>GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html</license>
+	<description>Pro2Store Quick Icon</description>
+	<files folder="plugins/quickicon/protostore">
+		<filename plugin="protostore">protostore.php</filename>
+	</files>
+</extension>

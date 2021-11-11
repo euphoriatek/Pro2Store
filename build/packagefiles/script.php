@@ -125,9 +125,6 @@ class pkg_protostoreInstallerScript
 		if ($type == 'install')
 		{
 
-//			$this->initSetup();
-//			$this->importCountries();
-//			$this->importZones();
 
 			$db = Factory::getDbo();
 
@@ -136,26 +133,21 @@ class pkg_protostoreInstallerScript
 			$plugin->element = 'protostore_shortcodes';
 			$plugin->folder  = (string) 'content';
 			$plugin->enabled = 1;
-			// Update record
 			$db->updateObject('#__extensions', $plugin, array('type', 'element', 'folder'));
 
 
-			// Prepare plugin object
 			$plugin          = new stdClass();
 			$plugin->type    = 'plugin';
 			$plugin->element = 'protostore_ajaxhelper';
 			$plugin->folder  = (string) 'ajax';
 			$plugin->enabled = 1;
-			// Update record
 			$db->updateObject('#__extensions', $plugin, array('type', 'element', 'folder'));
-
 
 			$plugin          = new stdClass();
 			$plugin->type    = 'plugin';
 			$plugin->element = 'offlinepay';
 			$plugin->folder  = (string) 'protostorepayment';
 			$plugin->enabled = 1;
-			// Update record
 			$db->updateObject('#__extensions', $plugin, array('type', 'element', 'folder'));
 
 			$plugin          = new stdClass();
@@ -163,7 +155,6 @@ class pkg_protostoreInstallerScript
 			$plugin->element = 'protostore';
 			$plugin->folder  = (string) 'user';
 			$plugin->enabled = 1;
-			// Update record
 			$db->updateObject('#__extensions', $plugin, array('type', 'element', 'folder'));
 
 			$plugin          = new stdClass();
@@ -171,16 +162,13 @@ class pkg_protostoreInstallerScript
 			$plugin->element = 'protostore_fields';
 			$plugin->folder  = (string) 'content';
 			$plugin->enabled = 1;
-			// Update record
 			$db->updateObject('#__extensions', $plugin, array('type', 'element', 'folder'));
-
 
 			$plugin          = new stdClass();
 			$plugin->type    = 'plugin';
 			$plugin->element = 'protostore_emailer';
 			$plugin->folder  = (string) 'protostoresystem';
 			$plugin->enabled = 1;
-			// Update record
 			$db->updateObject('#__extensions', $plugin, array('type', 'element', 'folder'));
 
 			$plugin          = new stdClass();
@@ -188,7 +176,6 @@ class pkg_protostoreInstallerScript
 			$plugin->element = 'protostore_offlinepay';
 			$plugin->folder  = (string) 'system';
 			$plugin->enabled = 1;
-			// Update record
 			$db->updateObject('#__extensions', $plugin, array('type', 'element', 'folder'));
 
 			$plugin          = new stdClass();
@@ -196,7 +183,6 @@ class pkg_protostoreInstallerScript
 			$plugin->element = 'defaultshipping';
 			$plugin->folder  = (string) 'protostoreshipping';
 			$plugin->enabled = 1;
-			// Update record
 			$db->updateObject('#__extensions', $plugin, array('type', 'element', 'folder'));
 
 			$plugin          = new stdClass();
@@ -204,7 +190,13 @@ class pkg_protostoreInstallerScript
 			$plugin->element = 'protostore';
 			$plugin->folder  = (string) 'system';
 			$plugin->enabled = 1;
-			// Update record
+			$db->updateObject('#__extensions', $plugin, array('type', 'element', 'folder'));
+			
+			$plugin          = new stdClass();
+			$plugin->type    = 'plugin';
+			$plugin->element = 'protostore';
+			$plugin->folder  = (string) 'quickicon';
+			$plugin->enabled = 1;
 			$db->updateObject('#__extensions', $plugin, array('type', 'element', 'folder'));
 
 

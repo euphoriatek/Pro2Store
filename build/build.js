@@ -141,6 +141,13 @@ const {version} = require('../package.json');
 
     /** USER PLUGIN DONE **/
 
+    // Quickicon plugin
+    zip = new (require('adm-zip'));
+    zip.addLocalFolder('./plugins/quickicon/protostore', false);
+    zip.writeZip(`./build/output/package/packages/plg_quickicon_protostore.zip`);
+
+    /** USER PLUGIN DONE **/
+
 
         // sort out AJAX plugin
     const replaceErrorReporting = {
