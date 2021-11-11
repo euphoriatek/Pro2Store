@@ -45,7 +45,6 @@ echo "{emailcloak=off}";
     </div>
 
     <!--ADDRESS FORM HERE-->
-<!--    <button @click="updateCustomerAddresses" class="uk-button uk-button-primary">Update Addresses</button>-->
     <div v-show="openAddAddressForm">
 
 		<?= $this->render("{$__dir}/forms/logged_in_address", compact('props')) ?>
@@ -187,7 +186,7 @@ echo "{emailcloak=off}";
                 });
 
                 const response = await request.json();
-                if (response.data.status == 'ok') {
+                if (response.success) {
                     emitter.emit('yps_cart_update');
                     this.updateCustomerAddresses();
                     this.loading = false;
@@ -200,7 +199,6 @@ echo "{emailcloak=off}";
 
 
                     if (!this.doesOrderHaveUniqueBillingAddressAssigned) {
-
 
                         const params = {
                             'shipping_address_id': address.id,
