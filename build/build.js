@@ -204,7 +204,7 @@ const {version} = require('../package.json');
     zip.addLocalFolder('./modules/mod_protostorecurrencyswitcher', false);
     zip.writeZip(`./build/output/package/packages/mod_protostorecurrencyswitcher.zip`);
 
-    
+
     // Customer Addresses module
     const zip8e = new (require('adm-zip'));
     zip8e.addLocalFolder('modules/mod_protostorecustomeraddresses', false);
