@@ -479,6 +479,24 @@ class OrderFactory
 	}
 
 	/**
+	 * @param   int          $int
+	 * @param   string|null  $currency
+	 *
+	 * @return string
+	 *
+	 * @throws UnknownCurrencyException
+	 * @since 2.0
+	 */
+
+	public static function intToFloat(int $int, string $currency = null): string
+	{
+
+		return CurrencyFactory::toFloat($int, $currency);
+
+
+	}
+
+	/**
 	 *
 	 * Gets the currency for the order... we *CAN'T* instantiate the Order class here with self::get() as
 	 * we need this function for the OrderedProduct class...
@@ -886,7 +904,7 @@ class OrderFactory
 	 */
 
 
-	public static function createOrderFromCart(string $paymentMethod, string $vendorToken = ''): ?Order
+	public static function createOrderFromCart(string $paymentMethod, string $vendorToken = NULL): ?Order
 	{
 
 		// init vars
@@ -1114,7 +1132,7 @@ class OrderFactory
 
 		$pluginName = str_replace(' ', '', strtolower($payment_method));
 
-		return \Joomla\CMS\Uri\Uri::root() . "plugins/system/protostore_" .  $pluginName . "/modules/" . $pluginName . "/elements/protostore_" . $pluginName . "/images/protostore_" . $pluginName . ".svg";
+		return \Joomla\CMS\Uri\Uri::root() . "plugins/system/protostore_" . $pluginName . "/modules/" . $pluginName . "/elements/protostore_" . $pluginName . "/images/protostore_" . $pluginName . ".svg";
 	}
 
 

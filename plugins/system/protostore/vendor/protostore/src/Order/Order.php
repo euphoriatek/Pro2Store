@@ -54,6 +54,7 @@ class Order
 	// Price as formatted Strings:
 
 	public $order_total_formatted;
+	public $order_total_float;
 	public $order_subtotal_formatted;
 	public $shipping_total_formatted;
 	public $tax_total_formatted;
@@ -130,6 +131,7 @@ class Order
 		// set all the formats for the money values.
 		$this->order_status_formatted = OrderFactory::getStatusFormatted($this->order_status);
 		$this->order_total_formatted  = OrderFactory::intToFormat($this->order_total, $this->currency);
+		$this->order_total_float  = OrderFactory::intToFloat($this->order_total, $this->currency);
 
 		$this->order_subtotal_formatted = OrderFactory::intToFormat($this->order_subtotal, $this->currency);
 
