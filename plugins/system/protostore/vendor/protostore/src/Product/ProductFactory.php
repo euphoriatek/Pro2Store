@@ -2445,11 +2445,13 @@ class ProductFactory
 
 		$db = Factory::getDbo();
 
-		$items = json_decode($data->json->getString('items'));
+		$items = $data->json->get('items', '', 'ARRAY');
 
 		/** @var Product $item */
 		foreach ($items as $item)
 		{
+			$item = (object) $item;
+
 			$query      = $db->getQuery(true);
 			$conditions = array(
 				$db->quoteName('id') . ' = ' . $db->quote($item->id)
@@ -2461,9 +2463,12 @@ class ProductFactory
 
 		}
 
-		/** @var Product $item */
+
 		foreach ($items as $item)
 		{
+
+			$item = (object) $item;
+
 			$query      = $db->getQuery(true);
 			$conditions = array(
 				$db->quoteName('id') . ' = ' . $db->quote($item->joomla_item_id)
