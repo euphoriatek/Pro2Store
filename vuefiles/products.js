@@ -468,7 +468,7 @@ const p2s_products = {
 
             // this.selected;
             const ShowLabel = true;
-            const ReportTitle = 'TEST';
+            const ReportTitle = 'Pro2Store_products';
             //If JSONData is not an object then JSON.parse will parse the JSON string in an Object
             var arrData = typeof this.selected != 'object' ? JSON.parse(this.selected) : this.selected;
             var CSV = '';
