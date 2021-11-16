@@ -235,25 +235,9 @@ class CountryFactory
 	public static function getDefault(): ?Country
 	{
 
-		$db = Factory::getDbo();
+		$instance = DefaultCountry::getInstance();
+		return $instance->getCountry();
 
-		$query = $db->getQuery(true);
-
-		$query->select('id');
-		$query->from($db->quoteName('#__protostore_country'));
-		$query->where($db->quoteName('default') . ' = 1');
-
-		$db->setQuery($query);
-
-		$id = $db->loadResult();
-
-		if ($id)
-		{
-
-			return self::get($id);
-		}
-
-		return null;
 
 	}
 

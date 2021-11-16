@@ -72,24 +72,17 @@ class CurrencyFactory
 	 * Gets the current users set currency from the cookie
 	 * If none is set, the currency initialisation occurs.
 	 *
-	 * @return false|Currency
+	 * @return null|Currency
 	 *
 	 * @throws Exception
 	 *
-	 * @since 1.5
+	 * @since 2.0
 	 */
 
-	public static function getCurrent()
+	public static function getCurrent() : ?Currency
 	{
-
-		$currency_id = Factory::getApplication()->input->cookie->get('yps-currency');
-
-		if (!$currency_id)
-		{
-			return self::initCurrency();
-		}
-
-		return self::get($currency_id);
+		$instance = CurrentCurrency::getInstance();
+		return $instance->getCurrency();
 
 	}
 
@@ -240,7 +233,7 @@ class CurrencyFactory
 		if (!$currency)
 		{
 			$instance = CurrentCurrency::getInstance();
-			$currency = $instance->getCurrecny();
+			$currency = $instance->getCurrency();
 		}
 
 
@@ -304,7 +297,7 @@ class CurrencyFactory
 
 			// try getting the current selected currency
 			$instance = CurrentCurrency::getInstance();
-			$currency = $instance->getCurrecny();
+			$currency = $instance->getCurrency();
 			if ($currency)
 			{
 				$currencyISO = $currency->iso;
@@ -345,7 +338,7 @@ class CurrencyFactory
 
 			// try getting the current selected currency
 			$instance = CurrentCurrency::getInstance();
-			$currency = $instance->getCurrecny();
+			$currency = $instance->getCurrency();
 
 			$currencyISO = $currency->iso;
 
@@ -379,7 +372,7 @@ class CurrencyFactory
 			// try getting the current selected currency
 			// try getting the current selected currency
 			$instance = CurrentCurrency::getInstance();
-			$currency = $instance->getCurrecny();
+			$currency = $instance->getCurrency();
 			if ($currency)
 			{
 				$currencyISO = $currency->iso;

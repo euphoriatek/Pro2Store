@@ -47,37 +47,8 @@ class CartFactory
 	public static function get(): Cart
 	{
 
-		$db   = Factory::getDbo();
-		$user = Factory::getUser();
-
-		// now check if there is already a cart for this cookie
-		$query = $db->getQuery(true);
-
-		$query->select('*');
-		$query->from($db->quoteName('#__protostore_cart'));
-
-		if ($user->guest)
-		{
-			$query->where($db->quoteName('cookie_id') . ' = ' . $db->quote(Utilities::getCookieID()));
-		}
-		else
-		{
-			$query->where($db->quoteName('user_id') . ' = ' . $db->quote($user->id));
-		}
-
-		$db->setQuery($query);
-
-		$result = $db->loadObject();
-
-		if ($result)
-		{
-			return new Cart($result);
-		}
-
-		//so if there is no cart matching the user id or cookie, run init...
-		// remember... init reference this function so it will re-run until a cart is created and found.
-
-		return self::init();
+		$instance = CurrentCart::getInstance();
+		return $instance->getCart();
 
 	}
 

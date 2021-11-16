@@ -9,45 +9,47 @@
 
 namespace Protostore\Currency;
 
+use Exception;
 use Joomla\CMS\Factory;
 
+/**
+ *
+ * Singleton to grab the current currency... it may be "anti-pattern" but it saves a TON of DB queries.
+ *
+ * @package     Protostore\Currency
+ *
+ * @since       2.0
+ */
 
 class CurrentCurrency
 {
-// Hold the class instance.
+    // Hold the class instance.
 	private static $instance = null;
 	private $currency;
 
 
+	/**
+	 * @throws Exception
+	 * @since 2.0
+	 */
 
 	private function __construct()
 	{
 
+		// get the current cookie stored currency
 		$currency_id = Factory::getApplication()->input->cookie->get('yps-currency');
 
+		// if there is no currency stored in the cookie...
 		if (!$currency_id)
 		{
+			// then init the currency using the factory
 			$this->currency = CurrencyFactory::initCurrency();
 
+			// if there is a store currency in the cookie then...
 		} else {
-			$db = Factory::getDbo();
 
-			$query = $db->getQuery(true);
-
-			$query->select('*');
-			$query->from($db->quoteName('#__protostore_currency'));
-			$query->where($db->quoteName('id') . ' = ' . $db->quote($currency_id));
-
-			$db->setQuery($query);
-
-			$result = $db->loadObject();
-
-			if ($result)
-			{
-
-				$this->currency = new Currency($result);
-			}
-
+			// go to the database and get that particular currency
+			$this->currency = CurrencyFactory::get($currency_id);
 		}
 
 
@@ -79,7 +81,7 @@ class CurrentCurrency
 	 * @since 2.0
 	 */
 
-	public function getCurrecny(): ?Currency
+	public function getCurrency(): ?Currency
 	{
 		return $this->currency;
 	}
