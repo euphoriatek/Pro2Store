@@ -1,13 +1,5 @@
 <?php
 
-/**
- * @package   Pro2Store
- * @author    Ray Lawlor - pro2.store
- * @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
- * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
- *
- */
-
 declare(strict_types=1);
 
 namespace Brick\Money;
@@ -37,6 +29,8 @@ abstract class AbstractMoney implements MoneyContainer
     /**
      * Converts this money to a Money in the given Context.
      *
+     * @psalm-param RoundingMode::* $roundingMode
+     *
      * @param Context $context      The context.
      * @param int     $roundingMode The rounding mode, if necessary.
      *
@@ -51,6 +45,8 @@ abstract class AbstractMoney implements MoneyContainer
 
     /**
      * Required by interface MoneyContainer.
+     *
+     * @psalm-return array<string, BigNumber>
      *
      * @return BigNumber[]
      */

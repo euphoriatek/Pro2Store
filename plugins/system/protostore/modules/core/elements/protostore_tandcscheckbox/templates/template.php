@@ -9,7 +9,6 @@
  */
 
 
-
 $id = uniqid('yps_tandcs');
 
 $el = $this->el('div', [
@@ -31,8 +30,7 @@ $el = $this->el('div', [
                style="width: <?= $props['width']; ?>px; height: <?= $props['height']; ?>px; border-radius: <?= $props['border_radius']; ?>px; ">
     <?php endif; ?>
     <?php if ($props['linktotandcs']) : ?>
-
-    <a target="_blank" href="<?= $props['termsUrl']; ?> ?>">
+    <a target="_blank" href="<?= $props['termsUrl']; ?>">
         <?php endif; ?>
         <?= $props['tandcs_text']; ?>
         <?php if ($props['linktotandcs']) : ?>

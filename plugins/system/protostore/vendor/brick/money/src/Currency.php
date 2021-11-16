@@ -1,13 +1,5 @@
 <?php
 
-/**
- * @package   Pro2Store
- * @author    Ray Lawlor - pro2.store
- * @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
- * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
- *
- */
-
 declare(strict_types=1);
 
 namespace Brick\Money;
@@ -66,7 +58,7 @@ final class Currency
     private $defaultFractionDigits;
 
     /**
-     * Private constructor. Use getInstance() to obtain an instance.
+     * Class constructor.
      *
      * @param string $currencyCode          The currency code.
      * @param int    $numericCode           The numeric currency code.

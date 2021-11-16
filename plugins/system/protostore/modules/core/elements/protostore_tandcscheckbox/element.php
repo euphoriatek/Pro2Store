@@ -31,12 +31,7 @@ return [
 
 			$node->props['checked'] = TandcsFactory::isChecked();
 
-
-
-			$termsUrl = Utilities::getUrlFromMenuItem(45);
-
-
-			$node->props['termsUrl'] = Route::_($termsUrl . '&Itemid=' . $termsId);
+			$node->props['termsUrl'] = \Protostore\Config\ConfigFactory::getSystemRedirectUrls()->tandcs->full;
 
 		},
 

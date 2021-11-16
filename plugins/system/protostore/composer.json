@@ -5,16 +5,14 @@
   "license": "MIT",
   "require": {
     "php": "^7.1|^8.0",
-    "brick/money": "0.5.0",
+    "brick/money": "0.5.3",
     "respect/validation": "2.1.0",
-    "stathisg/greek-slug-generator": "2.0.2"
+    "stathisg/greek-slug-generator": "2.0.2",
+    "ph-7/eu-vat-validator": "2.8.*"
   },
   "autoload": {
     "psr-4": {
       "Protostore\\": "vendor/protostore/src"
     }
-  },
-  "require-dev": {
-    "phpunit/phpunit": "^9"
   }
 }

@@ -91,6 +91,10 @@ class ConfigFactory
 		$urls->cancellation->short = $base . $config->get('cancellation_page_url');
 		$urls->cancellation->full = $fullBase . $config->get('cancellation_page_url');
 
+		$urls->tandcs = new stdClass();
+		$urls->tandcs->short = $base . $config->get('terms_and_conditions_url');
+		$urls->tandcs->full = $fullBase . $config->get('terms_and_conditions_url');
+
 		return $urls;
 
 

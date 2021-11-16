@@ -536,7 +536,7 @@ class CurrencyFactory
 	 * @since 1.5
 	 */
 
-	private static function initCurrency(): ?Currency
+	public static function initCurrency(): ?Currency
 	{
 		$currency = self::getAPublishedCurrency();
 

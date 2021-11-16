@@ -1,13 +1,5 @@
 <?php
 
-/**
- * @package   Pro2Store
- * @author    Ray Lawlor - pro2.store
- * @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
- * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
- *
- */
-
 declare(strict_types=1);
 
 namespace Brick\Money;
@@ -15,6 +7,7 @@ namespace Brick\Money;
 use Brick\Math\BigDecimal;
 use Brick\Math\BigNumber;
 use Brick\Math\Exception\RoundingNecessaryException;
+use Brick\Math\RoundingMode;
 
 /**
  * Adjusts a rational number to a decimal amount.
@@ -27,6 +20,8 @@ interface Context
      * The given rounding mode MUST be respected; no default rounding mode must be applied.
      * In case the rounding mode is irrelevant, for example in AutoContext, this method MUST throw an exception if a
      * rounding mode other than RoundingMode::UNNECESSARY is used.
+     *
+     * @psalm-param RoundingMode::* $roundingMode
      *
      * @param BigNumber $amount       The amount.
      * @param Currency  $currency     The target currency.

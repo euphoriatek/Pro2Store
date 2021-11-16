@@ -131,8 +131,6 @@ class CountryFactory
 		if ($searchTerm)
 		{
 			$query->where($db->quoteName('country_name') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'));
-			$query->where($db->quoteName('country_isocode_2') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'));
-			$query->where($db->quoteName('country_isocode_3') . ' LIKE ' . $db->quote('%' . $searchTerm . '%'));
 		}
 
 		$query->order($orderBy . ' ' . $orderDir);

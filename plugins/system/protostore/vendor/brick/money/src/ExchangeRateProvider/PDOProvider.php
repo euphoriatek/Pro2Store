@@ -1,13 +1,5 @@
 <?php
 
-/**
- * @package   Pro2Store
- * @author    Ray Lawlor - pro2.store
- * @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
- * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
- *
- */
-
 declare(strict_types=1);
 
 namespace Brick\Money\ExchangeRateProvider;
@@ -58,10 +50,12 @@ final class PDOProvider implements ExchangeRateProvider
     {
         $conditions = [];
 
+        /** @psalm-suppress DocblockTypeContradiction */
         if ($configuration->tableName === null) {
             throw new \InvalidArgumentException('Invalid configuration: $tableName is not set.');
         }
 
+        /** @psalm-suppress DocblockTypeContradiction */
         if ($configuration->exchangeRateColumnName === null) {
             throw new \InvalidArgumentException('Invalid configuration: $exchangeRateColumnName is not set.');
         }
@@ -142,11 +136,13 @@ final class PDOProvider implements ExchangeRateProvider
 
         $this->statement->execute($parameters);
 
+        /** @var int|float|numeric-string|false $exchangeRate */
         $exchangeRate = $this->statement->fetchColumn();
 
         if ($exchangeRate === false) {
             if ($this->parameters !== []) {
                 $info = [];
+                /** @psalm-suppress MixedAssignment */
                 foreach ($this->parameters as $parameter) {
                     $info[] = var_export($parameter, true);
                 }

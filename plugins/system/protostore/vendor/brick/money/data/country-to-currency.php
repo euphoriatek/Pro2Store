@@ -233,7 +233,7 @@
     'UZ' => ['UZS'],
     'VA' => ['EUR'],
     'VC' => ['XCD'],
-    'VE' => ['VES'],
+    'VE' => ['VES', 'VED'],
     'VG' => ['USD'],
     'VI' => ['USD'],
     'VN' => ['VND'],
@@ -246,13 +246,3 @@
     'ZM' => ['ZMW'],
     'ZW' => ['ZWL']
 ];
-
-/**
- * @package   Pro2Store
- * @author    Ray Lawlor - pro2.store
- * @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
- * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
- *
- */
-
-

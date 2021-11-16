@@ -520,17 +520,6 @@ const p2s_products = {
             link.click();
             document.body.removeChild(link);
 
-
-            // var blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
-            // var url = URL.createObjectURL(blob);
-            //
-            // // Create a link to download it
-            // var pom = document.createElement('a');
-            // pom.href = url;
-            // pom.setAttribute('download', filename);
-            // pom.click();
-
-
         }
 
 

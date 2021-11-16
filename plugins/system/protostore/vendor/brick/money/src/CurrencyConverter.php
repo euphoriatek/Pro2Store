@@ -1,13 +1,5 @@
 <?php
 
-/**
- * @package   Pro2Store
- * @author    Ray Lawlor - pro2.store
- * @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
- * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
- *
- */
-
 declare(strict_types=1);
 
 namespace Brick\Money;
@@ -59,6 +51,8 @@ final class CurrencyConverter
 
     /**
      * Converts the given money to the given currency.
+     *
+     * @psalm-param RoundingMode::* $roundingMode
      *
      * @param MoneyContainer      $moneyContainer The Money, RationalMoney or MoneyBag to convert.
      * @param Currency|string|int $currency       The Currency instance, ISO currency code or ISO numeric currency code.

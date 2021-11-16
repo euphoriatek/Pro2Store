@@ -153,6 +153,7 @@
     'UYU' => ['UYU', 858, 'Peso Uruguayo', 2],
     'UYW' => ['UYW', 927, 'Unidad Previsional', 4],
     'UZS' => ['UZS', 860, 'Uzbekistan Sum', 2],
+    'VED' => ['VED', 926, 'Bolívar Soberano', 2],
     'VES' => ['VES', 928, 'Bolívar Soberano', 2],
     'VND' => ['VND', 704, 'Dong', 0],
     'VUV' => ['VUV', 548, 'Vatu', 0],
@@ -166,13 +167,3 @@
     'ZMW' => ['ZMW', 967, 'Zambian Kwacha', 2],
     'ZWL' => ['ZWL', 932, 'Zimbabwe Dollar', 2]
 ];
-
-/**
- * @package   Pro2Store
- * @author    Ray Lawlor - pro2.store
- * @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
- * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
- *
- */
-
-

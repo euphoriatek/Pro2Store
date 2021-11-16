@@ -1,13 +1,5 @@
 <?php
 
-/**
- * @package   Pro2Store
- * @author    Ray Lawlor - pro2.store
- * @copyright Copyright (C) 2021 Ray Lawlor - pro2.store
- * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
- *
- */
-
 declare(strict_types=1);
 
 namespace Brick\Money;
@@ -23,6 +15,8 @@ final class MoneyBag implements MoneyContainer
 {
     /**
      * The amounts in this bag, indexed by currency code.
+     *
+     * @psalm-var array<string, BigRational>
      *
      * @var BigRational[]
      */
@@ -52,6 +46,8 @@ final class MoneyBag implements MoneyContainer
 
     /**
      * Returns the amounts contained in this bag, as rational numbers, indexed by currency code.
+     *
+     * @psalm-return array<string, BigRational>
      *
      * @return BigRational[]
      */
