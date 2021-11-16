@@ -239,7 +239,8 @@ class CurrencyFactory
 
 		if (!$currency)
 		{
-			$currency = self::getCurrent();
+			$instance = CurrentCurrency::getInstance();
+			$currency = $instance->getCurrecny();
 		}
 
 
@@ -302,17 +303,10 @@ class CurrencyFactory
 		{
 
 			// try getting the current selected currency
-			$currency = self::getCurrent();
+			$instance = CurrentCurrency::getInstance();
+			$currency = $instance->getCurrecny();
 			if ($currency)
 			{
-				$currencyISO = $currency->iso;
-			}
-			else
-			{
-
-				// else ... get the default currency
-
-				$currency    = self::getDefault();
 				$currencyISO = $currency->iso;
 			}
 
@@ -350,14 +344,9 @@ class CurrencyFactory
 		{
 
 			// try getting the current selected currency
-			$currency = self::getCurrent();
-			if (!$currency)
-			{
+			$instance = CurrentCurrency::getInstance();
+			$currency = $instance->getCurrecny();
 
-				// else ... get the default currency
-
-				$currency = self::getDefault();
-			}
 			$currencyISO = $currency->iso;
 
 		}
@@ -388,19 +377,14 @@ class CurrencyFactory
 		{
 
 			// try getting the current selected currency
-			$currency = self::getCurrent();
+			// try getting the current selected currency
+			$instance = CurrentCurrency::getInstance();
+			$currency = $instance->getCurrecny();
 			if ($currency)
 			{
 				$currencyISO = $currency->iso;
 			}
-			else
-			{
-
-				// else ... get the default currency
-
-				$currency    = self::getDefault();
-				$currencyISO = $currency->iso;
-			}
+			
 
 		}
 

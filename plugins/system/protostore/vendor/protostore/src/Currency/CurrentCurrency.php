@@ -45,7 +45,7 @@ class CurrentCurrency
 			if ($result)
 			{
 
-				$this->currency = Currency($result);
+				$this->currency = new Currency($result);
 			}
 
 		}
