@@ -13,6 +13,7 @@ defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Factory;
 
+use Joomla\CMS\Language\Text;
 use Protostore\Bootstrap\listView;
 use Protostore\Render\Render;
 use Protostore\Country\CountryFactory;
@@ -88,7 +89,7 @@ class bootstrap implements listView
 	public function getItems(): ?array
 	{
 
-		return CountryFactory::getZoneList(0, 0, false, '', null, 'published', 'desc');
+		return CountryFactory::getZoneList(0, 0, true, '', null, 'published', 'desc');
 
 	}
 
@@ -120,9 +121,19 @@ class bootstrap implements listView
 		// TODO: Implement addStylesheets() method.
 	}
 
+	/**
+	 *
+	 *
+	 * @since 2.0
+	 */
 	public function addTranslationStrings(): void
 	{
-		// TODO: Implement addTranslationStrings() method.
+
+		$doc = Factory::getDocument();
+
+
+		$doc->addCustomTag('<script id="confirmLangString" type="application/json">' . Text::_('COM_PROTOSTORE_COUNTRIES_DELETE_CONFIRM') . '</script>');
+
 	}
 }
 

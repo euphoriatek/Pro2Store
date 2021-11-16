@@ -44,12 +44,7 @@ use Joomla\CMS\Layout\LayoutHelper;
                             <div class="uk-width-auto uk-text-right">
                                 <div class="uk-grid uk-grid-small " uk-grid="">
                                     <div class="uk-width-auto uk-grid-item-match uk-flex-middle">
-                                        <div class="uk-grid uk-grid-small" uk-grid="">
-                                            <div class="uk-width-expand uk-grid-item-match uk-flex-middle ">  <?= Text::_('COM_PROTOSTORE_SHOW_ONLY_PUBLISHED'); ?></div>
-                                            <div class="uk-width-auto">
-                                                <p-inputswitch v-model="publishedOnly" @change="filter"></p-inputswitch>
-                                            </div>
-                                        </div>
+
                                     </div>
                                     <div class="uk-width-auto">
 
@@ -94,6 +89,7 @@ use Joomla\CMS\Layout\LayoutHelper;
                             <tr>
 
                                 <th class="uk-text-left">
+                                    <input @change="selectAll($event)" type="checkbox">
                                 </th>
                                 <th class="uk-text-left"><?= Text::_('COM_PROTOSTORE_ZONES_TABLE_COUNTRYNAME'); ?>
                                     <a href="#" @click="sort('country_name')" class="uk-margin-small-right uk-icon"
@@ -128,7 +124,7 @@ use Joomla\CMS\Layout\LayoutHelper;
                             <tbody>
                             <tr class="el-item" v-for="item in itemsChunked[currentPage]">
                                 <td>
-                                    <div><input type="checkbox"></div>
+                                    <div><input v-model="selected" :value="item" type="checkbox"></div>
                                 </td>
                                 <td>
                                     <a :href="'index.php?option=com_protostore&view=country&id=' + item.id">{{item.country_name}}</a>
@@ -182,15 +178,26 @@ use Joomla\CMS\Layout\LayoutHelper;
             </div>
             <div class="uk-width-1-4">
                 <div>
-                    <div class="uk-card uk-card-default" uk-sticky="offset: 100">
+                    <div class="uk-card uk-card-default ">
+
                         <div class="uk-card-header">
-                            <h3>Options</h3>
+                            <h4> <?= Text::_('COM_PROTOSTORE_CONTROLS'); ?></h4>
                         </div>
                         <div class="uk-card-body">
-                            <button
-                                    class="uk-button uk-button-primary"><?= Text::_('COM_PROTOSTORE_ADD_CURRENCY_CURRENCY_ADD'); ?></button>
+                            <ul class="uk-nav-default uk-nav-parent-icon" uk-nav>
+                                <li>
+                                    <a  @click="toggleSelected"  :class="[selected.length == 0 ? 'uk-disabled' : ' uk-text-bold uk-text-emphasis']">
+                                        <span class="uk-margin-small-right" uk-icon="icon: check"></span>
+								        <?= Text::_('COM_PROTOSTORE_TOGGLE_PUBLISHED'); ?>
+                                    </a>
+                                </li>
+                            </ul>
+
                         </div>
                     </div>
+                </div>
+                <div class="uk-alert-primary" uk-alert>
+		            <?= Text::_('COM_PROTOSTORE_ZONES_NOTICE_INFO'); ?>
                 </div>
             </div>
         </div>

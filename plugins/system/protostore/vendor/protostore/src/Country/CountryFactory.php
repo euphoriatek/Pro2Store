@@ -170,7 +170,7 @@ class CountryFactory
 	 * @since 2.0
 	 */
 
-	public static function getZoneList(int $limit = 0, int $offset = 0, bool $publishedOnly = false, string $searchTerm = null, int $country_id = null, string $orderBy = 'published', string $orderDir = 'DESC'): ?array
+	public static function getZoneList(int $limit = 0, int $offset = 0, bool $publishedOnly = true, string $searchTerm = null, int $country_id = null, string $orderBy = 'published', string $orderDir = 'DESC'): ?array
 	{
 
 		// init items
@@ -401,6 +401,41 @@ class CountryFactory
 		return $response;
 	}
 
+	/**
+	 * @param   Input  $data
+	 *
+	 *
+	 * @return bool
+	 * @since 2.0
+	 */
+
+	public static function togglePublishedZonesFromInputData(Input $data): bool
+	{
+
+
+		$response = false;
+
+		$db = Factory::getDbo();
+
+		$items = $data->json->get('items', '', 'ARRAY');
+
+
+		foreach ($items as $item)
+		{
+
+			$object            = new stdClass();
+			$object->id        = $item['id'];
+			$object->published = $item['published'];
+
+			$db->updateObject('#__protostore_zone', $object, 'id');
+
+			$response = true;
+		}
+
+
+		return $response;
+	}
+
 
 	/**
 	 * @param   Input  $data
@@ -475,6 +510,38 @@ class CountryFactory
 				$db->quoteName('id') . ' = ' . $db->quote($item['id'])
 			);
 			$query->delete($db->quoteName('#__protostore_country'));
+			$query->where($conditions);
+			$db->setQuery($query);
+			$db->execute();
+
+		}
+
+		return true;
+
+	}
+	/**
+	 * @param   Input  $data
+	 *
+	 *
+	 * @return bool
+	 * @since 2.0
+	 */
+
+	public static function trashZonesFromInputData(Input $data): bool
+	{
+
+		$db = Factory::getDbo();
+
+		$items = $data->json->get('items', '', 'ARRAY');
+
+
+		foreach ($items as $item)
+		{
+			$query      = $db->getQuery(true);
+			$conditions = array(
+				$db->quoteName('id') . ' = ' . $db->quote($item['id'])
+			);
+			$query->delete($db->quoteName('#__protostore_zone'));
 			$query->where($conditions);
 			$db->setQuery($query);
 			$db->execute();

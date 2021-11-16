@@ -19,8 +19,10 @@ const p2s_zones = {
             pagesizes: [5, 10, 15, 20, 25, 30, 50, 100, 200, 500],
             show: 25,
             enteredText: '',
-            publishedOnly: false,
-            selectedCountry: 0
+            publishedOnly: true,
+            selectedCountry: 0,
+            selected: [],
+            confirm_LangString: '',
         };
     },
     async beforeMount() {
@@ -46,6 +48,13 @@ const p2s_zones = {
         const show = document.getElementById('page_size');
         this.show = show.innerText;
         show.remove();
+
+        const confirmLangString = document.getElementById('confirmLangString');
+        try {
+            this.confirm_LangString = confirmLangString.innerText;
+            confirmLangString.remove();
+        } catch (err) {
+        }
 
 
     },
@@ -154,19 +163,104 @@ const p2s_zones = {
         },
         async togglePublished(item) {
 
+            this.selected = [];
+
+            this.selected.push(item);
+
+            this.toggleSelected();
+
+        },
+        async toggleSelected() {
+
+            this.selected.forEach((zone) => {
+                zone.published ^= 1;
+            })
+
             const params = {
-                'item_id': item.id
+                'items': this.selected
             };
 
-            const URLparams = this.serialize(params);
-
-            const request = await fetch(this.base_url + 'index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=zone.togglePublished&format=raw&' + URLparams, {method: 'post'});
+            const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=zones.togglePublished&format=raw", {
+                method: 'POST',
+                mode: 'cors',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                redirect: 'follow',
+                referrerPolicy: 'no-referrer',
+                body: JSON.stringify(params)
+            });
 
             const response = await request.json();
 
             if (response.success) {
-                item.published = response.data
+                UIkit.notification({
+                    message: this.updatedMessage,
+                    status: 'success',
+                    pos: 'top-center',
+                    timeout: 5000
+                });
+                this.selected = [];
+                await this.filter();
+
+            } else {
+                UIkit.notification({
+                    message: 'There was an error.',
+                    status: 'danger',
+                    pos: 'top-center',
+                    timeout: 5000
+                });
             }
+
+        },
+        async trashSelected() {
+
+            await UIkit.modal.confirm('<h5>' + this.confirm_LangString + '</h5>');
+
+            const params = {
+                'items': this.selected
+            };
+
+
+            const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=zones.trash&format=raw", {
+                method: 'POST',
+                mode: 'cors',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                redirect: 'follow',
+                referrerPolicy: 'no-referrer',
+                body: JSON.stringify(params)
+            });
+
+
+            const response = await request.json();
+
+            if (response.success) {
+                await this.filter();
+
+            } else {
+                UIkit.notification({
+                    message: 'There was an error.',
+                    status: 'danger',
+                    pos: 'top-center',
+                    timeout: 5000
+                });
+            }
+
+
+        },
+        selectAll(e) {
+            if (e.target.checked) {
+                this.selected = this.itemsChunked[this.currentPage];
+            } else {
+                this.selected = [];
+            }
+
         },
         serialize(obj) {
             var str = [];
@@ -183,4 +277,4 @@ const p2s_zones = {
     }
 }
 
-Vue.createApp(p2s_zones).mount('#p2s_zones')
+Vue.createApp(p2s_zones).mount('#p2s_zones');
