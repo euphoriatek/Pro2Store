@@ -251,14 +251,35 @@ class DiscountFactory
 
 		$db = Factory::getDbo();
 
+		$amount     = $data->json->getInt('amount', 0);
+		$percentage = $data->json->getInt('percentage', 0);
+
+		$discountType = $data->json->getInt('discount_type');
+
+
+		switch ($discountType)
+		{
+			case 1:
+				$percentage = 0;
+				break;
+			case 2:
+				$amount = 0;
+				break;
+			case 3:
+				$amount     = 0;
+				$percentage = 0;
+				break;
+		}
+
+
 		$discount                = new stdClass();
-		$discount->name          = $data->getString('name');
-		$discount->amount        = $data->getInt('amount');
-		$discount->discount_type = $data->get('discount_type');
-		$discount->percentage    = $data->getString('percentage');
-		$discount->coupon_code   = $data->getString('coupon_code');
-		$discount->expiry_date   = $data->getString('expiry_date');
-		$discount->published     = $data->get('published');
+		$discount->name          = $data->json->getString('name');
+		$discount->amount        = $amount;
+		$discount->discount_type = $discountType;
+		$discount->percentage    = $percentage;
+		$discount->coupon_code   = $data->json->getString('coupon_code');
+		$discount->expiry_date   = $data->json->getString('expiry_date');
+		$discount->published     = $data->json->getInt('published');
 		$discount->created       = Utilities::getDate();
 		$discount->created_by    = Factory::getUser()->id;
 		$discount->modified      = Utilities::getDate();
