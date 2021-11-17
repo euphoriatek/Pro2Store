@@ -22,8 +22,7 @@
 
         <field name="discount_type" type="discounttype" default="" required="true" label="Discount Type" description="" />
 
-<!--        <field name="expiry_date" type="calendar" default="now" label="Select a date" description="" showtime="true" minyear="0" format="%Y-%m-%d %H:%M:%S"/>-->
-        <field name="expiry_date" type="vuedatetime" />
+        <field name="expiry_date" type="vuedatetime" label="Select a date"/>
 
         <field name="published" type="pinputswitch" default="0" label="Published" description=""
                class="btn-group btn-group-yesno">

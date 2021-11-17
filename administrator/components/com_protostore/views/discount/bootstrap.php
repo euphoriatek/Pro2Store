@@ -141,6 +141,7 @@ class bootstrap extends AdminModel
 		{
 
 
+			// format the date with a 'T' before the time to make it work with the datetime-local HTML5 element.
 			$this->vars['item']->expiry_date = HtmlHelper::date($this->vars['item']->expiry_date, 'Y-m-d\TH:i:s');
 
 			foreach ($this->vars['item'] as $key => $value)
@@ -169,7 +170,7 @@ class bootstrap extends AdminModel
 
 
 		// include whatever PrimeVue component scripts we need
-		Utilities::includePrime(array('config', 'inputswitch', 'inputtext', 'inputnumber', 'calendar'));
+		Utilities::includePrime(array('inputswitch', 'inputtext', 'inputnumber'));
 
 
 	}
