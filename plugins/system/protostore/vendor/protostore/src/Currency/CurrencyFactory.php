@@ -294,7 +294,7 @@ class CurrencyFactory
 
 			$current->iso       = $data->json->getString('iso', $current->iso);
 			$current->name      = $data->json->getString('name', $current->name);
-			$current->rate      = $data->json->getString('emailtype', $current->rate);
+			$current->rate      = floatval($data->json->getString('rate', $current->rate));
 			$current->published = $data->json->getInt('published', $current->published);
 
 			if (self::commitToDatabase($current))

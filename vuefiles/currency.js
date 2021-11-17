@@ -13,7 +13,7 @@ const p2s_currency_form = {
                 jform_name: '',
                 jform_iso: '',
                 jform_currencysymbol: '',
-                jform_rate: '',
+                jform_rate: 1,
                 jform_default: '',
                 jform_published: true
             },
@@ -50,6 +50,13 @@ const p2s_currency_form = {
             this.p2s_locale = locale.innerText;
         }
         locale.remove();
+        const jform_rate = document.getElementById('jform_rate_data');
+        if (jform_rate) {
+            this.form.jform_rate = jform_rate.innerText;
+        } else {
+            this.form.jform_rate = 1;
+        }
+        // jform_rate.remove();
 
     },
     methods: {
@@ -110,7 +117,10 @@ const p2s_currency_form = {
 
                     // we also need to make sure that the next save action doesn't trigger a create... we do this by adding the id to the form array
                     this.form.jform_id = response.data.id;
-
+                    this.form.jform_name = response.data.name;
+                    this.form.jform_iso = response.data.iso;
+                    this.form.jform_currencysymbol = response.data.currencysymbol;
+                    this.form.jform_rate = response.data.rate;
 
                 }
 
@@ -144,7 +154,6 @@ const p2s_currency_form = {
                         if (theInput.innerText == 0) {
                             this.form[jfrom] = false;
                         }
-
 
                     }
                     // theInput.remove();
