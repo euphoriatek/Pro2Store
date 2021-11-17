@@ -11,6 +11,7 @@
 
 defined('_JEXEC') or die('Restricted access');
 
+use Protostore\Currency\Currency;
 use Protostore\Currency\CurrencyFactory;
 use Joomla\Input\Input;
 
@@ -20,12 +21,12 @@ class protostoreTask_save
 	/**
 	 * @param   Input  $data
 	 *
-	 * @return bool
+	 * @return Currency
 	 *
 	 * @throws Exception
 	 * @since 2.0
 	 */
-	public function getResponse(Input $data)
+	public function getResponse(Input $data): ?Currency
 	{
 
 

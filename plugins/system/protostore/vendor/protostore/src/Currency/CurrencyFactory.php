@@ -24,6 +24,7 @@ use Brick\Money\Money;
 
 
 use Exception;
+use Protostore\Utilities\Utilities;
 use stdClass;
 
 
@@ -79,9 +80,10 @@ class CurrencyFactory
 	 * @since 2.0
 	 */
 
-	public static function getCurrent() : ?Currency
+	public static function getCurrent(): ?Currency
 	{
 		$instance = CurrentCurrency::getInstance();
+
 		return $instance->getCurrency();
 
 	}
@@ -274,6 +276,74 @@ class CurrencyFactory
 
 
 	/**
+	 * @param   Input  $data
+	 *
+	 * @return Currency|null
+	 *
+	 * @since 2.0
+	 */
+
+	public static function saveFromInputData(Input $data): ?Currency
+	{
+
+
+		if ($id = $data->json->get('currency_id', null))
+		{
+
+			$current = self::get($id);
+
+			$current->iso       = $data->json->getString('iso', $current->iso);
+			$current->name      = $data->json->getString('name', $current->name);
+			$current->rate      = $data->json->getString('emailtype', $current->rate);
+			$current->published = $data->json->getInt('published', $current->published);
+
+			if (self::commitToDatabase($current))
+			{
+				return $current;
+			}
+
+		}
+
+
+		return null;
+
+	}
+
+	/**
+	 * @param   Currency  $currency
+	 *
+	 * @return bool
+	 *
+	 * @since v2.0
+	 */
+
+	public static function commitToDatabase(Currency $currency): bool
+	{
+		$db = Factory::getDbo();
+
+		$insert = new stdClass();
+
+		$insert->id        = $currency->id;
+		$insert->iso       = $currency->iso;
+		$insert->name      = $currency->name;
+		$insert->rate      = $currency->rate;
+		$insert->published = $currency->published;
+
+
+		$result = $db->updateObject('#__protostore_currency', $insert, 'id');
+
+		if ($result)
+		{
+			return true;
+		}
+
+		return false;
+
+
+	}
+
+
+	/**
 	 *
 	 * Takes an integer (representing the MINOR of the value - i.e. for 10 pounds, the number will be 1000)
 	 * and a Currency ISO and returns the Formatted string for the value.
@@ -344,7 +414,7 @@ class CurrencyFactory
 
 		}
 
-		$float = Money::ofMinor( $number, $currencyISO, new CashContext(1), RoundingMode::DOWN);
+		$float = Money::ofMinor($number, $currencyISO, new CashContext(1), RoundingMode::DOWN);
 
 		return $float->getAmount();
 
@@ -377,7 +447,7 @@ class CurrencyFactory
 			{
 				$currencyISO = $currency->iso;
 			}
-			
+
 
 		}
 

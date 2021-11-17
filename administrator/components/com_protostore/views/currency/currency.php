@@ -56,7 +56,7 @@ $item = $vars['item'];
 		                            <?= Text::_('JTOOLBAR_SAVE'); ?>
                                 </button>
                                 <a class="uk-button uk-button-default uk-button-small "
-                                   href="index.php?option=com_protostore&view=countries"><?= Text::_('JTOOLBAR_CANCEL'); ?></a>
+                                   href="index.php?option=com_protostore&view=currencies"><?= Text::_('JTOOLBAR_CANCEL'); ?></a>
                             </div>
 
                         </nav>
@@ -70,7 +70,7 @@ $item = $vars['item'];
 						'cardStyle' => 'default',
 						'cardTitle' => 'COM_PROTOSTORE_CURRENCIES_MODAL_EDIT_TITLE',
 						'cardId'    => 'details',
-						'fields'    => array('name', 'iso', 'currencysymbol', 'rate', 'default', 'published')
+						'fields'    => array('name', 'iso', 'currencysymbol', 'rate', 'published')
 					)); ?>
 
                 </div>

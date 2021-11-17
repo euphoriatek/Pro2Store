@@ -9,10 +9,10 @@
 <form>
     <fieldset name="details" addfieldpath="/administrator/components/com_protostore/models/fields">
 
-        <field name="name" type="text" default="title" label="Name" description="" required="true" size="10"
+        <field name="name" type="vuetext" default="title" label="Name" description="" required="true" size="10"
                class="uk-input uk-form-width-medium uk-form-large"/>
 
-        <field name="email" type="text" default="title" label="Email" required="true" description="" size="10"
+        <field name="email" type="vuetext" default="title" label="Email" required="true" description="" size="10"
                class="uk-input uk-form-width-medium uk-form-large"/>
 
         <field name="j_user_id" type="Userselect" label="Joomla User" readonly="false"   />

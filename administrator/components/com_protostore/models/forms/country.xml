@@ -9,16 +9,16 @@
 <form>
     <fieldset name="details"  addfieldpath="/administrator/components/com_protostore/models/fields">
 
-        <field name="country_name" type="text" default="title" label="COM_PROTOSTORE_COUNTRIES_TABLE_COUNTRYNAME" description="" size="10"
+        <field name="country_name" type="vuetext" default="title" label="COM_PROTOSTORE_COUNTRIES_TABLE_COUNTRYNAME" description="" size="10"
                class="uk-input uk-form-width-medium uk-form-large"/>
 
-        <field name="country_isocode_2" type="text" default="0" label="COM_PROTOSTORE_COUNTRIES_TABLE_ISO2" description="" size="10"
+        <field name="country_isocode_2" type="vuetext" default="0" label="COM_PROTOSTORE_COUNTRIES_TABLE_ISO2" description="" size="10"
                class="uk-input uk-form-width-medium uk-form-large" />
 
-        <field name="country_isocode_3" type="text" default="0" label="COM_PROTOSTORE_COUNTRIES_TABLE_ISO3" description="" size="10"
+        <field name="country_isocode_3" type="vuetext" default="0" label="COM_PROTOSTORE_COUNTRIES_TABLE_ISO3" description="" size="10"
                class="uk-input uk-form-width-medium uk-form-large" filter="raw" />
 
-        <field name="taxrate" type="number" default="0" label="COM_PROTOSTORE_COUNTRIES_TAXRATE" description="" size="10"
+        <field name="taxrate" type="vuenumber" default="0" label="COM_PROTOSTORE_COUNTRIES_TAXRATE" description="" size="10"
                class="uk-input uk-form-width-medium uk-form-large" filter="float" />
 
         <field name="requires_vat" type="pinputswitch" default="0" label="COM_PROTOSTORE_COUNTRIES_ENABLE_VAT" description=""

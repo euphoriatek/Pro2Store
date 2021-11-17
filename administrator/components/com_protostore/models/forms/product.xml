@@ -14,7 +14,7 @@
 
         <field name="base_price" type="baseprice" default="0" label="COM_PROTOSTORE_ADD_PRODUCT_BASE_PRICE" description=""/>
 
-        <field name="sku" type="text" default="0" label="COM_PROTOSTORE_ADD_PRODUCT_SKU_LABEL" description="" size="10"
+        <field name="sku" type="vuetext" default="0" label="COM_PROTOSTORE_ADD_PRODUCT_SKU_LABEL" description="" size="10"
                class="uk-input uk-form-width-medium uk-form-large" filter="int" />
 
         <field name="manage_stock" type="pinputswitch" default="0" label="COM_PROTOSTORE_ADD_PRODUCT_INVENTORY_MANAGE_STOCK_LABEL" description=""

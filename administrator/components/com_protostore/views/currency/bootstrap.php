@@ -65,14 +65,11 @@ class bootstrap extends AdminModel
 	{
 
 
-		$this->vars['item']     = false;
 		$this->vars['currency'] = CurrencyFactory::getDefault();
 		$this->vars['locale']   = Factory::getLanguage()->get('tag');
 
-		if ($id)
-		{
-			$this->vars['item'] = CurrencyFactory::get($id);
-		}
+
+		$this->vars['item'] = CurrencyFactory::get($id);
 
 		$this->addScripts();
 		$this->addStylesheets();
@@ -98,8 +95,16 @@ class bootstrap extends AdminModel
 		// Get the form.
 
 
-		return $this->loadForm('com_protostore.' . self::$view, self::$view, array('control' => 'jform', 'load_data' => $loadData));
+		$form = $this->loadForm('com_protostore.' . self::$view, self::$view, array('control' => 'jform', 'load_data' => $loadData));
 
+		$form->setValue('id', null, $this->vars['item']->id);
+		$form->setValue('name', null, $this->vars['item']->name);
+		$form->setValue('iso', null, $this->vars['item']->iso);
+		$form->setValue('currencysymbol', null, $this->vars['item']->currencysymbol);
+		$form->setValue('rate', null, $this->vars['item']->rate);
+		$form->setValue('published', null, $this->vars['item']->published);
+
+		return $form;
 
 	}
 
@@ -120,14 +125,34 @@ class bootstrap extends AdminModel
 
 
 		//set up data for vue:
+		//set up data for vue:
 		if ($this->vars['item'])
 		{
 
+			foreach ($this->vars['item'] as $key => $value)
+			{
+				if (is_string($value))
+				{
+					$doc->addCustomTag('<script id="jform_' . $key . '_data" type="application/json">' . $value . '</script>');
+				}
 
-			$doc->addCustomTag('<script id="p2s_item" type="application/json">' . json_encode($this->vars['item']) . '</script>');
+				if (is_integer($value))
+				{
+					$doc->addCustomTag('<script id="jform_' . $key . '_data" type="application/json">' . $value . '</script>');
+				}
 
+				if (is_array($value))
+				{
+					$doc->addCustomTag('<script id="jform_' . $key . '_data" type="application/json">' . json_encode($value) . '</script>');
+				}
+				if (is_object($value))
+				{
+					$doc->addCustomTag('<script id="jform_' . $key . '_data" type="application/json">' . json_encode($value) . '</script>');
+				}
+			}
 
 		}
+
 
 
 		// include whatever PrimeVue component scripts we need

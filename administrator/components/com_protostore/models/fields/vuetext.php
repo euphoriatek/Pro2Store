@@ -15,7 +15,7 @@ defined('_JEXEC') or die('Restricted access');
  *
  * @since 2.0
  */
-class JFormFieldNumber extends JFormField
+class JFormFieldVuetext extends JFormField
 {
 	/**
 	 * The form field type.
@@ -23,7 +23,7 @@ class JFormFieldNumber extends JFormField
 	 * @var    string
 	 * @since 2.0
 	 */
-	protected $type = 'Number';
+	protected $type = 'vuetext';
 
 	/**
 	 * Method to get the field input markup.
@@ -38,11 +38,16 @@ class JFormFieldNumber extends JFormField
 
 		$html = array();
 
-		$html[] = '<input class="input-small ' . $this->class . '" type="number" ';
+		$html[] = '<input class="test input-small ' . $this->class . '" type="text" ';
 		$html[] = 'name="' . $this->name . '" ';
 		$html[] = 'v-model="form.' . $this->id . '" ';
+
 		$html[] = 'id="' . $this->id . '" ';
-		$html[] = ' />test';
+		if($this->required) {
+			$html[] = 'required="true" ';
+		}
+
+		$html[] = ' />';
 
 		return implode('', $html);
 

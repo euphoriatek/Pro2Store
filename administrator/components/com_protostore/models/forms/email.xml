@@ -9,10 +9,10 @@
 <form>
     <fieldset name="details"  addfieldpath="/administrator/components/com_protostore/models/fields">
 
-        <field name="to" type="text" default="title" label="To" description="" size="10"
+        <field name="to" type="vuetext" default="title" label="To" description="" size="10"
                class="uk-input uk-form-width-medium uk-form-large"/>
 
-        <field name="subject" type="text" default="0" label="Subject" description="" size="10"
+        <field name="subject" type="vuetext" default="0" label="Subject" description="" size="10"
                class="uk-input uk-form-width-medium uk-form-large" required="true" />
 
         <field name="emailtype" type="list" default="" required="true" label="Email Type" description="">

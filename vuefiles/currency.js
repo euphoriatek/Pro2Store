@@ -9,6 +9,7 @@ const p2s_currency_form = {
     data() {
         return {
             form: {
+                jform_id: '',
                 jform_name: '',
                 jform_iso: '',
                 jform_currencysymbol: '',
@@ -31,7 +32,9 @@ const p2s_currency_form = {
     computed() {
     },
     async beforeMount() {
+
         await this.setData();
+
         const base_url = document.getElementById('base_url');
         this.base_url = base_url.innerText;
         base_url.remove();
@@ -52,14 +55,13 @@ const p2s_currency_form = {
     methods: {
 
         toggle() {
-            console.log(this.hasErroraccess);
             this.hasErroraccess = !this.hasErroraccess;
         },
 
         async saveItem() {
 
             const params = {
-                itemid: this.form.jform_id,
+                currency_id: this.form.jform_id,
                 name: this.form.jform_name,
                 currencysymbol: this.form.currencysymbol,
                 iso: this.form.jform_iso,
@@ -68,9 +70,20 @@ const p2s_currency_form = {
                 published: (this.form.jform_published ? 1 : 0)
             };
 
-            const URLparams = this.serialize(params);
 
-            const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=currency.save&format=raw&" + URLparams);
+            const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=currencies.save&format=raw", {
+                method: 'POST',
+                mode: 'cors',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                redirect: 'follow',
+                referrerPolicy: 'no-referrer',
+                body: JSON.stringify(params)
+            });
+
 
             const response = await request.json();
 
@@ -113,7 +126,7 @@ const p2s_currency_form = {
             console.log(this.form);
 
         },
-        async setData() {
+       async setData() {
             const keys = Object.keys(this.form);
             keys.forEach((jfrom) => {
                 let theInput = document.getElementById(jfrom + '_data');
@@ -134,7 +147,7 @@ const p2s_currency_form = {
 
 
                     }
-                    theInput.remove();
+                    // theInput.remove();
                 }
 
             });
