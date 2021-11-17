@@ -12,6 +12,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\MVC\Model\AdminModel;
 
 use Protostore\Currency\CurrencyFactory;
@@ -139,6 +140,8 @@ class bootstrap extends AdminModel
 		if ($this->vars['item'])
 		{
 
+
+			$this->vars['item']->expiry_date = HtmlHelper::date($this->vars['item']->expiry_date, 'Y-m-d\TH:i:s');
 
 			foreach ($this->vars['item'] as $key => $value)
 			{

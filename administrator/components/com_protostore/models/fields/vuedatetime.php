@@ -15,7 +15,7 @@ defined('_JEXEC') or die('Restricted access');
  *
  * @since 2.0
  */
-class JFormFieldPcalendar extends JFormField
+class JFormFieldVuedatetime extends JFormField
 {
 	/**
 	 * The form field type.
@@ -23,12 +23,7 @@ class JFormFieldPcalendar extends JFormField
 	 * @var    string
 	 * @since 2.0
 	 */
-	protected $type = 'pcalendar';
-
-	public function getLabel()
-	{
-		return '';
-	}
+	protected $type = 'Vuedatetime';
 
 	/**
 	 * Method to get the field input markup.
@@ -39,12 +34,13 @@ class JFormFieldPcalendar extends JFormField
 	 */
 	protected function getInput()
 	{
+
 		$html = array();
 
-		$html[] = '<p-calendar v-model="form.jform_expiry_date" dateFormat="mm-dd-yy" showTime="true" showSeconds="true" showButtonBar="true"  hourFormat="12" inputmode="none"></p-calendar>';
-
+		$html[] = '<input type="datetime-local" v-model="form.'.$this->id.'" id="'.$this->id.'"  name="'.$this->id.'">';
 
 		return implode('', $html);
+
 
 	}
 }

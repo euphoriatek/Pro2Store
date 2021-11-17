@@ -26,6 +26,7 @@ class Discount
 	public $percentage;
 	public $coupon_code;
 	public $expiry_date;
+	public $expiry_date_vue;
 	public $discount_type;
 	public $discount_type_string;
 	public $published;

@@ -73,7 +73,7 @@ const p2s_discount_form = {
 
         async saveItem() {
 
-            this.form.jform_expiry_date = document.getElementById("jform_expiry_date").getAttribute('data-alt-value');
+            // this.form.jform_expiry_date = document.getElementById("jform_expiry_date").getAttribute('data-alt-value');
 
 
             const params = {

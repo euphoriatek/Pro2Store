@@ -18,11 +18,12 @@
         <field name="amount" type="pinputnumber" default="0" label="Amount" description="" size="10" formName="discount_amount"
                class="uk-input uk-form-width-medium uk-form-large" />
 
-        <field name="percentage" type="pinputnumber" label="Percentage" description="Percentage" formName="discount_percentage" />
+        <field name="percentage" type="pinputnumber" label="Percentage" description="" formName="discount_percentage" />
 
         <field name="discount_type" type="discounttype" default="" required="true" label="Discount Type" description="" />
 
-        <field name="expiry_date" type="pcalendar" default="now" label="Select a date" description=""/>
+<!--        <field name="expiry_date" type="calendar" default="now" label="Select a date" description="" showtime="true" minyear="0" format="%Y-%m-%d %H:%M:%S"/>-->
+        <field name="expiry_date" type="vuedatetime" />
 
         <field name="published" type="pinputswitch" default="0" label="Published" description=""
                class="btn-group btn-group-yesno">
