@@ -48,12 +48,11 @@ const p2s_discount_form = {
         this.base_url = base_url.innerText;
         base_url.remove();
 
-
         const p2s_currency = document.getElementById('currency');
         if (p2s_currency != null) {
             try {
                 this.p2s_currency = JSON.parse(p2s_currency.innerText);
-                p2s_currency.remove();
+                // p2s_currency.remove();
             } catch (err) {
             }
         }
@@ -63,7 +62,7 @@ const p2s_discount_form = {
         if (p2s_locale != null) {
             try {
                 this.p2s_local = p2s_locale.innerText;
-                p2s_locale.remove();
+                // p2s_locale.remove();
             } catch (err) {
             }
         }
@@ -89,7 +88,6 @@ const p2s_discount_form = {
             };
 
 
-
             const request = await fetch(this.base_url + "index.php?option=com_ajax&plugin=protostore_ajaxhelper&method=post&task=task&type=discount.save&format=raw", {
                 method: 'POST',
                 mode: 'cors',
@@ -104,8 +102,6 @@ const p2s_discount_form = {
             });
 
             const response = await request.json();
-
-
 
 
             if (response.success) {
@@ -194,9 +190,11 @@ const p2s_discount_form = {
     components: {
         'p-inputswitch': primevue.inputswitch,
         'p-inputnumber': primevue.inputnumber,
-        'p-inputtext': primevue.inputtext
+        'p-inputtext': primevue.inputtext,
+        "p-calendar": primevue.calendar,
+        "p-config": primevue.config
     }
 }
-Vue.createApp(p2s_discount_form).mount('#p2s_discount_form');
+Vue.createApp(p2s_discount_form).use(primevue.config.default).mount('#p2s_discount_form');
 
 
