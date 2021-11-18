@@ -30,10 +30,11 @@ class bootstrap implements listView
 	public function __construct()
 	{
 		$this->init();
+		$this->setVars();
 		$this->addScripts();
 		$this->addStylesheets();
 		$this->addTranslationStrings();
-		$this->setVars();
+
 
 		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/currencies/currencies.php', $this->vars);
 

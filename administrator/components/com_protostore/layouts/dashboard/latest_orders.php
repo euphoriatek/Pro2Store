@@ -13,6 +13,7 @@ defined('_JEXEC') or die('Restricted access');
 use Joomla\CMS\Language\Text;
 use Protostore\Order\Order;
 
+/** @var  $displayData array */
 $data = $displayData;
 
 
@@ -29,6 +30,7 @@ $data = $displayData;
             </div>
             <div class="uk-width-auto">
                 <a class="uk-icon-link uk-icon"
+                   href="index.php?option=com_protostore&view=orders"
                    title="" data-uk-tooltip="" data-uk-icon="icon: arrow-right"
                    aria-expanded="false"><?= Text::_('COM_PROTOSTORE_SEE_ALL'); ?></a>
             </div>

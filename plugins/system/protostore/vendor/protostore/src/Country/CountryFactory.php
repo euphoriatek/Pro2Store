@@ -627,12 +627,12 @@ class CountryFactory
 	}
 
 	/**
-	 * @param   array|object  $item
+	 * @param   array  $item
 	 *
 	 * @since 2.0
 	 */
 
-	private static function updateZoneList($item)
+	public static function updateZoneList(array $item)
 	{
 
 		if (!$item)
