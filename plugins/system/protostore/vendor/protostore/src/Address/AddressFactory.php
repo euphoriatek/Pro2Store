@@ -307,7 +307,7 @@ class AddressFactory
 
 
 		return CountryFactory::get($country_id);
-	
+
 
 	}
 
@@ -322,15 +322,13 @@ class AddressFactory
 	public static function getZoneName($zone_id): string
 	{
 
-//		if ($zone = CountryFactory::getZone($zone_id))
-//		{
-//			return $zone->zone_name;
-//		}
-//		else
-//		{
-//			return '';
-//		}
-return '';
+		if ($zone = CountryFactory::getZone($zone_id))
+		{
+			return $zone->zone_name;
+		}
+
+		return '';
+		
 
 	}
 
