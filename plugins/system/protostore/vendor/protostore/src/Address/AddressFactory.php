@@ -328,7 +328,7 @@ class AddressFactory
 		}
 
 		return '';
-		
+
 
 	}
 

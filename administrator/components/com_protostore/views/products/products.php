@@ -19,7 +19,7 @@ use Joomla\CMS\Layout\LayoutHelper;
 ?>
 
 
-<div id="p2s_products">
+<div id="p2s_products" v-cloak>
     <div class="uk-margin-left">
         <div class="uk-grid" uk-grid="">
             <div class="uk-width-3-4">

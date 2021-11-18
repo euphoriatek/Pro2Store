@@ -17,11 +17,7 @@ use Joomla\CMS\Layout\LayoutHelper;
 ?>
 
 
-<script id="base_url" type="application/json"><?= Uri::base(); ?></script>
-<script id="items_data" type="application/json"><?= json_encode($vars['items']); ?></script>
-<script id="page_size" type="application/json"><?= $vars['list_limit']; ?></script>
-
-<div id="p2s_currencies">
+<div id="p2s_currencies" v-cloak>
 	<div class="uk-margin-left">
 		<div class="uk-grid" uk-grid="">
 			<div class="uk-width-3-4">

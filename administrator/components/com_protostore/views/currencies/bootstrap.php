@@ -96,8 +96,10 @@ class bootstrap implements listView
 
 
 		// include the vue script - defer
-		Factory::getDocument()->addScript('../media/com_protostore/js/vue/currencies/currencies.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
-
+		$doc = Factory::getDocument();
+		$doc->addScript('../media/com_protostore/js/vue/currencies/currencies.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
+		$doc->addCustomTag('<script id="items_data" type="application/json">' . json_encode($this->vars['items']) . '</script>');
+		$doc->addCustomTag('<script id="page_size" type="application/json">' . $this->vars['list_limit'] . '</script>');
 
 		// include prime
 		Utilities::includePrime(array('inputswitch'));

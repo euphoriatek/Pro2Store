@@ -19,7 +19,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 
 ?>
 
-<div id="p2s_emailmanager">
+<div id="p2s_emailmanager" v-cloak>
     <div class="uk-margin-left">
         <div class="uk-grid" uk-grid="">
             <div class="uk-width-3-4">

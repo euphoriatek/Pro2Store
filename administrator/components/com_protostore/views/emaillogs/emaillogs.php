@@ -17,7 +17,7 @@ use Joomla\CMS\Layout\LayoutHelper;
 
 ?>
 
-<div id="p2s_emaillogs">
+<div id="p2s_emaillogs" v-cloak>
 	<div class="uk-margin-left">
 		<div class="uk-grid" uk-grid="">
 			<div class="uk-width-3-4">

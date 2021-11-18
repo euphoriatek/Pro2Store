@@ -16,7 +16,7 @@ use Joomla\CMS\Layout\LayoutHelper;
 /** @var array $vars */
 ?>
 
-<div id="p2s_discounts">
+<div id="p2s_discounts" v-cloak>
     <div class="uk-margin-left">
         <div class="uk-grid" uk-grid="">
             <div class="uk-width-3-4">

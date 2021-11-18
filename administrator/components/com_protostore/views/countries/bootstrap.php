@@ -69,7 +69,6 @@ class bootstrap implements listView
 
 		$this->vars['items']          = $this->getItems();
 		$this->vars['list_limit']     = Factory::getConfig()->get('list_limit', '25');
-		$this->vars['updatedMessage'] = Text::_('COM_PROTOSTORE_COUNTRIES_UPDATED');
 
 
 	}
@@ -102,7 +101,9 @@ class bootstrap implements listView
 
 		// include the vue script - defer
 		$doc->addScript('../media/com_protostore/js/vue/countries/countries.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
-		$doc->addCustomTag('<script id="updatedMessage" type="application/json">' . $this->vars['updatedMessage'] . '</script>');
+
+		$doc->addCustomTag('<script id="items_data" type="application/json">' . json_encode($this->vars['items']) . '</script>');
+		$doc->addCustomTag('<script id="page_size" type="application/json">' . $this->vars['list_limit'] . '</script>');
 
 		// include prime
 		Utilities::includePrime(array('inputswitch'));
@@ -131,7 +132,7 @@ class bootstrap implements listView
 
 		$doc = Factory::getDocument();
 
-
+		$doc->addCustomTag('<script id="updatedMessage" type="application/json">' . Text::_('COM_PROTOSTORE_COUNTRIES_UPDATED') . '</script>');
 		$doc->addCustomTag('<script id="confirmLangString" type="application/json">' . Text::_('COM_PROTOSTORE_COUNTRIES_DELETE_CONFIRM') . '</script>');
 
 	}

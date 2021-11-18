@@ -22,7 +22,7 @@ $item = $vars['item'];
 ?>
 
 
-<div id="p2s_zone_form">
+<div id="p2s_zone_form" v-cloak>
 
     <form @submit.prevent="saveItem">
         <div class="uk-margin-left">

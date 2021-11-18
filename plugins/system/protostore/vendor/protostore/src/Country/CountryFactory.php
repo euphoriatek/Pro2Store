@@ -318,11 +318,11 @@ class CountryFactory
 
 			$current = self::getZone($id);
 
-			$current->zone_name    = $data->json->getString('jform_zone_name', $current->zone_name);
-			$current->country_id   = $data->json->getString('jform_country_id', $current->country_id);
-			$current->zone_isocode = $data->json->getString('jform_zone_isocode', $current->zone_isocode);
-			$current->taxrate      = $data->json->getString('jform_taxrate', $current->taxrate);
-			$current->published    = $data->json->getInt('jform_published', $current->published);
+			$current->zone_name    = $data->json->getString('zone_name', $current->zone_name);
+			$current->country_id   = $data->json->getString('country_id', $current->country_id);
+			$current->zone_isocode = $data->json->getString('zone_isocode', $current->zone_isocode);
+			$current->taxrate      = $data->json->getString('taxrate', $current->taxrate);
+			$current->published    = $data->json->getInt('published', $current->published);
 
 
 			if (self::commitZoneToDatabase($current))
