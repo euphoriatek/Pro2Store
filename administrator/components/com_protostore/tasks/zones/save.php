@@ -11,10 +11,9 @@
 
 defined('_JEXEC') or die('Restricted access');
 
+use Protostore\Country\CountryFactory;
+use Protostore\Country\Zone;
 use Joomla\Input\Input;
-
-use Protostore\Discount\DiscountFactory;
-use Protostore\Discount\Discount;
 
 
 class protostoreTask_save
@@ -23,16 +22,15 @@ class protostoreTask_save
 	/**
 	 * @param   Input  $data
 	 *
-	 * @return null|Discount
+	 * @return Zone;
 	 *
 	 * @throws Exception
 	 * @since 2.0
 	 */
-	public function getResponse(Input $data): ?Discount
+	public function getResponse(Input $data): Zone
 	{
 
-
-		return DiscountFactory::saveFromInputData($data);
+		return CountryFactory::saveZoneFromInputData($data);
 
 
 	}

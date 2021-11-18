@@ -29,8 +29,6 @@ class bootstrap implements listView
 
 	/**
 	 * @var array $vars
-
-
 	 * @since 2.0
 	 */
 	public $vars;

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<!-- @package   Pro2Store -->
+<!-- @author    Ray Lawlor - pro2.store -->
+<!-- @copyright Copyright (C) 2021 Ray Lawlor - pro2.store -->
+<!-- @license   http://www.gnu.org/licenses/gpl.html GNU/GPL -->
+<!-- -->
+
+<form>
+    <fieldset name="details"  addfieldpath="/administrator/components/com_protostore/models/fields">
+
+        <field name="zone_name" type="vuetext" default="title" label="COM_PROTOSTORE_ZONES_TABLE_ZONENAME" description="" size="10"
+               class="uk-input uk-form-width-medium uk-form-large"/>
+        <field name="country_id" type="countryselect" default="title" label="COM_PROTOSTORE_ZONES_TABLE_COUNTRYNAME" description="" size="10"
+               class="uk-input uk-form-width-medium uk-form-large"/>
+
+        <field name="zone_isocode" type="vuetext" default="0" label="COM_PROTOSTORE_ZONES_TABLE_ISO" description="" size="10"
+               class="uk-input uk-form-width-medium uk-form-large" />
+
+        <field name="taxrate" type="vuenumber" default="0" label="COM_PROTOSTORE_ZONES_TAXRATE" description="" size="10"
+               class="uk-input uk-form-width-medium uk-form-large" filter="float" />
+
+
+        <field name="published" type="pinputswitch" default="0" label="COM_PROTOSTORE_COUNTRIES_TABLE_PUBLISHED" description=""
+               class="btn-group btn-group-yesno">
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+
+    </fieldset>
+
+</form>

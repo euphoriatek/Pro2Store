@@ -26,13 +26,23 @@ use Protostore\Render\Render;
 class bootstrapWrapper
 {
 
-	private $vars;
+	/**
+	 * @var array $vars
+	 * @since 2.0
+	 */
+	public $vars;
+
+	/**
+	 * @var string $view
+	 * @since 2.0
+	 */
+	public static $view = 'wrapper';
 
 	public function __construct()
 	{
 		$this->init();
 
-		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/wrapper/wrapper.php', $this->vars);
+		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/'.self::$view.'/'.self::$view.'.php', $this->vars);
 
 	}
 

@@ -12,12 +12,12 @@
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\MVC\Model\AdminModel;
+use Joomla\CMS\Language\Text;
 
-use Protostore\Currency\CurrencyFactory;
+use Protostore\Country\Zone;
 use Protostore\Render\Render;
-use Protostore\Discount\DiscountFactory;
+use Protostore\Country\CountryFactory;
 use Protostore\Utilities\Utilities;
 
 
@@ -39,7 +39,7 @@ class bootstrap extends AdminModel
 	 * @var string $view
 	 * @since 2.0
 	 */
-	public static $view = 'discount';
+	public static $view = 'zone';
 
 	public function __construct()
 	{
@@ -49,6 +49,8 @@ class bootstrap extends AdminModel
 		$id    = $input->get('id');
 
 		$this->init($id);
+		$this->addScripts();
+		$this->addStylesheets();
 
 		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/'.self::$view.'/'.self::$view.'.php', $this->vars);
 
@@ -66,17 +68,13 @@ class bootstrap extends AdminModel
 	{
 
 
-		$this->vars['item']     = false;
-		$this->vars['currency'] = CurrencyFactory::getDefault();
-		$this->vars['locale']   = Factory::getLanguage()->get('tag');
+		$this->vars['item'] = false;
+		$this->vars['successMessage'] = Text::_('COM_PROTOSTORE_COUNTRIES_SAVED');
 
-		if ($id)
-		{
+		if($id) {
 			$this->vars['item'] = $this->getTheItem($id);
 		}
 
-		$this->addScripts();
-		$this->addStylesheets();
 
 
 		$this->vars['form'] = $this->getForm(array('item' => $this->vars['item']), true);
@@ -86,46 +84,31 @@ class bootstrap extends AdminModel
 
 	/**
 	 *
-	 * @return array|false
+	 * @return Zone|null
 	 *
 	 * @since 2.0
 	 */
 
-	public function getTheItem($id)
+	public function getTheItem($id): ?Zone
 	{
-		return DiscountFactory::get($id);
+		return CountryFactory::getZone($id);
 	}
 
 	/**
 	 * @param   array  $data
 	 * @param   bool   $loadData
 	 *
-	 * @return bool|JForm
+	 * @return JForm
 	 *
+	 * @throws Exception
 	 * @since 2.0
 	 */
 
-	public function getForm($data = array(), $loadData = true)
+	public function getForm($data = array(), $loadData = true): JForm
 	{
 		// Get the form.
 
-		$item = $data['item'];
-
-
-		$form = $this->loadForm('com_protostore.discount', 'discount', array('control' => 'jform', 'load_data' => $loadData));
-
-		if ($item)
-		{
-
-			$form->setValue('name', null, $item->name);
-			$form->setValue('coupon_code', null, $item->coupon_code);
-			$form->setValue('amount', null, $item->amount);
-			$form->setValue('percentage', null, $item->percentage);
-			$form->setValue('expiry_date', null, $item->expiry_date);
-			$form->setValue('published', null, $item->published);
-
-
-		}
+		$form = $this->loadForm('com_protostore.'.self::$view, self::$view, array('control' => 'jform', 'load_data' => $loadData));
 
 		return $form;
 	}
@@ -136,23 +119,21 @@ class bootstrap extends AdminModel
 	 * @since 2.0
 	 */
 
-	private function addScripts()
+	private function addScripts($add = false): void
 	{
+
 
 		$doc = Factory::getDocument();
 
-
 		// include the vue script - defer
 		$doc->addScript('../media/com_protostore/js/vue/'.self::$view.'/'.self::$view.'.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
+		$doc->addCustomTag('<script id="successMessage" type="application/json">' . $this->vars['successMessage'] . '</script>');
 
+		// include prime
+		Utilities::includePrime(array('inputswitch'));
 
-		//set up data for vue:
 		if ($this->vars['item'])
 		{
-
-
-			// format the date with a 'T' before the time to make it work with the datetime-local HTML5 element.
-			$this->vars['item']->expiry_date = HtmlHelper::date($this->vars['item']->expiry_date, 'Y-m-d\TH:i:s');
 
 			foreach ($this->vars['item'] as $key => $value)
 			{
@@ -179,16 +160,12 @@ class bootstrap extends AdminModel
 		}
 
 
-		// include whatever PrimeVue component scripts we need
-		Utilities::includePrime(array('inputswitch', 'inputtext', 'inputnumber'));
-
-
 	}
 
 	/**
 	 *
 	 *
-	 * @since version
+	 * @since 2.0
 	 */
 
 	private function addStylesheets()

@@ -322,15 +322,15 @@ class AddressFactory
 	public static function getZoneName($zone_id): string
 	{
 
-		if ($zone = CountryFactory::getZone($zone_id))
-		{
-			return $zone->zone_name;
-		}
-		else
-		{
-			return '';
-		}
-
+//		if ($zone = CountryFactory::getZone($zone_id))
+//		{
+//			return $zone->zone_name;
+//		}
+//		else
+//		{
+//			return '';
+//		}
+return '';
 
 	}
 

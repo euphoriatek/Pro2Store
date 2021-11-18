@@ -236,6 +236,7 @@ class CountryFactory
 	{
 
 		$instance = DefaultCountry::getInstance();
+
 		return $instance->getCountry();
 
 
@@ -297,6 +298,45 @@ class CountryFactory
 	}
 
 	/**
+	 *
+	 * This method is called first and runs the check before calling other functions to commit the data.
+	 *
+	 * @param   Input  $data
+	 *
+	 *
+	 * @return Zone
+	 * @since 2.0
+	 */
+
+
+	public static function saveZoneFromInputData(Input $data): ?Zone
+	{
+
+
+		if ($id = $data->json->getInt('zone_id', null))
+		{
+
+			$current = self::getZone($id);
+
+			$current->zone_name    = $data->json->getString('jform_zone_name', $current->zone_name);
+			$current->country_id   = $data->json->getString('jform_country_id', $current->country_id);
+			$current->zone_isocode = $data->json->getString('jform_zone_isocode', $current->zone_isocode);
+			$current->taxrate      = $data->json->getString('jform_taxrate', $current->taxrate);
+			$current->published    = $data->json->getInt('jform_published', $current->published);
+
+
+			if (self::commitZoneToDatabase($current))
+			{
+
+				return $current;
+			}
+
+		}
+
+		return null;
+	}
+
+	/**
 	 * @param   Input  $data
 	 *
 	 * @return Country
@@ -328,6 +368,39 @@ class CountryFactory
 
 		return null;
 
+
+	}
+
+	/**
+	 * @param   Zone  $item
+	 *
+	 * @return bool
+	 * @since 2.0
+	 */
+
+
+	private static function commitZoneToDatabase(Zone $item): bool
+	{
+
+		$db = Factory::getDbo();
+
+		$insert = new stdClass();
+
+		$insert->id           = $item->id;
+		$insert->zone_name    = $item->zone_name;
+		$insert->zone_isocode = $item->zone_isocode;
+		$insert->country_id   = $item->country_id;
+		$insert->taxrate      = $item->taxrate;
+		$insert->published    = $item->published;
+
+		$result = $db->updateObject('#__protostore_zone', $insert, 'id');
+
+		if ($result)
+		{
+			return true;
+		}
+
+		return false;
 
 	}
 
@@ -519,6 +592,7 @@ class CountryFactory
 		return true;
 
 	}
+
 	/**
 	 * @param   Input  $data
 	 *

@@ -19,7 +19,7 @@ use Joomla\CMS\Layout\LayoutHelper;
 ?>
 
 
-<div id="p2s_zones">
+<div id="p2s_zones" v-cloak >
     <div class="uk-margin-left">
         <div class="uk-grid" uk-grid="">
             <div class="uk-width-3-4">
@@ -91,13 +91,14 @@ use Joomla\CMS\Layout\LayoutHelper;
                                 <th class="uk-text-left">
                                     <input @change="selectAll($event)" type="checkbox">
                                 </th>
-                                <th class="uk-text-left"><?= Text::_('COM_PROTOSTORE_ZONES_TABLE_COUNTRYNAME'); ?>
-                                    <a href="#" @click="sort('country_name')" class="uk-margin-small-right uk-icon"
+
+                                <th class="uk-text-left"><?= Text::_('COM_PROTOSTORE_ZONES_TABLE_ZONENAME'); ?>
+                                    <a href="#" @click="sort('zone_name')" class="uk-margin-small-right uk-icon"
                                        uk-icon="triangle-down">
                                     </a>
                                 </th>
-                                <th class="uk-text-left"><?= Text::_('COM_PROTOSTORE_ZONES_TABLE_ZONENAME'); ?>
-                                    <a href="#" @click="sort('zone_name')" class="uk-margin-small-right uk-icon"
+                                <th class="uk-text-left"><?= Text::_('COM_PROTOSTORE_ZONES_TABLE_COUNTRYNAME'); ?>
+                                    <a href="#" @click="sort('country_name')" class="uk-margin-small-right uk-icon"
                                        uk-icon="triangle-down">
                                     </a>
                                 </th>
@@ -127,10 +128,10 @@ use Joomla\CMS\Layout\LayoutHelper;
                                     <div><input v-model="selected" :value="item" type="checkbox"></div>
                                 </td>
                                 <td>
-                                    <a :href="'index.php?option=com_protostore&view=country&id=' + item.id">{{item.country_name}}</a>
+                                    <a :href="'index.php?option=com_protostore&view=zone&id=' + item.id"> {{item.zone_name}}</a>
                                 </td>
                                 <td>
-                                    {{item.zone_name}}
+                                    {{item.country_name}}
                                 </td>
                                 <td>
                                     {{item.zone_isocode}}

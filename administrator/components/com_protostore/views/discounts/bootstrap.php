@@ -27,7 +27,17 @@ use Protostore\Utilities\Utilities;
 class bootstrap implements listView
 {
 
+	/**
+	 * @var array $vars
+	 * @since 2.0
+	 */
 	public $vars;
+
+	/**
+	 * @var string $view
+	 * @since 2.0
+	 */
+	public static $view = 'discounts';
 
 	public function __construct()
 	{
@@ -39,7 +49,7 @@ class bootstrap implements listView
 
 
 
-		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/discounts/discounts.php', $this->vars);
+		echo Render::render(JPATH_ADMINISTRATOR . '/components/com_protostore/views/'.self::$view.'/'.self::$view.'.php', $this->vars);
 
 	}
 
@@ -101,7 +111,7 @@ class bootstrap implements listView
 
 
 		// include the vue script - defer
-		$doc->addScript('../media/com_protostore/js/vue/discounts/discounts.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
+		$doc->addScript('../media/com_protostore/js/vue/'.self::$view.'/'.self::$view.'.min.js', array('type' => 'text/javascript'), array('defer' => 'defer'));
 
 		$doc->addCustomTag('<script id="items_data" type="application/json">' . json_encode($this->vars['items']) . '</script>');
 		$doc->addCustomTag('<script id="page_size" type="application/json">' . $this->vars['list_limit'] . '</script>');

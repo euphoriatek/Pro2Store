@@ -179,7 +179,7 @@ class DiscountFactory
 	 */
 
 
-	public static function saveFromInputData(Input $data)
+	public static function saveFromInputData(Input $data): ?Discount
 	{
 
 
