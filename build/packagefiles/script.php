@@ -191,7 +191,7 @@ class pkg_protostoreInstallerScript
 			$plugin->folder  = (string) 'system';
 			$plugin->enabled = 1;
 			$db->updateObject('#__extensions', $plugin, array('type', 'element', 'folder'));
-			
+
 			$plugin          = new stdClass();
 			$plugin->type    = 'plugin';
 			$plugin->element = 'protostore';
@@ -201,6 +201,279 @@ class pkg_protostoreInstallerScript
 
 
 		}
+
+
+		if ($type == 'update')
+		{
+
+			if (version_compare($this->oldversion, '2.0.0', '<='))
+			{
+				// now do all the work needed to update the system from V1 to V2
+
+				$customerColumns = array(
+					'checked_out',
+					'checked_out_time',
+					'version',
+					'hits',
+					'access',
+					'ordering',
+					'params',
+					'asset_id'
+				);
+
+				foreach ($customerColumns as $column)
+				{
+					$this->dropColumn('customer', $column);
+				}
+
+
+				$option_presetColumns = array(
+					'checked_out',
+					'checked_out_time',
+					'version',
+					'hits',
+					'access',
+					'ordering',
+					'params',
+					'asset_id'
+				);
+
+				foreach ($option_presetColumns as $column)
+				{
+					$this->dropColumn('option_preset', $column);
+				}
+
+
+				$productColumns = array(
+					'asset_id'
+				);
+
+				foreach ($productColumns as $column)
+				{
+					$this->dropColumn('product', $column);
+				}
+
+
+				$zoneColumns = array(
+					'default'
+				);
+
+				foreach ($zoneColumns as $column)
+				{
+					$this->dropColumn('zone', $column);
+				}
+
+
+				$orderColumns = array(
+					'asset_id'
+				);
+
+				foreach ($orderColumns as $column)
+				{
+					$this->dropColumn('order', $column);
+				}
+
+				// add hash column
+				$query = "SHOW COLUMNS FROM `#__protostore_order` LIKE 'hash'";
+				$db->setQuery($query);
+				$res = $db->loadResult();
+				if (!$res)
+				{
+					$query = 'ALTER TABLE ' . $db->quoteName('#__protostore_order') . ' ADD COLUMN `hash` varchar(255) DEFAULT NULL;';
+					$db->setQuery($query);
+					$db->execute();
+				}
+
+				// fix donation_total column
+				$query = "SHOW COLUMNS FROM `#__protostore_order` LIKE 'donation'";
+				$db->setQuery($query);
+				$res = $db->loadResult();
+				if ($res)
+				{
+					$query = 'ALTER TABLE ' . $db->quoteName('#__protostore_order') . ' CHANGE `donation` `donation_total` int(11) NOT NULL DEFAULT \'0\';';
+					$db->setQuery($query);
+					$db->execute();
+				}
+
+				// fix customer_id column
+				$query = "SHOW COLUMNS FROM `#__protostore_order` LIKE 'customer'";
+				$db->setQuery($query);
+				$res = $db->loadResult();
+				if ($res)
+				{
+					$query = 'ALTER TABLE ' . $db->quoteName('#__protostore_order') . ' CHANGE `customer` `customer_id` int(11) NOT NULL DEFAULT \'0\';';
+
+					$db->setQuery($query);
+					$db->execute();
+				}
+
+				// add variant_id column
+				$query = "SHOW COLUMNS FROM `#__protostore_order_products` LIKE 'variant_id'";
+				$db->setQuery($query);
+				$res = $db->loadResult();
+				if (!$res)
+				{
+					$query = 'ALTER TABLE ' . $db->quoteName('#__protostore_order_products') . ' ADD COLUMN `variant_id` int(11) DEFAULT NULL;';
+					$db->setQuery($query);
+					$db->execute();
+				}
+
+				// add tracking_provider column
+				$query = "SHOW COLUMNS FROM `#__protostore_order_tracking` LIKE 'tracking_provider'";
+				$db->setQuery($query);
+				$res = $db->loadResult();
+				if (!$res)
+				{
+					$query = 'ALTER TABLE ' . $db->quoteName('#__protostore_order_tracking') . ' ADD COLUMN `tracking_provider` varchar(255) DEFAULT NULL;';
+					$db->setQuery($query);
+					$db->execute();
+				}
+
+				// add maxPerOrder column
+				$query = "SHOW COLUMNS FROM `#__protostore_product` LIKE 'maxPerOrder'";
+				$db->setQuery($query);
+				$res = $db->loadResult();
+				if (!$res)
+				{
+					$query = 'ALTER TABLE ' . $db->quoteName('#__protostore_product') . ' ADD COLUMN `maxPerOrder` int(11) DEFAULT NULL;';
+					$db->setQuery($query);
+					$db->execute();
+				}
+
+
+				$customerAddressColumns = array('asset_id');
+
+				foreach ($customerAddressColumns as $column)
+				{
+					$this->dropColumn('customer_address', $column);
+				}
+
+				$emailColumns = array('asset_id');
+
+				foreach ($emailColumns as $column)
+				{
+					$this->dropColumn('email', $column);
+				}
+
+
+				/**
+				 * Do discount table
+				 */
+
+				$discountColumns = array('asset_id', 'ordering', 'access', 'hits', 'version', 'checked_out_time', 'checked_out');
+
+				foreach ($discountColumns as $column)
+				{
+					$this->dropColumn('discount', $column);
+				}
+
+				// add percentage column
+				$query = "SHOW COLUMNS FROM `#__protostore_discount` LIKE 'percentage'";
+				$db->setQuery($query);
+				$res = $db->loadResult();
+				if (!$res)
+				{
+					$query = 'ALTER TABLE ' . $db->quoteName('#__protostore_discount') . ' ADD COLUMN `percentage` float DEFAULT NULL;';
+					$db->setQuery($query);
+					$db->execute();
+				}
+
+				// now go through the discount table and make the data updates required
+				$query = $db->getQuery(true);
+
+				$query->select('*');
+				$query->from($db->quoteName('#__protostore_discount'));
+
+				$db->setQuery($query);
+
+				$currentDiscounts = $db->loadObjectList();
+
+				foreach ($currentDiscounts as $discount)
+				{
+
+
+					switch ($discount->discount_type)
+					{
+						case 'amount':
+							$discount->discount_type = 1;
+						case 'perc':
+							$discount->discount_type = 2;
+							$discount->percentage    = $discount->amount;
+						case 'freeship':
+							$discount->discount_type = 3;
+
+
+					}
+
+					$db->updateObject('#__protostore_discount', $discount, 'id');
+
+
+				}
+
+				// fix discount_type column
+				$query = "SHOW COLUMNS FROM `#__protostore_discount` LIKE 'discount_type'";
+				$db->setQuery($query);
+				$res = $db->loadResult();
+				if ($res)
+				{
+					$query = 'ALTER TABLE ' . $db->quoteName('#__protostore_discount') . ' ALTER COLUMN `discount_type` tinyint(4) DEFAULT NULL;';
+					$db->setQuery($query);
+					$db->execute();
+				}
+				// fix amount column
+				$query = "SHOW COLUMNS FROM `#__protostore_discount` LIKE 'amount'";
+				$db->setQuery($query);
+				$res = $db->loadResult();
+				if ($res)
+				{
+					$query = 'ALTER TABLE ' . $db->quoteName('#__protostore_discount') . ' ALTER COLUMN `amount` int(11) DEFAULT NULL;';
+					$db->setQuery($query);
+					$db->execute();
+				}
+
+
+//				/**
+//				 * Do product options
+//				 */
+//
+//
+//				$query = $db->getQuery(true);
+//
+//				$query->select('*');
+//				$query->from($db->quoteName('#__protostore_product_option_values'));
+//
+//				$db->setQuery($query);
+//
+//				$options = $db->loadObjectList();
+//
+//				foreach ($options as $option)
+//				{
+//
+//					$object                 = new stdClass();
+//					$object->id             = 0;
+//					$object->product_id     = $option->product_id;
+//					$object->option_name    = $option->optionname;
+//
+//					if ($option->modifiertype == 'perc')
+//					{
+//						$object->modifier_value = $option->modifiervalue . 00;
+//
+//					}
+//					if ($option->modifiertype == 'amount')
+//					{
+//						$object->modifier_value = $option->modifiervalue;
+//					}
+//
+//					$object->modifier_type  = $option->modifiertype;
+//
+//					$db->insertObject('#__protostore_product_option', $object);
+//
+//				}
+
+
+			}
+		}
+
 
 	}
 
@@ -214,81 +487,20 @@ class pkg_protostoreInstallerScript
 		return $manifest[$name];
 	}
 
-//	private function initSetup()
-//	{
-//
-//		$db    = Factory::getDbo();
-//		$query = 'TRUNCATE TABLE ' . $db->quoteName('#__protostore_setup');
-//		$db->setQuery($query);
-//		$db->execute();
-//
-//		$object        = new stdClass();
-//		$object->id    = 0;
-//		$object->value = 'false';
-//
-//		$db->insertObject('#__protostore_setup', $object);
-//
-//	}
-//
-//	private function importCountries()
-//	{
-//
-//		$countries = file_get_contents(JPATH_ROOT . '/administrator/components/com_protostore/data/countries.json');
-//		$countries = json_decode($countries, true);
-//
-//		$db = Factory::getDbo();
-//
-//		$query = 'TRUNCATE TABLE ' . $db->quoteName('#__protostore_country');
-//		$db->setQuery($query);
-//		$db->execute();
-//
-//
-//		foreach ($countries as $country)
-//		{
-//			$object                    = new stdClass();
-//			$object->id                = $country['id'];
-//			$object->country_name      = $country['country_name'];
-//			$object->country_isocode_2 = $country['country_isocode_2'];
-//			$object->country_isocode_3 = $country['country_isocode_3'];
-//			$object->requires_vat      = $country['requires_vat'];
-//			$object->taxrate           = $country['taxrate'];
-//			$object->default           = $country['default'];
-//			$object->published         = $country['published'];
-//
-//			$db->insertObject('#__protostore_country', $object);
-//		}
-//
-//	}
-//
-//	private function importZones()
-//	{
-//
-//		$zones = file_get_contents(JPATH_ROOT . '/administrator/components/com_protostore/data/zones.json', '', '', '', '');
-//		$zones = mb_convert_encoding($zones, "HTML-ENTITIES", "UTF-8");
-//		$zones = json_decode($zones, true);
-//
-//		$db = Factory::getDbo();
-//
-//		$query = 'TRUNCATE TABLE ' . $db->quoteName('#__protostore_zone');
-//		$db->setQuery($query);
-//		$db->execute();
-//
-//
-//		foreach ($zones as $zone)
-//		{
-//			$object               = new stdClass();
-//			$object->id           = $zone['id'];
-//			$object->country_id   = $zone['country_id'];
-//			$object->zone_name    = $zone['zone_name'];
-//			$object->zone_isocode = $zone['zone_isocode'];
-//			$object->taxrate      = $zone['taxrate'];
-//			$object->published    = $zone['published'];
-//
-//			$db->insertObject('#__protostore_zone', $object);
-//		}
-//
-//	}
 
+	private function dropColumn($tableSuffix, $column)
+	{
+		$db    = Factory::getDbo();
+		$query = "SHOW COLUMNS FROM `#__protostore_" . $tableSuffix . "` LIKE '" . $column . "'";
+		$db->setQuery($query);
+		$res = $db->loadResult();
+		if ($res)
+		{
+			$query = 'ALTER TABLE ' . $db->quoteName('#__protostore_' . $tableSuffix) . ' DROP COLUMN ' . $db->quoteName($column);
+			$db->setQuery($query);
+			$db->execute();
+		}
+	}
 
 
 }
