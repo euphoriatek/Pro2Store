@@ -32,6 +32,7 @@ use Protostore\Coupon\CouponFactory;
 use Protostore\Currency\CurrencyFactory;
 use Protostore\Customer\CustomerFactory;
 use Protostore\Emaillog\EmaillogFactory;
+use Protostore\Language\LanguageFactory;
 use Protostore\Product\ProductFactory;
 use Protostore\Shipping\ShippingFactory;
 use Protostore\Tax\TaxFactory;
@@ -604,8 +605,7 @@ class OrderFactory
 	public static function getStatusFormatted(string $status): string
 	{
 
-		$language = Factory::getLanguage();
-		$language->load('com_protostore');
+		LanguageFactory::load();
 
 		switch ($status)
 		{
