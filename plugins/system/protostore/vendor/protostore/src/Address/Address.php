@@ -85,9 +85,13 @@ class Address
 
 		$this->zone_name          = AddressFactory::getZoneName($this->zone);
 		$country                  = AddressFactory::getCountry($this->country);
-		$this->country_name       = $country->country_name;
-		$this->country_isocode_2  = $country->country_isocode_2;
-		$this->country_isocode_3  = $country->country_isocode_3;
+
+		if($country) {
+			$this->country_name       = $country->country_name;
+			$this->country_isocode_2  = $country->country_isocode_2;
+			$this->country_isocode_3  = $country->country_isocode_3;
+		}
+
 		$this->address_as_csv     = AddressFactory::getAddressAsCSV($this);
 		$this->isAssignedShipping = AddressFactory::checkAssigned($this->id, 'shipping');
 		$this->isAssignedBilling  = AddressFactory::checkAssigned($this->id, 'billing');
