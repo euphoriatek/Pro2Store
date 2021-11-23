@@ -383,7 +383,7 @@ class CurrencyFactory
 		// use Brick to format the number
 		$money = Money::ofMinor($number, $currencyISO);
 
-		return $money->formatTo($locale);
+		return $money->formatTo($locale); // example:  €120.00
 
 
 	}
