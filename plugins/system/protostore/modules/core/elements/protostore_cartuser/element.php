@@ -15,7 +15,7 @@ use Joomla\CMS\Uri\Uri;
 
 use Protostore\Cart\CartFactory;
 use Protostore\Config\ConfigFactory;
-use Protostore\Zone\Zone;
+use Protostore\Country\CountryFactory;
 
 
 return [
@@ -69,7 +69,7 @@ return [
 			}
 
 			$node->props['baseUrl']   = Uri::base();
-			$node->props['countries'] = Zone::getAllCountries();
+			$node->props['countries'] = CountryFactory::getList(0,0,true);
 		}
 	]
 ];
