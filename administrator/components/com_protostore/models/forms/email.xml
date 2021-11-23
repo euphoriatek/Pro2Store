@@ -29,7 +29,7 @@
         <field name="language" type="languageselect"
                label="JFIELD_LANGUAGE_LABEL"
                default="*"
-               description="COM_CATEGORIES_FIELD_LANGUAGE_DESC"
+               description=""
                class="span12 small" >
         </field>
 
