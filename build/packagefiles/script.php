@@ -256,6 +256,10 @@ class pkg_protostoreInstallerScript
 					$db->execute();
 				}
 
+				$query = 'ALTER TABLE ' . $db->quoteName('#__protostore_email') . ' ADD COLUMN  `language` char(7) DEFAULT \'*\',';
+				$db->setQuery($query);
+				$db->execute();
+
 
 //			// fix donation_total column
 				$query = 'ALTER TABLE ' . $db->quoteName('#__protostore_order') . ' CHANGE `donation` `donation_total` int(11) NULL DEFAULT NULL;';
@@ -425,7 +429,7 @@ class pkg_protostoreInstallerScript
 			$this->dropColumn('customer_address', $column);
 		}
 
-		$emailColumns = array('asset_id');
+		$emailColumns = array('params');
 
 		foreach ($emailColumns as $column)
 		{
