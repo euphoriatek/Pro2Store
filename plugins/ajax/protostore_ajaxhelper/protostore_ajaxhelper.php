@@ -10,7 +10,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 
-// error_reporting(0);
+error_reporting(0);
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Response\JsonResponse;
