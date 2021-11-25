@@ -209,6 +209,35 @@ class pkg_protostoreInstallerScript
 			{
 				// now do all the work needed to update the system from V1 to V2
 
+
+
+				// for email... first add the language col
+				//then move the value of 'params' into the new col
+				// then we can remove 'params' col
+				$query = 'ALTER TABLE ' . $db->quoteName('#__protostore_email') . ' ADD COLUMN  `language` char(7) DEFAULT \'*\',';
+				$db->setQuery($query);
+				$db->execute();
+
+
+				$query = $db->getQuery(true);
+
+				$query->select('*');
+				$query->from($db->quoteName('#__protostore_email'));
+
+				$db->setQuery($query);
+
+				$emails = $db->loadObjectList();
+
+				foreach ($emails as $email)
+				{
+					$object = new stdClass();
+					$object->language = $email->params;
+
+					$db->updateObject('#__protostore_email', $object, 'id');
+				}
+
+
+
 				$this->removeUnneededColumns();
 
 
@@ -256,12 +285,9 @@ class pkg_protostoreInstallerScript
 					$db->execute();
 				}
 
-				$query = 'ALTER TABLE ' . $db->quoteName('#__protostore_email') . ' ADD COLUMN  `language` char(7) DEFAULT \'*\',';
-				$db->setQuery($query);
-				$db->execute();
 
 
-//			// fix donation_total column
+
 				$query = 'ALTER TABLE ' . $db->quoteName('#__protostore_order') . ' CHANGE `donation` `donation_total` int(11) NULL DEFAULT NULL;';
 				$db->setQuery($query);
 				$db->execute();
@@ -315,6 +341,8 @@ class pkg_protostoreInstallerScript
 
 				}
 
+
+// get this fixed ideally but not 100% required... the system will still work without the change.
 				// fix discount_type column
 //				$query = 'ALTER TABLE ' . $db->quoteName('#__protostore_discount') . ' ALTER COLUMN `discount_type` tinyint(4) DEFAULT NULL;';
 //				$db->setQuery($query);
@@ -324,7 +352,56 @@ class pkg_protostoreInstallerScript
 //				$query = 'ALTER TABLE ' . $db->quoteName('#__protostore_discount') . ' ALTER COLUMN `amount` int(11) DEFAULT NULL;';
 //				$db->setQuery($query);
 //				$db->execute();
+
+
+				// do product options
+
+				//first just get rid of the old table
+//				$query = 'DROP TABLE ' . $db->quoteName('#__protostore_product_option') . ';';
+//				$db->setQuery($query);
+//				$db->execute();
+
+
+//				// now recreate the table in the form we need.
+//				$query = 'CREATE TABLE `#__protostore_product_option` (
+//  `id` int(11) NOT NULL AUTO_INCREMENT,
+//  `product_id` int(11) DEFAULT NULL,
+//  `option_name` varchar(255) DEFAULT NULL,
+//  `modifier_value` int(11) DEFAULT NULL,
+//  `modifier_type` char(6) DEFAULT NULL,
+//  PRIMARY KEY (`id`)
+//) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;';
+//				$db->setQuery($query);
+//				$db->execute();
 //
+//
+//				// now iterate through the option values table and insert the data
+//				$query = $db->getQuery(true);
+//
+//				$query->select('*');
+//				$query->from($db->quoteName('#__protostore_product_option_values'));
+//
+//				$db->setQuery($query);
+//
+//				$results = $db->loadObjectList();
+//
+//				if ($results)
+//				{
+//					foreach ($results as $result)
+//					{
+//
+//						$object = new stdClass();
+//						$object->id = 0;
+//						$object->product_id = $result->product_id;
+//						$object->option_name = $result->optionname;
+//						$object->modifier_value = $result->modifiervalue;
+//						$object->modifier_type = $result->modifiertype;
+//
+//						$db->insertObject('#__protostore_product_option', $object);
+//
+//					}
+//				}
+
 
 			} // end if
 		}
@@ -429,7 +506,7 @@ class pkg_protostoreInstallerScript
 			$this->dropColumn('customer_address', $column);
 		}
 
-		$emailColumns = array('params');
+		$emailColumns = array('asset_id', 'params');
 
 		foreach ($emailColumns as $column)
 		{

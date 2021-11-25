@@ -63,7 +63,7 @@ const p2s_products = {
 
         const items_data = document.getElementById('items_data');
         this.items = JSON.parse(items_data.innerText);
-        // items_data.remove();
+        items_data.remove();
 
         const categories_data = document.getElementById('categories_data');
         this.categories = JSON.parse(categories_data.innerText);

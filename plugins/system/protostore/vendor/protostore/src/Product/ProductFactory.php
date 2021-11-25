@@ -510,11 +510,21 @@ class ProductFactory
 		}
 
 
+
+
 		// create the item in Pro2Store Products table
 
 
 		$product                 = new stdClass();
 		$product->joomla_item_id = $db->insertid();
+
+		//		FIX j4 WORKFLOWS
+		$object            = new stdClass();
+		$object->item_id   = $product->joomla_item_id;
+		$object->stage_id  = 1;
+		$object->extension = 'com_content.article';
+
+		$db->insertObject('#__workflow_associations', $object);
 
 
 		$base_price          = $data->json->getFloat('base_price', 0);
@@ -559,9 +569,6 @@ class ProductFactory
 			return null;
 		}
 
-
-		//todo - Sort out how J4 saves tags.
-
 		// Create the Tags
 
 		if ($tags = $data->json->getString('tags'))
@@ -587,8 +594,6 @@ class ProductFactory
 	private static function commitToDatabase(Product $product): bool
 	{
 
-
-		// todo - fix workflows for j4
 
 		$db = Factory::getDbo();
 
@@ -617,13 +622,14 @@ class ProductFactory
 
 			$jresult = $db->updateObject('#__content', $product->joomlaItem, 'id');
 
+			$j_item_id = $db->insertid();
+
 			if ($jresult)
 			{
 				// now do variants & checkbox options
 
 				self::commitVariants($product);
 				self::commitOptions($product);
-
 
 			}
 
@@ -640,6 +646,7 @@ class ProductFactory
 			}
 
 		}
+
 
 		// now do custom fields
 		foreach ($product->custom_fields as $field)
