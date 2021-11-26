@@ -214,132 +214,132 @@ class pkg_protostoreInstallerScript
 				// for email... first add the language col
 				//then move the value of 'params' into the new col
 				// then we can remove 'params' col
-				$query = 'ALTER TABLE ' . $db->quoteName('#__protostore_email') . ' ADD COLUMN  `language` char(7) DEFAULT \'*\',';
+				$query = 'ALTER TABLE ' . $db->quoteName('#__protostore_email') . ' ADD COLUMN  `language` char(7) DEFAULT \'*\';';
 				$db->setQuery($query);
 				$db->execute();
 
 
-				$query = $db->getQuery(true);
-
-				$query->select('*');
-				$query->from($db->quoteName('#__protostore_email'));
-
-				$db->setQuery($query);
-
-				$emails = $db->loadObjectList();
-
-				foreach ($emails as $email)
-				{
-					$object = new stdClass();
-					$object->language = $email->params;
-
-					$db->updateObject('#__protostore_email', $object, 'id');
-				}
+//				$query = $db->getQuery(true);
+//
+//				$query->select('*');
+//				$query->from($db->quoteName('#__protostore_email'));
+//
+//				$db->setQuery($query);
+//
+//				$emails = $db->loadObjectList();
+//
+//				foreach ($emails as $email)
+//				{
+//					$object = new stdClass();
+//					$object->language = $email->params;
+//
+//					$db->updateObject('#__protostore_email', $object, 'id');
+//				}
 
 
 
 				$this->removeUnneededColumns();
 
-
-				// add hash column
-				$query = "SHOW COLUMNS FROM " . $db->quoteName('#__protostore_order') . " LIKE 'hash'";
-				$db->setQuery($query);
-				$res = $db->loadResult();
-				if (!$res)
-				{
-					$query = 'ALTER TABLE ' . $db->quoteName('#__protostore_order') . ' ADD COLUMN `hash` varchar(255) DEFAULT NULL;';
-					$db->setQuery($query);
-					$db->execute();
-				}
-
-				// add variant_id column
-				$query = "SHOW COLUMNS FROM " . $db->quoteName('#__protostore_order_products') . " LIKE 'variant_id'";
-				$db->setQuery($query);
-				$res = $db->loadResult();
-				if (!$res)
-				{
-					$query = 'ALTER TABLE ' . $db->quoteName('#__protostore_order_products') . ' ADD COLUMN `variant_id` int(11) DEFAULT NULL;';
-					$db->setQuery($query);
-					$db->execute();
-				}
-
-				// add tracking_provider column
-				$query = "SHOW COLUMNS FROM " . $db->quoteName('#__protostore_order_tracking') . " LIKE 'tracking_provider'";
-				$db->setQuery($query);
-				$res = $db->loadResult();
-				if (!$res)
-				{
-					$query = 'ALTER TABLE ' . $db->quoteName('#__protostore_order_tracking') . ' ADD COLUMN `tracking_provider` varchar(255) DEFAULT NULL;';
-					$db->setQuery($query);
-					$db->execute();
-				}
-
-				// add maxPerOrder column
-				$query = "SHOW COLUMNS FROM " . $db->quoteName('#__protostore_product') . " LIKE 'maxPerOrder'";
-				$db->setQuery($query);
-				$res = $db->loadResult();
-				if (!$res)
-				{
-					$query = 'ALTER TABLE ' . $db->quoteName('#__protostore_product') . ' ADD COLUMN `maxPerOrder` int(11) DEFAULT NULL;';
-					$db->setQuery($query);
-					$db->execute();
-				}
-
-
-
-
-				$query = 'ALTER TABLE ' . $db->quoteName('#__protostore_order') . ' CHANGE `donation` `donation_total` int(11) NULL DEFAULT NULL;';
-				$db->setQuery($query);
-				$db->execute();
-
-
-				// fix customer_id column
-				$query = 'ALTER TABLE ' . $db->quoteName('#__protostore_order') . ' CHANGE `customer` `customer_id` int(11) NOT NULL DEFAULT \'0\';';
-				$db->setQuery($query);
-				$db->execute();
-
-
-				/**
-				 * Do discount table
-				 */
-
-
-				// add percentage column
-
-
-				$query = 'ALTER TABLE ' . $db->quoteName('#__protostore_discount') . ' ADD COLUMN `percentage` float DEFAULT NULL;';
-				$db->setQuery($query);
-				$db->execute();
-
-
-				// now go through the discount table and make the data updates required
-				$query = $db->getQuery(true);
-
-				$query->select('*');
-				$query->from($db->quoteName('#__protostore_discount'));
-
-				$db->setQuery($query);
-
-				$currentDiscounts = $db->loadObjectList();
-
-				foreach ($currentDiscounts as $discount)
-				{
-
-					switch ($discount->discount_type)
-					{
-						case 'amount':
-							$discount->discount_type = 1;
-						case 'perc':
-							$discount->discount_type = 2;
-							$discount->percentage    = $discount->amount;
-						case 'freeship':
-							$discount->discount_type = 3;
-
-					}
-
-					$db->updateObject('#__protostore_discount', $discount, 'id');
-
-				}
+//
+//				// add hash column
+//				$query = "SHOW COLUMNS FROM " . $db->quoteName('#__protostore_order') . " LIKE 'hash'";
+//				$db->setQuery($query);
+//				$res = $db->loadResult();
+//				if (!$res)
+//				{
+//					$query = 'ALTER TABLE ' . $db->quoteName('#__protostore_order') . ' ADD COLUMN `hash` varchar(255) DEFAULT NULL;';
+//					$db->setQuery($query);
+//					$db->execute();
+//				}
+//
+//				// add variant_id column
+//				$query = "SHOW COLUMNS FROM " . $db->quoteName('#__protostore_order_products') . " LIKE 'variant_id'";
+//				$db->setQuery($query);
+//				$res = $db->loadResult();
+//				if (!$res)
+//				{
+//					$query = 'ALTER TABLE ' . $db->quoteName('#__protostore_order_products') . ' ADD COLUMN `variant_id` int(11) DEFAULT NULL;';
+//					$db->setQuery($query);
+//					$db->execute();
+//				}
+//
+//				// add tracking_provider column
+//				$query = "SHOW COLUMNS FROM " . $db->quoteName('#__protostore_order_tracking') . " LIKE 'tracking_provider'";
+//				$db->setQuery($query);
+//				$res = $db->loadResult();
+//				if (!$res)
+//				{
+//					$query = 'ALTER TABLE ' . $db->quoteName('#__protostore_order_tracking') . ' ADD COLUMN `tracking_provider` varchar(255) DEFAULT NULL;';
+//					$db->setQuery($query);
+//					$db->execute();
+//				}
+//
+//				// add maxPerOrder column
+//				$query = "SHOW COLUMNS FROM " . $db->quoteName('#__protostore_product') . " LIKE 'maxPerOrder'";
+//				$db->setQuery($query);
+//				$res = $db->loadResult();
+//				if (!$res)
+//				{
+//					$query = 'ALTER TABLE ' . $db->quoteName('#__protostore_product') . ' ADD COLUMN `maxPerOrder` int(11) DEFAULT NULL;';
+//					$db->setQuery($query);
+//					$db->execute();
+//				}
+//
+//
+//
+//
+//				$query = 'ALTER TABLE ' . $db->quoteName('#__protostore_order') . ' CHANGE `donation` `donation_total` int(11) NULL DEFAULT NULL;';
+//				$db->setQuery($query);
+//				$db->execute();
+//
+//
+//				// fix customer_id column
+//				$query = 'ALTER TABLE ' . $db->quoteName('#__protostore_order') . ' CHANGE `customer` `customer_id` int(11) NOT NULL DEFAULT \'0\';';
+//				$db->setQuery($query);
+//				$db->execute();
+//
+//
+//				/**
+//				 * Do discount table
+//				 */
+//
+//
+//				// add percentage column
+//
+//
+//				$query = 'ALTER TABLE ' . $db->quoteName('#__protostore_discount') . ' ADD COLUMN `percentage` float DEFAULT NULL;';
+//				$db->setQuery($query);
+//				$db->execute();
+//
+//
+//				// now go through the discount table and make the data updates required
+//				$query = $db->getQuery(true);
+//
+//				$query->select('*');
+//				$query->from($db->quoteName('#__protostore_discount'));
+//
+//				$db->setQuery($query);
+//
+//				$currentDiscounts = $db->loadObjectList();
+//
+//				foreach ($currentDiscounts as $discount)
+//				{
+//
+//					switch ($discount->discount_type)
+//					{
+//						case 'amount':
+//							$discount->discount_type = 1;
+//						case 'perc':
+//							$discount->discount_type = 2;
+//							$discount->percentage    = $discount->amount;
+//						case 'freeship':
+//							$discount->discount_type = 3;
+//
+//					}
+//
+//					$db->updateObject('#__protostore_discount', $discount, 'id');
+//
+//				}
 
 
 // get this fixed ideally but not 100% required... the system will still work without the change.
