@@ -16,9 +16,11 @@ Pro2Store is an Ecommerce Extension for YOOtheme Pro
 - Install Joomla as usuall
 - Once installed, click "system >> discover". You should now see a list of all the Pro2Store plugins etc.
 - Select them all and click install
-- NOTE: Before going to the component, make sure all the plugins are enabled.
 
-## to begin Development
+
+### NOTE: Before going to the component, make sure all the plugins are enabled AND you follow the steps below
+
+## To begin Development
 
 - Open in (ideally) PHPStorm
 - Make sure you have Node and NPM installed and open the PHPStorm terminal and run:
@@ -28,7 +30,13 @@ npm install
 ```
 
 - NPM install creates a folder called 'node_modules' in your installation - it includes all the JavaScript needed to run the builds.
-- In your Joomla backend, use the "Discover" function to install the Pro2Store system
+- run this command to compile the Vue Javascript:
+
+```bash
+node bundlevue.js
+```
+
+### Now you can visit the component backend!
 
 ## Vue Development
 
