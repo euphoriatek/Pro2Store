@@ -15,7 +15,8 @@ Pro2Store is an Ecommerce Extension for YOOtheme Pro
 - Copy the Joomla core files to the Pro2Store folder NOTE: Don't overwrite the files… click "Merge" if promtped
 - Install Joomla as usual
 - Once installed, click "system >> discover". You should now see a list of all the Pro2Store plugins etc.
-- Select them all and click install **NOTE** The plugins could be on 2 pages... so increase the page list limit and make sure you instal all the plugins
+- Select them all and click install 
+- **NOTE The plugins could be on 2 pages... so increase the page list limit and make sure you instal all the plugins**
 
 
 ### NOTE: Before going to the component, make sure all the plugins are enabled AND you follow the steps below
