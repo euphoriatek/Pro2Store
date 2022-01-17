@@ -12,8 +12,8 @@ Pro2Store is an Ecommerce Extension for YOOtheme Pro
 
 - Pull the repo onto your local machine. this will create a folder called "Pro2Store".
 - Download Joomla 4: https://downloads.joomla.org/ and unzip.
-- Copy the Joomla core files to the Pro2Store folder NOTE: Don't overwrite the files... click "Merge" if promtped
-- Install Joomla as usuall
+- Copy the Joomla core files to the Pro2Store folder NOTE: Don't overwrite the files… click "Merge" if promtped
+- Install Joomla as usual
 - Once installed, click "system >> discover". You should now see a list of all the Pro2Store plugins etc.
 - Select them all and click install
 
@@ -29,7 +29,7 @@ Pro2Store is an Ecommerce Extension for YOOtheme Pro
 npm install
 ```
 
-- NPM install creates a folder called 'node_modules' in your installation - it includes all the JavaScript needed to run the builds.
+- NPM install creates a folder called 'node_modules' in your installation – it includes all the JavaScript needed to run the builds.
 - run this command to compile the Vue Javascript:
 
 ```bash
