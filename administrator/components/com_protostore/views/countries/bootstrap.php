@@ -134,7 +134,6 @@ class bootstrap implements listView
 
 		$doc->addCustomTag('<script id="updatedMessage" type="application/json">' . Text::_('COM_PROTOSTORE_COUNTRIES_UPDATED') . '</script>');
 		$doc->addCustomTag('<script id="confirmLangString" type="application/json">' . Text::_('COM_PROTOSTORE_COUNTRIES_DELETE_CONFIRM') . '</script>');
-
 	}
 
 }
